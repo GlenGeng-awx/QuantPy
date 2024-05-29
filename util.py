@@ -2,8 +2,14 @@ import yfinance as yf
 import pandas as pd
 import os
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
+pd.set_option('display.float_format', '{:.0f}'.format)
 
-def local_max(data: pd.DataFrame) -> pd.DataFrame:
+
+def local_max(data: pd.DataFrame) -> set:
     hit_dates = set()
 
     for idx in range(1, data.shape[0] - 1):
@@ -11,12 +17,10 @@ def local_max(data: pd.DataFrame) -> pd.DataFrame:
                 and data.iloc[idx]["high"] > data.iloc[idx + 1]["high"]):
             hit_dates.add(data.iloc[idx]["Date"])
 
-    hit_rows = data[data["Date"].isin(hit_dates)]
-    print(f'shape of local max: {hit_rows.shape}')
-    return hit_rows
+    return hit_dates
 
 
-def local_min(data: pd.DataFrame) -> pd.DataFrame:
+def local_min(data: pd.DataFrame) -> set:
     hit_dates = set()
 
     for idx in range(1, data.shape[0] - 1):
@@ -24,33 +28,27 @@ def local_min(data: pd.DataFrame) -> pd.DataFrame:
                 and data.iloc[idx]["low"] < data.iloc[idx + 1]["low"]):
             hit_dates.add(data.iloc[idx]["Date"])
 
-    hit_rows = data[data["Date"].isin(hit_dates)]
-    print(f'shape of lcoal min: {hit_rows.shape}')
-    return hit_rows
+    return hit_dates
 
 
-def range_max(data: pd.DataFrame, step=5) -> pd.DataFrame:
+def range_max(data: pd.DataFrame, step=5) -> set:
     hit_dates = set()
 
     for idx in range(step, data.shape[0] - step):
         if data.iloc[idx]["high"] == data.iloc[idx - step:idx + step]["high"].max():
             hit_dates.add(data.iloc[idx]["Date"])
 
-    hit_rows = data[data["Date"].isin(hit_dates)]
-    print(f'shape of range max: {hit_rows.shape}')
-    return hit_rows
+    return hit_dates
 
 
-def range_min(data: pd.DataFrame, step=5) -> pd.DataFrame:
+def range_min(data: pd.DataFrame, step=5) -> set:
     hit_dates = set()
 
     for idx in range(step, data.shape[0] - step):
         if data.iloc[idx]["low"] == data.iloc[idx - step:idx + step]["low"].min():
             hit_dates.add(data.iloc[idx]["Date"])
 
-    hit_rows = data[data["Date"].isin(hit_dates)]
-    print(f'shape of range min: {hit_rows.shape}')
-    return hit_rows
+    return hit_dates
 
 
 def load_data(symbol):
@@ -67,3 +65,10 @@ def load_data(symbol):
 
     return pd.read_csv(file_name)
 
+
+def hit_down(row: pd.Series):
+    return row['local_max_3rd'] or (row['local_max_2nd'] and row['range_max_n'])
+
+
+def hit_up(row: pd.Series):
+    return row['local_min_3rd'] or (row['local_min_2nd'] and row['range_min_n'])

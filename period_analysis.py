@@ -1,225 +1,251 @@
 import plotly.graph_objects as go
+
 from util import *
 
 
-def add_candlestick(fig: go.Figure, data: pd.DataFrame):
-    fig.add_trace(
-        go.Candlestick(
-            x=data['Date'],
-            close=data['close'],
-            open=data['open'],
-            high=data['high'],
-            low=data['low'],
-            name="Candlesticks",
-            increasing_line_color='red',
-            decreasing_line_color='green',
-            line=dict(width=0.5)
-        )
-    )
+class PeriodAnalysis:
+    def __init__(self, stock_name: str, stock_df: pd.DataFrame):
+        self.stock_name = stock_name
 
+        self.stock_df = stock_df.copy()  # copy to avoid warning
+        self.from_date = stock_df.iloc[0]['Date']
+        self.to_date = stock_df.iloc[-1]['Date']
+        print(f"{self.stock_name} period_analysis -> range: {self.from_date} ~ {self.to_date}, shape: {self.stock_df.shape}")
 
-def add_column(data: pd.DataFrame, to_be_added_key: str, to_be_added_value: pd.Series):
-    data[to_be_added_key] = data.apply(
-        lambda row: to_be_added_value.isin([row['Date']]).any(),
-        axis=1
-    )
+        self.up_box = []  # [(from_idx, highest_idx), ...]
+        self.down_box = []  # [(from_idx, lowest_idx), ...]
 
+        self.fig = go.Figure()
 
-def add_scatter(fig: go.Figure, data: pd.DataFrame, key: str, value: str, color: str, size: int):
-    fig.add_trace(
-        go.Scatter(
-            x=data[data[key]]['Date'],
-            y=data[data[key]][value],
-            mode='markers',
-            marker=dict(
-                color=color,
-                size=size
+    def add_candlestick(self):
+        self.fig.add_trace(
+            go.Candlestick(
+                x=self.stock_df['Date'],
+                close=self.stock_df['close'],
+                open=self.stock_df['open'],
+                high=self.stock_df['high'],
+                low=self.stock_df['low'],
+                name="Candlesticks",
+                increasing_line_color='red',
+                decreasing_line_color='green',
+                line=dict(width=0.5)
             )
         )
-    )
 
-
-def add_up_box(fig, data: pd.DataFrame, from_idx, to_idx):
-    from_date = data.loc[from_idx]['Date']
-    from_low = data.loc[from_idx]['low']
-
-    to_date = data.loc[to_idx]['Date']
-    to_high = data.loc[to_idx]['high']
-
-    delta = to_high - from_low
-    pst = 100 * delta / from_low
-
-    fig.add_shape(
-        type="rect",
-        x0=from_date, y0=from_low, x1=to_date, y1=to_high,
-        line=dict(
-            color="Red",
-            width=1,
-            dash="dot",
-        ),
-        label=dict(
-            text=f'{to_idx - from_idx}D <br> {delta:.2f}$ <br> +{pst:.2f}%',
-            textposition="bottom center"
-        ),
-    )
-
-    mid = (from_low + to_high) / 2
-
-    fig.add_shape(
-        type="line",
-        x0=from_date, y0=mid, x1=to_date, y1=mid,
-        line=dict(
-            color="Red",
-            width=0.5,
-            dash="dot",
+    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int):
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df[self.stock_df[filter_column]]['Date'],
+                y=self.stock_df[self.stock_df[filter_column]][display_column],
+                mode='markers',
+                marker=dict(
+                    color=color,
+                    size=size
+                )
+            )
         )
-    )
 
+    def add_hline(self):
+        for idx, row in self.stock_df.iterrows():
+            if hit_down(row):
+                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green")
 
-def add_down_box(fig, data: pd.DataFrame, from_idx, to_idx):
-    from_date = data.loc[from_idx]['Date']
-    from_high = data.loc[from_idx]['high']
+            if hit_up(row):
+                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red")
 
-    to_date = data.loc[to_idx]['Date']
-    to_low = data.loc[to_idx]['low']
+    def add_vline(self, dates):
+        for date in dates:
+            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color="black")
 
-    delta = from_high - to_low
-    pst = 100 * delta / from_high
+    def add_up_box(self, from_idx, to_idx):
+        from_date = self.stock_df.loc[from_idx]['Date']
+        from_low = self.stock_df.loc[from_idx]['low']
 
-    fig.add_shape(
-        type="rect",
-        x0=from_date, y0=from_high, x1=to_date, y1=to_low,
-        line=dict(
-            color="Green",
-            width=1,
-            dash="dot",
-        ),
-        label=dict(
-            text=f'-{pst:.2f}% <br> {delta:.2f}$ <br> {to_idx - from_idx}D',
-            textposition="top center"
-        ),
-    )
+        to_date = self.stock_df.loc[to_idx]['Date']
+        to_high = self.stock_df.loc[to_idx]['high']
 
-    mid = (from_high + to_low) / 2
+        length = to_idx - from_idx
+        delta = to_high - from_low
+        pst = 100 * delta / from_low
 
-    fig.add_shape(
-        type="line",
-        x0=from_date, y0=mid, x1=to_date, y1=mid,
-        line=dict(
-            color="Green",
-            width=0.5,
-            dash="dot",
+        if length <= 9 and pst < 20:
+            print(f'ignore up, {from_date} with {length} days and {pst:.2f}% up')
+            return
+
+        self.fig.add_shape(
+            type="rect",
+            x0=from_date, y0=from_low, x1=to_date, y1=to_high,
+            line=dict(
+                color="Red",
+                width=1,
+                dash="dot"
+            ),
+            label=dict(
+                text=f'{length}D <br> {delta:.2f}$ <br> +{pst:.2f}%',
+                textposition="bottom center"
+            ),
         )
-    )
 
+        mid = (from_low + to_high) / 2
+        self.fig.add_shape(
+            type="line",
+            x0=from_date, y0=mid, x1=to_date, y1=mid,
+            line=dict(
+                color="Red",
+                width=0.5,
+                dash="dot"
+            )
+        )
 
-def up_analysis(fig, stock_data: pd.DataFrame):
-    triggered_idx = []
+    def add_down_box(self, from_idx, to_idx):
+        from_date = self.stock_df.loc[from_idx]['Date']
+        from_high = self.stock_df.loc[from_idx]['high']
 
-    for idx, row in stock_data.iterrows():
-        if row['local_min_3rd'] or (row['local_min_2nd'] and row['range_min_n']):
-            triggered_idx.append(idx)
+        to_date = self.stock_df.loc[to_idx]['Date']
+        to_low = self.stock_df.loc[to_idx]['low']
 
-    triggered_idx.append(stock_data.index[-1])
-    print(f"triggered up -> {triggered_idx}")
+        length = to_idx - from_idx
+        delta = from_high - to_low
+        pst = 100 * delta / from_high
 
-    for i in range(len(triggered_idx) - 1):
-        start_idx, end_idx = triggered_idx[i], triggered_idx[i + 1]
-        print(f'up -> {stock_data.loc[start_idx]["Date"]} ~ {stock_data.loc[end_idx]["Date"]}')
+        if length <= 9 and pst < 15:
+            print(f'ignore down, {from_date} with {length} days and {pst:.2f}% down')
+            return
 
-        highest_idx = start_idx
-        for idx in range(start_idx + 1, end_idx):
-            if stock_data.loc[idx]['high'] > stock_data.loc[highest_idx]['high']:
-                highest_idx = idx
+        self.fig.add_shape(
+            type="rect",
+            x0=from_date, y0=from_high, x1=to_date, y1=to_low,
+            line=dict(
+                color="Green",
+                width=1,
+                dash="dot",
+            ),
+            label=dict(
+                text=f'-{pst:.2f}% <br> {delta:.2f}$ <br> {to_idx - from_idx}D',
+                textposition="top center"
+            ),
+        )
 
-        if highest_idx - start_idx <= 9:
-            continue
-        add_up_box(fig, stock_data, start_idx, highest_idx)
+        mid = (from_high + to_low) / 2
+        self.fig.add_shape(
+            type="line",
+            x0=from_date, y0=mid, x1=to_date, y1=mid,
+            line=dict(
+                color="Green",
+                width=0.5,
+                dash="dot",
+            )
+        )
 
+    def build_graph(self):
+        self.add_candlestick()
 
-def down_analysis(fig, stock_data: pd.DataFrame):
-    triggered_idx = []
+        self.add_scatter('local_max_1st', 'high', 'red', 2)
+        self.add_scatter('local_max_2nd', 'high', 'red', 6)
+        self.add_scatter('local_max_3rd', 'high', 'red', 10)
+        self.add_scatter('range_max_n', 'high', 'black', 4)
 
-    for idx, row in stock_data.iterrows():
-        if row['local_max_3rd'] or (row['local_max_2nd'] and row['range_max_n']):
-            triggered_idx.append(idx)
+        self.add_scatter('local_min_1st', 'low', 'green', 2)
+        self.add_scatter('local_min_2nd', 'low', 'green', 6)
+        self.add_scatter('local_min_3rd', 'low', 'green', 10)
+        self.add_scatter('range_min_n', 'low', 'blue', 4)
 
-    triggered_idx.append(stock_data.index[-1])
-    print(f"triggered down -> {triggered_idx}")
+        for (start_idx, highest_idx) in self.up_box:
+            self.add_up_box(start_idx, highest_idx)
 
-    for i in range(len(triggered_idx) - 1):
-        start_idx, end_idx = triggered_idx[i], triggered_idx[i + 1]
-        print(f'down -> {stock_data.loc[start_idx]["Date"]} ~ {stock_data.loc[end_idx]["Date"]}')
+        for (start_idx, lowest_idx) in self.down_box:
+            self.add_down_box(start_idx, lowest_idx)
 
-        lowest_idx = start_idx
-        for idx in range(start_idx + 1, end_idx):
-            if stock_data.loc[idx]['low'] < stock_data.loc[lowest_idx]['low']:
-                lowest_idx = idx
+        self.add_hline()
 
-        if lowest_idx - start_idx <= 9:
-            continue
-        add_down_box(fig, stock_data, start_idx, lowest_idx)
+        self.fig.update_xaxes(
+            rangebreaks=[
+                dict(bounds=["sat", "mon"]),  # hide weekends
+            ]
+        )
 
+        self.fig.update_layout(
+            title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}'
+        )
 
-def period_analysis(symbol, start_date, end_date):
-    stock_data = load_data(symbol)
-    stock_data = stock_data[(stock_data['Date'] > start_date) & (stock_data['Date'] < end_date)]
-    # stock_data['Date'] = pd.to_datetime(stock_data['Date'])
+    def up_analysis(self):
+        triggered_idx = []
+        for idx, row in self.stock_df.iterrows():
+            if hit_up(row):
+                triggered_idx.append(idx)
 
-    # calculate
-    local_max_1st_rows = local_max(stock_data)
-    local_max_2nd_rows = local_max(local_max_1st_rows)
-    local_max_3rd_rows = local_max(local_max_2nd_rows)
+        triggered_idx.append(self.stock_df.index[-1])
+        print(f"triggered up -> {triggered_idx}")
 
-    range_max_n_rows = range_max(stock_data, 15)
+        for i in range(len(triggered_idx) - 1):
+            start_idx, end_idx = triggered_idx[i], triggered_idx[i + 1]
 
-    local_min_1st_rows = local_min(stock_data)
-    local_min_2nd_rows = local_min(local_min_1st_rows)
-    local_min_3rd_rows = local_min(local_min_2nd_rows)
+            highest_idx = start_idx
+            for idx in range(start_idx + 1, end_idx):
+                if self.stock_df.loc[idx]['high'] > self.stock_df.loc[highest_idx]['high']:
+                    highest_idx = idx
 
-    range_min_n_rows = range_min(stock_data, 15)
+            self.up_box.append((start_idx, highest_idx))
 
-    # merge
-    add_column(stock_data, 'local_max_1st', local_max_1st_rows['Date'])
-    add_column(stock_data, 'local_max_2nd', local_max_2nd_rows['Date'])
-    add_column(stock_data, 'local_max_3rd', local_max_3rd_rows['Date'])
-    add_column(stock_data, 'range_max_n', range_max_n_rows['Date'])
+            # logging
+            start_date = self.stock_df.loc[start_idx]['Date']
+            to_date = self.stock_df.loc[end_idx]['Date']
+            highest_date = self.stock_df.loc[highest_idx]['Date']
+            print(f'checking up range -> {start_date} ~ {to_date}, found highest at {highest_date}')
 
-    add_column(stock_data, 'local_min_1st', local_min_1st_rows['Date'])
-    add_column(stock_data, 'local_min_2nd', local_min_2nd_rows['Date'])
-    add_column(stock_data, 'local_min_3rd', local_min_3rd_rows['Date'])
-    add_column(stock_data, 'range_min_n', range_min_n_rows['Date'])
+    def down_analysis(self):
+        triggered_idx = []
+        for idx, row in self.stock_df.iterrows():
+            if hit_down(row):
+                triggered_idx.append(idx)
 
-    # plot
-    fig = go.Figure()
-    add_candlestick(fig, stock_data)
+        triggered_idx.append(self.stock_df.index[-1])
+        print(f"triggered down -> {triggered_idx}")
 
-    add_scatter(fig, stock_data, 'local_max_1st', 'high', 'red', 2)
-    add_scatter(fig, stock_data, 'local_max_2nd', 'high', 'red', 6)
-    add_scatter(fig, stock_data, 'local_max_3rd', 'high', 'red', 10)
-    add_scatter(fig, stock_data, 'range_max_n', 'high', 'black', 4)
+        for i in range(len(triggered_idx) - 1):
+            start_idx, end_idx = triggered_idx[i], triggered_idx[i + 1]
 
-    add_scatter(fig, stock_data, 'local_min_1st', 'low', 'green', 2)
-    add_scatter(fig, stock_data, 'local_min_2nd', 'low', 'green', 6)
-    add_scatter(fig, stock_data, 'local_min_3rd', 'low', 'green', 10)
-    add_scatter(fig, stock_data, 'range_min_n', 'low', 'blue', 4)
+            lowest_idx = start_idx
+            for idx in range(start_idx + 1, end_idx):
+                if self.stock_df.loc[idx]['low'] < self.stock_df.loc[lowest_idx]['low']:
+                    lowest_idx = idx
 
-    up_analysis(fig, stock_data)
-    down_analysis(fig, stock_data)
+            self.down_box.append((start_idx, lowest_idx))
 
-    fig.update_xaxes(
-        rangebreaks=[
-            dict(bounds=["sat", "mon"]),  # hide weekends
-        ]
-    )
+            # logging
+            start_date = self.stock_df.loc[start_idx]['Date']
+            to_date = self.stock_df.loc[end_idx]['Date']
+            lowest_date = self.stock_df.loc[lowest_idx]['Date']
+            print(f'checking down range -> {start_date} ~ {to_date}, found lowest at {lowest_date}')
 
-    fig.show()
+    def add_column(self, column, dates: set):
+        self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)
 
-# TSLA MRNA MNSO
-SYMBOL = "MRNA"
-# fig = make_subplots(rows=3, cols=1)
+    def analyze(self):
+        # calculate
+        local_max_1st_dates = local_max(self.stock_df)
+        local_max_2nd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_1st_dates)])
+        local_max_3rd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_2nd_dates)])
 
-# period_analysis(SYMBOL, '2024-01-01', '2024-05-31')
-period_analysis(SYMBOL, '2023-01-01', '2024-05-31')
-# period_analysis(SYMBOL, '2022-01-01', '2024-05-31')
-# period_analysis(SYMBOL, '2021-01-01', '2024-05-41')
+        range_max_n_dates = range_max(self.stock_df, 15)
+
+        local_min_1st_dates = local_min(self.stock_df)
+        local_min_2nd_dates = local_min(self.stock_df[self.stock_df['Date'].isin(local_min_1st_dates)])
+        local_min_3rd_dates = local_min(self.stock_df[self.stock_df['Date'].isin(local_min_2nd_dates)])
+
+        range_min_n_dates = range_min(self.stock_df, 15)
+
+        # merge
+        self.add_column('local_max_1st', local_max_1st_dates)
+        self.add_column('local_max_2nd', local_max_2nd_dates)
+        self.add_column('local_max_3rd', local_max_3rd_dates)
+        self.add_column('range_max_n', range_max_n_dates)
+
+        self.add_column('local_min_1st', local_min_1st_dates)
+        self.add_column('local_min_2nd', local_min_2nd_dates)
+        self.add_column('local_min_3rd', local_min_3rd_dates)
+        self.add_column('range_min_n', range_min_n_dates)
+
+        self.up_analysis()
+        self.down_analysis()
+#        print(self.stock_df)
