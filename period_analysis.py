@@ -12,8 +12,10 @@ class PeriodAnalysis:
         self.to_date = stock_df.iloc[-1]['Date']
         print(f"{self.stock_name} period_analysis -> range: {self.from_date} ~ {self.to_date}, shape: {self.stock_df.shape}")
 
-        self.up_box = []  # [(from_idx, highest_idx), ...]
-        self.down_box = []  # [(from_idx, lowest_idx), ...]
+        # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
+        self.up_box = []
+        # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
+        self.down_box = []
 
         self.fig = go.Figure()
 
@@ -57,21 +59,7 @@ class PeriodAnalysis:
         for date in dates:
             self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color="black")
 
-    def add_up_box(self, from_idx, to_idx):
-        from_date = self.stock_df.loc[from_idx]['Date']
-        from_low = self.stock_df.loc[from_idx]['low']
-
-        to_date = self.stock_df.loc[to_idx]['Date']
-        to_high = self.stock_df.loc[to_idx]['high']
-
-        length = to_idx - from_idx
-        delta = to_high - from_low
-        pst = 100 * delta / from_low
-
-        if length <= 9 and pst < 20:
-            print(f'ignore up, {from_date} with {length} days and {pst:.2f}% up')
-            return
-
+    def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid):
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_low, x1=to_date, y1=to_high,
@@ -86,7 +74,6 @@ class PeriodAnalysis:
             ),
         )
 
-        mid = (from_low + to_high) / 2
         self.fig.add_shape(
             type="line",
             x0=from_date, y0=mid, x1=to_date, y1=mid,
@@ -97,21 +84,7 @@ class PeriodAnalysis:
             )
         )
 
-    def add_down_box(self, from_idx, to_idx):
-        from_date = self.stock_df.loc[from_idx]['Date']
-        from_high = self.stock_df.loc[from_idx]['high']
-
-        to_date = self.stock_df.loc[to_idx]['Date']
-        to_low = self.stock_df.loc[to_idx]['low']
-
-        length = to_idx - from_idx
-        delta = from_high - to_low
-        pst = 100 * delta / from_high
-
-        if length <= 9 and pst < 15:
-            print(f'ignore down, {from_date} with {length} days and {pst:.2f}% down')
-            return
-
+    def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid):
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_high, x1=to_date, y1=to_low,
@@ -121,12 +94,11 @@ class PeriodAnalysis:
                 dash="dot",
             ),
             label=dict(
-                text=f'-{pst:.2f}% <br> {delta:.2f}$ <br> {to_idx - from_idx}D',
+                text=f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}D',
                 textposition="top center"
             ),
         )
 
-        mid = (from_high + to_low) / 2
         self.fig.add_shape(
             type="line",
             x0=from_date, y0=mid, x1=to_date, y1=mid,
@@ -150,11 +122,11 @@ class PeriodAnalysis:
         self.add_scatter('local_min_3rd', 'low', 'green', 10)
         self.add_scatter('range_min_n', 'low', 'blue', 4)
 
-        for (start_idx, highest_idx) in self.up_box:
-            self.add_up_box(start_idx, highest_idx)
+        for item in self.up_box:
+            self.add_up_box(*item)
 
-        for (start_idx, lowest_idx) in self.down_box:
-            self.add_down_box(start_idx, lowest_idx)
+        for item in self.down_box:
+            self.add_down_box(*item)
 
         self.add_hline()
 
@@ -167,6 +139,25 @@ class PeriodAnalysis:
         self.fig.update_layout(
             title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}'
         )
+
+    def pick_up_box(self, from_idx, to_idx):
+        from_date = self.stock_df.loc[from_idx]['Date']
+        from_low = self.stock_df.loc[from_idx]['low']
+
+        to_date = self.stock_df.loc[to_idx]['Date']
+        to_high = self.stock_df.loc[to_idx]['high']
+
+        length = to_idx - from_idx
+        delta = to_high - from_low
+        pst = 100 * delta / from_low
+        mid = (from_low + to_high) / 2
+
+        if length <= 9 and pst < 20:
+            print(f'drop up box, {from_date} ~ {to_date}, {length} days, {pst:.2f}%')
+            return
+
+        print(f'pick up box, {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
+        self.up_box.append((from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid))
 
     def up_analysis(self):
         triggered_idx = []
@@ -185,13 +176,26 @@ class PeriodAnalysis:
                 if self.stock_df.loc[idx]['high'] > self.stock_df.loc[highest_idx]['high']:
                     highest_idx = idx
 
-            self.up_box.append((start_idx, highest_idx))
+            self.pick_up_box(start_idx, highest_idx)
 
-            # logging
-            start_date = self.stock_df.loc[start_idx]['Date']
-            to_date = self.stock_df.loc[end_idx]['Date']
-            highest_date = self.stock_df.loc[highest_idx]['Date']
-            print(f'checking up range -> {start_date} ~ {to_date}, found highest at {highest_date}')
+    def pick_down_box(self, from_idx, to_idx):
+        from_date = self.stock_df.loc[from_idx]['Date']
+        from_high = self.stock_df.loc[from_idx]['high']
+
+        to_date = self.stock_df.loc[to_idx]['Date']
+        to_low = self.stock_df.loc[to_idx]['low']
+
+        length = to_idx - from_idx
+        delta = from_high - to_low
+        pst = 100 * delta / from_high
+        mid = (from_high + to_low) / 2
+
+        if length <= 9 and pst < 15:
+            print(f'drop down box, {from_date} ~ {to_date}, {length} days, {pst:.2f}%')
+            return
+
+        print(f'pick down box, {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
+        self.down_box.append((from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid))
 
     def down_analysis(self):
         triggered_idx = []
@@ -210,13 +214,7 @@ class PeriodAnalysis:
                 if self.stock_df.loc[idx]['low'] < self.stock_df.loc[lowest_idx]['low']:
                     lowest_idx = idx
 
-            self.down_box.append((start_idx, lowest_idx))
-
-            # logging
-            start_date = self.stock_df.loc[start_idx]['Date']
-            to_date = self.stock_df.loc[end_idx]['Date']
-            lowest_date = self.stock_df.loc[lowest_idx]['Date']
-            print(f'checking down range -> {start_date} ~ {to_date}, found lowest at {lowest_date}')
+            self.pick_down_box(start_idx, lowest_idx)
 
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)

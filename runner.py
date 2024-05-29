@@ -1,11 +1,28 @@
 from period_analysis import *
 
 STOCK_NAMES = [
-    "TSLA", "XPEV", "LI", "RIVN",
-    "MRNA", "BNTX", "AZN", "PFE",
-    "MNSO", "ZM",
+    "^IXIC",
+    "META",
+    "MNSO",
+    "TSLA",
+    "RIVN",
+    "ZM",
+    "XPEV",
+    "PDD",
+    "COIN",
+    "SNAP",
+    "BILI",
+    "NVDA",
+    "EDU",
+    "AMD",
+    "BEKE",
+    "MRNA",
     "BABA",
-    "PDD", "NVDA", "CPNG"
+    "LI",
+    "BNTX",
+    "JD",
+    "BA",
+    "CPNG"
 ]
 
 PERIOD = [

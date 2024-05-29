@@ -58,7 +58,7 @@ def load_data(symbol):
         print(f'load {symbol} from network')
         ticker = yf.Ticker(symbol)
 
-        df = ticker.history(start="2015-01-01", end="2024-05-31")
+        df = ticker.history(start="2015-01-01", end="2024-12-31")
         df.columns = df.columns.str.lower()
 
         df.to_csv(file_name)
