@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from util import *
 
@@ -17,7 +18,12 @@ class PeriodAnalysis:
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = []
 
-        self.fig = go.Figure()
+        # self.fig = go.Figure()
+        self.fig = make_subplots(rows=2, cols=1,
+                                 vertical_spacing=0.05,
+                                 row_heights=[0.85, 0.15],
+                                 shared_xaxes=True,
+                                 )
 
     def add_candlestick(self):
         self.fig.add_trace(
@@ -32,6 +38,17 @@ class PeriodAnalysis:
                 decreasing_line_color='green',
                 line=dict(width=0.5)
             )
+        )
+
+    def add_volume(self):
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df['Date'],
+                y=self.stock_df['volume_reg'],
+                mode='lines',
+                line=dict(width=1),
+            ),
+            row=2, col=1
         )
 
     def add_scatter(self, filter_column: str, display_column: str, color: str, size: int):
@@ -50,10 +67,10 @@ class PeriodAnalysis:
     def add_hline(self):
         for idx, row in self.stock_df.iterrows():
             if hit_down(row):
-                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green")
+                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green", row=1, col=1)
 
             if hit_up(row):
-                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red")
+                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red", row=1, col=1)
 
     def add_vline(self, dates):
         for date in dates:
@@ -129,6 +146,7 @@ class PeriodAnalysis:
             self.add_down_box(*item)
 
         self.add_hline()
+        self.add_volume()
 
         self.fig.update_xaxes(
             rangebreaks=[
@@ -137,7 +155,9 @@ class PeriodAnalysis:
         )
 
         self.fig.update_layout(
-            title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}'
+            title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}',
+            xaxis_rangeslider_visible=False,
+            hovermode='x unified',
         )
 
     def pick_up_box(self, from_idx, to_idx):
@@ -165,7 +185,7 @@ class PeriodAnalysis:
             if hit_up(row):
                 triggered_idx.append(idx)
 
-        triggered_idx.append(self.stock_df.index[-1])
+        triggered_idx.append(self.stock_df.index[-1] + 1)
         print(f"triggered up -> {triggered_idx}")
 
         for i in range(len(triggered_idx) - 1):
@@ -203,7 +223,7 @@ class PeriodAnalysis:
             if hit_down(row):
                 triggered_idx.append(idx)
 
-        triggered_idx.append(self.stock_df.index[-1])
+        triggered_idx.append(self.stock_df.index[-1] + 1)
         print(f"triggered down -> {triggered_idx}")
 
         for i in range(len(triggered_idx) - 1):
@@ -246,4 +266,10 @@ class PeriodAnalysis:
 
         self.up_analysis()
         self.down_analysis()
-#        print(self.stock_df)
+
+        # volume
+        volume = self.stock_df['volume']
+        print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
+        self.stock_df['volume_reg'] = (volume - volume.mean()) / volume.std()
+
+        # print(self.stock_df)

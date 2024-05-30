@@ -2,6 +2,8 @@ from period_analysis import *
 
 STOCK_NAMES = [
     "^IXIC",
+    "000001.SS",
+    "000300.SS",
     "META",
     "MNSO",
     "TSLA",
@@ -23,6 +25,7 @@ STOCK_NAMES = [
     "JD",
     "BA",
     "CPNG"
+    "IQ",
 ]
 
 PERIOD = [
