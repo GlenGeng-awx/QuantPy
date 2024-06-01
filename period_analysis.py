@@ -18,12 +18,8 @@ class PeriodAnalysis:
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = []
 
-        # self.fig = go.Figure()
-        self.fig = make_subplots(rows=2, cols=1,
-                                 vertical_spacing=0.05,
-                                 row_heights=[0.85, 0.15],
-                                 shared_xaxes=True,
-                                 )
+        self.volume_std_div_mean = 0
+        self.fig = None
 
     def add_candlestick(self):
         self.fig.add_trace(
@@ -45,13 +41,25 @@ class PeriodAnalysis:
             go.Scatter(
                 x=self.stock_df['Date'],
                 y=self.stock_df['volume_reg'],
-                mode='lines',
-                line=dict(width=1),
+                mode='markers+lines',
+                line=dict(width=0.5),
+                marker_size=1,
+                marker_color='blue',
             ),
             row=2, col=1
         )
 
-    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int):
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df['Date'],
+                y=self.stock_df['volume_ma_n'],
+                mode='lines',
+                line=dict(width=0.5, color='black'),
+            ),
+            row=2, col=1
+        )
+
+    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int, row=1, col=1):
         self.fig.add_trace(
             go.Scatter(
                 x=self.stock_df[self.stock_df[filter_column]]['Date'],
@@ -61,7 +69,8 @@ class PeriodAnalysis:
                     color=color,
                     size=size
                 )
-            )
+            ),
+            row=row, col=col,
         )
 
     def add_hline(self):
@@ -127,6 +136,13 @@ class PeriodAnalysis:
         )
 
     def build_graph(self):
+        self.fig = make_subplots(rows=2, cols=1,
+                                 subplot_titles=("candle stick", f"std/mean={self.volume_std_div_mean:.2f}"),
+                                 vertical_spacing=0.05,
+                                 row_heights=[0.7, 0.3],
+                                 shared_xaxes=True,
+                                 )
+
         self.add_candlestick()
 
         self.add_scatter('local_max_1st', 'high', 'red', 2)
@@ -145,8 +161,18 @@ class PeriodAnalysis:
         for item in self.down_box:
             self.add_down_box(*item)
 
-        self.add_hline()
+        if self.stock_df.shape[0] < 300:
+            self.add_hline()
+
         self.add_volume()
+
+        self.add_scatter('local_max_volume_1st', 'volume_reg', 'red', 2, row=2, col=1)
+        self.add_scatter('local_max_volume_2nd', 'volume_reg', 'red', 4, row=2, col=1)
+        self.add_scatter('local_max_volume_3rd', 'volume_reg', 'red', 8, row=2, col=1)
+
+        self.add_scatter('local_min_volume_1st', 'volume_reg', 'green', 2, row=2, col=1)
+        self.add_scatter('local_min_volume_2nd', 'volume_reg', 'green', 4, row=2, col=1)
+        self.add_scatter('local_min_volume_3rd', 'volume_reg', 'green', 8, row=2, col=1)
 
         self.fig.update_xaxes(
             rangebreaks=[
@@ -236,11 +262,18 @@ class PeriodAnalysis:
 
             self.pick_down_box(start_idx, lowest_idx)
 
+    def regularize_volume(self):
+        volume = self.stock_df['volume']
+        print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
+        self.volume_std_div_mean = volume.std() / volume.mean()
+        self.stock_df['volume_reg'] = (volume - volume.mean()) / volume.std()
+        self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=15).mean()
+
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)
 
     def analyze(self):
-        # calculate
+        # calculate candle stick
         local_max_1st_dates = local_max(self.stock_df)
         local_max_2nd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_1st_dates)])
         local_max_3rd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_2nd_dates)])
@@ -267,9 +300,28 @@ class PeriodAnalysis:
         self.up_analysis()
         self.down_analysis()
 
-        # volume
-        volume = self.stock_df['volume']
-        print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
-        self.stock_df['volume_reg'] = (volume - volume.mean()) / volume.std()
+        # calculate volume
+        self.regularize_volume()
+
+        local_max_volume_1st_dates = local_max(self.stock_df, 'volume_reg')
+        local_max_volume_2nd_dates = local_max(
+            self.stock_df[self.stock_df['Date'].isin(local_max_volume_1st_dates)], 'volume_reg')
+        local_max_volume_3rd_dates = local_max(
+            self.stock_df[self.stock_df['Date'].isin(local_max_volume_2nd_dates)], 'volume_reg')
+
+        local_min_volume_1st_dates = local_min(self.stock_df, 'volume_reg')
+        local_min_volume_2nd_dates = local_min(
+            self.stock_df[self.stock_df['Date'].isin(local_min_volume_1st_dates)], 'volume_reg')
+        local_min_volume_3rd_dates = local_min(
+            self.stock_df[self.stock_df['Date'].isin(local_min_volume_2nd_dates)], 'volume_reg')
+
+        # merge
+        self.add_column('local_max_volume_1st', local_max_volume_1st_dates)
+        self.add_column('local_max_volume_2nd', local_max_volume_2nd_dates)
+        self.add_column('local_max_volume_3rd', local_max_volume_3rd_dates)
+
+        self.add_column('local_min_volume_1st', local_min_volume_1st_dates)
+        self.add_column('local_min_volume_2nd', local_min_volume_2nd_dates)
+        self.add_column('local_min_volume_3rd', local_min_volume_3rd_dates)
 
         # print(self.stock_df)

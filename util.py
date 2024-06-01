@@ -9,23 +9,23 @@ pd.set_option('display.max_colwidth', None)
 pd.set_option('display.float_format', '{:.0f}'.format)
 
 
-def local_max(data: pd.DataFrame) -> set:
+def local_max(data: pd.DataFrame, column='high') -> set:
     hit_dates = set()
 
     for idx in range(1, data.shape[0] - 1):
-        if (data.iloc[idx]["high"] > data.iloc[idx - 1]["high"]
-                and data.iloc[idx]["high"] > data.iloc[idx + 1]["high"]):
+        if (data.iloc[idx][column] > data.iloc[idx - 1][column]
+                and data.iloc[idx][column] > data.iloc[idx + 1][column]):
             hit_dates.add(data.iloc[idx]["Date"])
 
     return hit_dates
 
 
-def local_min(data: pd.DataFrame) -> set:
+def local_min(data: pd.DataFrame, column='low') -> set:
     hit_dates = set()
 
     for idx in range(1, data.shape[0] - 1):
-        if (data.iloc[idx]["low"] < data.iloc[idx - 1]["low"]
-                and data.iloc[idx]["low"] < data.iloc[idx + 1]["low"]):
+        if (data.iloc[idx][column] < data.iloc[idx - 1][column]
+                and data.iloc[idx][column] < data.iloc[idx + 1][column]):
             hit_dates.add(data.iloc[idx]["Date"])
 
     return hit_dates

@@ -1,15 +1,22 @@
 from period_analysis import *
 
-STOCK_NAMES = [
-    "^IXIC",
-    "000001.SS",
-    "000300.SS",
+STOCK_NAMES_TIER_1 = [
     "META",
-    "MNSO",
-    "TSLA",
     "RIVN",
+    "TSLA",
+    "BABA",
+    "JD",
     "ZM",
     "XPEV",
+    "BEKE",
+    "MNSO",
+    "0700.HK"
+    "000300.SS",
+]
+
+STOCK_NAMES_TIER_2 = [
+    "^IXIC",
+    "000001.SS",
     "PDD",
     "COIN",
     "SNAP",
@@ -17,25 +24,23 @@ STOCK_NAMES = [
     "NVDA",
     "EDU",
     "AMD",
-    "BEKE",
     "MRNA",
-    "BABA",
     "LI",
     "BNTX",
-    "JD",
     "BA",
-    "CPNG"
+    "CPNG",
     "IQ",
+    "TSM",
 ]
 
 PERIOD = [
-    ('2023-05-31', '2024-05-31'),
-    ('2023-01-01', '2024-05-31'),
-    ('2022-01-01', '2024-05-31'),
-    ('2021-01-01', '2024-05-31'),
+    ('2023-05-31', '2024-07-31'),
+    ('2023-01-01', '2024-07-31'),
+    # ('2022-01-01', '2024-07-31'),
+    # ('2021-01-01', '2024-07-31'),
 ]
 
-for stock_name in STOCK_NAMES:
+for stock_name in STOCK_NAMES_TIER_1:
     stock_data = load_data(stock_name)
 
     for (start_date, end_date) in PERIOD:
