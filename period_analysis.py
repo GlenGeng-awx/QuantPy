@@ -41,8 +41,9 @@ class PeriodAnalysis:
             go.Scatter(
                 x=self.stock_df['Date'],
                 y=self.stock_df['volume_reg'],
-                mode='markers+lines',
-                line=dict(width=0.5),
+                # mode='markers+lines',
+                # line=dict(width=0.5, color='grey'),
+                mode='markers',
                 marker_size=1,
                 marker_color='blue',
             ),
@@ -54,17 +55,18 @@ class PeriodAnalysis:
                 x=self.stock_df['Date'],
                 y=self.stock_df['volume_ma_n'],
                 mode='lines',
-                line=dict(width=0.5, color='black'),
+                line=dict(width=1, color='black'),
             ),
             row=2, col=1
         )
 
-    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int, row=1, col=1):
+    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int,
+                    *, mode='markers', row=1, col=1):
         self.fig.add_trace(
             go.Scatter(
                 x=self.stock_df[self.stock_df[filter_column]]['Date'],
                 y=self.stock_df[self.stock_df[filter_column]][display_column],
-                mode='markers',
+                mode=mode,
                 marker=dict(
                     color=color,
                     size=size
@@ -147,12 +149,14 @@ class PeriodAnalysis:
 
         self.add_scatter('local_max_1st', 'high', 'red', 2)
         self.add_scatter('local_max_2nd', 'high', 'red', 6)
-        self.add_scatter('local_max_3rd', 'high', 'red', 10)
+        self.add_scatter('local_max_3rd', 'high', 'red', 10,
+                         mode='markers+lines' if self.stock_df.shape[0] > 300 else 'markers')
         self.add_scatter('range_max_n', 'high', 'black', 4)
 
         self.add_scatter('local_min_1st', 'low', 'green', 2)
         self.add_scatter('local_min_2nd', 'low', 'green', 6)
-        self.add_scatter('local_min_3rd', 'low', 'green', 10)
+        self.add_scatter('local_min_3rd', 'low', 'green', 10,
+                         mode='markers+lines' if self.stock_df.shape[0] > 300 else 'markers')
         self.add_scatter('range_min_n', 'low', 'blue', 4)
 
         for item in self.up_box:
@@ -180,6 +184,9 @@ class PeriodAnalysis:
             ]
         )
 
+        # self.fig.update_xaxes(showspikes=True)
+        # self.fig.update_yaxes(showspikes=True)
+
         self.fig.update_layout(
             title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}',
             xaxis_rangeslider_visible=False,
@@ -198,7 +205,13 @@ class PeriodAnalysis:
         pst = 100 * delta / from_low
         mid = (from_low + to_high) / 2
 
-        if length <= 9 and pst < 20:
+        up_conf = {
+            '000001.SS': 10,
+            '000300.SS': 10,
+        }
+        target_pst = up_conf.get(self.stock_name, 20)
+
+        if length <= 9 and pst < target_pst:
             print(f'drop up box, {from_date} ~ {to_date}, {length} days, {pst:.2f}%')
             return
 
@@ -236,7 +249,13 @@ class PeriodAnalysis:
         pst = 100 * delta / from_high
         mid = (from_high + to_low) / 2
 
-        if length <= 9 and pst < 15:
+        down_conf = {
+            '000001.SS': 8,
+            '000300.SS': 8,
+        }
+        target_pst = down_conf.get(self.stock_name, 15)
+
+        if length <= 9 and pst < target_pst:
             print(f'drop down box, {from_date} ~ {to_date}, {length} days, {pst:.2f}%')
             return
 
@@ -266,8 +285,8 @@ class PeriodAnalysis:
         volume = self.stock_df['volume']
         print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
         self.volume_std_div_mean = volume.std() / volume.mean()
-        self.stock_df['volume_reg'] = (volume - volume.mean()) / volume.std()
-        self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=15).mean()
+        self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(lambda x: min(4, x))
+        self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=20).mean()  # 15，20, 30
 
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)
