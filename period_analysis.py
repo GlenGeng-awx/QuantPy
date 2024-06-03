@@ -21,6 +21,9 @@ class PeriodAnalysis:
         self.volume_std_div_mean = 0
         self.fig = None
 
+    def in_precise_view(self):
+        return self.stock_df.shape[0] < 400
+
     def add_candlestick(self):
         self.fig.add_trace(
             go.Candlestick(
@@ -41,9 +44,9 @@ class PeriodAnalysis:
             go.Scatter(
                 x=self.stock_df['Date'],
                 y=self.stock_df['volume_reg'],
-                # mode='markers+lines',
-                # line=dict(width=0.5, color='grey'),
-                mode='markers',
+                mode='markers+lines',
+                line=dict(width=0.5, color='grey'),
+                # mode='markers',
                 marker_size=1,
                 marker_color='blue',
             ),
@@ -83,9 +86,9 @@ class PeriodAnalysis:
             if hit_up(row):
                 self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red", row=1, col=1)
 
-    def add_vline(self, dates):
+    def add_vline(self, dates, color):
         for date in dates:
-            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color="black")
+            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color=color)
 
     def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid):
         self.fig.add_shape(
@@ -150,13 +153,13 @@ class PeriodAnalysis:
         self.add_scatter('local_max_1st', 'high', 'red', 2)
         self.add_scatter('local_max_2nd', 'high', 'red', 6)
         self.add_scatter('local_max_3rd', 'high', 'red', 10,
-                         mode='markers+lines' if self.stock_df.shape[0] > 300 else 'markers')
+                         mode='markers+lines' if not self.in_precise_view() else 'markers')
         self.add_scatter('range_max_n', 'high', 'black', 4)
 
         self.add_scatter('local_min_1st', 'low', 'green', 2)
         self.add_scatter('local_min_2nd', 'low', 'green', 6)
         self.add_scatter('local_min_3rd', 'low', 'green', 10,
-                         mode='markers+lines' if self.stock_df.shape[0] > 300 else 'markers')
+                         mode='markers+lines' if not self.in_precise_view() else 'markers')
         self.add_scatter('range_min_n', 'low', 'blue', 4)
 
         for item in self.up_box:
@@ -165,7 +168,7 @@ class PeriodAnalysis:
         for item in self.down_box:
             self.add_down_box(*item)
 
-        if self.stock_df.shape[0] < 300:
+        if self.in_precise_view():
             self.add_hline()
 
         self.add_volume()
