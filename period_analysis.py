@@ -22,7 +22,8 @@ class PeriodAnalysis:
         self.fig = None
 
     def in_precise_view(self):
-        return self.stock_df.shape[0] < 400
+        # return self.stock_df.shape[0] < 400
+        return True
 
     def add_candlestick(self):
         self.fig.add_trace(
@@ -40,28 +41,101 @@ class PeriodAnalysis:
         )
 
     def add_volume(self):
+        # self.fig.add_trace(
+        #     go.Scatter(
+        #         x=self.stock_df['Date'],
+        #         y=self.stock_df['volume_reg'],
+        #         mode='markers+lines',
+        #         line=dict(width=0.5, color='grey'),
+        #         # mode='markers',
+        #         marker_size=1,
+        #         marker_color='blue',
+        #     ),
+        #     row=2, col=1
+        # )
+        #
+        # self.fig.add_trace(
+        #     go.Scatter(
+        #         x=self.stock_df['Date'],
+        #         y=self.stock_df['volume_ma_n'],
+        #         mode='lines',
+        #         line=dict(width=1, color='black'),
+        #     ),
+        #     row=2, col=1
+        # )
+
         self.fig.add_trace(
             go.Scatter(
                 x=self.stock_df['Date'],
                 y=self.stock_df['volume_reg'],
-                mode='markers+lines',
-                line=dict(width=0.5, color='grey'),
-                # mode='markers',
-                marker_size=1,
+                mode='markers',
+                marker_size=2,
                 marker_color='blue',
             ),
             row=2, col=1
         )
 
+        condition = (self.stock_df['local_max_volume_1st']
+                     | self.stock_df['local_min_volume_1st']
+                     | (self.stock_df['volume_reg'] > 2))
+
         self.fig.add_trace(
             go.Scatter(
-                x=self.stock_df['Date'],
-                y=self.stock_df['volume_ma_n'],
+                x=self.stock_df[condition]['Date'],
+                y=self.stock_df[condition]['volume_reg'],
                 mode='lines',
-                line=dict(width=1, color='black'),
+                line=dict(width=0.5, color='grey'),
             ),
             row=2, col=1
         )
+
+        condition = self.stock_df['local_min_volume_3rd']
+
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df[condition]['Date'],
+                y=self.stock_df[condition]['volume_reg'],
+                mode='markers',
+                marker_size=4,
+                marker_color='black',
+            ),
+            row=2, col=1
+        )
+
+        condition = ((self.stock_df['local_max_volume_3rd'] | (self.stock_df['volume_reg'] > 2))
+                     & (self.stock_df['open'] < self.stock_df['close']))
+
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df[condition]['Date'],
+                y=self.stock_df[condition]['volume_reg'],
+                mode='markers',
+                marker_size=4,
+                marker_color='red',
+            ),
+            row=2, col=1
+        )
+
+        condition = ((self.stock_df['local_max_volume_3rd'] | (self.stock_df['volume_reg'] > 2))
+                     & (self.stock_df['open'] > self.stock_df['close']))
+
+        self.fig.add_trace(
+            go.Scatter(
+                x=self.stock_df[condition]['Date'],
+                y=self.stock_df[condition]['volume_reg'],
+                mode='markers',
+                marker_size=4,
+                marker_color='green',
+            ),
+            row=2, col=1
+        )
+
+        for idx, row in self.stock_df[self.stock_df['local_max_volume_3rd']].iterrows():
+            date, open, close = row['Date'], row['open'], row['close']
+            if open < close:
+                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red', row=1, col=1)
+            else:
+                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green', row=1, col=1)
 
     def add_scatter(self, filter_column: str, display_column: str, color: str, size: int,
                     *, mode='markers', row=1, col=1):
@@ -80,15 +154,17 @@ class PeriodAnalysis:
 
     def add_hline(self):
         for idx, row in self.stock_df.iterrows():
+            # if hit_down(row):
+            #     self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green", row=1, col=1)
+            #
+            # if hit_up(row):
+            #     self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red", row=1, col=1)
             if hit_down(row):
-                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green", row=1, col=1)
+                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
 
             if hit_up(row):
-                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red", row=1, col=1)
+                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
 
-    def add_vline(self, dates, color):
-        for date in dates:
-            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color=color)
 
     def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid):
         self.fig.add_shape(
@@ -144,7 +220,7 @@ class PeriodAnalysis:
         self.fig = make_subplots(rows=2, cols=1,
                                  subplot_titles=("candle stick", f"std/mean={self.volume_std_div_mean:.2f}"),
                                  vertical_spacing=0.05,
-                                 row_heights=[0.7, 0.3],
+                                 row_heights=[0.6, 0.4],
                                  shared_xaxes=True,
                                  )
 
@@ -152,14 +228,12 @@ class PeriodAnalysis:
 
         self.add_scatter('local_max_1st', 'high', 'red', 2)
         self.add_scatter('local_max_2nd', 'high', 'red', 6)
-        self.add_scatter('local_max_3rd', 'high', 'red', 10,
-                         mode='markers+lines' if not self.in_precise_view() else 'markers')
+        self.add_scatter('local_max_3rd', 'high', 'red', 10)
         self.add_scatter('range_max_n', 'high', 'black', 4)
 
         self.add_scatter('local_min_1st', 'low', 'green', 2)
         self.add_scatter('local_min_2nd', 'low', 'green', 6)
-        self.add_scatter('local_min_3rd', 'low', 'green', 10,
-                         mode='markers+lines' if not self.in_precise_view() else 'markers')
+        self.add_scatter('local_min_3rd', 'low', 'green', 10)
         self.add_scatter('range_min_n', 'low', 'blue', 4)
 
         for item in self.up_box:
@@ -173,13 +247,26 @@ class PeriodAnalysis:
 
         self.add_volume()
 
-        self.add_scatter('local_max_volume_1st', 'volume_reg', 'red', 2, row=2, col=1)
-        self.add_scatter('local_max_volume_2nd', 'volume_reg', 'red', 4, row=2, col=1)
-        self.add_scatter('local_max_volume_3rd', 'volume_reg', 'red', 8, row=2, col=1)
+        # self.add_scatter('local_max_volume_1st', 'volume_reg', 'red', 2, row=2, col=1)
+        # self.add_scatter('local_max_volume_2nd', 'volume_reg', 'red', 4, row=2, col=1)
+        # self.add_scatter('local_max_volume_3rd', 'volume_reg', 'red', 8, row=2, col=1)
+        #
+        # self.add_scatter('local_min_volume_1st', 'volume_reg', 'green', 2, row=2, col=1)
+        # self.add_scatter('local_min_volume_2nd', 'volume_reg', 'green', 4, row=2, col=1)
+        # self.add_scatter('local_min_volume_3rd', 'volume_reg', 'green', 8, row=2, col=1)
 
-        self.add_scatter('local_min_volume_1st', 'volume_reg', 'green', 2, row=2, col=1)
-        self.add_scatter('local_min_volume_2nd', 'volume_reg', 'green', 4, row=2, col=1)
-        self.add_scatter('local_min_volume_3rd', 'volume_reg', 'green', 8, row=2, col=1)
+        # for date in self.stock_df[self.stock_df['local_max_volume_3rd']]['Date']:
+        #     self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red')
+        #
+        # for idx, row in self.stock_df[self.stock_df['local_max_volume_3rd']].iterrows():
+        #     date, open, close = row['Date'], row['open'], row['close']
+        #     if open < close:
+        #         self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red')
+        #     else:
+        #         self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green')
+        #
+        # for date in self.stock_df[self.stock_df['local_min_volume_3rd']]['Date']:
+        #     self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='black')
 
         self.fig.update_xaxes(
             rangebreaks=[
@@ -288,8 +375,10 @@ class PeriodAnalysis:
         volume = self.stock_df['volume']
         print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
         self.volume_std_div_mean = volume.std() / volume.mean()
-        self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(lambda x: min(4, x))
-        self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=20).mean()  # 15，20, 30
+        # self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(lambda x: min(4, x))
+        self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(
+            lambda x: 4 + (x - 4) / 6 if x > 4 else x)
+        # self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=10).mean()  # 15，20, 30
 
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)
