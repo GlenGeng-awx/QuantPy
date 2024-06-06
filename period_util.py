@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import os
+from period_conf import *
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -67,8 +68,8 @@ def load_data(symbol):
 
 
 def hit_down(row: pd.Series):
-    return row['local_max_3rd'] or (row['local_max_2nd'] and row['range_max_n'])
+    return row[local_max_price_3rd] or (row[local_max_price_2nd] and row[range_max_price_30])
 
 
 def hit_up(row: pd.Series):
-    return row['local_min_3rd'] or (row['local_min_2nd'] and row['range_min_n'])
+    return row[local_min_price_3rd] or (row[local_min_price_2nd] and row[range_min_price_30])

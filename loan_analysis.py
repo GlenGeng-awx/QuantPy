@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.graph_objects as go
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -50,5 +51,25 @@ for index, row in df.iterrows():
 
 df['loss_100'] = pd.Series(loss_100)
 
+# debug
 print(df)
 print(df['loss_373'].sum(), df['loss_100'].sum())
+
+# display
+fig = go.Figure()
+
+fig.add_trace(
+    go.Scatter(
+        name='loss_473',
+        x=df.index,
+        y=df['loss_373'] + df['loss_100'],
+        mode='markers+lines',
+        line=dict(width=1),
+        marker_size=2,
+        marker_color='blue',
+    ),
+)
+
+fig.update_xaxes(dtick=12)
+fig.update_layout(hovermode="x unified")
+fig.show()

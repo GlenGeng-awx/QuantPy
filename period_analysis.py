@@ -1,287 +1,22 @@
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-from util import *
+from period_util import *
+from period_conf import *
 
 
 class PeriodAnalysis:
     def __init__(self, stock_name: str, stock_df: pd.DataFrame):
         self.stock_name = stock_name
-
         self.stock_df = stock_df.copy()  # copy to avoid warning
-        self.from_date = stock_df.iloc[0]['Date']
-        self.to_date = stock_df.iloc[-1]['Date']
-        print(f"{self.stock_name} period_analysis -> range: {self.from_date} ~ {self.to_date}, shape: {self.stock_df.shape}")
+
+        from_date = stock_df.iloc[0]['Date']
+        to_date = stock_df.iloc[-1]['Date']
+        print(f"{self.stock_name} period_analysis -> range: {from_date} ~ {to_date}, shape: {self.stock_df.shape}")
+
+        self.volume_std_div_volume_mean = 0
 
         # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
         self.up_box = []
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = []
-
-        self.volume_std_div_mean = 0
-        self.fig = None
-
-    def in_precise_view(self):
-        # return self.stock_df.shape[0] < 400
-        return True
-
-    def add_candlestick(self):
-        self.fig.add_trace(
-            go.Candlestick(
-                x=self.stock_df['Date'],
-                close=self.stock_df['close'],
-                open=self.stock_df['open'],
-                high=self.stock_df['high'],
-                low=self.stock_df['low'],
-                name="Candlesticks",
-                increasing_line_color='red',
-                decreasing_line_color='green',
-                line=dict(width=0.5)
-            )
-        )
-
-    def add_volume(self):
-        # self.fig.add_trace(
-        #     go.Scatter(
-        #         x=self.stock_df['Date'],
-        #         y=self.stock_df['volume_reg'],
-        #         mode='markers+lines',
-        #         line=dict(width=0.5, color='grey'),
-        #         # mode='markers',
-        #         marker_size=1,
-        #         marker_color='blue',
-        #     ),
-        #     row=2, col=1
-        # )
-        #
-        # self.fig.add_trace(
-        #     go.Scatter(
-        #         x=self.stock_df['Date'],
-        #         y=self.stock_df['volume_ma_n'],
-        #         mode='lines',
-        #         line=dict(width=1, color='black'),
-        #     ),
-        #     row=2, col=1
-        # )
-
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df['Date'],
-                y=self.stock_df['volume_reg'],
-                mode='markers',
-                marker_size=2,
-                marker_color='blue',
-            ),
-            row=2, col=1
-        )
-
-        condition = (self.stock_df['local_max_volume_1st']
-                     | self.stock_df['local_min_volume_1st']
-                     | (self.stock_df['volume_reg'] > 2))
-
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df[condition]['Date'],
-                y=self.stock_df[condition]['volume_reg'],
-                mode='lines',
-                line=dict(width=0.5, color='grey'),
-            ),
-            row=2, col=1
-        )
-
-        condition = self.stock_df['local_min_volume_3rd']
-
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df[condition]['Date'],
-                y=self.stock_df[condition]['volume_reg'],
-                mode='markers',
-                marker_size=4,
-                marker_color='black',
-            ),
-            row=2, col=1
-        )
-
-        condition = ((self.stock_df['local_max_volume_3rd'] | (self.stock_df['volume_reg'] > 2))
-                     & (self.stock_df['open'] < self.stock_df['close']))
-
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df[condition]['Date'],
-                y=self.stock_df[condition]['volume_reg'],
-                mode='markers',
-                marker_size=4,
-                marker_color='red',
-            ),
-            row=2, col=1
-        )
-
-        condition = ((self.stock_df['local_max_volume_3rd'] | (self.stock_df['volume_reg'] > 2))
-                     & (self.stock_df['open'] > self.stock_df['close']))
-
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df[condition]['Date'],
-                y=self.stock_df[condition]['volume_reg'],
-                mode='markers',
-                marker_size=4,
-                marker_color='green',
-            ),
-            row=2, col=1
-        )
-
-        for idx, row in self.stock_df[self.stock_df['local_max_volume_3rd']].iterrows():
-            date, open, close = row['Date'], row['open'], row['close']
-            if open < close:
-                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red', row=1, col=1)
-            else:
-                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green', row=1, col=1)
-
-    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int,
-                    *, mode='markers', row=1, col=1):
-        self.fig.add_trace(
-            go.Scatter(
-                x=self.stock_df[self.stock_df[filter_column]]['Date'],
-                y=self.stock_df[self.stock_df[filter_column]][display_column],
-                mode=mode,
-                marker=dict(
-                    color=color,
-                    size=size
-                )
-            ),
-            row=row, col=col,
-        )
-
-    def add_hline(self):
-        for idx, row in self.stock_df.iterrows():
-            # if hit_down(row):
-            #     self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="green", row=1, col=1)
-            #
-            # if hit_up(row):
-            #     self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="red", row=1, col=1)
-            if hit_down(row):
-                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
-
-            if hit_up(row):
-                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
-
-
-    def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid):
-        self.fig.add_shape(
-            type="rect",
-            x0=from_date, y0=from_low, x1=to_date, y1=to_high,
-            line=dict(
-                color="Red",
-                width=1,
-                dash="dot"
-            ),
-            label=dict(
-                text=f'{length}D <br> {delta:.2f}$ <br> +{pst:.2f}%',
-                textposition="bottom center"
-            ),
-        )
-
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=mid, x1=to_date, y1=mid,
-            line=dict(
-                color="Red",
-                width=0.5,
-                dash="dot"
-            )
-        )
-
-    def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid):
-        self.fig.add_shape(
-            type="rect",
-            x0=from_date, y0=from_high, x1=to_date, y1=to_low,
-            line=dict(
-                color="Green",
-                width=1,
-                dash="dot",
-            ),
-            label=dict(
-                text=f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}D',
-                textposition="top center"
-            ),
-        )
-
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=mid, x1=to_date, y1=mid,
-            line=dict(
-                color="Green",
-                width=0.5,
-                dash="dot",
-            )
-        )
-
-    def build_graph(self):
-        self.fig = make_subplots(rows=2, cols=1,
-                                 subplot_titles=("candle stick", f"std/mean={self.volume_std_div_mean:.2f}"),
-                                 vertical_spacing=0.05,
-                                 row_heights=[0.6, 0.4],
-                                 shared_xaxes=True,
-                                 )
-
-        self.add_candlestick()
-
-        self.add_scatter('local_max_1st', 'high', 'red', 2)
-        self.add_scatter('local_max_2nd', 'high', 'red', 6)
-        self.add_scatter('local_max_3rd', 'high', 'red', 10)
-        self.add_scatter('range_max_n', 'high', 'black', 4)
-
-        self.add_scatter('local_min_1st', 'low', 'green', 2)
-        self.add_scatter('local_min_2nd', 'low', 'green', 6)
-        self.add_scatter('local_min_3rd', 'low', 'green', 10)
-        self.add_scatter('range_min_n', 'low', 'blue', 4)
-
-        for item in self.up_box:
-            self.add_up_box(*item)
-
-        for item in self.down_box:
-            self.add_down_box(*item)
-
-        if self.in_precise_view():
-            self.add_hline()
-
-        self.add_volume()
-
-        # self.add_scatter('local_max_volume_1st', 'volume_reg', 'red', 2, row=2, col=1)
-        # self.add_scatter('local_max_volume_2nd', 'volume_reg', 'red', 4, row=2, col=1)
-        # self.add_scatter('local_max_volume_3rd', 'volume_reg', 'red', 8, row=2, col=1)
-        #
-        # self.add_scatter('local_min_volume_1st', 'volume_reg', 'green', 2, row=2, col=1)
-        # self.add_scatter('local_min_volume_2nd', 'volume_reg', 'green', 4, row=2, col=1)
-        # self.add_scatter('local_min_volume_3rd', 'volume_reg', 'green', 8, row=2, col=1)
-
-        # for date in self.stock_df[self.stock_df['local_max_volume_3rd']]['Date']:
-        #     self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red')
-        #
-        # for idx, row in self.stock_df[self.stock_df['local_max_volume_3rd']].iterrows():
-        #     date, open, close = row['Date'], row['open'], row['close']
-        #     if open < close:
-        #         self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red')
-        #     else:
-        #         self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green')
-        #
-        # for date in self.stock_df[self.stock_df['local_min_volume_3rd']]['Date']:
-        #     self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='black')
-
-        self.fig.update_xaxes(
-            rangebreaks=[
-                dict(bounds=["sat", "mon"]),  # hide weekends
-            ]
-        )
-
-        # self.fig.update_xaxes(showspikes=True)
-        # self.fig.update_yaxes(showspikes=True)
-
-        self.fig.update_layout(
-            title=f'{self.stock_name} Period Analysis {self.from_date} ~ {self.to_date}',
-            xaxis_rangeslider_visible=False,
-            hovermode='x unified',
-        )
 
     def pick_up_box(self, from_idx, to_idx):
         from_date = self.stock_df.loc[from_idx]['Date']
@@ -371,68 +106,117 @@ class PeriodAnalysis:
 
             self.pick_down_box(start_idx, lowest_idx)
 
-    def regularize_volume(self):
-        volume = self.stock_df['volume']
-        print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
-        self.volume_std_div_mean = volume.std() / volume.mean()
-        # self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(lambda x: min(4, x))
-        self.stock_df['volume_reg'] = ((volume - volume.mean()) / volume.std()).apply(
-            lambda x: 4 + (x - 4) / 6 if x > 4 else x)
-        # self.stock_df['volume_ma_n'] = self.stock_df['volume_reg'].rolling(window=10).mean()  # 15，20, 30
-
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].apply(lambda date: date in dates)
 
-    def analyze(self):
-        # calculate candle stick
-        local_max_1st_dates = local_max(self.stock_df)
-        local_max_2nd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_1st_dates)])
-        local_max_3rd_dates = local_max(self.stock_df[self.stock_df['Date'].isin(local_max_2nd_dates)])
+    def analyze_price(self):
+        # local max price analysis
+        local_max_price_1st_dates = local_max(self.stock_df)
 
-        range_max_n_dates = range_max(self.stock_df, 15)
+        condition = self.stock_df['Date'].isin(local_max_price_1st_dates)
+        local_max_price_2nd_dates = local_max(self.stock_df[condition])
 
-        local_min_1st_dates = local_min(self.stock_df)
-        local_min_2nd_dates = local_min(self.stock_df[self.stock_df['Date'].isin(local_min_1st_dates)])
-        local_min_3rd_dates = local_min(self.stock_df[self.stock_df['Date'].isin(local_min_2nd_dates)])
+        condition = self.stock_df['Date'].isin(local_max_price_2nd_dates)
+        local_max_price_3rd_dates = local_max(self.stock_df[condition])
 
-        range_min_n_dates = range_min(self.stock_df, 15)
+        condition = self.stock_df['Date'].isin(local_max_price_3rd_dates)
+        local_max_price_4th_dates = local_max(self.stock_df[condition])
+
+        # local min price analysis
+        local_min_price_1st_dates = local_min(self.stock_df)
+
+        condition = self.stock_df['Date'].isin(local_min_price_1st_dates)
+        local_min_price_2nd_dates = local_min(self.stock_df[condition])
+
+        condition = self.stock_df['Date'].isin(local_min_price_2nd_dates)
+        local_min_price_3rd_dates = local_min(self.stock_df[condition])
+
+        condition = self.stock_df['Date'].isin(local_min_price_3rd_dates)
+        local_min_price_4th_dates = local_min(self.stock_df[condition])
+
+        # range max price analysis
+        range_max_price_15_dates = range_max(self.stock_df, 15)
+        range_max_price_30_dates = range_max(self.stock_df, 30)
+
+        # range min price analysis
+        range_min_price_15_dates = range_min(self.stock_df, 15)
+        range_min_price_30_dates = range_min(self.stock_df, 30)
 
         # merge
-        self.add_column('local_max_1st', local_max_1st_dates)
-        self.add_column('local_max_2nd', local_max_2nd_dates)
-        self.add_column('local_max_3rd', local_max_3rd_dates)
-        self.add_column('range_max_n', range_max_n_dates)
+        self.add_column(local_max_price_1st, local_max_price_1st_dates)
+        self.add_column(local_max_price_2nd, local_max_price_2nd_dates)
+        self.add_column(local_max_price_3rd, local_max_price_3rd_dates)
+        self.add_column(local_max_price_4th, local_max_price_4th_dates)
 
-        self.add_column('local_min_1st', local_min_1st_dates)
-        self.add_column('local_min_2nd', local_min_2nd_dates)
-        self.add_column('local_min_3rd', local_min_3rd_dates)
-        self.add_column('range_min_n', range_min_n_dates)
+        self.add_column(local_min_price_1st, local_min_price_1st_dates)
+        self.add_column(local_min_price_2nd, local_min_price_2nd_dates)
+        self.add_column(local_min_price_3rd, local_min_price_3rd_dates)
+        self.add_column(local_min_price_4th, local_min_price_4th_dates)
 
+        self.add_column(range_max_price_15, range_max_price_15_dates)
+        self.add_column(range_max_price_30, range_max_price_30_dates)
+
+        self.add_column(range_min_price_15, range_min_price_15_dates)
+        self.add_column(range_min_price_30, range_min_price_30_dates)
+
+    def regularize_volume(self):
+        volume = self.stock_df['volume']
+
+        print(f'volume mean: {volume.mean()}, volume std: {volume.std()}')
+        self.volume_std_div_volume_mean = volume.std() / volume.mean()
+
+        self.stock_df[volume_reg] = (volume - volume.mean()) / volume.std()
+
+        self.stock_df[volume_ma_15] = self.stock_df[volume_reg].rolling(window=15).mean()
+        self.stock_df[volume_ma_30] = self.stock_df[volume_reg].rolling(window=30).mean()
+        self.stock_df[volume_ma_60] = self.stock_df[volume_reg].rolling(window=60).mean()
+
+        self.stock_df[volume_reg] = self.stock_df[volume_reg].apply(lambda v: 4 + (v - 4) / 6 if v > 4 else v)
+
+    def analyze_volume(self):
+        self.regularize_volume()
+
+        # local max volume analysis
+        local_max_volume_1st_dates = local_max(self.stock_df, volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_max_volume_1st_dates)
+        local_max_volume_2nd_dates = local_max(self.stock_df[condition], volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_max_volume_2nd_dates)
+        local_max_volume_3rd_dates = local_max(self.stock_df[condition], volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_max_volume_3rd_dates)
+        local_max_volume_4th_dates = local_max(self.stock_df[condition], volume_reg)
+
+        # local min volume analysis
+        local_min_volume_1st_dates = local_min(self.stock_df, volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_min_volume_1st_dates)
+        local_min_volume_2nd_dates = local_min(self.stock_df[condition], volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_min_volume_2nd_dates)
+        local_min_volume_3rd_dates = local_min(self.stock_df[condition], volume_reg)
+
+        condition = self.stock_df['Date'].isin(local_min_volume_3rd_dates)
+        local_min_volume_4th_dates = local_min(self.stock_df[condition], volume_reg)
+
+        # merge
+        self.add_column(local_max_volume_1st, local_max_volume_1st_dates)
+        self.add_column(local_max_volume_2nd, local_max_volume_2nd_dates)
+        self.add_column(local_max_volume_3rd, local_max_volume_3rd_dates)
+        self.add_column(local_max_volume_4th, local_max_volume_4th_dates)
+
+        self.add_column(local_min_volume_1st, local_min_volume_1st_dates)
+        self.add_column(local_min_volume_2nd, local_min_volume_2nd_dates)
+        self.add_column(local_min_volume_3rd, local_min_volume_3rd_dates)
+        self.add_column(local_min_volume_4th, local_min_volume_4th_dates)
+
+    def analyze(self):
+        self.analyze_price()
+        self.analyze_volume()
+
+        # box analysis
         self.up_analysis()
         self.down_analysis()
 
-        # calculate volume
-        self.regularize_volume()
-
-        local_max_volume_1st_dates = local_max(self.stock_df, 'volume_reg')
-        local_max_volume_2nd_dates = local_max(
-            self.stock_df[self.stock_df['Date'].isin(local_max_volume_1st_dates)], 'volume_reg')
-        local_max_volume_3rd_dates = local_max(
-            self.stock_df[self.stock_df['Date'].isin(local_max_volume_2nd_dates)], 'volume_reg')
-
-        local_min_volume_1st_dates = local_min(self.stock_df, 'volume_reg')
-        local_min_volume_2nd_dates = local_min(
-            self.stock_df[self.stock_df['Date'].isin(local_min_volume_1st_dates)], 'volume_reg')
-        local_min_volume_3rd_dates = local_min(
-            self.stock_df[self.stock_df['Date'].isin(local_min_volume_2nd_dates)], 'volume_reg')
-
-        # merge
-        self.add_column('local_max_volume_1st', local_max_volume_1st_dates)
-        self.add_column('local_max_volume_2nd', local_max_volume_2nd_dates)
-        self.add_column('local_max_volume_3rd', local_max_volume_3rd_dates)
-
-        self.add_column('local_min_volume_1st', local_min_volume_1st_dates)
-        self.add_column('local_min_volume_2nd', local_min_volume_2nd_dates)
-        self.add_column('local_min_volume_3rd', local_min_volume_3rd_dates)
-
-        # print(self.stock_df)
+        print(self.stock_df.head(100))

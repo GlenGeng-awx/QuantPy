@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from period_analysis import *
+from period_display import *
 
 STOCK_NAMES_INDEX = [
     # "^IXIC",
@@ -11,9 +13,9 @@ STOCK_NAMES_TIER_1 = [
     # "MRNA",
     # "PDD",
     # "COIN",
-    "META",
+    # "META",
     # "RIVN",
-    # "TSLA",
+    "TSLA",
     # "BABA",
     # "JD",
     # "ZM",
@@ -38,36 +40,31 @@ STOCK_NAMES_TIER_2 = [
     "EBAY",
 ]
 
-DEFAULT_PERIOD = [
-    ('2023-05-31', '2024-07-31'),
-    # ('2023-01-01', '2024-07-31'),
-    # ('2022-01-01', '2024-07-31'),
-    # ('2021-01-01', '2024-07-31'),
-    # ('2020-01-01', '2024-07-31'),
-    # ('2019-01-01', '2024-07-31'),
-]
 
-CUSTOMIZED_PERIOD = {
-    # "XPEV": [
-    #     ('2021-01-01', '2024-07-31'),
-    #     ('2020-01-01', '2024-07-31'),
-    #     ('2019-01-01', '2024-07-31'),
-    # ],
-    # "META": [
-    #     ('2023-01-01', '2024-07-31'),
-    #     ('2021-01-01', '2024-07-31'),
-    #     ('2020-01-01', '2024-07-31'),
-    #     ('2019-01-01', '2024-07-31'),
-    # ],
-}
+def default_period():
+    current_date = datetime.now()
+    date_300_days_ago = current_date - timedelta(days=365 * 1.5)
+    date_600_days_ago = current_date - timedelta(days=365 * 3)
+    date_900_days_ago = current_date - timedelta(days=365 * 4.5)
+
+    return [
+        (date_300_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        (date_600_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        (date_900_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+    ]
+
 
 for stock_name in STOCK_NAMES_TIER_1:
     stock_data = load_data(stock_name)
 
-    for (start_date, end_date) in CUSTOMIZED_PERIOD.get(stock_name, DEFAULT_PERIOD):
-        stock_df = stock_data[(stock_data['Date'] > start_date) & (stock_data['Date'] < end_date)]
+    for (start_date, end_date) in default_period():
+        condition = (stock_data['Date'] > start_date) & (stock_data['Date'] < end_date)
+        stock_df = stock_data[condition]
 
         pa = PeriodAnalysis(stock_name, stock_df)
         pa.analyze()
-        pa.build_graph()
-        pa.fig.show()
+
+        pd = PeriodDisplay(pa)
+        pd.build_graph()
+        pd.fig.show()
+
