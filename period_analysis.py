@@ -2,14 +2,23 @@ from period_util import *
 from period_conf import *
 
 
+def is_support_level(row: pd.Series):
+    return row[local_min_price_3rd] or (row[local_min_price_2nd] and row[range_min_price_30])
+
+
+def is_resistance_level(row: pd.Series):
+    return row[local_max_price_3rd] or (row[local_max_price_2nd] and row[range_max_price_30])
+
+
 class PeriodAnalysis:
     def __init__(self, stock_name: str, stock_df: pd.DataFrame):
         self.stock_name = stock_name
         self.stock_df = stock_df.copy()  # copy to avoid warning
 
-        from_date = stock_df.iloc[0]['Date']
-        to_date = stock_df.iloc[-1]['Date']
-        print(f"{self.stock_name} period_analysis -> range: {from_date} ~ {to_date}, shape: {self.stock_df.shape}")
+        from_date = shrink_date_str(stock_df.iloc[0]['Date'])
+        to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
+        self.title = f"{self.stock_name}: {from_date} to {to_date}, {self.stock_df.shape[0]} days"
+        print(self.title)
 
         self.volume_std_div_volume_mean = 0
 
@@ -17,6 +26,8 @@ class PeriodAnalysis:
         self.up_box = []
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = []
+
+        self.support_resistance_level = []
 
     def pick_up_box(self, from_idx, to_idx):
         from_date = self.stock_df.loc[from_idx]['Date']
@@ -46,7 +57,7 @@ class PeriodAnalysis:
     def up_analysis(self):
         triggered_idx = []
         for idx, row in self.stock_df.iterrows():
-            if hit_up(row):
+            if is_support_level(row):
                 triggered_idx.append(idx)
 
         triggered_idx.append(self.stock_df.index[-1] + 1)
@@ -90,7 +101,7 @@ class PeriodAnalysis:
     def down_analysis(self):
         triggered_idx = []
         for idx, row in self.stock_df.iterrows():
-            if hit_down(row):
+            if is_resistance_level(row):
                 triggered_idx.append(idx)
 
         triggered_idx.append(self.stock_df.index[-1] + 1)
@@ -211,6 +222,13 @@ class PeriodAnalysis:
         self.add_column(local_min_volume_3rd, local_min_volume_3rd_dates)
         self.add_column(local_min_volume_4th, local_min_volume_4th_dates)
 
+    def support_resistance_analysis(self):
+        for idx, row in self.stock_df.iterrows():
+            if is_support_level(row):
+                self.support_resistance_level.append(row['low'])
+            if is_resistance_level(row):
+                self.support_resistance_level.append(row['high'])
+
     def analyze(self):
         self.analyze_price()
         self.analyze_volume()
@@ -219,4 +237,7 @@ class PeriodAnalysis:
         self.up_analysis()
         self.down_analysis()
 
-        print(self.stock_df.head(100))
+        # sr analysis
+        self.support_resistance_analysis()
+
+        # print(self.stock_df.head(100))

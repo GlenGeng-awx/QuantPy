@@ -1,2 +1,58 @@
 from period_conf import *
+from period_display import *
 
+# (from_date, direction, length, pst)
+forcast_period = {
+    'MRNA': [
+        ('2024-05-24', 'down', 25, 25),
+    ],
+}
+
+
+class PeriodForecast:
+    def __init__(self, period_display: PeriodDisplay):
+        self.stock_name = period_display.stock_name
+        self.stock_df = period_display.stock_df
+        self.period_display = period_display
+
+    # (_from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid)
+    def build_up_box(self, from_date, length, pst):
+        condition = self.stock_df['Date'].apply(lambda x: shrink_date_str(x) == from_date)
+        from_low = self.stock_df[condition]['low'].values[0]
+
+        to_date = calculate_next_n_workday(from_date, length)
+        to_high = from_low * (1 + pst / 100)
+
+        delta = to_high - from_low
+        mid = (from_low + to_high) / 2
+
+        return None, from_date, from_low, None, to_date, to_high, length, delta, pst, mid
+
+    # (_from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid)
+    def build_down_box(self, from_date, length, pst):
+        condition = self.stock_df['Date'].apply(lambda x: shrink_date_str(x) == from_date)
+        from_high = self.stock_df[condition]['high'].values[0]
+
+        to_date = calculate_next_n_workday(from_date, length)
+        to_low = from_high * (1 - pst / 100)
+
+        delta = from_high - to_low
+        mid = (from_high + to_low) / 2
+
+        return None, from_date, from_high, None, to_date, to_low, length, delta, pst, mid
+
+    def forecast(self):
+        if self.stock_name not in forcast_period:
+            return
+
+        for (from_date, direction, length, pst) in forcast_period[self.stock_name]:
+            print(f'forecast {self.stock_name} {direction} {length} days from {from_date} with {pst}%')
+
+            if direction == 'up':
+                box = self.build_up_box(from_date, length, pst)
+                print('up box ->', box)
+                self.period_display.add_up_box(*box, forcast=True)
+            else:
+                box = self.build_down_box(from_date, length, pst)
+                print('down box ->', box)
+                self.period_display.add_down_box(*box, forcast=True)

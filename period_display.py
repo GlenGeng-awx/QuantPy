@@ -10,11 +10,13 @@ class PeriodDisplay:
     def __init__(self, period_analysis: PeriodAnalysis):
         self.stock_name = period_analysis.stock_name
         self.stock_df = period_analysis.stock_df.copy()
+        self.title = period_analysis.title
 
         self.volume_std_div_volume_mean = period_analysis.volume_std_div_volume_mean
 
         self.up_box = period_analysis.up_box
         self.down_box = period_analysis.down_box
+        self.support_resistance_level = period_analysis.support_resistance_level
 
         self.fig = None
 
@@ -87,10 +89,6 @@ class PeriodDisplay:
         self.add_price_scatter(range_min_price_15, 'low', 'black', 2)
         self.add_price_scatter(range_min_price_30, 'low', 'black', 4)
 
-    def in_precise_view(self):
-        return self.stock_df.shape[0] < 400
-        # return True
-
     def add_volume_ma(self, column, color: str, size: float):
         self.fig.add_trace(
             go.Scatter(
@@ -103,9 +101,10 @@ class PeriodDisplay:
             row=2, col=1
         )
 
-    def add_volume_scatter(self, condition: Series, color: str, size: int):
+    def add_volume_scatter(self, name, condition: Series, color: str, size: int):
         self.fig.add_trace(
             go.Scatter(
+                name=name,
                 x=self.stock_df[condition]['Date'],
                 y=self.stock_df[condition][volume_reg],
                 mode='markers',
@@ -138,36 +137,36 @@ class PeriodDisplay:
         self.add_volume_ma(volume_ma_60, 'green', 0.5)
 
         condition = (self.stock_df['Date'] == self.stock_df['Date'])
-        self.add_volume_scatter(condition, 'blue', 2)
+        self.add_volume_scatter('daily volume', condition, 'blue', 2)
 
         # step B
         condition = self.stock_df[local_min_volume_2nd]
-        self.add_volume_scatter(condition, 'black', 2)
+        self.add_volume_scatter(local_min_volume_2nd, condition, 'black', 2)
 
         condition = self.stock_df[local_min_volume_3rd]
-        self.add_volume_scatter(condition, 'black', 4)
+        self.add_volume_scatter(local_min_volume_3rd, condition, 'black', 4)
 
         condition = self.stock_df[local_min_volume_4th]
-        self.add_volume_scatter(condition, 'black', 6)
+        self.add_volume_scatter(local_min_volume_4th, condition, 'black', 6)
 
         # step C
         condition1 = (
                 self.stock_df[local_max_volume_2nd]
                 & (self.stock_df['open'] < self.stock_df['close'])
         )
-        self.add_volume_scatter(condition1, 'red', 2)
+        self.add_volume_scatter(f'{local_max_volume_2nd} - up', condition1, 'red', 2)
 
         condition2 = (
                 self.stock_df[local_max_volume_3rd]
                 & (self.stock_df['open'] < self.stock_df['close'])
         )
-        self.add_volume_scatter(condition2, 'red', 4)
+        self.add_volume_scatter(f'{local_max_volume_3rd} - up' , condition2, 'red', 4)
 
         condition3 = (
                 self.stock_df[local_max_volume_4th]
                 & (self.stock_df['open'] < self.stock_df['close'])
         )
-        self.add_volume_scatter(condition3, 'red', 6)
+        self.add_volume_scatter(f'{local_max_volume_4th} - up', condition3, 'red', 6)
 
         for date in self.stock_df[condition2 | condition3]['Date']:
             self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red', row=1, col=1)
@@ -177,37 +176,39 @@ class PeriodDisplay:
                 self.stock_df[local_max_volume_2nd]
                 & (self.stock_df['open'] > self.stock_df['close'])
         )
-        self.add_volume_scatter(condition1, 'green', 2)
+        self.add_volume_scatter(f'{local_max_volume_2nd} - down', condition1, 'green', 2)
 
         condition2 = (
                 self.stock_df[local_max_volume_3rd]
                 & (self.stock_df['open'] > self.stock_df['close'])
         )
-        self.add_volume_scatter(condition2, 'green', 4)
+        self.add_volume_scatter(f'{local_max_volume_3rd} - down', condition2, 'green', 4)
 
         condition3 = (
                 self.stock_df[local_max_volume_4th]
                 & (self.stock_df['open'] > self.stock_df['close'])
         )
-        self.add_volume_scatter(condition3, 'green', 6)
+        self.add_volume_scatter(f'{local_max_volume_4th} - down', condition3, 'green', 6)
 
         for date in self.stock_df[condition2 | condition3]['Date']:
             self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green', row=1, col=1)
 
-    def add_hline(self):
-        for idx, row in self.stock_df.iterrows():
-            if hit_down(row):
-                self.fig.add_hline(y=row['high'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
-            if hit_up(row):
-                self.fig.add_hline(y=row['low'], line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
+    def in_precise_view(self):
+        return self.stock_df.shape[0] < 400
+        # return True
 
-    def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid):
+    def add_support_resistance_level(self):
+        for level in self.support_resistance_level:
+            self.fig.add_hline(y=level, line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
+
+    def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid,
+                   *, forcast=False):
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_low, x1=to_date, y1=to_high,
             line=dict(
-                color="Red",
-                width=0.5,
+                color="Red" if not forcast else "Blue",
+                width=1,
                 dash="dot"
             ),
             label=dict(
@@ -231,18 +232,19 @@ class PeriodDisplay:
             x0=from_date, y0=from_low, x1=to_date, y1=to_high,
             line=dict(
                 color="Red",
-                width=0.5,
+                width=1,
                 # dash="dot"
             )
         )
 
-    def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid):
+    def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid,
+                     *, forcast=False):
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_high, x1=to_date, y1=to_low,
             line=dict(
-                color="Green",
-                width=0.5,
+                color="Green" if not forcast else "Blue",
+                width=1,
                 dash="dot",
             ),
             label=dict(
@@ -266,7 +268,7 @@ class PeriodDisplay:
             x0=from_date, y0=from_high, x1=to_date, y1=to_low,
             line=dict(
                 color="Green",
-                width=0.5,
+                width=1,
                 # dash="dot",
             )
         )
@@ -283,7 +285,7 @@ class PeriodDisplay:
         self.build_volume_graph()
 
         if self.in_precise_view():
-            self.add_hline()
+            self.add_support_resistance_level()
 
         for item in self.up_box:
             self.add_up_box(*item)
@@ -300,15 +302,11 @@ class PeriodDisplay:
         # self.fig.update_xaxes(showspikes=True)
         # self.fig.update_yaxes(showspikes=True)
 
-        from_date = self.stock_df.iloc[0]['Date']
-        to_date = self.stock_df.iloc[-1]['Date']
-
         self.fig.update_layout(
-            title=f'{self.stock_name} Period Analysis {from_date} ~ {to_date}',
+            title=self.title,
             xaxis_rangeslider_visible=False,
             hovermode="x unified",
             hoverlabel=dict(
                 namelength=200
             )
         )
-

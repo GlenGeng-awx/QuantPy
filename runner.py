@@ -1,21 +1,23 @@
 from datetime import datetime, timedelta
-from period_analysis import *
-from period_display import *
+from period_util import load_data
+from period_analysis import PeriodAnalysis
+from period_display import PeriodDisplay
+from period_forecast import PeriodForecast
 
 STOCK_NAMES_INDEX = [
-    # "^IXIC",
+    "^IXIC",
     # "000300.SS",
     # "000001.SS",
     # "GC=F",
 ]
 
 STOCK_NAMES_TIER_1 = [
-    # "MRNA",
+    "MRNA",
     # "PDD",
     # "COIN",
     # "META",
     # "RIVN",
-    "TSLA",
+    # "TSLA",
     # "BABA",
     # "JD",
     # "ZM",
@@ -49,8 +51,8 @@ def default_period():
 
     return [
         (date_300_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        (date_600_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        (date_900_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        # (date_600_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        # (date_900_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
     ]
 
 
@@ -61,10 +63,16 @@ for stock_name in STOCK_NAMES_TIER_1:
         condition = (stock_data['Date'] > start_date) & (stock_data['Date'] < end_date)
         stock_df = stock_data[condition]
 
+        # step 1: analyze
         pa = PeriodAnalysis(stock_name, stock_df)
         pa.analyze()
 
+        # step 2: display
         pd = PeriodDisplay(pa)
         pd.build_graph()
+
+        # step 3: forecast
+        PeriodForecast(pd).forecast()
+
         pd.fig.show()
 

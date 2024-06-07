@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import os
+from datetime import datetime
 from period_conf import *
 
 pd.set_option('display.max_rows', None)
@@ -67,9 +68,12 @@ def load_data(symbol):
     return pd.read_csv(file_name)
 
 
-def hit_down(row: pd.Series):
-    return row[local_max_price_3rd] or (row[local_max_price_2nd] and row[range_max_price_30])
+def calculate_next_n_workday(from_date, n):
+    date_range = pd.bdate_range(start=from_date, periods=n+1)
+    return date_range[-1].strftime("%Y-%m-%d")
 
 
-def hit_up(row: pd.Series):
-    return row[local_min_price_3rd] or (row[local_min_price_2nd] and row[range_min_price_30])
+def shrink_date_str(date_str) -> str:
+    # like "2024-06-06 00:00:00-05:00" -> "2024-06-06"
+    return date_str.split()[0]
+
