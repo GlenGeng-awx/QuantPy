@@ -39,12 +39,12 @@ class PeriodDisplay:
         x, y = [], []
 
         for idx, row in self.stock_df.iterrows():
-            local_max_1st, local_min_1st = row[local_max_price_1st], row[local_min_price_1st]
+            local_max_2nd, local_min_2nd = row[local_max_price_2nd], row[local_min_price_2nd]
             high, low, date = row['high'], row['low'], row['Date'],
 
-            if local_max_1st or local_min_1st:
+            if local_max_2nd or local_min_2nd:
                 x.append(date)
-                y.append(high if local_max_1st else low)
+                y.append(high if local_max_2nd else low)
 
         self.fig.add_trace(
             go.Scatter(
@@ -52,7 +52,7 @@ class PeriodDisplay:
                 x=x,
                 y=y,
                 mode='lines',
-                line=dict(width=0.5, color='grey'),
+                line=dict(width=1, color='black'),
             )
         )
 
@@ -168,8 +168,9 @@ class PeriodDisplay:
         )
         self.add_volume_scatter(f'{local_max_volume_4th} - up', condition3, 'red', 6)
 
-        for date in self.stock_df[condition2 | condition3]['Date']:
-            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red', row=1, col=1)
+        if DISPLAY_CONF['enable_peak_volume_up']:
+            for date in self.stock_df[condition2 | condition3]['Date']:
+                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='red', row=1, col=1)
 
         # step D
         condition1 = (
@@ -190,19 +191,20 @@ class PeriodDisplay:
         )
         self.add_volume_scatter(f'{local_max_volume_4th} - down', condition3, 'green', 6)
 
-        for date in self.stock_df[condition2 | condition3]['Date']:
-            self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green', row=1, col=1)
-
-    def in_precise_view(self):
-        return self.stock_df.shape[0] < 400
-        # return True
+        if DISPLAY_CONF['enable_peak_volume_down']:
+            for date in self.stock_df[condition2 | condition3]['Date']:
+                self.fig.add_vline(x=date, line_width=1, line_dash="dash", line_color='green', row=1, col=1)
 
     def add_support_resistance_level(self):
-        for level in self.support_resistance_level:
-            self.fig.add_hline(y=level, line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
+        if DISPLAY_CONF['enable_sr_level']:
+            for level in self.support_resistance_level:
+                self.fig.add_hline(y=level, line_width=0.5, line_dash="dash", line_color="grey", row=1, col=1)
 
     def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid,
                    *, forcast=False):
+        if not DISPLAY_CONF['enable_up_box']:
+            return
+
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_low, x1=to_date, y1=to_high,
@@ -239,6 +241,9 @@ class PeriodDisplay:
 
     def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid,
                      *, forcast=False):
+        if not DISPLAY_CONF['enable_down_box']:
+            return
+
         self.fig.add_shape(
             type="rect",
             x0=from_date, y0=from_high, x1=to_date, y1=to_low,
@@ -284,8 +289,7 @@ class PeriodDisplay:
         self.build_candlestick()
         self.build_volume_graph()
 
-        if self.in_precise_view():
-            self.add_support_resistance_level()
+        self.add_support_resistance_level()
 
         for item in self.up_box:
             self.add_up_box(*item)

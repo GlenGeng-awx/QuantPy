@@ -3,7 +3,10 @@ from period_display import *
 
 # (from_date, direction, length, pst)
 forcast_period = {
-    'MRNA': [
+    IXIC: [
+        ('2024-04-19', 'up', 80, 20),
+    ],
+    MRNA: [
         ('2024-05-24', 'down', 25, 25),
     ],
 }
@@ -18,6 +21,9 @@ class PeriodForecast:
     # (_from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid)
     def build_up_box(self, from_date, length, pst):
         condition = self.stock_df['Date'].apply(lambda x: shrink_date_str(x) == from_date)
+        if not condition.any():
+            return ()
+
         from_low = self.stock_df[condition]['low'].values[0]
 
         to_date = calculate_next_n_workday(from_date, length)
@@ -31,6 +37,9 @@ class PeriodForecast:
     # (_from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid)
     def build_down_box(self, from_date, length, pst):
         condition = self.stock_df['Date'].apply(lambda x: shrink_date_str(x) == from_date)
+        if not condition.any():
+            return ()
+
         from_high = self.stock_df[condition]['high'].values[0]
 
         to_date = calculate_next_n_workday(from_date, length)
@@ -50,9 +59,13 @@ class PeriodForecast:
 
             if direction == 'up':
                 box = self.build_up_box(from_date, length, pst)
+                if len(box) == 0:
+                    continue
                 print('up box ->', box)
                 self.period_display.add_up_box(*box, forcast=True)
             else:
                 box = self.build_down_box(from_date, length, pst)
+                if len(box) == 0:
+                    continue
                 print('down box ->', box)
                 self.period_display.add_down_box(*box, forcast=True)

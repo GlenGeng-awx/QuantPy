@@ -3,63 +3,51 @@ from period_util import load_data
 from period_analysis import PeriodAnalysis
 from period_display import PeriodDisplay
 from period_forecast import PeriodForecast
+from period_conf import *
 
 STOCK_NAMES_INDEX = [
-    "^IXIC",
-    # "000300.SS",
-    # "000001.SS",
-    # "GC=F",
+    # IXIC,
+    # SS_000300,
+    SS_000001,
+    # GC_F,
 ]
 
 STOCK_NAMES_TIER_1 = [
-    "MRNA",
-    # "PDD",
-    # "COIN",
-    # "META",
-    # "RIVN",
-    # "TSLA",
-    # "BABA",
-    # "JD",
-    # "ZM",
-    # "XPEV",
-    # "BEKE",
-    # "MNSO",
-    # "0700.HK"
+    MRNA,
+    PDD,
+    COIN,
+    META,
+    RIVN,
+    TSLA,
+    BABA,
+    JD,
+    ZM,
+    XPEV,
+    BEKE,
+    MNSO,
+    HK_0700
 ]
 
 STOCK_NAMES_TIER_2 = [
-    "SNAP",
-    "BILI",
-    "NVDA",
-    "EDU",
-    "AMD",
-    "LI",
-    "BNTX",
-    "BA",
-    "CPNG",
-    "IQ",
-    "TSM",
-    "EBAY",
+    SNAP,
+    BILI,
+    NVDA,
+    EDU,
+    AMD,
+    LI,
+    BNTX,
+    BA,
+    CPNG,
+    IQ,
+    TSM,
+    EBAY,
 ]
 
 
-def default_period():
-    current_date = datetime.now()
-    date_300_days_ago = current_date - timedelta(days=365 * 1.5)
-    date_600_days_ago = current_date - timedelta(days=365 * 3)
-    date_900_days_ago = current_date - timedelta(days=365 * 4.5)
-
-    return [
-        (date_300_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        # (date_600_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        # (date_900_days_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-    ]
-
-
-for stock_name in STOCK_NAMES_TIER_1:
+for stock_name in STOCK_NAMES_INDEX:
     stock_data = load_data(stock_name)
 
-    for (start_date, end_date) in default_period():
+    for (start_date, end_date) in get_period(stock_name):
         condition = (stock_data['Date'] > start_date) & (stock_data['Date'] < end_date)
         stock_df = stock_data[condition]
 
