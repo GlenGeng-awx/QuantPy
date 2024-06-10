@@ -12,20 +12,33 @@ STOCK_NAMES_INDEX = [
     # GC_F,
 ]
 
-STOCK_NAMES_TIER_1 = [
+STOCK_NAMES_TIER_0 = [
+    IXIC,
     MRNA,
     PDD,
-    COIN,
-    META,
-    RIVN,
     TSLA,
     BABA,
+    HK_0700,
     JD,
-    ZM,
-    XPEV,
     BEKE,
-    MNSO,
-    HK_0700
+]
+
+STOCK_NAMES_TIER_1 = [
+    # MRNA,
+    PDD,
+    # COIN,
+    # META,
+    # RIVN,
+    # TSLA,
+    # BABA,
+    # JD,
+    # ZM,
+    # XPEV,
+    # BEKE,
+    # MNSO,
+    # HK_0700,
+    # IQ,
+    # PLTR,
 ]
 
 STOCK_NAMES_TIER_2 = [
@@ -38,13 +51,12 @@ STOCK_NAMES_TIER_2 = [
     BNTX,
     BA,
     CPNG,
-    IQ,
     TSM,
     EBAY,
 ]
 
 
-for stock_name in STOCK_NAMES_INDEX:
+for stock_name in STOCK_NAMES_TIER_1:
     stock_data = load_data(stock_name)
 
     for (start_date, end_date) in get_period(stock_name):

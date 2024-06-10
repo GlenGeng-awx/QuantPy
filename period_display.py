@@ -35,6 +35,22 @@ class PeriodDisplay:
             row=1, col=1,
         )
 
+    def add_price_line(self, filter_column: str, display_column: str, color: str, size: int, name=None):
+        self.fig.add_trace(
+            go.Scatter(
+                name=name if name else filter_column,
+                x=self.stock_df[self.stock_df[filter_column]]['Date'],
+                y=self.stock_df[self.stock_df[filter_column]][display_column],
+                mode='markers+lines',
+                marker=dict(
+                    color=color,
+                    size=size
+                ),
+                line_dash="dot",
+            ),
+            row=1, col=1,
+        )
+
     def add_price_mountain_view(self):
         x, y = [], []
 
@@ -72,6 +88,12 @@ class PeriodDisplay:
         )
 
         self.add_price_mountain_view()
+
+        self.add_price_line(local_max_price_3rd, 'high', 'red', 5, 'price_upper_bound')
+        self.add_price_line(local_min_price_3rd, 'low', 'green', 5, 'price_lower_bound')
+
+        self.add_price_line(local_max_price_3rd_quasi, 'high', 'blue', 5)
+        self.add_price_line(local_min_price_3rd_quasi, 'low', 'black', 5)
 
         self.add_price_scatter(local_max_price_1st, 'high', 'red', 2)
         self.add_price_scatter(local_max_price_2nd, 'high', 'red', 4)
@@ -309,6 +331,10 @@ class PeriodDisplay:
         self.fig.update_layout(
             title=self.title,
             xaxis_rangeslider_visible=False,
+            # yaxis_type="log",  # Set y-axis to 'log' or 'linear'
+            # plot_bgcolor='white',
+            xaxis_gridcolor='gray',
+            yaxis_gridcolor='gray',
             hovermode="x unified",
             hoverlabel=dict(
                 namelength=200

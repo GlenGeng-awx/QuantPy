@@ -11,6 +11,9 @@ local_min_price_2nd = 'local_min_price_2nd'
 local_min_price_3rd = 'local_min_price_3rd'
 local_min_price_4th = 'local_min_price_4th'
 
+local_max_price_3rd_quasi = 'local_max_price_3rd_quasi'
+local_min_price_3rd_quasi = 'local_min_price_3rd_quasi'
+
 range_max_price_15 = 'range_max_price_15'
 range_max_price_30 = 'range_max_price_30'
 
@@ -51,6 +54,7 @@ BNTX = "BNTX"
 PDD = "PDD"
 COIN = "COIN"
 META = "META"
+PLTR = "PLTR"
 
 NVDA = "NVDA"
 AMD = "AMD"
@@ -85,6 +89,10 @@ PERIOD_CONF[SS_000001] = [
     ('2017-01-01', datetime.now().strftime('%Y-%m-%d'))
 ]
 
+PERIOD_CONF[PDD] = [
+    ('2019-01-01', datetime.now().strftime('%Y-%m-%d'))
+]
+
 
 def default_period():
     current_date = datetime.now()
@@ -94,8 +102,8 @@ def default_period():
     date_3y_ago = current_date - timedelta(days=365 * 3)
 
     return [
-        (date_1y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        (date_2y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        # (date_1y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        # (date_2y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
         (date_3y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
     ]
 
@@ -108,7 +116,18 @@ def get_period(stock_name):
 
 
 # display option
-DISPLAY_CONF = {
+DISPLAY_CONF_1 = {
+    # candle stick
+    'enable_up_box': True,
+    'enable_down_box': True,
+    'enable_sr_level': False,
+
+    # volume
+    'enable_peak_volume_up': True,
+    'enable_peak_volume_down': True,
+}
+
+DISPLAY_CONF_2 = {
     # candle stick
     'enable_up_box': False,
     'enable_down_box': False,
@@ -118,3 +137,5 @@ DISPLAY_CONF = {
     'enable_peak_volume_up': False,
     'enable_peak_volume_down': False,
 }
+
+DISPLAY_CONF = DISPLAY_CONF_1

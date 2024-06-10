@@ -129,6 +129,7 @@ class PeriodAnalysis:
 
         condition = self.stock_df['Date'].isin(local_max_price_2nd_dates)
         local_max_price_3rd_dates = local_max(self.stock_df[condition])
+        local_max_price_3rd_quasi_dates = local_max_quasi(self.stock_df[condition])
 
         condition = self.stock_df['Date'].isin(local_max_price_3rd_dates)
         local_max_price_4th_dates = local_max(self.stock_df[condition])
@@ -141,6 +142,7 @@ class PeriodAnalysis:
 
         condition = self.stock_df['Date'].isin(local_min_price_2nd_dates)
         local_min_price_3rd_dates = local_min(self.stock_df[condition])
+        local_min_price_3rd_quasi_dates = local_min_quasi(self.stock_df[condition])
 
         condition = self.stock_df['Date'].isin(local_min_price_3rd_dates)
         local_min_price_4th_dates = local_min(self.stock_df[condition])
@@ -163,6 +165,9 @@ class PeriodAnalysis:
         self.add_column(local_min_price_2nd, local_min_price_2nd_dates)
         self.add_column(local_min_price_3rd, local_min_price_3rd_dates)
         self.add_column(local_min_price_4th, local_min_price_4th_dates)
+
+        self.add_column(local_max_price_3rd_quasi, local_max_price_3rd_quasi_dates)
+        self.add_column(local_min_price_3rd_quasi, local_min_price_3rd_quasi_dates)
 
         self.add_column(range_max_price_15, range_max_price_15_dates)
         self.add_column(range_max_price_30, range_max_price_30_dates)

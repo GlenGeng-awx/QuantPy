@@ -22,12 +22,32 @@ def local_max(data: pd.DataFrame, column='high') -> set:
     return hit_dates
 
 
+def local_max_quasi(data: pd.DataFrame, column='high') -> set:
+    hit_dates = set()
+
+    for idx in range(1, data.shape[0]):
+        if data.iloc[idx][column] > data.iloc[idx - 1][column]:
+            hit_dates.add(data.iloc[idx]["Date"])
+
+    return hit_dates
+
+
 def local_min(data: pd.DataFrame, column='low') -> set:
     hit_dates = set()
 
     for idx in range(1, data.shape[0] - 1):
         if (data.iloc[idx][column] < data.iloc[idx - 1][column]
                 and data.iloc[idx][column] < data.iloc[idx + 1][column]):
+            hit_dates.add(data.iloc[idx]["Date"])
+
+    return hit_dates
+
+
+def local_min_quasi(data: pd.DataFrame, column='low') -> set:
+    hit_dates = set()
+
+    for idx in range(1, data.shape[0]):
+        if data.iloc[idx][column] < data.iloc[idx - 1][column]:
             hit_dates.add(data.iloc[idx]["Date"])
 
     return hit_dates
