@@ -10,10 +10,11 @@ class VolumeMountainViewDisplay:
         self.stock_df = stock_df
 
     def build_graph(self):
-        condition = (
-            self.stock_df[local_max_volume_1st] | self.stock_df[local_min_volume_1st]
-            | (self.stock_df[volume_reg] > 2)
-        )
+        # condition = (
+        #     self.stock_df[local_max_volume_1st] | self.stock_df[local_min_volume_1st]
+        #     | (self.stock_df[volume_reg] > 2)
+        # )
+        condition = self.stock_df[local_max_volume_2nd] | self.stock_df[local_min_volume_2nd]
 
         x = self.stock_df[condition]['Date']
         y = self.stock_df[condition][volume_reg]

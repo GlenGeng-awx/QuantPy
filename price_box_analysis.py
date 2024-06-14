@@ -23,7 +23,7 @@ class PriceBoxAnalysis:
         pst = 100 * delta / from_low
         mid = (from_low + to_high) / 2
 
-        print(f'build up box, {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
+        print(f'build up box, from_idx={from_idx} to_idx={to_idx} {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
         self.up_box.append((from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid))
 
     def build_down_box(self, from_idx, to_idx):
@@ -38,28 +38,72 @@ class PriceBoxAnalysis:
         pst = 100 * delta / from_high
         mid = (from_high + to_low) / 2
 
-        print(f'build down box, {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
+        print(f'build down box, from_idx={from_idx} to_idx={to_idx} {from_date} ~ {to_date}, {length} days, {delta:.2f}$, {pst:.2f}%, mid {mid}')
         self.down_box.append((from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid))
+
+    def handle_up_down(self, start_idx, end_idx):
+        print(f'handle_up_down(start_idx={start_idx}, end_idx={end_idx})')
+        if end_idx - start_idx < 10:
+            self.build_down_box(start_idx, end_idx)
+            return
+
+        lowest_idx = min_between(self.stock_df, start_idx + 1, end_idx - 1)
+
+        if self.stock_df.loc[lowest_idx]['low'] > self.stock_df.loc[end_idx]['low']:
+            self.build_down_box(start_idx, end_idx)
+            return
+
+        self.build_down_box(start_idx, lowest_idx)
+        self.handle_down_down(lowest_idx, end_idx)
+
+    def handle_down_up(self, start_idx, end_idx):
+        print(f'handle_down_up(start_idx={start_idx}, end_idx={end_idx})')
+        if end_idx - start_idx < 10:
+            self.build_up_box(start_idx, end_idx)
+            return
+
+        highest_idx = max_between(self.stock_df, start_idx + 1, end_idx - 1)
+
+        if self.stock_df.loc[highest_idx]['high'] < self.stock_df.loc[end_idx]['high']:
+            self.build_up_box(start_idx, end_idx)
+            return
+
+        self.build_up_box(start_idx, highest_idx)
+        self.handle_up_up(highest_idx, end_idx)
+
+    def handle_up_up(self, start_idx, end_idx):
+        print(f'handle_up_up(start_idx={start_idx}, end_idx={end_idx})')
+        if end_idx - start_idx < 3:
+            return
+
+        lowest_idx = min_between(self.stock_df, start_idx + 1, end_idx - 1)
+        self.handle_up_down(start_idx, lowest_idx)
+        self.handle_down_up(lowest_idx, end_idx)
+
+    def handle_down_down(self, start_idx, end_idx):
+        print(f'handle_down_down(start_idx={start_idx}, end_idx={end_idx})')
+        if end_idx - start_idx < 3:
+            return
+
+        highest_idx = max_between(self.stock_df, start_idx + 1, end_idx - 1)
+        self.handle_down_up(start_idx, highest_idx)
+        self.handle_up_down(highest_idx, end_idx)
 
     def analyze_middle(self, start_idx, end_idx):
         start_row = self.stock_df.loc[start_idx]
         end_row = self.stock_df.loc[end_idx]
 
         if is_support_level(start_row) and is_resistance_level(end_row):
-            self.build_up_box(start_idx, end_idx)
+            self.handle_down_up(start_idx, end_idx)
 
         if is_resistance_level(start_row) and is_support_level(end_row):
-            self.build_down_box(start_idx, end_idx)
+            self.handle_up_down(start_idx, end_idx)
 
         if is_support_level(start_row) and is_support_level(end_row):
-            highest_idx = max_between(self.stock_df, start_idx + 1, end_idx - 1)
-            self.build_up_box(start_idx, highest_idx)
-            self.build_down_box(highest_idx, end_idx)
+            self.handle_down_down(start_idx, end_idx)
 
         if is_resistance_level(start_row) and is_resistance_level(end_row):
-            lowest_idx = min_between(self.stock_df, start_idx + 1, end_idx - 1)
-            self.build_down_box(start_idx, lowest_idx)
-            self.build_up_box(lowest_idx, end_idx)
+            self.handle_up_up(start_idx, end_idx)
 
     def analyze_head(self, head_idx):
         head_row = self.stock_df.loc[head_idx]

@@ -39,6 +39,28 @@ class DisplayEngine:
                                  shared_xaxes=True,
                                  )
 
+        self.fig.update_xaxes(
+            rangebreaks=[
+                dict(bounds=["sat", "mon"]),  # hide weekends
+            ]
+        )
+
+        # self.fig.update_xaxes(showspikes=True)
+        # self.fig.update_yaxes(showspikes=True)
+
+        self.fig.update_layout(
+            title=self.title,
+            xaxis_rangeslider_visible=False,
+            # plot_bgcolor='white',
+            xaxis_gridcolor='gray',
+            yaxis_gridcolor='gray',
+            hovermode="x unified",
+            hoverlabel=dict(
+                namelength=200
+            )
+        )
+
+    def add_candlestick(self):
         self.fig.add_trace(
             go.Candlestick(
                 x=self.stock_df['Date'],
@@ -53,36 +75,15 @@ class DisplayEngine:
             )
         )
 
-        self.fig.update_xaxes(
-            rangebreaks=[
-                dict(bounds=["sat", "mon"]),  # hide weekends
-            ]
-        )
-
-        # self.fig.update_xaxes(showspikes=True)
-        # self.fig.update_yaxes(showspikes=True)
-
-        self.fig.update_layout(
-            title=self.title,
-            xaxis_rangeslider_visible=False,
-            # yaxis_type="log",  # Set y-axis to 'log' or 'linear'
-            # plot_bgcolor='white',
-            xaxis_gridcolor='gray',
-            yaxis_gridcolor='gray',
-            hovermode="x unified",
-            hoverlabel=dict(
-                namelength=200
-            )
-        )
-
     def build_graph(self):
         self.setup()
 
-        PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
+        self.add_candlestick()
+        # PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
+        # PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
         # PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
         # PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
+        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
         # PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()

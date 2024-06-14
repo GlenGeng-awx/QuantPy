@@ -15,7 +15,7 @@ STOCK_NAMES_TIER_0 = [
     # IXIC,
     # MRNA,
     # PDD,
-    TSLA,
+    # TSLA,
     # BABA,
     # HK_0700,
     # JD,
@@ -23,20 +23,19 @@ STOCK_NAMES_TIER_0 = [
     # XPEV,
     # IQ,
     # META,
-    # COIN,
-    # RIVN,
-    # PLTR,
-    # SNOW,
+    COIN,
+    RIVN,
+    PLTR,
+    SNOW,
+    MNSO,
 ]
 
 STOCK_NAMES_TIER_1 = [
     PDD,
-
     BABA,
     JD,
     ZM,
     BEKE,
-    MNSO,
     HK_0700,
 ]
 
@@ -63,4 +62,5 @@ for stock_name in STOCK_NAMES_TIER_0:
 
         de = DisplayEngine(ae, {})
         de.build_graph()
+
         de.display()

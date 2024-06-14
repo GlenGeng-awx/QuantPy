@@ -15,9 +15,17 @@ class PriceMountainViewDisplay:
             local_max_2nd, local_min_2nd = row[local_max_price_2nd], row[local_min_price_2nd]
             high, low, date = row['high'], row['low'], row['Date'],
 
-            if local_max_2nd or local_min_2nd:
+            # if local_max_2nd or local_min_2nd:
+            #     x.append(date)
+            #     y.append(high if local_max_2nd else low)
+
+            if local_max_2nd:
                 x.append(date)
-                y.append(high if local_max_2nd else low)
+                y.append(high)
+
+            if local_min_2nd:
+                x.append(date)
+                y.append(low)
 
         self.fig.add_trace(
             go.Scatter(

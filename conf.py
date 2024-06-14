@@ -98,9 +98,9 @@ PERIOD_CONF[IXIC] = [
 def default_period():
     current_date = datetime.now()
 
-    date_1y_ago = current_date - timedelta(days=365 * 1)
-    date_2y_ago = current_date - timedelta(days=365 * 2)
-    date_3y_ago = current_date - timedelta(days=365 * 3)
+    date_1y_ago = datetime(current_date.year - 1, 1, 1)
+    date_2y_ago = datetime(current_date.year - 2, 1, 1)
+    date_3y_ago = datetime(current_date.year - 3, 1, 1)
 
     return [
         # (date_1y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
