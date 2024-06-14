@@ -1,4 +1,4 @@
-from period_conf import *
+from conf import *
 from period_display import *
 
 # (from_date, direction, length, pst)
@@ -27,9 +27,13 @@ forcast_period = {
     BEKE: [
         ('2024-05-17', 'down', 30, 30),
     ],
+
     PLTR: [
         ('2024-04-19', 'up', 50, 35)
-    ]
+    ],
+    # 快速拉升以后，洗盘时间长达三个月，洗盘幅度达到 5/8，但是，低点不跌破。
+    # 策略：止损 275，亏损 60，止盈 190，盈利 100
+    COIN: [],
 }
 
 

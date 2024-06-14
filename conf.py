@@ -55,6 +55,7 @@ PDD = "PDD"
 COIN = "COIN"
 META = "META"
 PLTR = "PLTR"
+SNOW = "SNOW"
 
 NVDA = "NVDA"
 AMD = "AMD"
@@ -82,16 +83,16 @@ PERIOD_CONF[IXIC] = [
     # ('2017-01-01', datetime.now().strftime('%Y-%m-%d')),
     # ('2017-01-01', '2020-05-12'),
     # ('2020-01-01', '2023-01-01'),
-    ('2022-01-01', datetime.now().strftime('%Y-%m-%d'))
+    ('2021-01-01', datetime.now().strftime('%Y-%m-%d'))
 ]
-
-PERIOD_CONF[SS_000001] = [
-    ('2017-01-01', datetime.now().strftime('%Y-%m-%d'))
-]
-
-PERIOD_CONF[PDD] = [
-    ('2019-01-01', datetime.now().strftime('%Y-%m-%d'))
-]
+#
+# PERIOD_CONF[SS_000001] = [
+#     ('2017-01-01', datetime.now().strftime('%Y-%m-%d'))
+# ]
+#
+# PERIOD_CONF[PDD] = [
+#     ('2019-01-01', datetime.now().strftime('%Y-%m-%d'))
+# ]
 
 
 def default_period():
@@ -115,27 +116,54 @@ def get_period(stock_name):
         return default_period()
 
 
+#
 # display option
-DISPLAY_CONF_1 = {
-    # candle stick
-    'enable_up_box': True,
-    'enable_down_box': True,
-    'enable_sr_level': False,
+#
+enable_trend_line = 'enable_trend_line'
+enable_price_mountain_view = 'enable_price_mountain_view'
 
-    # volume
-    'enable_peak_volume_up': True,
-    'enable_peak_volume_down': True,
+# candle stick
+enable_up_box = 'enable_up_box'
+enable_down_box = 'enable_down_box'
+enable_box_label = 'enable_box_label'
+
+enable_sr_level = 'enable_sr_level'
+
+# volume
+enable_peak_volume_up = 'enable_peak_volume_up'
+enable_peak_volume_down = 'enable_peak_volume_down'
+
+display_conf_microscopic = {
+    enable_trend_line: True,
+    enable_price_mountain_view: True,
+
+    enable_up_box: True,
+    enable_down_box: True,
+    enable_box_label: True,
+
+    enable_sr_level: True,
+
+    enable_peak_volume_up: True,
+    enable_peak_volume_down: True,
 }
 
-DISPLAY_CONF_2 = {
-    # candle stick
-    'enable_up_box': False,
-    'enable_down_box': False,
-    'enable_sr_level': False,
+display_conf_fine_1 = {
+    enable_up_box: True,
+    enable_down_box: True,
+    enable_box_label: True,
 
-    # volume
-    'enable_peak_volume_up': False,
-    'enable_peak_volume_down': False,
+    enable_peak_volume_up: True,
+    enable_peak_volume_down: True,
 }
 
-DISPLAY_CONF = DISPLAY_CONF_1
+display_conf_coarse_2 = {
+    enable_trend_line: True,
+    enable_price_mountain_view: True,
+}
+
+display_conf_coarse_1 = {
+    enable_up_box: True,
+    enable_down_box: True,
+    enable_box_label: True,
+    enable_sr_level: True,
+}
