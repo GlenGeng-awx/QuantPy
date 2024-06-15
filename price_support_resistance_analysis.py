@@ -20,6 +20,6 @@ class PriceSupportResistanceAnalysis:
     def analyze(self):
         for idx, row in self.stock_df.iterrows():
             if is_support_level(row):
-                self.support_resistance_level.append(row['low'])
+                self.support_resistance_level.append(row[low_k])
             if is_resistance_level(row):
-                self.support_resistance_level.append(row['high'])
+                self.support_resistance_level.append(row[high_k])

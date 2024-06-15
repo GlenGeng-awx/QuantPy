@@ -13,10 +13,10 @@ class PriceBoxAnalysis:
 
     def build_up_box(self, from_idx, to_idx):
         from_date = self.stock_df.loc[from_idx]['Date']
-        from_low = self.stock_df.loc[from_idx]['low']
+        from_low = self.stock_df.loc[from_idx][low_k]
 
         to_date = self.stock_df.loc[to_idx]['Date']
-        to_high = self.stock_df.loc[to_idx]['high']
+        to_high = self.stock_df.loc[to_idx][high_k]
 
         length = to_idx - from_idx
         delta = to_high - from_low
@@ -28,10 +28,10 @@ class PriceBoxAnalysis:
 
     def build_down_box(self, from_idx, to_idx):
         from_date = self.stock_df.loc[from_idx]['Date']
-        from_high = self.stock_df.loc[from_idx]['high']
+        from_high = self.stock_df.loc[from_idx][high_k]
 
         to_date = self.stock_df.loc[to_idx]['Date']
-        to_low = self.stock_df.loc[to_idx]['low']
+        to_low = self.stock_df.loc[to_idx][low_k]
 
         length = to_idx - from_idx
         delta = from_high - to_low
@@ -49,7 +49,7 @@ class PriceBoxAnalysis:
 
         lowest_idx = min_between(self.stock_df, start_idx + 1, end_idx - 1)
 
-        if self.stock_df.loc[lowest_idx]['low'] > self.stock_df.loc[end_idx]['low']:
+        if self.stock_df.loc[lowest_idx][low_k] > self.stock_df.loc[end_idx][low_k]:
             self.build_down_box(start_idx, end_idx)
             return
 
@@ -64,7 +64,7 @@ class PriceBoxAnalysis:
 
         highest_idx = max_between(self.stock_df, start_idx + 1, end_idx - 1)
 
-        if self.stock_df.loc[highest_idx]['high'] < self.stock_df.loc[end_idx]['high']:
+        if self.stock_df.loc[highest_idx][high_k] < self.stock_df.loc[end_idx][high_k]:
             self.build_up_box(start_idx, end_idx)
             return
 

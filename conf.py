@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
 
+high_k = 'high'  # 'high' or 'close'
+low_k = 'low'  # 'low' or 'close'
+close_k = 'close'
+
 # price
 local_max_price_1st = 'local_max_price_1st'
 local_max_price_2nd = 'local_max_price_2nd'

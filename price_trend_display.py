@@ -29,8 +29,9 @@ class PriceTrendDisplay:
         )
 
     def build_graph(self):
-        self.add_line(local_max_price_3rd, 'high', 'red', 5, 'price_upper_bound')
-        self.add_line(local_min_price_3rd, 'low', 'green', 5, 'price_lower_bound')
+        self.add_line(local_max_price_3rd, high_k, 'red', 5, 'price_upper_bound')
+        self.add_line(local_min_price_3rd, low_k, 'green', 5, 'price_lower_bound')
 
-        # self.add_line(local_max_price_3rd_quasi, 'high', 'blue', 5)
-        # self.add_line(local_min_price_3rd_quasi, 'low', 'black', 5)
+        # self.add_line(local_max_price_3rd_quasi, high_k, 'blue', 5)
+        # self.add_line(local_min_price_3rd_quasi, low_k, 'black', 5)
+

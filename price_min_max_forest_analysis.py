@@ -1,16 +1,22 @@
 import pandas as pd
 from conf import *
 
-max_tasks = [local_max_price_2nd, local_max_price_1st]
-min_tasks = [local_min_price_2nd, local_min_price_1st]
+max_tasks_3rd = [local_max_price_2nd, local_max_price_1st]
+min_tasks_3rd = [local_min_price_2nd, local_min_price_1st]
+
+max_tasks_2nd = [local_max_price_1st]
+min_tasks_2nd = [local_min_price_1st]
 
 
 class PriceMinMaxForestAnalysis:
     def __init__(self, stock_df: pd.DataFrame):
         self.stock_df = stock_df
 
-        self.max_forest = []
-        self.min_forest = []
+        self.max_forest_3rd = []
+        self.min_forest_3rd = []
+
+        self.max_forest_2nd = []
+        self.min_forest_2nd = []
 
     def drill_down(self, curr_idx, todo_tasks: list) -> list:
         print(f'drill_down curr_idx={curr_idx}, todo_tasks={todo_tasks}')
@@ -44,15 +50,31 @@ class PriceMinMaxForestAnalysis:
         for idx, row in self.stock_df.iterrows():
             if row[local_max_price_3rd]:
                 print(f'hit max idx={idx}, date={row["Date"]}')
-                max_tree = self.drill_down(idx, max_tasks.copy())
-                print(max_tree)
-                self.max_forest += max_tree
+                max_tree_3rd = self.drill_down(idx, max_tasks_3rd.copy())
+                print(max_tree_3rd)
+                self.max_forest_3rd += max_tree_3rd
 
         for idx, row in self.stock_df.iterrows():
             if row[local_min_price_3rd]:
                 print(f'hit min idx={idx}, date={row["Date"]}')
-                min_tree = self.drill_down(idx, min_tasks.copy())
-                print(min_tree)
-                self.min_forest += min_tree
+                min_tree_3rd = self.drill_down(idx, min_tasks_3rd.copy())
+                print(min_tree_3rd)
+                self.min_forest_3rd += min_tree_3rd
 
-        print(f'max forest = {self.max_forest}, min forest = {self.min_forest}')
+        print(f'max forest 3rd = {self.max_forest_3rd}, min forest 3rd = {self.min_forest_3rd}')
+
+        for idx, row in self.stock_df.iterrows():
+            if row[local_max_price_2nd]:
+                print(f'hit max idx={idx}, date={row["Date"]}')
+                max_tree_2nd = self.drill_down(idx, max_tasks_2nd.copy())
+                print(max_tree_2nd)
+                self.max_forest_2nd += max_tree_2nd
+
+        for idx, row in self.stock_df.iterrows():
+            if row[local_min_price_2nd]:
+                print(f'hit min idx={idx}, date={row["Date"]}')
+                min_tree_2nd = self.drill_down(idx, min_tasks_2nd.copy())
+                print(min_tree_2nd)
+                self.min_forest_2nd += min_tree_2nd
+
+        print(f'max forest 2nd = {self.max_forest_2nd}, min forest 2nd = {self.min_forest_2nd}')

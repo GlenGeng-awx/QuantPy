@@ -12,7 +12,7 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    IXIC,
+    # IXIC,
     BABA,
     SNOW,
     META,
@@ -20,14 +20,14 @@ STOCK_NAMES_TIER_0 = [
     MRNA,
     COIN,
     TSLA,
-    # PDD,
-    # HK_0700,
-    # JD,
-    # BEKE,
-    # XPEV,
-    # IQ,
-    # RIVN,
-    # MNSO,
+    PDD,
+    HK_0700,
+    JD,
+    BEKE,
+    XPEV,
+    IQ,
+    RIVN,
+    MNSO,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -53,7 +53,7 @@ STOCK_NAMES_TIER_2 = [
     EBAY,
 ]
 
-for stock_name in set(STOCK_NAMES_TIER_0 + STOCK_NAMES_TIER_1 + STOCK_NAMES_TIER_2):
+for stock_name in STOCK_NAMES_TIER_0:
     stock_data = load_data(stock_name)
 
     for (start_date, end_date) in get_period(stock_name):

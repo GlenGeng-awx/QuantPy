@@ -3,7 +3,7 @@ from plotly.subplots import make_subplots
 
 from analysis_engine import AnalysisEngine
 
-from util import shrink_date_str
+from util import *
 
 from price_min_max_display import PriceMinMaxDisplay
 from price_min_max_forest_display import PriceMinMaxForestDisplay
@@ -66,8 +66,8 @@ class DisplayEngine:
                 x=self.stock_df['Date'],
                 close=self.stock_df['close'],
                 open=self.stock_df['open'],
-                high=self.stock_df['high'],
-                low=self.stock_df['low'],
+                high=self.stock_df[high_k],
+                low=self.stock_df[low_k],
                 name="Candlesticks",
                 increasing_line_color='red',
                 decreasing_line_color='green',
@@ -80,11 +80,11 @@ class DisplayEngine:
 
         self.add_candlestick()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        # PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
+        PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
         PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
         # PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
         PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
+        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, True).build_graph()
         PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()

@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import os
+from conf import high_k, low_k, close_k
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -9,7 +10,7 @@ pd.set_option('display.max_colwidth', None)
 pd.set_option('display.float_format', '{:.0f}'.format)
 
 
-def local_max(data: pd.DataFrame, column='high') -> set:
+def local_max(data: pd.DataFrame, column=high_k) -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0] - 1):
@@ -20,7 +21,7 @@ def local_max(data: pd.DataFrame, column='high') -> set:
     return hit_dates
 
 
-def local_max_quasi(data: pd.DataFrame, column='high') -> set:
+def local_max_quasi(data: pd.DataFrame, column=high_k) -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0]):
@@ -30,7 +31,7 @@ def local_max_quasi(data: pd.DataFrame, column='high') -> set:
     return hit_dates
 
 
-def local_min(data: pd.DataFrame, column='low') -> set:
+def local_min(data: pd.DataFrame, column=low_k) -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0] - 1):
@@ -41,7 +42,7 @@ def local_min(data: pd.DataFrame, column='low') -> set:
     return hit_dates
 
 
-def local_min_quasi(data: pd.DataFrame, column='low') -> set:
+def local_min_quasi(data: pd.DataFrame, column=low_k) -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0]):
@@ -55,7 +56,7 @@ def range_max(data: pd.DataFrame, step=5) -> set:
     hit_dates = set()
 
     for pos in range(step, data.shape[0] - step):
-        if data.iloc[pos]["high"] == data.iloc[pos - step:pos + step]["high"].max():
+        if data.iloc[pos][high_k] == data.iloc[pos - step:pos + step][high_k].max():
             hit_dates.add(data.iloc[pos]["Date"])
 
     return hit_dates
@@ -65,19 +66,19 @@ def range_min(data: pd.DataFrame, step=5) -> set:
     hit_dates = set()
 
     for pos in range(step, data.shape[0] - step):
-        if data.iloc[pos]["low"] == data.iloc[pos - step:pos + step]["low"].min():
+        if data.iloc[pos][low_k] == data.iloc[pos - step:pos + step][low_k].min():
             hit_dates.add(data.iloc[pos]["Date"])
 
     return hit_dates
 
 
-def max_between(data: pd.DataFrame, start_idx, end_idx, column='high') -> int:
+def max_between(data: pd.DataFrame, start_idx, end_idx, column=high_k) -> int:
     # max price in [start_idx, end_idx]
     print(f'max_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmax()
 
 
-def min_between(data: pd.DataFrame, start_idx, end_idx, column='low') -> int:
+def min_between(data: pd.DataFrame, start_idx, end_idx, column=low_k) -> int:
     # min price in [start_idx, end_idx]
     print(f'min_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmin()
