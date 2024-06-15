@@ -77,6 +77,7 @@ class MinMaxAnalysis:
 
         self.stock_df[volume_reg] = (volume - volume.mean()) / volume.std()
 
+        self.stock_df[volume_ma_5] = self.stock_df[volume_reg].rolling(window=5).mean()
         self.stock_df[volume_ma_15] = self.stock_df[volume_reg].rolling(window=15).mean()
         self.stock_df[volume_ma_30] = self.stock_df[volume_reg].rolling(window=30).mean()
         self.stock_df[volume_ma_60] = self.stock_df[volume_reg].rolling(window=60).mean()

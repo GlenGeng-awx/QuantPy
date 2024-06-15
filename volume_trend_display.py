@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 import pandas as pd
-from conf import volume_ma_15, volume_ma_30, volume_ma_60
+from conf import volume_ma_5, volume_ma_15, volume_ma_30, volume_ma_60
 
 
 class VolumeTrendDisplay:
@@ -21,6 +21,7 @@ class VolumeTrendDisplay:
         )
 
     def build_graph(self):
-        self.add_ma(volume_ma_15, 'red', 0.5)
-        self.add_ma(volume_ma_30, 'grey', 0.5)
-        self.add_ma(volume_ma_60, 'green', 0.5)
+        self.add_ma(volume_ma_5, 'blue', 0.5)
+        # self.add_ma(volume_ma_15, 'red', 0.5)
+        # self.add_ma(volume_ma_30, 'grey', 0.5)
+        # self.add_ma(volume_ma_60, 'green', 0.5)

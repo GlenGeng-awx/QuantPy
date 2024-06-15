@@ -12,22 +12,22 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # IXIC,
-    # MRNA,
+    IXIC,
+    BABA,
+    SNOW,
+    META,
+    PLTR,
+    MRNA,
+    COIN,
+    TSLA,
     # PDD,
-    # TSLA,
-    # BABA,
     # HK_0700,
     # JD,
     # BEKE,
     # XPEV,
     # IQ,
-    # META,
-    COIN,
-    RIVN,
-    PLTR,
-    SNOW,
-    MNSO,
+    # RIVN,
+    # MNSO,
 ]
 
 STOCK_NAMES_TIER_1 = [

@@ -12,6 +12,7 @@ class PriceMountainViewDisplay:
         x, y = [], []
 
         for idx, row in self.stock_df.iterrows():
+            local_max_1st, local_min_1st = row[local_max_price_1st], row[local_min_price_1st]
             local_max_2nd, local_min_2nd = row[local_max_price_2nd], row[local_min_price_2nd]
             high, low, date = row['high'], row['low'], row['Date'],
 

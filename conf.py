@@ -33,6 +33,7 @@ local_min_volume_2nd = 'local_min_volume_2nd'
 local_min_volume_3rd = 'local_min_volume_3rd'
 local_min_volume_4th = 'local_min_volume_4th'
 
+volume_ma_5 = 'volume_ma_5'
 volume_ma_15 = 'volume_ma_15'
 volume_ma_30 = 'volume_ma_30'
 volume_ma_60 = 'volume_ma_60'
@@ -103,9 +104,9 @@ def default_period():
     date_3y_ago = datetime(current_date.year - 3, 1, 1)
 
     return [
-        # (date_1y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        (date_1y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
         # (date_2y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
-        (date_3y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
+        # (date_3y_ago.strftime('%Y-%m-%d'), current_date.strftime('%Y-%m-%d')),
     ]
 
 

@@ -79,16 +79,17 @@ class DisplayEngine:
         self.setup()
 
         self.add_candlestick()
-        # PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
+        PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
         # PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
-        # PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
+        PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
         # PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
+        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
+        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
         # PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
         # VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
-        # VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
+        VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
 
     def display(self):
         self.fig.show()
