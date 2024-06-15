@@ -3,9 +3,9 @@ from price_box_analysis import PriceBoxAnalysis
 
 
 class PriceBoxDisplay:
-    def __init__(self, fig: go.Figure, analysis: PriceBoxAnalysis):
+    def __init__(self, fig: go.Figure, analysis: PriceBoxAnalysis, enable_box_label=None):
         self.fig = fig
-        self.enable_box_label = analysis.stock_df.shape[0] < 500
+        self.enable_box_label = analysis.stock_df.shape[0] < 500 if enable_box_label is None else enable_box_label
 
         # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
         self.up_box = analysis.up_box

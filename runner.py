@@ -53,7 +53,7 @@ STOCK_NAMES_TIER_2 = [
     EBAY,
 ]
 
-for stock_name in STOCK_NAMES_TIER_0:
+for stock_name in set(STOCK_NAMES_TIER_0 + STOCK_NAMES_TIER_1 + STOCK_NAMES_TIER_2):
     stock_data = load_data(stock_name)
 
     for (start_date, end_date) in get_period(stock_name):

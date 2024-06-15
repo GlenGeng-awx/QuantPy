@@ -3,11 +3,13 @@ from util import *
 
 
 def is_support_level(row: pd.Series):
-    return row[local_min_price_3rd] or (row[local_min_price_2nd] and row[range_min_price_30])
+    # return row[local_min_price_3rd] or (row[local_min_price_2nd] and row[range_min_price_30])
+    return row[local_min_price_3rd]
 
 
 def is_resistance_level(row: pd.Series):
-    return row[local_max_price_3rd] or (row[local_max_price_2nd] and row[range_max_price_30])
+    # return row[local_max_price_3rd] or (row[local_max_price_2nd] and row[range_max_price_30])
+    return row[local_max_price_3rd]
 
 
 class PriceSupportResistanceAnalysis:
