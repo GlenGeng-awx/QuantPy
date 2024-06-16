@@ -24,13 +24,14 @@ class PriceTrendDisplay:
                     size=size
                 ),
                 line=dict(dash="dot"),
+                visible='legendonly',
             ),
             row=1, col=1,
         )
 
     def build_graph(self):
-        self.add_line(local_max_price_3rd, high_k, 'red', 5, 'price_upper_bound')
-        self.add_line(local_min_price_3rd, low_k, 'green', 5, 'price_lower_bound')
+        self.add_line(local_max_price_3rd, high_k, 'red', 5, 'price_max_3rd_bound')
+        self.add_line(local_min_price_3rd, low_k, 'green', 5, 'price_min_3rd_bound')
 
         # self.add_line(local_max_price_3rd_quasi, high_k, 'blue', 5)
         # self.add_line(local_min_price_3rd_quasi, low_k, 'black', 5)

@@ -50,8 +50,6 @@ class PriceMountainViewDisplay:
                 self.x.insert(-1, max_date)
                 self.y.insert(-1, max_high)
 
-
-
     def step2(self):
         self.fig.add_trace(
             go.Scatter(
@@ -60,6 +58,7 @@ class PriceMountainViewDisplay:
                 y=self.y,
                 mode='lines',
                 line=dict(width=1, color='black'),
+                # visible='legendonly',
             )
         )
 

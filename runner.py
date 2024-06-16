@@ -28,6 +28,7 @@ STOCK_NAMES_TIER_0 = [
     IQ,
     RIVN,
     MNSO,
+    BILI,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -41,7 +42,6 @@ STOCK_NAMES_TIER_1 = [
 
 STOCK_NAMES_TIER_2 = [
     SNAP,
-    BILI,
     NVDA,
     EDU,
     AMD,

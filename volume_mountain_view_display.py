@@ -26,6 +26,7 @@ class VolumeMountainViewDisplay:
                 y=y,
                 mode='lines',
                 line=dict(width=0.5, color='grey'),
+                visible='legendonly',
             ),
-            row=2, col=1
+            row=2, col=1,
         )

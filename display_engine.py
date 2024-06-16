@@ -16,6 +16,8 @@ from volume_min_max_display import VolumeMinMaxDisplay
 from volume_mountain_view_display import VolumeMountainViewDisplay
 from volume_trend_display import VolumeTrendDisplay
 
+from trading_record_display import TradingRecordDisplay
+
 
 class DisplayEngine:
     def __init__(self, analysis_engine: AnalysisEngine, display_conf: dict):
@@ -71,7 +73,8 @@ class DisplayEngine:
                 name="Candlesticks",
                 increasing_line_color='red',
                 decreasing_line_color='green',
-                line=dict(width=0.5)
+                line=dict(width=0.5),
+                visible='legendonly',
             )
         )
 
@@ -82,14 +85,16 @@ class DisplayEngine:
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
         PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
         PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
-        # PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
+        PriceTrendDisplay(self.fig, self.stock_df).build_graph()
+        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
         # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, True).build_graph()
         PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        # VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
+        VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
         VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
+
+        TradingRecordDisplay(self.fig, self.stock_name).build_graph()
 
     def display(self):
         self.fig.show()

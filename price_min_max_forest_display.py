@@ -33,15 +33,16 @@ class PriceMinMaxForestDisplay:
                 y=y,
                 mode='lines',
                 line=dict(width=width, color=color, dash='dot'),
+                visible='legendonly',
             )
         )
 
     def build_graph(self):
         # max forest 3rd
-        # self.add_scatter(self.max_forest_3rd, high_k, 'max forest 3rd', 'red', 1)
+        self.add_scatter(self.max_forest_3rd, high_k, 'max forest 3rd', 'red', 1)
 
         # min forest 3rd
-        # self.add_scatter(self.min_forest_3rd, low_k, 'min forest 3rd', 'green', 1)
+        self.add_scatter(self.min_forest_3rd, low_k, 'min forest 3rd', 'green', 1)
 
         # max forest 2nd
         self.add_scatter(self.max_forest_2nd, high_k, 'max forest 2nd', 'red', 1)
