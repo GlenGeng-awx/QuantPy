@@ -87,10 +87,10 @@ class PeriodForecast:
                 if len(box) == 0:
                     continue
                 print('up box ->', box)
-                self.period_display.add_up_box(*box, forcast=True)
+                self.period_display._add_up_box(*box, forcast=True)
             else:
                 box = self.build_down_box(from_date, length, pst)
                 if len(box) == 0:
                     continue
                 print('down box ->', box)
-                self.period_display.add_down_box(*box, forcast=True)
+                self.period_display._add_down_box(*box, forcast=True)

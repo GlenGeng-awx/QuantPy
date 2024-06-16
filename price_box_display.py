@@ -3,90 +3,72 @@ from price_box_analysis import PriceBoxAnalysis
 
 
 class PriceBoxDisplay:
-    def __init__(self, fig: go.Figure, analysis: PriceBoxAnalysis, enable_box_label=None):
+    def __init__(self, fig: go.Figure, analysis: PriceBoxAnalysis):
         self.fig = fig
-        self.enable_box_label = analysis.stock_df.shape[0] < 500 if enable_box_label is None else enable_box_label
+        self.stock_df = analysis.stock_df
 
         # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
         self.up_box = analysis.up_box
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = analysis.down_box
 
-    def add_up_box(self, _from_idx, from_date, from_low, _to_idx, to_date, to_high, length, delta, pst, mid,
-                   *, forcast=False):
-        text = f'{length}D <br> {delta:.2f}$ <br> +{pst:.2f}%' if self.enable_box_label else None
+        self.x_of_up_box = []
+        self.y_of_up_box = []
 
-        self.fig.add_shape(
-            type="rect",
-            x0=from_date, y0=from_low, x1=to_date, y1=to_high,
-            line=dict(
-                color="Red" if not forcast else "Blue",
-                width=1,
-                dash="dot"
-            ),
-            label=dict(
-                text=text,
-                textposition="bottom center"
-            ),
-        )
+        self.x_of_up_text = []
+        self.y_of_up_text = []
+        self.up_text = []
 
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=mid, x1=to_date, y1=mid,
-            line=dict(
-                color="Red",
-                width=0.5,
-                dash="dot"
-            )
-        )
+        self.x_of_down_box = []
+        self.y_of_down_box = []
 
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=from_low, x1=to_date, y1=to_high,
-            line=dict(
-                color="Red",
-                width=1,
-                # dash="dot"
-            )
-        )
+        self.x_of_down_text = []
+        self.y_of_down_text = []
+        self.down_text = []
 
-    def add_down_box(self, _from_idx, from_date, from_high, _to_idx, to_date, to_low, length, delta, pst, mid,
-                     *, forcast=False):
-        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}D' if self.enable_box_label else None
+    def add_up_box(self, from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid):
+        # box
+        self.x_of_up_box.extend([from_date, from_date, to_date, to_date, from_date, None])
+        self.y_of_up_box.extend([from_low, to_high, to_high, from_low, from_low, None])
 
-        self.fig.add_shape(
-            type="rect",
-            x0=from_date, y0=from_high, x1=to_date, y1=to_low,
-            line=dict(
-                color="Green" if not forcast else "Blue",
-                width=1,
-                dash="dot",
-            ),
-            label=dict(
-                text=text,
-                textposition="top center"
-            ),
-        )
+        # middle line
+        self.x_of_up_box.extend([from_date, to_date, None])
+        self.y_of_up_box.extend([mid, mid, None])
 
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=mid, x1=to_date, y1=mid,
-            line=dict(
-                color="Green",
-                width=0.5,
-                dash="dot",
-            )
-        )
+        # trend line
+        self.x_of_up_box.extend([from_date, to_date, None])
+        self.y_of_up_box.extend([from_low, to_high, None])
 
-        self.fig.add_shape(
-            type="line",
-            x0=from_date, y0=from_high, x1=to_date, y1=to_low,
-            line=dict(
-                color="Green",
-                width=1,
-                # dash="dot",
-            )
-        )
+        # label
+        x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
+        y = from_low
+        text = f'{length}D <br> {delta:.2f}$ <br> +{pst:.2f}%'
+
+        self.x_of_up_text.append(x)
+        self.y_of_up_text.append(y)
+        self.up_text.append(text)
+
+    def add_down_box(self, from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid):
+        # box
+        self.x_of_down_box.extend([from_date, to_date, to_date, from_date, from_date, None])
+        self.y_of_down_box.extend([from_high, from_high, to_low, to_low, from_high, None])
+
+        # middle line
+        self.x_of_down_box.extend([from_date, to_date, None])
+        self.y_of_down_box.extend([mid, mid, None])
+
+        # trend line
+        self.x_of_down_box.extend([from_date, to_date, None])
+        self.y_of_down_box.extend([from_high, to_low, None])
+
+        # label
+        x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
+        y = from_high
+        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}D'
+
+        self.x_of_down_text.append(x)
+        self.y_of_down_text.append(y)
+        self.down_text.append(text)
 
     def build_graph(self):
         for item in self.up_box:
@@ -94,3 +76,53 @@ class PriceBoxDisplay:
 
         for item in self.down_box:
             self.add_down_box(*item)
+
+        self.fig.add_trace(
+            go.Scatter(
+                name='up box',
+                x=self.x_of_up_box,
+                y=self.y_of_up_box,
+                mode='lines',
+                line=dict(width=1, color='red', dash="dot",),
+                visible='legendonly',
+            )
+        )
+
+        self.fig.add_trace(
+            go.Scatter(
+                name='up text',
+                x=self.x_of_up_text,
+                y=self.y_of_up_text,
+                text=self.up_text,
+                mode="text",
+                textfont=dict(
+                    color="red",
+                ),
+                visible='legendonly',
+            )
+        )
+
+        self.fig.add_trace(
+            go.Scatter(
+                name='down box',
+                x=self.x_of_down_box,
+                y=self.y_of_down_box,
+                mode='lines',
+                line=dict(width=1, color='green', dash="dot",),
+                visible='legendonly',
+            )
+        )
+
+        self.fig.add_trace(
+            go.Scatter(
+                name='down text',
+                x=self.x_of_down_text,
+                y=self.y_of_down_text,
+                text=self.down_text,
+                mode="text",
+                textfont=dict(
+                    color="green",
+                ),
+                visible='legendonly',
+            )
+        )

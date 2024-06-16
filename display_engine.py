@@ -86,8 +86,7 @@ class DisplayEngine:
         PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
         PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
         PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, False).build_graph()
-        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis, True).build_graph()
+        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
         PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
