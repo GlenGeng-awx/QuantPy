@@ -78,6 +78,16 @@ class DisplayEngine:
             )
         )
 
+        self.fig.add_trace(
+            go.Scatter(
+                name="close_price",
+                x=self.stock_df['Date'],
+                y=self.stock_df['close'],
+                line=dict(width=1, color='black'),
+                visible='legendonly',
+            )
+        )
+
     def build_graph(self):
         self.setup()
 
