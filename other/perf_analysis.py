@@ -86,6 +86,26 @@ data_20 = [
     (50, 1870, 25, 57, 37400)
 ]
 
+data_50 = [
+    (10, 767, 12, 27, 38350),
+    (20, 980, 20, 41, 49000),
+    (30, 970, 28, 53, 48500),
+    (40, 980, 38, 74, 48500)
+]
+
+data_100 = [
+    (5, 358, 14, 24, 35800),
+    (10, 508, 19, 39, 50800),
+    (15, 520, 26, 51, 52000),
+    (20, 500, 35, 67, 50000)
+]
+
+data_200 = [
+    (5, 263, 32, 169, 52600),
+    (10, 295, 55, 168, 59000),
+    (15, 300, 79, 175, 60000)
+]
+
 
 def plot_bao2_data(fig: go.Figure, data, tag):
     fig.add_trace(
@@ -200,12 +220,18 @@ plot_bao_tps_data(fig_tps, data_5, 'red', 'BAO 5')
 plot_bao_tps_data(fig_tps, data_10, 'green', 'BAO 10')
 plot_bao_tps_data(fig_tps, data_15, 'blue', 'BAO 15')
 plot_bao_tps_data(fig_tps, data_20, 'purple', 'BAO 20')
+plot_bao_tps_data(fig_tps, data_50, 'pink', 'BAO 50')
+plot_bao_tps_data(fig_tps, data_100, 'tan', 'BAO 100')
+plot_bao_tps_data(fig_tps, data_200, 'orange', 'BAO 200')
 
 plot_ao_tps_data(fig_tps, data_2[:10], 'black', 'BAO 2')
 plot_ao_tps_data(fig_tps, data_5, 'red', 'BAO 5')
 plot_ao_tps_data(fig_tps, data_10, 'green', 'BAO 10')
 plot_ao_tps_data(fig_tps, data_15, 'blue', 'BAO 15')
 plot_ao_tps_data(fig_tps, data_20, 'purple', 'BAO 20')
+plot_ao_tps_data(fig_tps, data_50, 'pink', 'BAO 50')
+plot_ao_tps_data(fig_tps, data_100, 'tan', 'BAO 100')
+plot_ao_tps_data(fig_tps, data_200, 'orange', 'BAO 200')
 
 # setup graph layout
 fig_tps.update_xaxes(title_text="Concurrent Client Num", dtick=10)
@@ -258,12 +284,18 @@ plot_avg_latency_data(fig_latency, data_5, 'red', 'BAO 5')
 plot_avg_latency_data(fig_latency, data_10, 'green', 'BAO 10')
 plot_avg_latency_data(fig_latency, data_15, 'blue', 'BAO 15')
 plot_avg_latency_data(fig_latency, data_20, 'purple', 'BAO 20')
+plot_avg_latency_data(fig_latency, data_50, 'pink', 'BAO 50')
+plot_avg_latency_data(fig_latency, data_100, 'tan', 'BAO 100')
+plot_avg_latency_data(fig_latency, data_200, 'orange', 'BAO 200')
 
 plot_p99_latency_data(fig_latency, data_2[:10], 'black', 'BAO 2')
 plot_p99_latency_data(fig_latency, data_5, 'red', 'BAO 5')
 plot_p99_latency_data(fig_latency, data_10, 'green', 'BAO 10')
 plot_p99_latency_data(fig_latency, data_15, 'blue', 'BAO 15')
 plot_p99_latency_data(fig_latency, data_20, 'purple', 'BAO 20')
+plot_p99_latency_data(fig_latency, data_50, 'pink', 'BAO 50')
+plot_p99_latency_data(fig_latency, data_100, 'tan', 'BAO 100')
+plot_p99_latency_data(fig_latency, data_200, 'orange', 'BAO 200')
 
 # setup graph layout
 fig_latency.update_xaxes(title_text="Concurrent Client Num", dtick=10)
@@ -285,8 +317,8 @@ fig_summary = make_subplots(specs=[[{"secondary_y": True}]])
 fig_summary.add_trace(
     go.Scatter(
         name=f'handle_command Latency in US',
-        x=[2, 5, 10, 15, 20],
-        y=[100, 150, 250, 350, 450],
+        x=[2, 5, 10, 15, 20, 50, 100, 200],
+        y=[100, 150, 250, 350, 450, 880, 1800, 3000],
         mode='markers+lines',
         line=dict(width=2),
         marker_size=8,
@@ -298,8 +330,8 @@ fig_summary.add_trace(
 fig_summary.add_trace(
     go.Scatter(
         name=f'peak BAO TPS',
-        x=[2, 5, 10, 15, 20],
-        y=[7600, 4600, 3200, 2400, 1800],
+        x=[2, 5, 10, 15, 20, 50, 100, 200],
+        y=[7600, 4600, 3200, 2400, 1800, 980, 520, 300],
         mode='markers+lines',
         line=dict(width=2),
         marker_size=8,

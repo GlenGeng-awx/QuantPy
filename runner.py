@@ -1,17 +1,18 @@
 from analysis_engine import AnalysisEngine
 from display_engine import DisplayEngine
 
-from util import load_data
 from conf import *
 
 STOCK_NAMES_INDEX = [
     IXIC,
     # SS_000300,
-    # SS_000001,
+    SS_000001,
     # GC_F,
 ]
 
 STOCK_NAMES_TIER_0 = [
+    IXIC,
+    SS_000001,
     TSLA,
     COIN,
     XPEV,
@@ -48,13 +49,11 @@ STOCK_NAMES_TIER_1 = [
 ]
 
 for stock_name in STOCK_NAMES_TIER_0:
-    stock_data = load_data(stock_name)
-
-    for (start_date, end_date) in get_period(stock_name):
-        ae = AnalysisEngine(stock_name, start_date, end_date)
+    for (start_date, end_date, interval) in get_period(stock_name):
+        ae = AnalysisEngine(stock_name, start_date, end_date, interval)
         ae.analyze()
 
-        de = DisplayEngine(ae, {})
+        de = DisplayEngine(ae)
         de.build_graph()
 
         de.display()

@@ -1,16 +1,18 @@
+import plotly.graph_objects as go
 import time
+
 from util import *
 from conf import *
 
 
 class MinMaxAnalysis:
-    def __init__(self, stock_name: str, stock_df: pd.DataFrame):
+    def __init__(self, stock_name: str, interval: str, stock_df: pd.DataFrame):
         self.stock_name = stock_name
         self.stock_df = stock_df.copy()  # copy to avoid warning
 
-        self.from_date = shrink_date_str(stock_df.iloc[0]['Date'])
-        self.to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
-        self.csv_file = f'./repo/{self.stock_name}_{self.from_date}_{self.to_date}.csv'
+        from_date = shrink_date_str(stock_df.iloc[0]['Date'])
+        to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
+        self.csv_file = f'./repo/{self.stock_name}_{from_date}_{to_date}_{interval}.csv'
 
     def add_column(self, column, dates: set):
         self.stock_df[column] = self.stock_df['Date'].isin(dates)
@@ -24,7 +26,6 @@ class MinMaxAnalysis:
 
         condition = self.stock_df['Date'].isin(local_max_price_2nd_dates)
         local_max_price_3rd_dates = local_max(self.stock_df[condition])
-        local_max_price_3rd_quasi_dates = local_max_quasi(self.stock_df[condition])
 
         condition = self.stock_df['Date'].isin(local_max_price_3rd_dates)
         local_max_price_4th_dates = local_max(self.stock_df[condition])
@@ -37,18 +38,9 @@ class MinMaxAnalysis:
 
         condition = self.stock_df['Date'].isin(local_min_price_2nd_dates)
         local_min_price_3rd_dates = local_min(self.stock_df[condition])
-        local_min_price_3rd_quasi_dates = local_min_quasi(self.stock_df[condition])
 
         condition = self.stock_df['Date'].isin(local_min_price_3rd_dates)
         local_min_price_4th_dates = local_min(self.stock_df[condition])
-
-        # range max price analysis
-        range_max_price_15_dates = range_max(self.stock_df, 15)
-        range_max_price_30_dates = range_max(self.stock_df, 30)
-
-        # range min price analysis
-        range_min_price_15_dates = range_min(self.stock_df, 15)
-        range_min_price_30_dates = range_min(self.stock_df, 30)
 
         # merge
         self.add_column(local_max_price_1st, local_max_price_1st_dates)
@@ -60,15 +52,6 @@ class MinMaxAnalysis:
         self.add_column(local_min_price_2nd, local_min_price_2nd_dates)
         self.add_column(local_min_price_3rd, local_min_price_3rd_dates)
         self.add_column(local_min_price_4th, local_min_price_4th_dates)
-
-        self.add_column(local_max_price_3rd_quasi, local_max_price_3rd_quasi_dates)
-        self.add_column(local_min_price_3rd_quasi, local_min_price_3rd_quasi_dates)
-
-        self.add_column(range_max_price_15, range_max_price_15_dates)
-        self.add_column(range_max_price_30, range_max_price_30_dates)
-
-        self.add_column(range_min_price_15, range_min_price_15_dates)
-        self.add_column(range_min_price_30, range_min_price_30_dates)
 
     def regularize_volume(self):
         volume = self.stock_df['volume']
@@ -133,11 +116,50 @@ class MinMaxAnalysis:
             self.to_csv()
 
         end_time = time.time()
-        print(f'MinMaxAnalysis on {self.stock_name} from {self.from_date} to {self.to_date} '
-              f'cost {(end_time - start_time) * 1000}ms')
+        print(f'MinMaxAnalysis on {self.stock_name} cost {(end_time - start_time) * 1000}ms')
 
     def to_csv(self):
         self.stock_df.to_csv(self.csv_file)
 
     def from_csv(self):
         self.stock_df = pd.read_csv(self.csv_file)
+
+
+class PriceMinMaxDisplay:
+    def __init__(self, fig: go.Figure, stock_df: pd.DataFrame):
+        self.fig = fig
+        self.stock_df = stock_df
+
+    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int):
+        condition = self.stock_df[filter_column]
+        x = self.stock_df[condition]['Date']
+        y = self.stock_df[condition][display_column]
+
+        self.fig.add_trace(
+            go.Scatter(
+                name=filter_column,
+                x=x,
+                y=y,
+                mode='markers',
+                marker=dict(
+                    color=color,
+                    size=size
+                ),
+                visible='legendonly',
+            ),
+            row=1, col=1,
+        )
+
+    def build_graph(self):
+        self.add_scatter(local_max_price_1st, 'close', 'red', 4)
+        self.add_scatter(local_min_price_1st, 'close', 'green', 4)
+
+        self.add_scatter(local_max_price_2nd, 'close', 'red', 4)
+        self.add_scatter(local_min_price_2nd, 'close', 'green', 4)
+
+        self.add_scatter(local_max_price_3rd, 'close', 'red', 4)
+        self.add_scatter(local_min_price_3rd, 'close', 'green', 4)
+
+        self.add_scatter(local_max_price_4th, 'close', 'red', 4)
+        self.add_scatter(local_min_price_4th, 'close', 'green', 4)
+

@@ -5,35 +5,33 @@ from analysis_engine import AnalysisEngine
 
 from util import *
 
-from price_min_max_display import PriceMinMaxDisplay
-from price_min_max_forest_display import PriceMinMaxForestDisplay
-from price_mountain_view_display import PriceMountainViewDisplay
-from price_trend_display import PriceTrendDisplay
-from price_box_display import PriceBoxDisplay
-from price_support_resistance_display import PriceSupportResistanceDisplay
+from min_max_analysis import PriceMinMaxDisplay
+from wave_analysis import WaveDisplay
+# from price_box_display import PriceBoxDisplay
 
 from volume_min_max_display import VolumeMinMaxDisplay
-from volume_mountain_view_display import VolumeMountainViewDisplay
-from volume_trend_display import VolumeTrendDisplay
+# from volume_mountain_view_display import VolumeMountainViewDisplay
+# from volume_trend_display import VolumeTrendDisplay
 
-from trading_record_display import TradingRecordDisplay
+# from trading_record_display import TradingRecordDisplay
 
 
 class DisplayEngine:
-    def __init__(self, analysis_engine: AnalysisEngine, display_conf: dict):
+    def __init__(self, analysis_engine: AnalysisEngine):
         self.stock_name = analysis_engine.stock_name
+        self.interval = analysis_engine.interval
+
         self.stock_df = analysis_engine.stock_df
         self.analysis_engine = analysis_engine
 
-        self.display_conf = display_conf
-
         from_date = shrink_date_str(self.stock_df.iloc[0]['Date'])
         to_date = shrink_date_str(self.stock_df.iloc[-1]['Date'])
-        self.title = f"{self.stock_name}: {from_date} to {to_date}, {self.stock_df.shape[0]} days"
+        self.title = (f"{self.stock_name}: {from_date} to {to_date}, "
+                      f"{self.stock_df.shape[0]} {'days' if self.interval == '1d' else 'hours'}")
 
         self.fig = None
 
-    def setup(self):
+    def setup_graph(self):
         self.fig = make_subplots(rows=2, cols=1,
                                  subplot_titles=("candle stick", "volume"),
                                  vertical_spacing=0.05,
@@ -41,10 +39,15 @@ class DisplayEngine:
                                  shared_xaxes=True,
                                  )
 
+        rangebreaks = [
+            dict(bounds=["sat", "mon"]),  # hide weekends
+        ]
+
+        if self.interval == '1h':
+            rangebreaks.append(dict(bounds=[16, 9], pattern="hour"))  # hide hours outside 9am-4pm
+
         self.fig.update_xaxes(
-            rangebreaks=[
-                dict(bounds=["sat", "mon"]),  # hide weekends
-            ]
+            rangebreaks=rangebreaks
         )
 
         # self.fig.update_xaxes(showspikes=True)
@@ -68,8 +71,8 @@ class DisplayEngine:
                 x=self.stock_df['Date'],
                 close=self.stock_df['close'],
                 open=self.stock_df['open'],
-                high=self.stock_df[high_k],
-                low=self.stock_df[low_k],
+                high=self.stock_df['high'],
+                low=self.stock_df['low'],
                 name="Candlesticks",
                 increasing_line_color='red',
                 decreasing_line_color='green',
@@ -83,27 +86,24 @@ class DisplayEngine:
                 name="close_price",
                 x=self.stock_df['Date'],
                 y=self.stock_df['close'],
-                line=dict(width=1, color='black'),
-                visible='legendonly',
+                line=dict(width=0.5, color='blue'),
+                # visible='legendonly',
             )
         )
 
     def build_graph(self):
-        self.setup()
+        self.setup_graph()
 
         self.add_candlestick()
+        WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        PriceMinMaxForestDisplay(self.fig, self.analysis_engine.price_min_max_forest_analysis).build_graph()
-        PriceMountainViewDisplay(self.fig, self.stock_df).build_graph()
-        PriceTrendDisplay(self.fig, self.stock_df).build_graph()
-        PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
-        PriceSupportResistanceDisplay(self.fig, self.analysis_engine.price_support_resistance_analysis).build_graph()
+        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
-        VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
+        # VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
+        # VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
 
-        TradingRecordDisplay(self.fig, self.stock_name).build_graph()
+        # TradingRecordDisplay(self.fig, self.stock_name).build_graph()
 
     def display(self):
         self.fig.show()

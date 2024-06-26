@@ -1,16 +1,16 @@
 import yfinance as yf
 import pandas as pd
 import os
-from conf import high_k, low_k, close_k
+from datetime import datetime
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
-pd.set_option('display.float_format', '{:.0f}'.format)
+pd.set_option('display.float_format', '{:.3f}'.format)
 
 
-def local_max(data: pd.DataFrame, column=high_k) -> set:
+def local_max(data: pd.DataFrame, column='close') -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0] - 1):
@@ -21,17 +21,7 @@ def local_max(data: pd.DataFrame, column=high_k) -> set:
     return hit_dates
 
 
-def local_max_quasi(data: pd.DataFrame, column=high_k) -> set:
-    hit_dates = set()
-
-    for pos in range(1, data.shape[0]):
-        if data.iloc[pos][column] > data.iloc[pos - 1][column]:
-            hit_dates.add(data.iloc[pos]["Date"])
-
-    return hit_dates
-
-
-def local_min(data: pd.DataFrame, column=low_k) -> set:
+def local_min(data: pd.DataFrame, column='close') -> set:
     hit_dates = set()
 
     for pos in range(1, data.shape[0] - 1):
@@ -42,56 +32,31 @@ def local_min(data: pd.DataFrame, column=low_k) -> set:
     return hit_dates
 
 
-def local_min_quasi(data: pd.DataFrame, column=low_k) -> set:
-    hit_dates = set()
-
-    for pos in range(1, data.shape[0]):
-        if data.iloc[pos][column] < data.iloc[pos - 1][column]:
-            hit_dates.add(data.iloc[pos]["Date"])
-
-    return hit_dates
-
-
-def range_max(data: pd.DataFrame, step=5) -> set:
-    hit_dates = set()
-
-    for pos in range(step, data.shape[0] - step):
-        if data.iloc[pos][high_k] == data.iloc[pos - step:pos + step][high_k].max():
-            hit_dates.add(data.iloc[pos]["Date"])
-
-    return hit_dates
-
-
-def range_min(data: pd.DataFrame, step=5) -> set:
-    hit_dates = set()
-
-    for pos in range(step, data.shape[0] - step):
-        if data.iloc[pos][low_k] == data.iloc[pos - step:pos + step][low_k].min():
-            hit_dates.add(data.iloc[pos]["Date"])
-
-    return hit_dates
-
-
-def max_between(data: pd.DataFrame, start_idx, end_idx, column=high_k) -> int:
+def max_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
     # max price in [start_idx, end_idx]
     print(f'max_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmax()
 
 
-def min_between(data: pd.DataFrame, start_idx, end_idx, column=low_k) -> int:
+def min_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
     # min price in [start_idx, end_idx]
     print(f'min_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmin()
 
 
-def load_data(symbol):
-    file_name = f'./data/{symbol}.csv'
+def load_data(symbol, interval):
+    """ interval is 1d or 1h """
+    file_name = f'./data/{symbol}_{interval}.csv'
+
+    start_date = '2015-01-01' if interval == '1d' else '2023-01-01'
+    end_date = datetime(datetime.now().year, 12, 31).strftime('%Y-%m-%d')
 
     if not os.path.exists(file_name):
-        print(f'load {symbol} from network')
+        print(f'load {symbol} {interval} from network')
         ticker = yf.Ticker(symbol)
 
-        df = ticker.history(start="2015-01-01", end="2024-12-31")
+        df = ticker.history(start=start_date, end=end_date, interval=interval)
+        df.index.name = 'Date'
         df.columns = df.columns.str.lower()
 
         df.to_csv(file_name)
