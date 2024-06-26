@@ -7,7 +7,7 @@ from util import *
 
 from min_max_analysis import PriceMinMaxDisplay
 from wave_analysis import WaveDisplay
-# from price_box_display import PriceBoxDisplay
+from box_display import BoxDisplay
 
 from volume_min_max_display import VolumeMinMaxDisplay
 # from volume_mountain_view_display import VolumeMountainViewDisplay
@@ -96,8 +96,8 @@ class DisplayEngine:
 
         self.add_candlestick()
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
+        BoxDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        # PriceBoxDisplay(self.fig, self.analysis_engine.price_box_analysis).build_graph()
 
         VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
         # VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()

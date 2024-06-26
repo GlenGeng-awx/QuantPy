@@ -10,8 +10,9 @@ class WaveAnalysisImpl:
         self.stock_df = stock_df
         self.condition = condition
 
-        self.wave_x = []
-        self.wave_y = []
+        self.wave_idx = []  # index
+        self.wave_x = []    # date
+        self.wave_y = []    # close
 
     def analyze(self):
         triggered = self.stock_df[self.condition].index.tolist()
@@ -19,6 +20,7 @@ class WaveAnalysisImpl:
         if len(triggered) <= 2:
             return
 
+        wave_idx = [triggered[0]]
         wave_x = [self.stock_df.loc[triggered[0]]['Date']]
         wave_y = [self.stock_df.loc[triggered[0]]['close']]
 
@@ -35,9 +37,11 @@ class WaveAnalysisImpl:
             candidate.sort()
 
             for idx in candidate:
+                wave_idx.append(idx)
                 wave_x.append(self.stock_df.loc[idx]['Date'])
                 wave_y.append(self.stock_df.loc[idx]['close'])
 
+        self.wave_idx = wave_idx
         self.wave_x = wave_x
         self.wave_y = wave_y
 

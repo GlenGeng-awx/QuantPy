@@ -1,16 +1,20 @@
 import plotly.graph_objects as go
-from price_box_analysis import PriceBoxAnalysis
+from wave_analysis import WaveAnalysisImpl, WaveAnalysis
 
 
-class PriceBoxDisplay:
-    def __init__(self, fig: go.Figure, analysis: PriceBoxAnalysis):
+class BoxDisplayImpl:
+    def __init__(self, fig: go.Figure, label: str, wave_analysis_impl: WaveAnalysisImpl):
         self.fig = fig
-        self.stock_df = analysis.stock_df
+        self.label = label
+
+        self.stock_df = wave_analysis_impl.stock_df
+        self.wave_idx = wave_analysis_impl.wave_idx
 
         # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
-        self.up_box = analysis.up_box
+        self.up_box = []
+
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
-        self.down_box = analysis.down_box
+        self.down_box = []
 
         self.x_of_up_box = []
         self.y_of_up_box = []
@@ -25,6 +29,25 @@ class PriceBoxDisplay:
         self.x_of_down_text = []
         self.y_of_down_text = []
         self.down_text = []
+
+    def build_box(self, from_idx, to_idx):
+        from_date = self.stock_df.loc[from_idx]['Date']
+        from_price = self.stock_df.loc[from_idx]['close']
+
+        to_date = self.stock_df.loc[to_idx]['Date']
+        to_price = self.stock_df.loc[to_idx]['close']
+
+        length = to_idx - from_idx
+        mid = (from_price + to_price) / 2
+
+        if from_price < to_price:
+            delta = to_price - from_price
+            pst = 100 * delta / from_price
+            self.up_box.append((from_idx, from_date, from_price, to_idx, to_date, to_price, length, delta, pst, mid))
+        else:
+            delta = from_price - to_price
+            pst = 100 * delta / from_price
+            self.down_box.append((from_idx, from_date, from_price, to_idx, to_date, to_price, length, delta, pst, mid))
 
     def add_up_box(self, from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid):
         # box
@@ -42,7 +65,7 @@ class PriceBoxDisplay:
         # label
         x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
         y = from_low
-        text = f'{length}D <br> {delta:.2f}$ <br> +{pst:.2f}%'
+        text = f'{length} <br> {delta:.2f}$ <br> +{pst:.2f}%'
 
         self.x_of_up_text.append(x)
         self.y_of_up_text.append(y)
@@ -64,13 +87,17 @@ class PriceBoxDisplay:
         # label
         x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
         y = from_high
-        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}D'
+        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}'
 
         self.x_of_down_text.append(x)
         self.y_of_down_text.append(y)
         self.down_text.append(text)
 
     def build_graph(self):
+        for idx in range(0, len(self.wave_idx) - 1):
+            from_idx, to_idx = self.wave_idx[idx], self.wave_idx[idx + 1]
+            self.build_box(from_idx, to_idx)
+
         for item in self.up_box:
             self.add_up_box(*item)
 
@@ -79,7 +106,7 @@ class PriceBoxDisplay:
 
         self.fig.add_trace(
             go.Scatter(
-                name='up box',
+                name=f'up box - {self.label}',
                 x=self.x_of_up_box,
                 y=self.y_of_up_box,
                 mode='lines',
@@ -90,7 +117,7 @@ class PriceBoxDisplay:
 
         self.fig.add_trace(
             go.Scatter(
-                name='up text',
+                name=f'up text - {self.label}',
                 x=self.x_of_up_text,
                 y=self.y_of_up_text,
                 text=self.up_text,
@@ -104,7 +131,7 @@ class PriceBoxDisplay:
 
         self.fig.add_trace(
             go.Scatter(
-                name='down box',
+                name=f'down box - {self.label}',
                 x=self.x_of_down_box,
                 y=self.y_of_down_box,
                 mode='lines',
@@ -115,7 +142,7 @@ class PriceBoxDisplay:
 
         self.fig.add_trace(
             go.Scatter(
-                name='down text',
+                name=f'down text - {self.label}',
                 x=self.x_of_down_text,
                 y=self.y_of_down_text,
                 text=self.down_text,
@@ -126,3 +153,13 @@ class PriceBoxDisplay:
                 visible='legendonly',
             )
         )
+
+
+class BoxDisplay:
+    def __init__(self, fig: go.Figure, wave_analysis: WaveAnalysis):
+        self.fig = fig
+        self.wave_analysis = wave_analysis
+
+    def build_graph(self):
+        BoxDisplayImpl(self.fig, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph()
+        BoxDisplayImpl(self.fig, 'wave_4th', self.wave_analysis.wave_4th).build_graph()
