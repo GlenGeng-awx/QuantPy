@@ -4,6 +4,7 @@ from conf import *
 # date, buy/sell/short, price, volume
 trading_records = {
     TSLA: [
+        ('2024-06-26', 'buy', 187.0, 3),
         ('2024-06-13', 'buy', 183.0, 1),
         ('2024-06-11', 'buy', 172.0, 1),
         ('2024-06-10', 'buy', 177.0, 1),
@@ -44,12 +45,14 @@ trading_records = {
     ],
 
     XPEV: [
+        ('2024-06-17', 'buy', 7.23, 140),
         ('2024-06-11', 'sell', 7.6, 100),
         ('2024-05-23', 'buy', 7.95, 60),
         ('2024-05-21', 'buy', 9.85, 55),
     ],
 
     MRNA: [
+        ('2024-06-26', 'buy', 121.89, 4),
         ('2024-06-11', 'buy', 149.5, 7),
         ('2024-06-06', 'short', 156.0, 7),
         ('2024-05-28', 'sell', 151.32, 9),
@@ -69,6 +72,8 @@ trading_records = {
     ],
 
     IQ: [
+        ('2024-06-21', 'sell', 3.83, 100),
+        ('2024-06-18', 'buy', 4, 125),
         ('2024-06-10', 'sell', 4.22, 120),
         ('2024-06-07', 'buy', 4.26, 120),
     ],
@@ -79,6 +84,7 @@ trading_records = {
     ],
 
     PLTR: [
+        ('2024-06-20', 'sell', 26.2, 5),
         ('2024-06-10', 'sell', 22.58, 15),
         ('2024-06-07', 'buy', 23.38, 20),
     ],
@@ -123,6 +129,8 @@ trading_records = {
     ],
 
     META: [
+        ('2024-06-25', 'buy', 510.07, 2),
+        ('2024-06-21', 'short', 492.80, 1),
         ('2024-06-05', 'buy', 495.51, 2),
         ('2024-05-07', 'short', 469.16, 1),
         ('2024-04-30', 'short', 439.00, 1),
@@ -139,6 +147,7 @@ trading_records = {
     ],
 
     ZM: [
+        ('2024-06-26', 'buy', 57.50, 20),
         ('2024-06-03', 'sell', 61.70, 16),
         ('2024-05-20', 'buy', 61.50, 8),
         ('2024-04-30', 'buy', 62.00, 8),
@@ -165,6 +174,8 @@ trading_records = {
     ],
 
     BA: [
+        ('2024-06-25', 'sell', 174.99, 6),
+        ('2024-06-18', 'buy', 174.33, 6),
         ('2024-05-13', 'sell', 179.14, 1),
         ('2024-05-06', 'sell', 182, 2),
         ('2024-04-30', 'buy', 172, 3),
@@ -211,9 +222,10 @@ trading_records = {
 
 
 class TradingRecordDisplay:
-    def __init__(self, fig: go.Figure, stock_name: str):
+    def __init__(self, fig: go.Figure, stock_name: str, interval: str):
         self.fig = fig
         self.stock_name = stock_name
+        self.interval = interval
 
     def add_scatter(self, category: str, color: str, size: int):
         records = trading_records.get(self.stock_name, [])
@@ -223,6 +235,9 @@ class TradingRecordDisplay:
 
         if len(x) == 0:
             return
+
+        if self.interval == '1h':
+            x = [date + ' 10:30:00-04:00' for date in x]
 
         self.fig.add_trace(
             go.Scatter(
@@ -240,6 +255,6 @@ class TradingRecordDisplay:
         )
 
     def build_graph(self):
-        self.add_scatter('buy', 'red', 8)
-        self.add_scatter('sell', 'green', 8)
-        self.add_scatter('short', 'black', 8)
+        self.add_scatter('buy', 'red', 4)
+        self.add_scatter('sell', 'green', 4)
+        self.add_scatter('short', 'black', 4)

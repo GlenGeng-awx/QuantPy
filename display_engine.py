@@ -5,6 +5,7 @@ from analysis_engine import AnalysisEngine
 from min_max_analysis import PriceMinMaxDisplay
 from wave_analysis import WaveDisplay
 from box_display import BoxDisplay
+from trading_record_display import TradingRecordDisplay
 
 from util import *
 from conf import *
@@ -126,6 +127,8 @@ class DisplayEngine:
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
 
         self.add_volume()
+
+        TradingRecordDisplay(self.fig, self.stock_name, self.interval).build_graph()
 
     def display(self):
         self.fig.show()
