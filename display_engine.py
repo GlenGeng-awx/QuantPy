@@ -2,18 +2,12 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from analysis_engine import AnalysisEngine
-
-from util import *
-
 from min_max_analysis import PriceMinMaxDisplay
 from wave_analysis import WaveDisplay
 from box_display import BoxDisplay
 
-from volume_min_max_display import VolumeMinMaxDisplay
-# from volume_mountain_view_display import VolumeMountainViewDisplay
-# from volume_trend_display import VolumeTrendDisplay
-
-# from trading_record_display import TradingRecordDisplay
+from util import *
+from conf import *
 
 
 class DisplayEngine:
@@ -62,7 +56,8 @@ class DisplayEngine:
             hovermode="x unified",
             hoverlabel=dict(
                 namelength=200
-            )
+            ),
+            # barmode='overlay'
         )
 
     def add_candlestick(self):
@@ -91,19 +86,46 @@ class DisplayEngine:
             )
         )
 
+    def add_volume_ma(self, column, color: str, size: float):
+        self.fig.add_trace(
+            go.Scatter(
+                name=column,
+                x=self.stock_df['Date'],
+                y=self.stock_df[column],
+                mode='lines',
+                line=dict(width=size, color=color),
+                visible='legendonly',
+            ),
+            row=2, col=1
+        )
+
+    def add_volume(self):
+        self.fig.add_trace(
+            go.Bar(
+                name="volume",
+                x=self.stock_df['Date'],
+                y=self.stock_df['volume_reg'],
+                marker_color='blue',
+                opacity=0.5,
+            ),
+            row=2, col=1
+        )
+
+        self.add_volume_ma(volume_ma_5, 'black', 1)
+        self.add_volume_ma(volume_ma_15, 'black', 1)
+        self.add_volume_ma(volume_ma_30, 'black', 1)
+        self.add_volume_ma(volume_ma_60, 'black', 1)
+
     def build_graph(self):
         self.setup_graph()
 
         self.add_candlestick()
+
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
         BoxDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
 
-        VolumeMinMaxDisplay(self.fig, self.stock_df).build_graph()
-        # VolumeMountainViewDisplay(self.fig, self.stock_df).build_graph()
-        # VolumeTrendDisplay(self.fig, self.stock_df).build_graph()
-
-        # TradingRecordDisplay(self.fig, self.stock_name).build_graph()
+        self.add_volume()
 
     def display(self):
         self.fig.show()
