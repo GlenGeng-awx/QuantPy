@@ -74,14 +74,14 @@ def default_period():
 
     date_0y_ago = datetime(current_date.year, 1, 1).strftime('%Y-%m-%d')
     date_1y_ago = datetime(current_date.year - 1, 1, 1).strftime('%Y-%m-%d')
-    date_2y_ago = datetime(current_date.year - 2, 1, 1).strftime('%Y-%m-%d')
+    date_5y_ago = datetime(current_date.year - 5, 1, 1).strftime('%Y-%m-%d')
 
     current_date = current_date.strftime('%Y-%m-%d')
 
     return [
         (date_0y_ago, current_date, '1h'),
         (date_1y_ago, current_date, '1d'),
-        (date_2y_ago, current_date, '1d'),
+        (date_5y_ago, current_date, '1wk'),
     ]
 
 

@@ -22,7 +22,7 @@ class DisplayEngine:
         from_date = shrink_date_str(self.stock_df.iloc[0]['Date'])
         to_date = shrink_date_str(self.stock_df.iloc[-1]['Date'])
         self.title = (f"{self.stock_name}: {from_date} to {to_date}, "
-                      f"{self.stock_df.shape[0]} {'days' if self.interval == '1d' else 'hours'}")
+                      f"{self.stock_df.shape[0]} {'days' if self.interval == '1d' else ('hours' if self.interval == '1h' else 'weeks')}")
 
         self.fig = None
 
