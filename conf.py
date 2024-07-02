@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # price
 local_max_price_1st = 'local_max_price_1st'
