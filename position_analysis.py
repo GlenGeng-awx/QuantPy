@@ -1,17 +1,16 @@
 import plotly.graph_objects as go
+from itertools import groupby
 
 from conf import *
-from util import load_data, shrink_date_str
+from util import load_data, calculate_next_n_workday
 from trading_record import TRADING_RECORDS
 
 INITIAL_POSITIONS = {
-    TSLA: -4,
     COIN: -1,
     BILI: 10,
 }
 
 INITIAL_COSTS = {
-    TSLA: -1000,
     COIN: -146,
     BILI: 116,
 }
@@ -40,11 +39,23 @@ class PositionAnalysis:
         self.start_date = start_date
         self.end_date = end_date
 
-        self.trading_records = TRADING_RECORDS[self.stock_name]
+        # [(date, [(date, action, price, volume), ...]), ...]
+        self.trading_records = []
 
         self.position_map = {}
         self.cost_map = {}
         self.revenue_map = {}
+
+    def prepare_trading_records(self):
+        trading_records = TRADING_RECORDS[self.stock_name]
+
+        trading_records = [(date, list(group)) for date, group in groupby(trading_records, key=lambda x: x[0])]
+        trading_records.sort(key=lambda x: x[0])
+
+        for date, group in trading_records:
+            print(f"{date}\t{group}")
+
+        self.trading_records = trading_records
 
     def calculate_position_and_cost(self):
         position = INITIAL_POSITIONS.get(self.stock_name, 0)
@@ -57,24 +68,29 @@ class PositionAnalysis:
             '2024-01-01': cost
         }
 
-        for date, action, price, volume in reversed(self.trading_records):
-            if action == 'buy':
-                position += volume
-                cost += price * volume
-            elif action == 'sell':
-                position -= volume
-                cost -= price * volume
-            elif action == 'short':
-                position -= volume
-                cost -= price * volume
+        for date, group in self.trading_records:
+            for _, action, price, volume in group:
+                if action == 'buy':
+                    position += volume
+                    cost += price * volume
+                elif action == 'sell':
+                    position -= volume
+                    cost -= price * volume
+                elif action == 'short':
+                    position -= volume
+                    cost -= price * volume
+                print(f"{date} {action} price={price} volume={volume} position={position}")
 
-            # current round of game is over, reset cost to 0
-            if position == 0:
-                cost = 0
-
+            print(f"---> {date} position={position} cost={cost}")
             position_map[date] = position
             cost_map[date] = cost
-            print(f"{date} {action} price={price} volume={volume} position={position}")
+
+            # position of EOD is 0, it is our real profit or loss
+            # current round of game is over, reset cost of tomorrow to 0
+            if position == 0:
+                cost = 0
+                next_date = calculate_next_n_workday(date, 1)
+                cost_map[next_date] = cost
 
         self.position_map = position_map
         self.cost_map = cost_map
@@ -123,6 +139,7 @@ class PositionAnalysis:
         )
 
     def analyze(self):
+        self.prepare_trading_records()
         self.calculate_position_and_cost()
         self.calculate_revenue()
         self.build_graph()
