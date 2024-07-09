@@ -1,10 +1,12 @@
 import plotly.graph_objects as go
 from wave_analysis import WaveAnalysisImpl, WaveAnalysis
+from util import interval_to_label
 
 
 class BoxDisplayImpl:
-    def __init__(self, fig: go.Figure, label: str, wave_analysis_impl: WaveAnalysisImpl):
+    def __init__(self, fig: go.Figure, interval, label: str, wave_analysis_impl: WaveAnalysisImpl):
         self.fig = fig
+        self.interval = interval
         self.label = label
 
         self.stock_df = wave_analysis_impl.stock_df
@@ -65,7 +67,7 @@ class BoxDisplayImpl:
         # label
         x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
         y = from_low
-        text = f'{length} <br> {delta:.2f}$ <br> +{pst:.2f}%'
+        text = f'{length}{interval_to_label(self.interval, abbr=True)} <br> {delta:.2f}$ <br> +{pst:.2f}%'
 
         self.x_of_up_text.append(x)
         self.y_of_up_text.append(y)
@@ -87,7 +89,7 @@ class BoxDisplayImpl:
         # label
         x = self.stock_df.loc[(from_idx + to_idx) // 2]['Date']
         y = from_high
-        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}'
+        text = f'-{pst:.2f}% <br> {delta:.2f}$ <br> {length}{interval_to_label(self.interval, abbr=True)}'
 
         self.x_of_down_text.append(x)
         self.y_of_down_text.append(y)
@@ -156,10 +158,12 @@ class BoxDisplayImpl:
 
 
 class BoxDisplay:
-    def __init__(self, fig: go.Figure, wave_analysis: WaveAnalysis):
+    def __init__(self, fig: go.Figure, interval: str, wave_analysis: WaveAnalysis):
         self.fig = fig
+        self.interval = interval
         self.wave_analysis = wave_analysis
 
     def build_graph(self):
-        BoxDisplayImpl(self.fig, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph()
-        BoxDisplayImpl(self.fig, 'wave_4th', self.wave_analysis.wave_4th).build_graph()
+        BoxDisplayImpl(self.fig, self.interval, 'wave_2nd', self.wave_analysis.wave_2nd).build_graph()
+        BoxDisplayImpl(self.fig, self.interval, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph()
+        BoxDisplayImpl(self.fig, self.interval, 'wave_4th', self.wave_analysis.wave_4th).build_graph()

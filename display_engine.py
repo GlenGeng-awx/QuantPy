@@ -22,7 +22,7 @@ class DisplayEngine:
         from_date = shrink_date_str(self.stock_df.iloc[0]['Date'])
         to_date = shrink_date_str(self.stock_df.iloc[-1]['Date'])
         self.title = (f"{self.stock_name}: {from_date} to {to_date}, "
-                      f"{self.stock_df.shape[0]} {'days' if self.interval == '1d' else ('hours' if self.interval == '1h' else 'weeks')}")
+                      f"{self.stock_df.shape[0]} {interval_to_label(self.interval)}")
 
         self.fig = None
 
@@ -123,7 +123,7 @@ class DisplayEngine:
         self.add_candlestick()
 
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
-        BoxDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
+        BoxDisplay(self.fig, self.interval, self.analysis_engine.wave_analysis).build_graph()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
 
         self.add_volume()

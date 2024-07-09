@@ -73,3 +73,13 @@ def shrink_date_str(date_str) -> str:
     # like "2024-06-06 00:00:00-05:00" -> "2024-06-06"
     return date_str.split()[0]
 
+
+def interval_to_label(interval: str, abbr=False):
+    if interval == '1h':
+        return 'hours' if not abbr else 'h'
+    elif interval == '1d':
+        return 'days' if not abbr else 'd'
+    elif interval == '1wk':
+        return 'weeks' if not abbr else 'w'
+    else:
+        return 'unknown'

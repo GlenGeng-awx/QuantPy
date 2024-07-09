@@ -17,12 +17,17 @@ class WaveAnalysisImpl:
     def analyze(self):
         triggered = self.stock_df[self.condition].index.tolist()
 
-        if len(triggered) <= 2:
+        if len(triggered) == 0:
             return
 
-        wave_idx = [triggered[0]]
-        wave_x = [self.stock_df.loc[triggered[0]]['Date']]
-        wave_y = [self.stock_df.loc[triggered[0]]['close']]
+        # handle tail
+        highest_idx = max_between(self.stock_df, triggered[-1], self.stock_df.index[-1])
+        lowest_idx = min_between(self.stock_df, triggered[-1], self.stock_df.index[-1])
+
+        triggered = list(set(triggered) | {highest_idx, lowest_idx})
+        triggered.sort()
+
+        wave_idx = set()
 
         for i in range(1, len(triggered)):
             prev_idx, curr_idx = triggered[i - 1], triggered[i]
@@ -30,16 +35,13 @@ class WaveAnalysisImpl:
             highest_idx = max_between(self.stock_df, prev_idx, curr_idx)
             lowest_idx = min_between(self.stock_df, prev_idx, curr_idx)
 
-            candidate = {prev_idx, curr_idx, highest_idx, lowest_idx}
-            candidate.discard(prev_idx)  # already in wave_x
+            wave_idx.update({prev_idx, curr_idx, highest_idx, lowest_idx})
 
-            candidate = list(candidate)
-            candidate.sort()
+        wave_idx = list(wave_idx)
+        wave_idx.sort()
 
-            for idx in candidate:
-                wave_idx.append(idx)
-                wave_x.append(self.stock_df.loc[idx]['Date'])
-                wave_y.append(self.stock_df.loc[idx]['close'])
+        wave_x = [self.stock_df.loc[idx]['Date'] for idx in wave_idx]
+        wave_y = [self.stock_df.loc[idx]['close'] for idx in wave_idx]
 
         self.wave_idx = wave_idx
         self.wave_x = wave_x

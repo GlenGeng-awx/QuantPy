@@ -6,10 +6,14 @@ from trading_record import TRADING_RECORDS
 
 INITIAL_POSITIONS = {
     TSLA: -4,
+    COIN: -1,
+    BILI: 10,
 }
 
 INITIAL_COSTS = {
     TSLA: -1000,
+    COIN: -146,
+    BILI: 116,
 }
 
 
@@ -152,6 +156,17 @@ stocks = [
     BEKE,
     BABA,
     IQ,
+    COIN,
+    JD,
+    PLTR,
+    RIVN,
+    META,
+    MNSO,
+    ZM,
+    BABA,
+    EDU,
+    BA,
+    PDD,
 ]
 
 start_date = '2024-01-01'

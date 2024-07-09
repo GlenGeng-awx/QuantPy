@@ -59,7 +59,8 @@ SNAP = "SNAP"
 EBAY = "EBAY"
 IQ = "IQ"
 
-HK_0700 = "0700.HK"
+HK_0700 = "0700.HK"   # Tencent
+HK_1211 = "1211.HK"   # BYD
 BABA = "BABA"
 JD = "JD"
 BEKE = "BEKE"
@@ -79,9 +80,9 @@ def default_period():
     current_date = current_date.strftime('%Y-%m-%d')
 
     return [
-        (date_0y_ago, current_date, '1h'),
+        # (date_0y_ago, current_date, '1h'),
         (date_1y_ago, current_date, '1d'),
-        (date_5y_ago, current_date, '1wk'),
+        # (date_5y_ago, current_date, '1wk'),
     ]
 
 
