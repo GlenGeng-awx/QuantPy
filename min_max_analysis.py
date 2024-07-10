@@ -113,7 +113,7 @@ class MinMaxAnalysis:
         else:
             self.analyze_price()
             self.analyze_volume()
-            self.to_csv()
+            # self.to_csv()
 
         end_time = time.time()
         print(f'MinMaxAnalysis on {self.stock_name} cost {(end_time - start_time) * 1000}ms')

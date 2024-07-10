@@ -119,7 +119,7 @@ class PositionAnalysis:
             revenue = gross - cost  # for both long and short
 
             revenue_map[date] = revenue
-            print(f"{date} position={position} close={close} gross={gross} cost={cost} revenue={revenue}")
+            print(f"{date} position={position} close={close:.2f} gross={gross:.2f} cost={cost} revenue={revenue:.2f}")
 
         self.revenue_map = revenue_map
 
