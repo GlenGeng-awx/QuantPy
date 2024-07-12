@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from wave_analysis import WaveAnalysisImpl, WaveAnalysis
+from .wave_analysis_and_display import WaveAnalysisImpl, WaveAnalysis
 from util import interval_to_label
 
 

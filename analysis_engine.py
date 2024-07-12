@@ -1,7 +1,6 @@
 from util import load_data
-from min_max_analysis import MinMaxAnalysis
-from wave_analysis import WaveAnalysis
-# from price_box_analysis import PriceBoxAnalysis
+from technical.min_max_analysis_and_display import MinMaxAnalysis
+from technical.wave_analysis_and_display import WaveAnalysis
 
 
 class AnalysisEngine:
@@ -31,5 +30,3 @@ class AnalysisEngine:
         self.wave_analysis = WaveAnalysis(self.stock_df)
         self.wave_analysis.analyze()
 
-        # self.price_box_analysis = PriceBoxAnalysis(self.stock_df)
-        # self.price_box_analysis.analyze()

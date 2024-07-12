@@ -2,12 +2,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from analysis_engine import AnalysisEngine
-from min_max_analysis import PriceMinMaxDisplay
-from wave_analysis import WaveDisplay
-from box_display import BoxDisplay
 from trading_record_display import TradingRecordDisplay
-from sr_display import SupportResistanceDisplay
-from ema import EMA
+
+from technical.min_max_analysis_and_display import PriceMinMaxDisplay
+from technical.wave_analysis_and_display import WaveDisplay
+from technical.box_display import BoxDisplay
+from technical.sr_display import SupportResistanceDisplay
+
+from statistical.ema import EMA
 
 from util import *
 from conf import *

@@ -18,16 +18,18 @@ class EMA:
         prev_ema = 0
 
         length = self.stock_df.shape[0]
-        for pos in range(period, length):
+        for pos in range(length):
             row = self.stock_df.iloc[pos]
             date, close = row['Date'], row['close']
 
             ema = close * coefficient + prev_ema * (1 - coefficient)
+            prev_ema = ema
+
+            if pos < period:
+                continue
 
             x.append(date)
             y.append(ema)
-
-            prev_ema = ema
 
         return x, y
 
