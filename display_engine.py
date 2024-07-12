@@ -6,6 +6,8 @@ from min_max_analysis import PriceMinMaxDisplay
 from wave_analysis import WaveDisplay
 from box_display import BoxDisplay
 from trading_record_display import TradingRecordDisplay
+from sr_display import SupportResistanceDisplay
+from ema import EMA
 
 from util import *
 from conf import *
@@ -122,6 +124,9 @@ class DisplayEngine:
 
         self.add_candlestick()
 
+        EMA(self.fig, self.stock_df).build_graph()
+
+        SupportResistanceDisplay(self.fig, self.stock_df).build_graph()
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
         BoxDisplay(self.fig, self.interval, self.analysis_engine.wave_analysis).build_graph()
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
