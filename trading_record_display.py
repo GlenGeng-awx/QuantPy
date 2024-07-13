@@ -3,10 +3,11 @@ from trading_record import TRADING_RECORDS
 
 
 class TradingRecordDisplay:
-    def __init__(self, fig: go.Figure, stock_name: str, interval: str):
+    def __init__(self, fig: go.Figure, stock_name: str, interval: str, visible: bool = False):
         self.fig = fig
         self.stock_name = stock_name
         self.interval = interval
+        self.visible = visible
 
     def add_scatter(self, category: str, color: str, size: int):
         records = TRADING_RECORDS.get(self.stock_name, [])
@@ -30,7 +31,7 @@ class TradingRecordDisplay:
                     color=color,
                     size=size
                 ),
-                visible='legendonly',
+                visible='legendonly' if not self.visible else None,
             ),
             row=1, col=1,
         )

@@ -1,9 +1,11 @@
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from itertools import groupby
 
 from conf import *
 from util import load_data, calculate_next_n_workday
 from trading_record import TRADING_RECORDS
+from trading_record_display import TradingRecordDisplay
 
 INITIAL_POSITIONS = {
     COIN: -1,
@@ -31,13 +33,13 @@ def get_value_by_date(some_map, date):
 
 
 class PositionAnalysis:
-    def __init__(self, fig: go.Figure, stock_name: str, start_date: str, end_date: str):
-        self.fig = fig
-
+    def __init__(self, stock_name: str, start_date: str, end_date: str):
         self.stock_name = stock_name
-
         self.start_date = start_date
         self.end_date = end_date
+
+        self.fig = None
+        self.stock_df = None
 
         # [(date, [(date, action, price, volume), ...]), ...]
         self.trading_records = []
@@ -46,7 +48,7 @@ class PositionAnalysis:
         self.cost_map = {}
         self.revenue_map = {}
 
-    def prepare_trading_records(self):
+    def calculate_trading_records(self):
         trading_records = TRADING_RECORDS[self.stock_name]
 
         trading_records = [(date, list(group)) for date, group in groupby(trading_records, key=lambda x: x[0])]
@@ -102,14 +104,10 @@ class PositionAnalysis:
         return get_value_by_date(self.cost_map, date)
 
     def calculate_revenue(self):
-        stock_df = load_data(self.stock_name, '1d')
-
-        condition = (stock_df['Date'] >= self.start_date) & (stock_df['Date'] <= self.end_date)
-        stock_df = stock_df[condition]
-
         revenue_map = {}
-        for pos in range(stock_df.shape[0]):
-            row = stock_df.iloc[pos]
+
+        for pos in range(self.stock_df.shape[0]):
+            row = self.stock_df.iloc[pos]
             date, close = row['Date'], row['close']
 
             position = self.get_position_by_date(date)
@@ -123,46 +121,79 @@ class PositionAnalysis:
 
         self.revenue_map = revenue_map
 
+    def setup_graph(self):
+        self.fig = make_subplots(rows=3, cols=1,
+                                 subplot_titles=("Close", "Revenue", "Position"),
+                                 vertical_spacing=0.05,
+                                 row_heights=[0.4, 0.3, 0.3],
+                                 shared_xaxes=True,
+                                 )
+
+        self.fig.update_xaxes(
+            rangebreaks=[
+                dict(bounds=["sat", "mon"]),  # hide weekends
+            ],
+        )
+
+        self.fig.update_layout(
+            title=f"{self.stock_name} - Position Analysis",
+            hovermode="x unified",
+            hoverlabel=dict(namelength=200),
+            height=1000,
+        )
+
     def build_graph(self):
+        self.fig.add_trace(
+            go.Scatter(
+                name="close_price",
+                x=self.stock_df['Date'],
+                y=self.stock_df['close'],
+                line=dict(width=0.5, color='blue'),
+            )
+        )
+
+        TradingRecordDisplay(self.fig, self.stock_name, '1d', True).build_graph()
+
         revenue_list = list(self.revenue_map.items())
         revenue_list.sort(key=lambda x: x[0])
 
         self.fig.add_trace(
             go.Scatter(
-                name=self.stock_name,
+                name='revenue',
                 x=[x for x, _ in revenue_list],
                 y=[y for _, y in revenue_list],
                 mode='lines + markers',
                 line=dict(width=1),
                 marker=dict(size=3),
-            )
+            ),
+            row=2, col=1,
+        )
+
+        self.fig.add_trace(
+            go.Scatter(
+                name='position',
+                x=[date for date, _ in revenue_list],
+                y=[self.get_position_by_date(date) for date, _ in revenue_list],
+                mode='lines + markers',
+                line=dict(width=1),
+                marker=dict(size=3),
+            ),
+            row=3, col=1,
         )
 
     def analyze(self):
-        self.prepare_trading_records()
+        stock_df = load_data(self.stock_name, '1d')
+
+        condition = (stock_df['Date'] >= self.start_date) & (stock_df['Date'] <= self.end_date)
+        self.stock_df = stock_df[condition]
+
+        self.calculate_trading_records()
         self.calculate_position_and_cost()
         self.calculate_revenue()
+
+        self.setup_graph()
         self.build_graph()
-
-
-def setup_graph():
-    fig = go.Figure()
-
-    fig.update_xaxes(
-        rangebreaks=[
-            dict(bounds=["sat", "mon"]),  # hide weekends
-        ],
-    )
-
-    fig.update_layout(
-        title="Position Analysis",
-        xaxis_title="Date",
-        yaxis_title="Revenue",
-        hovermode="x unified",
-        hoverlabel=dict(namelength=200),
-    )
-
-    return fig
+        self.fig.show()
 
 
 stocks = [
@@ -189,9 +220,5 @@ stocks = [
 start_date = '2024-01-01'
 end_date = datetime.now().strftime('%Y-%m-%d')
 
-fig = setup_graph()
-
 for stock in stocks:
-    PositionAnalysis(fig, stock, start_date, end_date).analyze()
-
-fig.show()
+    PositionAnalysis(stock, start_date, end_date).analyze()
