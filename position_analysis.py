@@ -8,12 +8,10 @@ from trading_record import TRADING_RECORDS
 from trading_record_display import TradingRecordDisplay
 
 INITIAL_POSITIONS = {
-    COIN: -1,
     BILI: 10,
 }
 
 INITIAL_COSTS = {
-    COIN: -146,
     BILI: 116,
 }
 
@@ -122,10 +120,10 @@ class PositionAnalysis:
         self.revenue_map = revenue_map
 
     def setup_graph(self):
-        self.fig = make_subplots(rows=3, cols=1,
-                                 subplot_titles=("Close", "Revenue", "Position"),
+        self.fig = make_subplots(rows=4, cols=1,
+                                 subplot_titles=("Close", "Volume", "Revenue", "Position"),
                                  vertical_spacing=0.05,
-                                 row_heights=[0.4, 0.3, 0.3],
+                                 row_heights=[4, 2, 3, 2],
                                  shared_xaxes=True,
                                  )
 
@@ -139,7 +137,7 @@ class PositionAnalysis:
             title=f"{self.stock_name} - Position Analysis",
             hovermode="x unified",
             hoverlabel=dict(namelength=200),
-            height=1000,
+            height=1250,
         )
 
     def build_graph(self):
@@ -154,6 +152,17 @@ class PositionAnalysis:
 
         TradingRecordDisplay(self.fig, self.stock_name, '1d', True).build_graph()
 
+        self.fig.add_trace(
+            go.Bar(
+                name="volume",
+                x=self.stock_df['Date'],
+                y=self.stock_df['volume'],
+                marker_color='blue',
+                opacity=0.5,
+            ),
+            row=2, col=1
+        )
+
         revenue_list = list(self.revenue_map.items())
         revenue_list.sort(key=lambda x: x[0])
 
@@ -166,7 +175,7 @@ class PositionAnalysis:
                 line=dict(width=1),
                 marker=dict(size=3),
             ),
-            row=2, col=1,
+            row=3, col=1,
         )
 
         self.fig.add_trace(
@@ -178,7 +187,7 @@ class PositionAnalysis:
                 line=dict(width=1),
                 marker=dict(size=3),
             ),
-            row=3, col=1,
+            row=4, col=1,
         )
 
     def analyze(self):
@@ -215,6 +224,10 @@ stocks = [
     EDU,
     BA,
     PDD,
+    BILI,
+    LI,
+    SNAP,
+    CPNG,
 ]
 
 start_date = '2024-01-01'
