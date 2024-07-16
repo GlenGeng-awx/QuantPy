@@ -15,7 +15,7 @@ def local_max(data: pd.DataFrame, column='close') -> set:
 
     for pos in range(1, data.shape[0] - 1):
         if (data.iloc[pos][column] > data.iloc[pos - 1][column]
-                and data.iloc[pos][column] > data.iloc[pos + 1][column]):
+                and data.iloc[pos][column] >= data.iloc[pos + 1][column]):
             hit_dates.add(data.iloc[pos]["Date"])
 
     return hit_dates
@@ -26,7 +26,7 @@ def local_min(data: pd.DataFrame, column='close') -> set:
 
     for pos in range(1, data.shape[0] - 1):
         if (data.iloc[pos][column] < data.iloc[pos - 1][column]
-                and data.iloc[pos][column] < data.iloc[pos + 1][column]):
+                and data.iloc[pos][column] <= data.iloc[pos + 1][column]):
             hit_dates.add(data.iloc[pos]["Date"])
 
     return hit_dates
