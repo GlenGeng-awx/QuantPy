@@ -43,7 +43,7 @@ class EMA:
                 y=y,
                 mode='lines',
                 line=dict(width=0.75, color=color),
-                visible='legendonly',
+                visible='legendonly' if period != 20 else None,
             )
         )
 

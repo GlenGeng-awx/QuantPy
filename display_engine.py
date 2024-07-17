@@ -10,6 +10,7 @@ from technical.box_display import BoxDisplay
 from technical.sr_display import SupportResistanceDisplay
 
 from statistical.ema import EMA
+from statistical.bband import BBand
 
 from util import *
 from conf import *
@@ -127,6 +128,7 @@ class DisplayEngine:
         self.add_candlestick()
 
         EMA(self.fig, self.stock_df).build_graph()
+        BBand(self.fig, self.stock_df).build_graph()
 
         SupportResistanceDisplay(self.fig, self.stock_df).build_graph()
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
