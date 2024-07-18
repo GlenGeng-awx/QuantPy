@@ -41,7 +41,7 @@ class BBand:
             y_upper.append(up)
             y_lower.append(down)
 
-            print(f'{date}, mid={mean:.3f}, std={std:.3f}, up={up:.3f}, down={down:.3f}')
+            # print(f'{date}, mid={mean:.3f}, std={std:.3f}, up={up:.3f}, down={down:.3f}')
 
         return indices, x, y, y_upper, y_lower
 

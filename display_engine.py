@@ -11,6 +11,7 @@ from technical.sr_display import SupportResistanceDisplay
 
 from statistical.ema import EMA
 from statistical.bband import BBand
+from statistical.macd import MACD
 
 from util import *
 from conf import *
@@ -32,10 +33,10 @@ class DisplayEngine:
         self.fig = None
 
     def setup_graph(self):
-        self.fig = make_subplots(rows=2, cols=1,
-                                 subplot_titles=("candle stick", "volume"),
-                                 vertical_spacing=0.05,
-                                 row_heights=[0.6, 0.4],
+        self.fig = make_subplots(rows=3, cols=1,
+                                 subplot_titles=("candle stick", "volume", "macd"),
+                                 vertical_spacing=0.04,
+                                 row_heights=[0.6, 0.3, 0.3],
                                  shared_xaxes=True,
                                  )
 
@@ -63,7 +64,8 @@ class DisplayEngine:
             hoverlabel=dict(
                 namelength=200
             ),
-            # barmode='overlay'
+            # barmode='overlay',
+            height=1000,
         )
 
     def add_candlestick(self):
@@ -129,6 +131,7 @@ class DisplayEngine:
 
         EMA(self.fig, self.stock_df).build_graph()
         BBand(self.fig, self.stock_df).build_graph()
+        MACD(self.fig, self.stock_df).build_graph()
 
         SupportResistanceDisplay(self.fig, self.stock_df).build_graph()
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
