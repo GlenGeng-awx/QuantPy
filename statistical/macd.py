@@ -30,7 +30,10 @@ class MACD:
 
         return dif, dea, histogram
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
+        if not enable:
+            return
+
         dif, dea, histogram = self.calculate_macd()
 
         dif = dif.iloc[self.slow:]
@@ -47,7 +50,7 @@ class MACD:
                 mode='lines',
                 line=dict(width=0.75, color='black'),
             ),
-            row=3, col=1
+            row=2, col=1
         )
 
         self.fig.add_trace(
@@ -58,7 +61,7 @@ class MACD:
                 mode='lines',
                 line=dict(width=0.75, color='red'),
             ),
-            row=3, col=1
+            row=2, col=1
         )
 
         red_bar = histogram[histogram >= 0]
@@ -71,7 +74,7 @@ class MACD:
                 marker_color='red',
                 opacity=0.5,
             ),
-            row=3, col=1
+            row=2, col=1
         )
 
         green_bar = histogram[histogram < 0]
@@ -84,5 +87,5 @@ class MACD:
                 marker_color='green',
                 opacity=0.5,
             ),
-            row=3, col=1
+            row=2, col=1
         )

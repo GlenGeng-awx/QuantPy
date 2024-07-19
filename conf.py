@@ -1,5 +1,3 @@
-from datetime import datetime
-
 # price
 local_max_price_1st = 'local_max_price_1st'
 local_max_price_2nd = 'local_max_price_2nd'
@@ -68,24 +66,4 @@ MNSO = "MNSO"
 BILI = "BILI"
 EDU = "EDU"
 CPNG = "CPNG"
-
-
-def default_period():
-    current_date = datetime.now()
-
-    date_0y_ago = datetime(current_date.year, 1, 1).strftime('%Y-%m-%d')
-    date_1y_ago = datetime(current_date.year - 1, 1, 1).strftime('%Y-%m-%d')
-    date_5y_ago = datetime(current_date.year - 5, 1, 1).strftime('%Y-%m-%d')
-
-    current_date = current_date.strftime('%Y-%m-%d')
-
-    return [
-        # (date_0y_ago, current_date, '1h'),
-        (date_1y_ago, current_date, '1d'),
-        # (date_5y_ago, current_date, '1wk'),
-    ]
-
-
-def get_period(_stock_name):
-    return default_period()
 

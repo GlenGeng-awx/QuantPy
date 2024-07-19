@@ -63,5 +63,5 @@ def zigzag_retrace(zigzag_from, zigzag_a, zigzag_b):
               f"\tup_2618={up_2618:.2f}\n")
 
 
-wave_retrace(266, 395)
-zigzag_retrace(359.8, 381.6, 370.8)
+# wave_retrace(266, 395)
+zigzag_retrace(165, 124, 142)

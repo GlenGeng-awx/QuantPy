@@ -11,7 +11,7 @@ class SupportResistanceDisplay:
         self.start_date = stock_df['Date'].iloc[0]
         self.end_date = stock_df['Date'].iloc[-1]
 
-    def build_graph_impl(self, condition: pd.Series, name: str, color: str):
+    def build_graph_impl(self, condition: pd.Series, name: str, color: str, enable=False):
         x = []
         y = []
 
@@ -26,13 +26,13 @@ class SupportResistanceDisplay:
                 y=y,
                 mode='lines',
                 line=dict(width=0.75, color=color),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
-    def build_graph(self):
-        self.build_graph_impl(self.stock_df[local_min_price_3rd], 'support levels - 3rd', 'green')
-        self.build_graph_impl(self.stock_df[local_max_price_3rd], 'resistance levels - 3rd', 'red')
+    def build_graph(self, enable=False):
+        self.build_graph_impl(self.stock_df[local_min_price_3rd], 'support levels - 3rd', 'green', enable)
+        self.build_graph_impl(self.stock_df[local_max_price_3rd], 'resistance levels - 3rd', 'red', enable)
 
         self.build_graph_impl(self.stock_df[local_min_price_4th], 'support levels - 4th', 'green')
         self.build_graph_impl(self.stock_df[local_max_price_4th], 'resistance levels - 4th', 'red')

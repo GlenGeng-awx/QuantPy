@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from trading_record import TRADING_RECORDS
+from .trading_record import TRADING_RECORDS
 
 
 class TradingRecordDisplay:

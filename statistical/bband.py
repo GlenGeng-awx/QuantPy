@@ -45,7 +45,7 @@ class BBand:
 
         return indices, x, y, y_upper, y_lower
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
         _, x, y, y_upper, y_lower = self.calculate_bband()
 
         self.fig.add_trace(
@@ -55,7 +55,7 @@ class BBand:
                 y=y_upper,
                 mode='lines',
                 line=dict(width=0.75, color='red'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -66,7 +66,7 @@ class BBand:
                 y=y,
                 mode='lines',
                 line=dict(width=0.75, color='black'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -77,6 +77,6 @@ class BBand:
                 y=y_lower,
                 mode='lines',
                 line=dict(width=0.75, color='green'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )

@@ -1,11 +1,12 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from itertools import groupby
+from datetime import datetime
 
 from conf import *
 from util import load_data, calculate_next_n_workday
-from trading_record import TRADING_RECORDS
-from trading_record_display import TradingRecordDisplay
+from .trading_record import TRADING_RECORDS
+from .trading_record_display import TradingRecordDisplay
 
 INITIAL_POSITIONS = {
     BILI: 10,

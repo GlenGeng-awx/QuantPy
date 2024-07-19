@@ -85,7 +85,7 @@ class WaveDisplay:
         self.fig = fig
         self.wave_analysis = wave_analysis
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
         wave_1st = self.wave_analysis.wave_1st
 
         self.fig.add_trace(
@@ -118,7 +118,7 @@ class WaveDisplay:
                 x=wave_3rd.wave_x,
                 y=wave_3rd.wave_y,
                 line=dict(width=1, color='black'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 

@@ -95,7 +95,7 @@ class BoxDisplayImpl:
         self.y_of_down_text.append(y)
         self.down_text.append(text)
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
         for idx in range(0, len(self.wave_idx) - 1):
             from_idx, to_idx = self.wave_idx[idx], self.wave_idx[idx + 1]
             self.build_box(from_idx, to_idx)
@@ -113,7 +113,7 @@ class BoxDisplayImpl:
                 y=self.y_of_up_box,
                 mode='lines',
                 line=dict(width=1, color='red', dash="dot",),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -127,7 +127,7 @@ class BoxDisplayImpl:
                 textfont=dict(
                     color="red",
                 ),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -138,7 +138,7 @@ class BoxDisplayImpl:
                 y=self.y_of_down_box,
                 mode='lines',
                 line=dict(width=1, color='green', dash="dot",),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -152,7 +152,7 @@ class BoxDisplayImpl:
                 textfont=dict(
                     color="green",
                 ),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -163,7 +163,7 @@ class BoxDisplay:
         self.interval = interval
         self.wave_analysis = wave_analysis
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
         BoxDisplayImpl(self.fig, self.interval, 'wave_2nd', self.wave_analysis.wave_2nd).build_graph()
-        BoxDisplayImpl(self.fig, self.interval, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph()
+        BoxDisplayImpl(self.fig, self.interval, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph(enable)
         BoxDisplayImpl(self.fig, self.interval, 'wave_4th', self.wave_analysis.wave_4th).build_graph()

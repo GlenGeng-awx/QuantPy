@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from analysis_engine import AnalysisEngine
-from trading_record_display import TradingRecordDisplay
+from trading.trading_record_display import TradingRecordDisplay
 
 from technical.min_max_analysis_and_display import PriceMinMaxDisplay
 from technical.wave_analysis_and_display import WaveDisplay
@@ -33,10 +33,9 @@ class DisplayEngine:
         self.fig = None
 
     def setup_graph(self):
-        self.fig = make_subplots(rows=3, cols=1,
-                                 subplot_titles=("candle stick", "volume", "macd"),
-                                 vertical_spacing=0.04,
-                                 row_heights=[0.6, 0.3, 0.3],
+        self.fig = make_subplots(rows=2, cols=1,
+                                 vertical_spacing=0.05,
+                                 row_heights=[0.6, 0.3],
                                  shared_xaxes=True,
                                  )
 
@@ -65,10 +64,9 @@ class DisplayEngine:
                 namelength=200
             ),
             # barmode='overlay',
-            height=1000,
         )
 
-    def add_candlestick(self):
+    def add_candlestick(self, enable_candlestick=False, enable_close_price=True):
         self.fig.add_trace(
             go.Candlestick(
                 x=self.stock_df['Date'],
@@ -80,7 +78,7 @@ class DisplayEngine:
                 increasing_line_color='red',
                 decreasing_line_color='green',
                 line=dict(width=0.5),
-                visible='legendonly',
+                visible=None if enable_candlestick else 'legendonly',
             )
         )
 
@@ -90,7 +88,7 @@ class DisplayEngine:
                 x=self.stock_df['Date'],
                 y=self.stock_df['close'],
                 line=dict(width=0.5, color='blue'),
-                # visible='legendonly',
+                visible=None if enable_close_price else 'legendonly',
             )
         )
 
@@ -107,38 +105,65 @@ class DisplayEngine:
             row=2, col=1
         )
 
-    def add_volume(self):
-        self.fig.add_trace(
-            go.Bar(
-                name="volume",
-                x=self.stock_df['Date'],
-                y=self.stock_df['volume_reg'],
-                marker_color='blue',
-                opacity=0.5,
-            ),
-            row=2, col=1
-        )
+    def add_volume(self, enable_volume_raw=False, enable_volume_reg=False):
+        if enable_volume_reg:
+            self.fig.add_trace(
+                go.Bar(
+                    name="volume_reg",
+                    x=self.stock_df['Date'],
+                    y=self.stock_df['volume_reg'],
+                    marker_color='blue',
+                    opacity=0.5,
+                ),
+                row=2, col=1
+            )
 
-        self.add_volume_ma(volume_ma_5, 'black', 1)
-        self.add_volume_ma(volume_ma_15, 'black', 1)
-        self.add_volume_ma(volume_ma_30, 'black', 1)
-        self.add_volume_ma(volume_ma_60, 'black', 1)
+            self.add_volume_ma(volume_ma_5, 'black', 1)
+            self.add_volume_ma(volume_ma_15, 'black', 1)
+            self.add_volume_ma(volume_ma_30, 'black', 1)
+            self.add_volume_ma(volume_ma_60, 'black', 1)
 
-    def build_graph(self):
+        if enable_volume_raw:
+            self.fig.add_trace(
+                go.Bar(
+                    name="volume",
+                    x=self.stock_df['Date'],
+                    y=self.stock_df['volume'],
+                    marker_color='blue',
+                    opacity=0.5,
+                ),
+                row=2, col=1
+            )
+
+    def build_graph(self,
+                    enable_candlestick=False,
+                    enable_close_price=False,
+                    # statistical
+                    enable_ema=False,
+                    enable_bband=False,
+                    enable_macd=False,
+                    # technical
+                    enable_sr=False,
+                    enable_wave=False,
+                    enable_box=False,
+                    # volume
+                    enable_volume_raw=False,
+                    enable_volume_reg=False,
+                    ):
         self.setup_graph()
 
-        self.add_candlestick()
+        self.add_candlestick(enable_candlestick, enable_close_price)
 
-        EMA(self.fig, self.stock_df).build_graph()
-        BBand(self.fig, self.stock_df).build_graph()
-        MACD(self.fig, self.stock_df).build_graph()
+        EMA(self.fig, self.stock_df).build_graph(enable_ema)
+        BBand(self.fig, self.stock_df).build_graph(enable_bband)
+        MACD(self.fig, self.stock_df).build_graph(enable_macd)
 
-        SupportResistanceDisplay(self.fig, self.stock_df).build_graph()
-        WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph()
-        BoxDisplay(self.fig, self.interval, self.analysis_engine.wave_analysis).build_graph()
+        SupportResistanceDisplay(self.fig, self.stock_df).build_graph(enable_sr)
+        WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph(enable_wave)
+        BoxDisplay(self.fig, self.interval, self.analysis_engine.wave_analysis).build_graph(enable_box)
         PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
 
-        self.add_volume()
+        self.add_volume(enable_volume_raw, enable_volume_reg)
 
         TradingRecordDisplay(self.fig, self.stock_name, self.interval).build_graph()
 

@@ -27,7 +27,7 @@ class EMA:
 
         self.smoother = 2
 
-    def build_graph_impl(self, period: int, color: str):
+    def build_graph_impl(self, period: int, color: str, enable=False):
         ema = calculate_ema(self.stock_df['close'], period)
         ema = ema.iloc[period:]
 
@@ -40,11 +40,11 @@ class EMA:
                 y=ema,
                 mode='lines',
                 line=dict(width=0.75, color=color),
-                visible='legendonly' if period != 20 else None,
+                visible=None if enable else 'legendonly',
             )
         )
 
-    def build_graph(self):
-        self.build_graph_impl(5, 'black')
-        self.build_graph_impl(10, 'orange')
-        self.build_graph_impl(20, 'green')
+    def build_graph(self, enable=False):
+        self.build_graph_impl(5, 'black')   # always disable
+        self.build_graph_impl(10, 'orange', enable)
+        self.build_graph_impl(20, 'green', enable)
