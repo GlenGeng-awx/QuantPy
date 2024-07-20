@@ -126,11 +126,12 @@ class MinMaxAnalysis:
 
 
 class PriceMinMaxDisplay:
-    def __init__(self, fig: go.Figure, stock_df: pd.DataFrame):
+    def __init__(self, fig: go.Figure, interval, stock_df: pd.DataFrame):
         self.fig = fig
+        self.interval = interval
         self.stock_df = stock_df
 
-    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int):
+    def add_scatter(self, filter_column: str, display_column: str, color: str, size: int, enable=False):
         condition = self.stock_df[filter_column]
         x = self.stock_df[condition]['Date']
         y = self.stock_df[condition][display_column]
@@ -145,21 +146,24 @@ class PriceMinMaxDisplay:
                     color=color,
                     size=size
                 ),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             ),
             row=1, col=1,
         )
 
-    def build_graph(self):
+    def build_graph(self, enable=False):
         self.add_scatter(local_max_price_1st, 'close', 'red', 4)
         self.add_scatter(local_min_price_1st, 'close', 'green', 4)
 
         self.add_scatter(local_max_price_2nd, 'close', 'red', 4)
         self.add_scatter(local_min_price_2nd, 'close', 'green', 4)
 
-        self.add_scatter(local_max_price_3rd, 'close', 'red', 4)
-        self.add_scatter(local_min_price_3rd, 'close', 'green', 4)
+        self.add_scatter(local_max_price_3rd, 'close', 'red', 4,
+                         True if enable and self.interval == '1d' else False)
+        self.add_scatter(local_min_price_3rd, 'close', 'green', 4,
+                         True if enable and self.interval == '1d' else False)
 
-        self.add_scatter(local_max_price_4th, 'close', 'red', 4)
-        self.add_scatter(local_min_price_4th, 'close', 'green', 4)
-
+        self.add_scatter(local_max_price_4th, 'close', 'red', 4,
+                         True if enable and self.interval == '1h' else False)
+        self.add_scatter(local_min_price_4th, 'close', 'green', 4,
+                         True if enable and self.interval == '1h' else False)

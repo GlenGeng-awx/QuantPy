@@ -124,7 +124,7 @@ class PositionAnalysis:
         self.fig = make_subplots(rows=4, cols=1,
                                  subplot_titles=("Close", "Volume", "Revenue", "Position"),
                                  vertical_spacing=0.05,
-                                 row_heights=[4, 2, 3, 2],
+                                 row_heights=[5, 3, 2, 2],
                                  shared_xaxes=True,
                                  )
 
@@ -138,7 +138,7 @@ class PositionAnalysis:
             title=f"{self.stock_name} - Position Analysis",
             hovermode="x unified",
             hoverlabel=dict(namelength=200),
-            height=1250,
+            height=1000,
         )
 
     def build_graph(self):
@@ -192,6 +192,10 @@ class PositionAnalysis:
         )
 
     def analyze(self):
+        if self.stock_name not in TRADING_RECORDS:
+            print(f"{self.stock_name} has no trading records")
+            return
+
         stock_df = load_data(self.stock_name, '1d')
 
         condition = (stock_df['Date'] >= self.start_date) & (stock_df['Date'] <= self.end_date)
@@ -206,33 +210,33 @@ class PositionAnalysis:
         self.fig.show()
 
 
-stocks = [
-    TSLA,
-    MRNA,
-    XPEV,
-    SNOW,
-    BEKE,
-    BABA,
-    IQ,
-    COIN,
-    JD,
-    PLTR,
-    RIVN,
-    META,
-    MNSO,
-    ZM,
-    BABA,
-    EDU,
-    BA,
-    PDD,
-    BILI,
-    LI,
-    SNAP,
-    CPNG,
-]
-
-start_date = '2024-01-01'
-end_date = datetime.now().strftime('%Y-%m-%d')
-
-for stock in stocks:
-    PositionAnalysis(stock, start_date, end_date).analyze()
+# stocks = [
+#     TSLA,
+#     MRNA,
+#     XPEV,
+#     SNOW,
+#     BEKE,
+#     BABA,
+#     IQ,
+#     COIN,
+#     JD,
+#     PLTR,
+#     RIVN,
+#     META,
+#     MNSO,
+#     ZM,
+#     BABA,
+#     EDU,
+#     BA,
+#     PDD,
+#     BILI,
+#     LI,
+#     SNAP,
+#     CPNG,
+# ]
+#
+# start_date = '2024-01-01'
+# end_date = datetime.now().strftime('%Y-%m-%d')
+#
+# for stock in stocks:
+#     PositionAnalysis(stock, start_date, end_date).analyze()

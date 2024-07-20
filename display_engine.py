@@ -12,6 +12,7 @@ from technical.sr_display import SupportResistanceDisplay
 from statistical.ema import EMA
 from statistical.bband import BBand
 from statistical.macd import MACD
+from statistical.rsi import RSI
 
 from util import *
 from conf import *
@@ -64,6 +65,7 @@ class DisplayEngine:
                 namelength=200
             ),
             # barmode='overlay',
+            height=1000,
         )
 
     def add_candlestick(self, enable_candlestick=False, enable_close_price=True):
@@ -142,10 +144,12 @@ class DisplayEngine:
                     enable_ema=False,
                     enable_bband=False,
                     enable_macd=False,
+                    enable_rsi=False,
                     # technical
                     enable_sr=False,
                     enable_wave=False,
                     enable_box=False,
+                    enable_min_max=False,
                     # volume
                     enable_volume_raw=False,
                     enable_volume_reg=False,
@@ -157,11 +161,12 @@ class DisplayEngine:
         EMA(self.fig, self.stock_df).build_graph(enable_ema)
         BBand(self.fig, self.stock_df).build_graph(enable_bband)
         MACD(self.fig, self.stock_df).build_graph(enable_macd)
+        RSI(self.fig, self.stock_df).build_graph(enable_rsi)
 
-        SupportResistanceDisplay(self.fig, self.stock_df).build_graph(enable_sr)
+        SupportResistanceDisplay(self.fig, self.interval, self.stock_df).build_graph(enable_sr)
         WaveDisplay(self.fig, self.analysis_engine.wave_analysis).build_graph(enable_wave)
         BoxDisplay(self.fig, self.interval, self.analysis_engine.wave_analysis).build_graph(enable_box)
-        PriceMinMaxDisplay(self.fig, self.stock_df).build_graph()
+        PriceMinMaxDisplay(self.fig, self.interval, self.stock_df).build_graph(enable_min_max)
 
         self.add_volume(enable_volume_raw, enable_volume_reg)
 
