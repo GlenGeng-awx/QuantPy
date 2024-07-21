@@ -56,8 +56,8 @@ class RSI:
         self.build_graph_impl(14, 'black', True)
         self.build_graph_impl(21, 'orange')
 
-        self.fig.add_hline(y=80, line_dash='dot', line_color='red')
-        self.fig.add_hline(y=70, line_dash='dot', line_color='red')
+        self.fig.add_hline(y=80, line_dash='dot', line_color='red', row=2, col=1)
+        self.fig.add_hline(y=70, line_dash='dot', line_color='red', row=2, col=1)
 
-        self.fig.add_hline(y=30, line_dash='dot', line_color='green')
-        self.fig.add_hline(y=20, line_dash='dot', line_color='green')
+        self.fig.add_hline(y=30, line_dash='dot', line_color='green', row=2, col=1)
+        self.fig.add_hline(y=20, line_dash='dot', line_color='green', row=2, col=1)

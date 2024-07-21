@@ -59,7 +59,7 @@ class MACD:
                 x=x,
                 y=dea,
                 mode='lines',
-                line=dict(width=0.75, color='red'),
+                line=dict(width=0.75, color='orange'),
             ),
             row=2, col=1
         )

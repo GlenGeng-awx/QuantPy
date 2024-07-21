@@ -18,8 +18,9 @@ STOCK_NAMES_TIER_0 = [
     # IXIC,
     # SS_000001,
     # SS_000300,
-    TSLA,
+    # TSLA,
     # MRNA,
+    CPNG,
     # SNOW,
     # IQ,
     # JD,
@@ -77,7 +78,7 @@ def default_period():
     current_date = current_date.strftime('%Y-%m-%d')
 
     return [
-        # (date_0y_ago, current_date, '1h'),
+        (date_0y_ago, current_date, '1h'),
         (date_1y_ago, current_date, '1d'),
         # (date_5y_ago, current_date, '1wk'),
     ]

@@ -94,6 +94,13 @@ class DisplayEngine:
             )
         )
 
+        last_close = self.stock_df['close'].iloc[-1]
+        self.fig.add_hline(y=last_close,
+                           line_dash='dot',
+                           line_color='black',
+                           line_width=1,
+                           row=1, col=1)
+
     def add_volume_ma(self, column, color: str, size: float):
         self.fig.add_trace(
             go.Scatter(
