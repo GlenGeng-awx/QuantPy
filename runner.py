@@ -7,20 +7,20 @@ from trading.position_analysis import PositionAnalysis
 from conf import *
 
 STOCK_NAMES_INDEX = [
-    IXIC,
-    SS_000300,
-    SS_000001,
+    # IXIC,
+    # SS_000300,
+    # SS_000001,
     GC_F,
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # XPEV,
     # IXIC,
     # SS_000001,
     # SS_000300,
-    # TSLA,
+    # XPEV,
+    TSLA,
     # MRNA,
-    CPNG,
+    # CPNG,
     # SNOW,
     # IQ,
     # JD,
@@ -33,6 +33,8 @@ STOCK_NAMES_TIER_0 = [
     # BA,
     # BILI,
     # PDD,
+    # HK_0700,
+    # FUTU,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -132,5 +134,5 @@ for stock_name in STOCK_NAMES_TIER_0:
             de.display()
 
         elif interval == '1h':
-            de.build_graph(enable_close_price=True, enable_macd=True, enable_sr=True, enable_min_max=True)
+            de.build_graph(enable_close_price=True, enable_rsi=True, enable_sr=True, enable_min_max=True)
             de.display()

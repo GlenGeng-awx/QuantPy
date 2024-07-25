@@ -34,13 +34,13 @@ def local_min(data: pd.DataFrame, column='close') -> set:
 
 def max_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
     # max price in [start_idx, end_idx]
-    print(f'max_between(start_idx={start_idx}, end_idx={end_idx})')
+    # print(f'max_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmax()
 
 
 def min_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
     # min price in [start_idx, end_idx]
-    print(f'min_between(start_idx={start_idx}, end_idx={end_idx})')
+    # print(f'min_between(start_idx={start_idx}, end_idx={end_idx})')
     return data.loc[start_idx:end_idx][column].idxmin()
 
 

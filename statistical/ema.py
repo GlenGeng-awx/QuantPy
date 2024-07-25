@@ -6,10 +6,14 @@ def calculate_ema(s: pd.Series, period: int, smoother: int = 2) -> pd.Series:
     indices = []
     y = []
 
-    prev_ema = 0
     coefficient = smoother / (1 + period)  # 2 / (1 + n)
+    prev_ema = s.iloc[:period].mean()
 
-    for idx, value in s.items():
+    for idx, value in s.iloc[:period].items():
+        indices.append(idx)
+        y.append(prev_ema)
+
+    for idx, value in s[period:].items():
         ema = value * coefficient + prev_ema * (1 - coefficient)
         prev_ema = ema
 

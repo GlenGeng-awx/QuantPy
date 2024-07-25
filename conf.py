@@ -66,4 +66,4 @@ MNSO = "MNSO"
 BILI = "BILI"
 EDU = "EDU"
 CPNG = "CPNG"
-
+FUTU = "FUTU"
