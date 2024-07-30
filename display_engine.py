@@ -3,6 +3,7 @@ from plotly.subplots import make_subplots
 
 from analysis_engine import AnalysisEngine
 from trading.trading_record_display import TradingRecordDisplay
+from trading.ratio_analysis_and_display import RatioForcastDisplay
 
 from technical.min_max_analysis_and_display import PriceMinMaxDisplay
 from technical.wave_analysis_and_display import WaveDisplay
@@ -101,7 +102,7 @@ class DisplayEngine:
                            line_width=1,
                            row=1, col=1)
 
-    def add_volume_ma(self, column, color: str, size: float):
+    def add_volume_ma(self, column, color: str, size: float, enable=False):
         self.fig.add_trace(
             go.Scatter(
                 name=column,
@@ -109,7 +110,7 @@ class DisplayEngine:
                 y=self.stock_df[column],
                 mode='lines',
                 line=dict(width=size, color=color),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             ),
             row=2, col=1
         )
@@ -127,7 +128,7 @@ class DisplayEngine:
                 row=2, col=1
             )
 
-            self.add_volume_ma(volume_ma_5, 'black', 1)
+            self.add_volume_ma(volume_ma_5, 'black', 1, True)
             self.add_volume_ma(volume_ma_15, 'black', 1)
             self.add_volume_ma(volume_ma_30, 'black', 1)
             self.add_volume_ma(volume_ma_60, 'black', 1)
@@ -157,6 +158,7 @@ class DisplayEngine:
                     enable_wave=False,
                     enable_box=False,
                     enable_min_max=False,
+                    enable_ratio=False,
                     # volume
                     enable_volume_raw=False,
                     enable_volume_reg=False,
@@ -178,6 +180,7 @@ class DisplayEngine:
         self.add_volume(enable_volume_raw, enable_volume_reg)
 
         TradingRecordDisplay(self.fig, self.stock_name, self.interval).build_graph()
+        RatioForcastDisplay(self.fig, self.stock_df, self.stock_name, enable_ratio).build_graph()
 
     def display(self):
         self.fig.show()

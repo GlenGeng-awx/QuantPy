@@ -210,33 +210,35 @@ class PositionAnalysis:
         self.fig.show()
 
 
-# stocks = [
-#     TSLA,
-#     MRNA,
-#     XPEV,
-#     SNOW,
-#     BEKE,
-#     BABA,
-#     IQ,
-#     COIN,
-#     JD,
-#     PLTR,
-#     RIVN,
-#     META,
-#     MNSO,
-#     ZM,
-#     BABA,
-#     EDU,
-#     BA,
-#     PDD,
-#     BILI,
-#     LI,
-#     SNAP,
-#     CPNG,
-# ]
-#
-# start_date = '2024-01-01'
-# end_date = datetime.now().strftime('%Y-%m-%d')
-#
-# for stock in stocks:
-#     PositionAnalysis(stock, start_date, end_date).analyze()
+if __name__ == '__main__':
+
+    stocks = [
+        TSLA,
+        MRNA,
+        XPEV,
+        SNOW,
+        BEKE,
+        BABA,
+        IQ,
+        COIN,
+        JD,
+        PLTR,
+        RIVN,
+        META,
+        MNSO,
+        ZM,
+        BABA,
+        EDU,
+        BA,
+        PDD,
+        BILI,
+        LI,
+        SNAP,
+        CPNG,
+    ]
+
+    start_date = '2024-01-01'
+    end_date = datetime.now().strftime('%Y-%m-%d')
+
+    for stock in stocks:
+        PositionAnalysis(stock, start_date, end_date).analyze()

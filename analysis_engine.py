@@ -16,6 +16,8 @@ class AnalysisEngine:
         self.wave_analysis = None
         self.price_box_analysis = None
 
+        print(f"AnalysisEngine: {stock_name} {from_date}~{to_date} with interval {interval}")
+
     def analyze(self):
         stock_data = load_data(self.stock_name, self.interval)
 

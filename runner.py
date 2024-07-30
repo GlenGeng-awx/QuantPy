@@ -17,24 +17,25 @@ STOCK_NAMES_TIER_0 = [
     # IXIC,
     # SS_000001,
     # SS_000300,
+    # TSLA,
+    # META,
+    # HK_0700,
+    MRNA,
+    # BILI,
     # XPEV,
-    TSLA,
-    # MRNA,
-    # CPNG,
+    CPNG,
     # SNOW,
-    # IQ,
+    IQ,
     # JD,
     # BEKE,
     # RIVN,
-    # META,
     # MNSO,
     # ZM,
     # BABA,
     # BA,
-    # BILI,
     # PDD,
-    # HK_0700,
     # FUTU,
+    # COIN,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -82,7 +83,7 @@ def default_period():
     return [
         (date_0y_ago, current_date, '1h'),
         (date_1y_ago, current_date, '1d'),
-        # (date_5y_ago, current_date, '1wk'),
+        (date_5y_ago, current_date, '1wk'),
     ]
 
 
@@ -109,30 +110,40 @@ for stock_name in STOCK_NAMES_TIER_0:
             de.build_graph(enable_close_price=True, enable_volume_reg=True)
             de.display()
 
-            # close + volume reg + sr + min/max
-            de.build_graph(enable_close_price=True, enable_volume_reg=True, enable_sr=True, enable_min_max=True)
+            # close + volume reg + sr + min/max + ratio
+            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+                           enable_sr=True, enable_min_max=True, enable_ratio=True)
             de.display()
 
-            # close + rsi + wave 3rd
-            de.build_graph(enable_close_price=True, enable_rsi=True, enable_wave=True)
+            # close + volume reg + wave 3rd + ratio
+            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+                           enable_wave=True, enable_ratio=True)
             de.display()
 
             # close + volume reg + box 3rd
-            de.build_graph(enable_close_price=True, enable_volume_reg=True, enable_box=True)
+            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+                           enable_box=True)
             de.display()
 
-            # close + rsi + ema 10/20
-            de.build_graph(enable_close_price=True, enable_rsi=True, enable_ema=True)
-            de.display()
-
-            # close + rsi + bb
-            de.build_graph(enable_close_price=True, enable_rsi=True, enable_bband=True)
-            de.display()
-
-            # close + macd
-            de.build_graph(enable_close_price=True, enable_macd=True)
-            de.display()
+            # # close + rsi + ema 10/20
+            # de.build_graph(enable_close_price=True, enable_rsi=True, enable_ema=True)
+            # de.display()
+            #
+            # # close + rsi + bb
+            # de.build_graph(enable_close_price=True, enable_rsi=True, enable_bband=True)
+            # de.display()
+            #
+            # # close + macd
+            # de.build_graph(enable_close_price=True, enable_macd=True)
+            # de.display()
 
         elif interval == '1h':
-            de.build_graph(enable_close_price=True, enable_rsi=True, enable_sr=True, enable_min_max=True)
+            de.build_graph(enable_close_price=True, enable_rsi=True,
+                           enable_sr=True, enable_min_max=True)
+            de.display()
+
+        elif interval == '1wk':
+            # close + volume reg + wave 3rd + ratio
+            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+                           enable_wave=True, enable_ratio=True)
             de.display()
