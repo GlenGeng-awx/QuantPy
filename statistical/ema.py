@@ -1,46 +1,47 @@
 import pandas as pd
 import plotly.graph_objects as go
 
+EMA_5 = 'ema_5'
+EMA_10 = 'ema_10'
+EMA_20 = 'ema_20'
+
 
 def calculate_ema(s: pd.Series, period: int, smoother: int = 2) -> pd.Series:
-    indices = []
     y = []
 
     coefficient = smoother / (1 + period)  # 2 / (1 + n)
     prev_ema = s.iloc[:period].mean()
 
-    for idx, value in s.iloc[:period].items():
-        indices.append(idx)
-        y.append(prev_ema)
+    for pos in range(len(s)):
+        if pos < period:
+            y.append(prev_ema)
+            continue
 
-    for idx, value in s[period:].items():
-        ema = value * coefficient + prev_ema * (1 - coefficient)
+        ema = s.iloc[pos] * coefficient + prev_ema * (1 - coefficient)
         prev_ema = ema
 
-#        print(f'idx={idx}, ema{period}={ema:.3f}')
-        indices.append(idx)
         y.append(ema)
 
-    return pd.Series(y, index=indices)
+    return pd.Series(y, index=s.index)
 
 
 class EMA:
-    def __init__(self, fig: go.Figure, stock_df: pd.DataFrame):
-        self.fig = fig
+    def __init__(self, stock_df: pd.DataFrame):
         self.stock_df = stock_df
-
         self.smoother = 2
 
-    def build_graph_impl(self, period: int, color: str, enable=False):
-        ema = calculate_ema(self.stock_df['close'], period)
-        ema = ema.iloc[period:]
+        stock_df[EMA_5] = calculate_ema(stock_df['close'], 5)
+        stock_df[EMA_10] = calculate_ema(stock_df['close'], 10)
+        stock_df[EMA_20] = calculate_ema(stock_df['close'], 20)
 
-        x = [self.stock_df.loc[idx]['Date'] for idx in ema.index]
+    def _build_graph(self, fig: go.Figure, ema_type: str, color: str, enable=False):
+        ema = self.stock_df[ema_type]
+        dates = self.stock_df.loc[ema.index]['Date']
 
-        self.fig.add_trace(
+        fig.add_trace(
             go.Scatter(
-                name=f'EMA-{period}',
-                x=x,
+                name=f'{ema_type.replace("_", "-").upper()}',
+                x=dates,
                 y=ema,
                 mode='lines',
                 line=dict(width=0.75, color=color),
@@ -48,7 +49,7 @@ class EMA:
             )
         )
 
-    def build_graph(self, enable=False):
-        self.build_graph_impl(5, 'black')   # always disable
-        self.build_graph_impl(10, 'orange', enable)
-        self.build_graph_impl(20, 'green', enable)
+    def build_graph(self, fig: go.Figure, enable=False):
+        self._build_graph(fig, EMA_5, 'black')  # always disable
+        self._build_graph(fig, EMA_10, 'orange', enable)
+        self._build_graph(fig, EMA_20, 'green')

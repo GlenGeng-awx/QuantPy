@@ -1,20 +1,20 @@
+import pandas as pd
 import plotly.graph_objects as go
-from .wave_analysis_and_display import WaveAnalysisImpl, WaveAnalysis
+
+from .wave import Wave
 from util import interval_to_label
 
 
-class BoxDisplayImpl:
-    def __init__(self, fig: go.Figure, interval, label: str, wave_analysis_impl: WaveAnalysisImpl):
-        self.fig = fig
+class BoxImpl:
+    def __init__(self, stock_df: pd.DataFrame, wave_idx: list, interval: str, label: str):
+        self.stock_df = stock_df
+        self.wave_idx = wave_idx
+
         self.interval = interval
         self.label = label
 
-        self.stock_df = wave_analysis_impl.stock_df
-        self.wave_idx = wave_analysis_impl.wave_idx
-
         # [(from_idx, from_date, from_low, to_idx, to_date, to_high, length, delta, pst, mid), ...]
         self.up_box = []
-
         # [(from_idx, from_date, from_high, to_idx, to_date, to_low, length, delta, pst, mid), ...]
         self.down_box = []
 
@@ -32,7 +32,17 @@ class BoxDisplayImpl:
         self.y_of_down_text = []
         self.down_text = []
 
-    def build_box(self, from_idx, to_idx):
+        for idx in range(len(self.wave_idx) - 1):
+            from_idx, to_idx = self.wave_idx[idx], self.wave_idx[idx + 1]
+            self.fill_box(from_idx, to_idx)
+
+        for item in self.up_box:
+            self.add_up_box(*item)
+
+        for item in self.down_box:
+            self.add_down_box(*item)
+
+    def fill_box(self, from_idx, to_idx):
         from_date = self.stock_df.loc[from_idx]['Date']
         from_price = self.stock_df.loc[from_idx]['close']
 
@@ -95,18 +105,8 @@ class BoxDisplayImpl:
         self.y_of_down_text.append(y)
         self.down_text.append(text)
 
-    def build_graph(self, enable=False):
-        for idx in range(0, len(self.wave_idx) - 1):
-            from_idx, to_idx = self.wave_idx[idx], self.wave_idx[idx + 1]
-            self.build_box(from_idx, to_idx)
-
-        for item in self.up_box:
-            self.add_up_box(*item)
-
-        for item in self.down_box:
-            self.add_down_box(*item)
-
-        self.fig.add_trace(
+    def build_graph(self, fig: go.Figure, enable=False):
+        fig.add_trace(
             go.Scatter(
                 name=f'up box - {self.label}',
                 x=self.x_of_up_box,
@@ -117,7 +117,7 @@ class BoxDisplayImpl:
             )
         )
 
-        self.fig.add_trace(
+        fig.add_trace(
             go.Scatter(
                 name=f'up text - {self.label}',
                 x=self.x_of_up_text,
@@ -131,7 +131,7 @@ class BoxDisplayImpl:
             )
         )
 
-        self.fig.add_trace(
+        fig.add_trace(
             go.Scatter(
                 name=f'down box - {self.label}',
                 x=self.x_of_down_box,
@@ -142,7 +142,7 @@ class BoxDisplayImpl:
             )
         )
 
-        self.fig.add_trace(
+        fig.add_trace(
             go.Scatter(
                 name=f'down text - {self.label}',
                 x=self.x_of_down_text,
@@ -157,13 +157,12 @@ class BoxDisplayImpl:
         )
 
 
-class BoxDisplay:
-    def __init__(self, fig: go.Figure, interval: str, wave_analysis: WaveAnalysis):
-        self.fig = fig
-        self.interval = interval
-        self.wave_analysis = wave_analysis
+class Box:
+    def __init__(self, stock_df: pd.DataFrame, wave: Wave):
+        self.stock_df = stock_df
+        self.wave = wave
 
-    def build_graph(self, enable=False):
-        BoxDisplayImpl(self.fig, self.interval, 'wave_2nd', self.wave_analysis.wave_2nd).build_graph()
-        BoxDisplayImpl(self.fig, self.interval, 'wave_3rd', self.wave_analysis.wave_3rd).build_graph(enable)
-        BoxDisplayImpl(self.fig, self.interval, 'wave_4th', self.wave_analysis.wave_4th).build_graph()
+    def build_graph(self, fig: go.Figure, interval: str, enable=False):
+        BoxImpl(self.stock_df, self.wave.wave_2nd[0], interval, 'wave_2nd').build_graph(fig)
+        BoxImpl(self.stock_df, self.wave.wave_3rd[0], interval, 'wave_3rd').build_graph(fig, enable)
+        BoxImpl(self.stock_df, self.wave.wave_4th[0], interval, 'wave_4th').build_graph(fig)
