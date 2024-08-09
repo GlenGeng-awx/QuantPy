@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from analysis_engine import AnalysisEngine
-from display_engine import DisplayEngine
+from base_engine import BaseEngine
 from trading.position_analysis import PositionAnalysis
 
 from conf import *
@@ -23,9 +22,9 @@ STOCK_NAMES_TIER_0 = [
     MRNA,
     # BILI,
     # XPEV,
-    CPNG,
+    # CPNG,
     # SNOW,
-    IQ,
+    # IQ,
     # JD,
     # BEKE,
     # RIVN,
@@ -96,54 +95,51 @@ for stock_name in STOCK_NAMES_TIER_0:
     PositionAnalysis(stock_name, '2024-01-01', datetime.now().strftime('%Y-%m-%d')).analyze()
 
     for (start_date, end_date, interval) in get_period(stock_name):
-        ae = AnalysisEngine(stock_name, start_date, end_date, interval)
-        ae.analyze()
-
-        de = DisplayEngine(ae)
+        be = BaseEngine(stock_name, start_date, end_date, interval)
 
         if interval == '1d':
             # candle stick + volume raw
-            de.build_graph(enable_candlestick=True, enable_volume_raw=True)
-            de.display()
+            be.build_graph(enable_candlestick=True, enable_volume_raw=True)
+            be.display()
 
             # close + volume reg
-            de.build_graph(enable_close_price=True, enable_volume_reg=True)
-            de.display()
+            be.build_graph(enable_close_price=True, enable_volume_reg=True)
+            be.display()
 
             # close + volume reg + sr + min/max + ratio
-            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+            be.build_graph(enable_close_price=True, enable_volume_reg=True,
                            enable_sr=True, enable_min_max=True, enable_ratio=True)
-            de.display()
+            be.display()
 
             # close + volume reg + wave 3rd + ratio
-            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+            be.build_graph(enable_close_price=True, enable_volume_reg=True,
                            enable_wave=True, enable_ratio=True)
-            de.display()
+            be.display()
 
             # close + volume reg + box 3rd
-            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+            be.build_graph(enable_close_price=True, enable_volume_reg=True,
                            enable_box=True)
-            de.display()
+            be.display()
 
-            # # close + rsi + ema 10/20
-            # de.build_graph(enable_close_price=True, enable_rsi=True, enable_ema=True)
-            # de.display()
-            #
-            # # close + rsi + bb
-            # de.build_graph(enable_close_price=True, enable_rsi=True, enable_bband=True)
-            # de.display()
-            #
-            # # close + macd
-            # de.build_graph(enable_close_price=True, enable_macd=True)
-            # de.display()
+            # close + rsi + ema 10/20
+            be.build_graph(enable_close_price=True, enable_rsi=True, enable_ema=True)
+            be.display()
+
+            # close + rsi + bb
+            be.build_graph(enable_close_price=True, enable_rsi=True, enable_bband=True)
+            be.display()
+
+            # close + macd
+            be.build_graph(enable_close_price=True, enable_macd=True)
+            be.display()
 
         elif interval == '1h':
-            de.build_graph(enable_close_price=True, enable_rsi=True,
+            be.build_graph(enable_close_price=True, enable_rsi=True,
                            enable_sr=True, enable_min_max=True)
-            de.display()
+            be.display()
 
         elif interval == '1wk':
             # close + volume reg + wave 3rd + ratio
-            de.build_graph(enable_close_price=True, enable_volume_reg=True,
+            be.build_graph(enable_close_price=True, enable_volume_reg=True,
                            enable_wave=True, enable_ratio=True)
-            de.display()
+            be.display()
