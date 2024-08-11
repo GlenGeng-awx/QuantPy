@@ -65,5 +65,5 @@ class BBand:
 
     def build_graph(self, fig: go.Figure, enable=False):
         self._build_graph(fig, BBAND_UP, 'red', enable)
-        self._build_graph(fig, BBAND_MID, 'black', enable)
+        self._build_graph(fig, BBAND_MID, 'black', enable=False)
         self._build_graph(fig, BBAND_DOWN, 'green', enable)

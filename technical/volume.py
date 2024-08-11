@@ -75,6 +75,7 @@ class Volume:
                     y=self.stock_df[VOLUME_REG],
                     marker_color='blue',
                     opacity=0.5,
+                    visible='legendonly',
                 ),
                 row=2, col=1
             )

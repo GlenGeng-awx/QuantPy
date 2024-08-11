@@ -32,6 +32,39 @@ class Price:
             )
         )
 
+        fig.add_trace(
+            go.Scatter(
+                name="close_price_spot",
+                x=self.stock_df['Date'],
+                y=self.stock_df['close'],
+                mode="markers",
+                marker=dict(size=2, color='blue'),
+                visible=None if enable_close_price else 'legendonly',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name="high_price_spot",
+                x=self.stock_df['Date'],
+                y=self.stock_df['high'],
+                mode="markers",
+                marker=dict(size=2, color='red'),
+                visible=None if enable_close_price else 'legendonly',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name="low_price_spot",
+                x=self.stock_df['Date'],
+                y=self.stock_df['low'],
+                mode="markers",
+                marker=dict(size=2, color='green'),
+                visible=None if enable_close_price else 'legendonly',
+            )
+        )
+
         last_close = self.stock_df['close'].iloc[-1]
         fig.add_hline(y=last_close,
                       line_dash='dot',
