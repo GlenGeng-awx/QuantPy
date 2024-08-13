@@ -1,0 +1,3 @@
+
+LONG = 'long'
+SHORT = 'short'

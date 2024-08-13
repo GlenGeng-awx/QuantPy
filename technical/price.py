@@ -39,7 +39,7 @@ class Price:
                 y=self.stock_df['close'],
                 mode="markers",
                 marker=dict(size=2, color='blue'),
-                visible=None if enable_close_price else 'legendonly',
+                # visible=None if enable_close_price else 'legendonly',
             )
         )
 
