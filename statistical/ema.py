@@ -3,7 +3,9 @@ import plotly.graph_objects as go
 
 EMA_5 = 'ema_5'
 EMA_10 = 'ema_10'
+EMA_12 = 'ema_12'
 EMA_20 = 'ema_20'
+EMA_26 = 'ema_26'
 
 
 def calculate_ema(s: pd.Series, period: int, smoother: int = 2) -> pd.Series:
@@ -31,8 +33,10 @@ class EMA:
         self.smoother = 2
 
         stock_df[EMA_5] = calculate_ema(stock_df['close'], 5)
+        stock_df[EMA_12] = calculate_ema(stock_df['close'], 12)
         stock_df[EMA_10] = calculate_ema(stock_df['close'], 10)
         stock_df[EMA_20] = calculate_ema(stock_df['close'], 20)
+        stock_df[EMA_26] = calculate_ema(stock_df['close'], 26)
 
     def _build_graph(self, fig: go.Figure, ema_type: str, color: str, enable=False):
         ema = self.stock_df[ema_type]
@@ -52,4 +56,6 @@ class EMA:
     def build_graph(self, fig: go.Figure, enable=False):
         self._build_graph(fig, EMA_5, 'black')  # always disable
         self._build_graph(fig, EMA_10, 'orange', enable)
+        self._build_graph(fig, EMA_12, 'blue')
         self._build_graph(fig, EMA_20, 'green')
+        self._build_graph(fig, EMA_26, 'purple')

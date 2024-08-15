@@ -8,6 +8,7 @@ from technical.wave import Wave
 from technical.box import Box
 
 from statistical.ema import EMA
+from statistical.ma import MA
 from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
@@ -37,6 +38,7 @@ class BaseEngine:
         self.price = Price(self.stock_df)
 
         self.ema = EMA(self.stock_df)
+        self.ma = MA(self.stock_df)
         self.bband = BBand(self.stock_df)
         self.macd = MACD(self.stock_df)
         self.rsi = RSI(self.stock_df)
@@ -106,6 +108,7 @@ class BaseEngine:
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 
         self.ema.build_graph(self.fig, enable_ema)
+        self.ma.build_graph(self.fig)
         self.bband.build_graph(self.fig, enable_bband)
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
