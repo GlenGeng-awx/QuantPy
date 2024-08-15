@@ -80,7 +80,7 @@ class TrendImpl:
             return True
 
         if row[self.ma_type] > self.up_baseline * (1 - self.alpha):
-            print(f'hit up_baseline at {self.stock_df.loc[idx]["Date"]}')
+            # print(f'hit up_baseline at {self.stock_df.loc[idx]["Date"]}')
             return True
 
         return False
@@ -93,12 +93,12 @@ class TrendImpl:
             return True
 
         if row[self.ma_type] < self.down_baseline * (1 + self.alpha):
-            print(f'hit down_baseline at {self.stock_df.loc[idx]["Date"]}')
+            # print(f'hit down_baseline at {self.stock_df.loc[idx]["Date"]}')
             return True
 
         return False
 
-    def build_graph(self, fig: go.Figure):
+    def build_graph(self, fig: go.Figure, enable=False):
         index = self.stock_df[self.stock_df[self.ma_trend] == 'up'].index
         x = self.stock_df.loc[index]['Date']
         y = self.stock_df.loc[index][self.ma_type]
@@ -110,6 +110,7 @@ class TrendImpl:
                 y=y,
                 mode="markers",
                 marker=dict(size=2, color='red'),
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -124,6 +125,7 @@ class TrendImpl:
                 y=y,
                 mode="markers",
                 marker=dict(size=2, color='green'),
+                visible=None if enable else 'legendonly',
             )
         )
 
@@ -134,5 +136,5 @@ class Trend:
         self.ema26_trend = TrendImpl(stock_df, EMA_26, EMA_26_TREND, 0.005)
 
     def build_graph(self, fig: go.Figure):
-        self.ma20_trend.build_graph(fig)
+        self.ma20_trend.build_graph(fig, enable=True)
         self.ema26_trend.build_graph(fig)
