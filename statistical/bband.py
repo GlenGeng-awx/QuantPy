@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 BBAND_MID = 'bband_mid'
 BBAND_UP = 'bband_up'
 BBAND_DOWN = 'bband_down'
+BBAND_PST = 'bband_pst'
 
 
 def calculate_bband(stock_df: pd.DataFrame, n: int = 20, k: int = 2):
@@ -11,6 +12,7 @@ def calculate_bband(stock_df: pd.DataFrame, n: int = 20, k: int = 2):
     y = []
     y_up = []
     y_down = []
+    y_pst = []
 
     length = stock_df.shape[0]
     for pos in range(length):
@@ -29,15 +31,18 @@ def calculate_bband(stock_df: pd.DataFrame, n: int = 20, k: int = 2):
 
         up = mean + k * std
         down = mean - k * std
+        pst = (close - down) / (up - down)
 
         indices.append(idx)
         y.append(mean)
         y_up.append(up)
         y_down.append(down)
+        y_pst.append(pst)
 
     stock_df[BBAND_MID] = pd.Series(y, index=indices)
     stock_df[BBAND_UP] = pd.Series(y_up, index=indices)
     stock_df[BBAND_DOWN] = pd.Series(y_down, index=indices)
+    stock_df[BBAND_PST] = pd.Series(y_pst, index=indices)
 
 
 class BBand:
@@ -48,7 +53,7 @@ class BBand:
 
         calculate_bband(stock_df, n, k)
 
-    def _build_graph(self, fig, bband_type: str, color: str, enable=False):
+    def _build_graph_4_bband(self, fig, bband_type: str, color: str, enable=False):
         y = self.stock_df[bband_type].dropna()
         dates = self.stock_df.loc[y.index]['Date']
 
@@ -63,7 +68,26 @@ class BBand:
             )
         )
 
-    def build_graph(self, fig: go.Figure, enable=False):
-        self._build_graph(fig, BBAND_UP, 'red', enable)
-        self._build_graph(fig, BBAND_MID, 'black', enable=False)
-        self._build_graph(fig, BBAND_DOWN, 'green', enable)
+    def _build_graph_4_bband_pst(self, fig, enable=False):
+        if not enable:
+            return
+
+        bband_pst = self.stock_df[BBAND_PST].dropna()
+
+        fig.add_trace(
+            go.Scatter(
+                name='%B',
+                x=self.stock_df.loc[bband_pst.index]['Date'],
+                y=bband_pst,
+                mode='lines',
+                line=dict(width=0.75, color='blue'),
+            ),
+            row=2, col=1
+        )
+
+    def build_graph(self, fig: go.Figure, enable_bband=False, enable_bband_pst=False):
+        self._build_graph_4_bband(fig, BBAND_UP, 'red', enable_bband)
+        self._build_graph_4_bband(fig, BBAND_MID, 'black', enable=False)
+        self._build_graph_4_bband(fig, BBAND_DOWN, 'green', enable_bband)
+
+        self._build_graph_4_bband_pst(fig, enable_bband_pst)

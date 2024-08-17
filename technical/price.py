@@ -50,7 +50,7 @@ class Price:
                 y=self.stock_df['high'],
                 mode="markers",
                 marker=dict(size=2, color='red'),
-                visible=None if enable_close_price else 'legendonly',
+                visible='legendonly',
             )
         )
 
@@ -61,7 +61,7 @@ class Price:
                 y=self.stock_df['low'],
                 mode="markers",
                 marker=dict(size=2, color='green'),
-                visible=None if enable_close_price else 'legendonly',
+                visible='legendonly',
             )
         )
 

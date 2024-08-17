@@ -91,6 +91,7 @@ class BaseEngine:
                     # statistical
                     enable_ema=False,
                     enable_bband=False,
+                    enable_bband_pst=False,
                     enable_macd=False,
                     enable_rsi=False,
                     # technical
@@ -109,7 +110,7 @@ class BaseEngine:
 
         self.ema.build_graph(self.fig, enable_ema)
         self.ma.build_graph(self.fig)
-        self.bband.build_graph(self.fig, enable_bband)
+        self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
 
