@@ -37,7 +37,8 @@ class MACD:
 
         calculate_macd(stock_df, slow, fast, signal)
 
-    def build_graph(self, fig: go.Figure, enable=False):
+    def build_graph(self, fig: go.Figure, enable_macd=(False, 2)):
+        enable, row = enable_macd
         if not enable:
             return
 
@@ -53,7 +54,7 @@ class MACD:
                 mode='lines',
                 line=dict(width=0.75, color='black'),
             ),
-            row=2, col=1
+            row=row, col=1
         )
 
         fig.add_trace(
@@ -64,7 +65,7 @@ class MACD:
                 mode='lines',
                 line=dict(width=0.75, color='orange'),
             ),
-            row=2, col=1
+            row=row, col=1
         )
 
         histogram = self.stock_df[MACD_HISTOGRAM][self.slow:]
@@ -80,7 +81,7 @@ class MACD:
                 marker_color='red',
                 opacity=0.5,
             ),
-            row=2, col=1
+            row=row, col=1
         )
 
         green_bar = histogram[histogram < 0]
@@ -94,5 +95,5 @@ class MACD:
                 marker_color='green',
                 opacity=0.5,
             ),
-            row=2, col=1
+            row=row, col=1
         )

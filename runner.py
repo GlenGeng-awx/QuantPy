@@ -99,47 +99,67 @@ for stock_name in STOCK_NAMES_TIER_0:
 
         if interval == '1d':
             # candle stick + volume raw
-            be.build_graph(enable_candlestick=True, enable_volume_raw=True)
+            be.build_graph(enable_candlestick=True, enable_volume_raw=(True, 2))
             be.display()
 
             # close + volume reg
-            be.build_graph(enable_close_price=True, enable_volume_reg=True)
+            be.build_graph(enable_close_price=True, enable_volume_reg=(True, 2))
             be.display()
 
             # close + volume reg + sr + min/max + ratio
-            be.build_graph(enable_close_price=True, enable_volume_reg=True,
-                           enable_sr=True, enable_min_max=True, enable_ratio=True)
+            be.build_graph(enable_close_price=True,
+                           enable_sr=True, enable_min_max=True, enable_ratio=True,
+                           enable_volume_reg=(True, 2))
             be.display()
 
             # close + volume reg + wave 3rd + ratio
-            be.build_graph(enable_close_price=True, enable_volume_reg=True,
-                           enable_wave=True, enable_ratio=True)
+            be.build_graph(enable_close_price=True, enable_wave=True, enable_ratio=True,
+                           enable_volume_reg=(True, 2))
             be.display()
 
             # close + volume reg + box 3rd
-            be.build_graph(enable_close_price=True, enable_volume_reg=True,
-                           enable_box=True)
+            be.build_graph(enable_close_price=True, enable_box=True,
+                           enable_volume_reg=(True, 2))
             be.display()
 
             # close + rsi + ema 10/20
-            be.build_graph(enable_close_price=True, enable_rsi=True, enable_ema=True)
+            be.build_graph(enable_close_price=True, enable_ema=True,
+                           enable_rsi=(True, 2))
             be.display()
 
             # close + rsi + bb
-            be.build_graph(enable_close_price=True, enable_rsi=True, enable_bband=True)
+            be.build_graph(enable_close_price=True, enable_bband=True,
+                           enable_bband_pst=(True, 2))
             be.display()
 
             # close + macd
-            be.build_graph(enable_close_price=True, enable_macd=True)
+            be.build_graph(enable_close_price=True, enable_macd=(True, 2))
+            be.display()
+
+            # misc 1
+            be.build_graph(enable_close_price=True,
+                           enable_volume_reg=(True, 2),
+                           enable_bband_pst=(True, 3),
+                           rows=3
+                           )
+            be.display()
+
+            # misc 2
+            be.build_graph(enable_close_price=True,
+                           enable_volume_reg=(True, 2),
+                           enable_bband_pst=(True, 3),
+                           enable_rsi=(True, 4),
+                           rows=4,
+                           )
             be.display()
 
         elif interval == '1h':
-            be.build_graph(enable_close_price=True, enable_rsi=True,
-                           enable_sr=True, enable_min_max=True)
+            be.build_graph(enable_close_price=True, enable_sr=True, enable_min_max=True,
+                           enable_rsi=(True, 2))
             be.display()
 
         elif interval == '1wk':
             # close + volume reg + wave 3rd + ratio
-            be.build_graph(enable_close_price=True, enable_volume_reg=True,
-                           enable_wave=True, enable_ratio=True)
+            be.build_graph(enable_close_price=True, enable_wave=True, enable_ratio=True,
+                           enable_volume_reg=(True, 2))
             be.display()

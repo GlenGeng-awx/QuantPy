@@ -28,75 +28,19 @@ class TrendImpl:
     def calculate_trend(self):
         index = self.stock_df[self.ma_type].dropna().index
 
-        self._setup_trend(index[1])
+        trend = []
+        indices = []
 
-        for idx in index[2:]:
-            self.indices.append(idx)
-            row = self.stock_df.loc[idx]
+        for idx in index[40:]:
+            if self.stock_df[self.ma_type].loc[idx] < self.stock_df[self.ma_type].loc[idx-30:idx-1].min():
+                trend.append('down')
+                indices.append(idx)
 
-            if self.up_baseline:
-                if self._is_still_in_up_trend(idx):
-                    self.trend.append('up')
-                    self.up_baseline = max(self.up_baseline, row[self.ma_type])
-                else:
-                    self.trend.append('down')
-                    self._transition_to_down_trend(idx)
-            else:
-                if self._is_still_in_down_trend(idx):
-                    self.trend.append('down')
-                    self.down_baseline = min(self.down_baseline, row[self.ma_type])
-                else:
-                    self.trend.append('up')
-                    self._transition_to_up_trend(idx)
+            if self.stock_df[self.ma_type].loc[idx] > self.stock_df[self.ma_type].loc[idx-30:idx-1].max():
+                trend.append('up')
+                indices.append(idx)
 
-        return pd.Series(self.trend, index=self.indices)
-
-    def _setup_trend(self, idx):
-        self.indices.append(idx)
-
-        row = self.stock_df.loc[idx]
-        prev_row = self.stock_df.loc[idx - 1]
-
-        if row[self.ma_type] >= prev_row[self.ma_type]:
-            self._transition_to_up_trend(idx)
-            self.trend.append('up')
-        else:
-            self._transition_to_down_trend(idx)
-            self.trend.append('down')
-
-    def _transition_to_up_trend(self, idx):
-        self.down_baseline = None
-        self.up_baseline = self.stock_df.loc[idx][self.ma_type]
-
-    def _transition_to_down_trend(self, idx):
-        self.up_baseline = None
-        self.down_baseline = self.stock_df.loc[idx][self.ma_type]
-
-    def _is_still_in_up_trend(self, idx) -> bool:
-        row = self.stock_df.loc[idx]
-        prev_row = self.stock_df.loc[idx - 1]
-
-        if row[self.ma_type] >= prev_row[self.ma_type]:
-            return True
-
-        if row[self.ma_type] > self.up_baseline * (1 - self.alpha):
-            # print(f'hit up_baseline at {self.stock_df.loc[idx]["Date"]}')
-            return True
-
-        return False
-
-    def _is_still_in_down_trend(self, idx) -> bool:
-        row = self.stock_df.loc[idx]
-        prev_row = self.stock_df.loc[idx - 1]
-
-        if row[self.ma_type] <= prev_row[self.ma_type]:
-            return True
-
-        if row[self.ma_type] < self.down_baseline * (1 + self.alpha):
-            # print(f'hit down_baseline at {self.stock_df.loc[idx]["Date"]}')
-            return True
-
-        return False
+        return pd.Series(trend, index=indices)
 
     def build_graph(self, fig: go.Figure, enable=False):
         index = self.stock_df[self.stock_df[self.ma_trend] == 'up'].index
@@ -109,7 +53,7 @@ class TrendImpl:
                 x=x,
                 y=y,
                 mode="markers",
-                marker=dict(size=2, color='red'),
+                marker=dict(size=3, color='red'),
                 visible=None if enable else 'legendonly',
             )
         )
@@ -124,7 +68,7 @@ class TrendImpl:
                 x=x,
                 y=y,
                 mode="markers",
-                marker=dict(size=2, color='green'),
+                marker=dict(size=3, color='green'),
                 visible=None if enable else 'legendonly',
             )
         )

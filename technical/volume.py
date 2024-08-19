@@ -53,7 +53,9 @@ class Volume:
         stock_df[LOCAL_MIN_VOLUME_3RD] = local_min(stock_df[stock_df[LOCAL_MIN_VOLUME_2ND]], VOLUME_REG).reindex(stock_df.index, fill_value=False)
         stock_df[LOCAL_MIN_VOLUME_4TH] = local_min(stock_df[stock_df[LOCAL_MIN_VOLUME_3RD]], VOLUME_REG).reindex(stock_df.index, fill_value=False)
 
-    def add_volume_ma(self, fig: go.Figure, ma_type: str, color: str, size: float, enable=False):
+    def add_volume_ma(self, fig: go.Figure, ma_type: str,
+                      color: str, size: float, enable_ma=(False, 2)):
+        enable, row = enable_ma
         fig.add_trace(
             go.Scatter(
                 name=ma_type,
@@ -63,11 +65,16 @@ class Volume:
                 line=dict(width=size, color=color),
                 visible=None if enable else 'legendonly',
             ),
-            row=2, col=1
+            row=row, col=1
         )
 
-    def build_graph(self, fig: go.Figure, enable_volume_raw=False, enable_volume_reg=False):
-        if enable_volume_reg:
+    def build_graph(self,
+                    fig: go.Figure,
+                    enable_volume_raw=(False, 2),
+                    enable_volume_reg=(False, 2)
+                    ):
+        enable, row = enable_volume_reg
+        if enable:
             fig.add_trace(
                 go.Bar(
                     name=VOLUME_REG,
@@ -75,17 +82,18 @@ class Volume:
                     y=self.stock_df[VOLUME_REG],
                     marker_color='blue',
                     opacity=0.5,
-                    visible='legendonly',
+                    # visible='legendonly',
                 ),
-                row=2, col=1
+                row=row, col=1
             )
 
-            self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, True)
+            self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, (True, 2))
             self.add_volume_ma(fig, VOLUME_MA_15, 'black', 1)
             self.add_volume_ma(fig, VOLUME_MA_30, 'black', 1)
             self.add_volume_ma(fig, VOLUME_MA_60, 'black', 1)
 
-        if enable_volume_raw:
+        enable, row = enable_volume_raw
+        if enable:
             fig.add_trace(
                 go.Bar(
                     name="volume",
@@ -94,5 +102,5 @@ class Volume:
                     marker_color='blue',
                     opacity=0.5,
                 ),
-                row=2, col=1
+                row=row, col=1
             )

@@ -50,12 +50,27 @@ class BaseEngine:
 
         self.volume = Volume(self.stock_df)
 
-    def setup_graph(self):
-        self.fig = make_subplots(rows=2, cols=1,
-                                 vertical_spacing=0.05,
-                                 row_heights=[0.6, 0.3],
-                                 shared_xaxes=True,
-                                 )
+    def setup_graph(self, rows=2):
+        if rows == 2:
+            self.fig = make_subplots(rows=2, cols=1,
+                                     row_heights=[0.5, 0.25],
+                                     shared_xaxes=True,
+                                     vertical_spacing=0.05,
+                                     )
+        elif rows == 3:
+            self.fig = make_subplots(rows=3, cols=1,
+                                     row_heights=[0.5, 0.25, 0.25],
+                                     shared_xaxes=True,
+                                     vertical_spacing=0.03,
+                                     )
+        elif rows == 4:
+            self.fig = make_subplots(rows=4, cols=1,
+                                     row_heights=[0.5, 0.25, 0.25, 0.25],
+                                     shared_xaxes=True,
+                                     vertical_spacing=0.01,
+                                     )
+        else:
+            raise ValueError(f"Invalid rows: {rows}")
 
         rangebreaks = [
             dict(bounds=["sat", "mon"]),  # hide weekends
@@ -91,9 +106,9 @@ class BaseEngine:
                     # statistical
                     enable_ema=False,
                     enable_bband=False,
-                    enable_bband_pst=False,
-                    enable_macd=False,
-                    enable_rsi=False,
+                    enable_bband_pst=(False, 2),
+                    enable_macd=(False, 2),
+                    enable_rsi=(False, 2),
                     # technical
                     enable_min_max=False,
                     enable_sr=False,
@@ -101,10 +116,12 @@ class BaseEngine:
                     enable_box=False,
                     enable_ratio=False,
                     # volume
-                    enable_volume_raw=False,
-                    enable_volume_reg=False,
+                    enable_volume_raw=(False, 2),
+                    enable_volume_reg=(False, 2),
+                    # misc
+                    rows=2,
                     ):
-        self.setup_graph()
+        self.setup_graph(rows)
 
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 

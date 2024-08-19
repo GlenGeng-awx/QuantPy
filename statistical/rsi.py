@@ -38,7 +38,9 @@ class RSI:
         stock_df[RSI_14] = calculate_rsi(stock_df, 14, self.smoother)
         stock_df[RSI_21] = calculate_rsi(stock_df, 21, self.smoother)
 
-    def _build_graph(self, fig: go.Figure, rsi_type: str, color: str, enable=False):
+    def _build_graph(self, fig: go.Figure, rsi_type: str, color: str, enable_rsi=(False, 2)):
+        enable, row = enable_rsi
+
         rsi = self.stock_df[rsi_type]
         dates = self.stock_df.loc[rsi.index]['Date']
 
@@ -51,18 +53,19 @@ class RSI:
                 line=dict(width=0.75, color=color),
                 visible=None if enable else 'legendonly',
             ),
-            row=2, col=1
+            row=row, col=1
         )
 
-    def build_graph(self, fig: go.Figure, enable=False):
+    def build_graph(self, fig: go.Figure, enable_rsi=(False, 2)):
+        enable, row = enable_rsi
         if not enable:
             return
 
-        self._build_graph(fig, RSI_14, 'black', True)
-        self._build_graph(fig, RSI_21, 'orange')
+        self._build_graph(fig, RSI_14, 'black', (True, row))
+        self._build_graph(fig, RSI_21, 'orange', (False, row))
 
-        fig.add_hline(y=80, line_dash='dot', line_color='red', row=2, col=1)
-        fig.add_hline(y=70, line_dash='dot', line_color='red', row=2, col=1)
+        fig.add_hline(y=80, line_dash='dot', line_color='red', line_width=1, row=row, col=1)
+        fig.add_hline(y=70, line_dash='dot', line_color='red', line_width=1, row=row, col=1)
 
-        fig.add_hline(y=30, line_dash='dot', line_color='green', row=2, col=1)
-        fig.add_hline(y=20, line_dash='dot', line_color='green', row=2, col=1)
+        fig.add_hline(y=30, line_dash='dot', line_color='green', line_width=1, row=row, col=1)
+        fig.add_hline(y=20, line_dash='dot', line_color='green', line_width=1, row=row, col=1)
