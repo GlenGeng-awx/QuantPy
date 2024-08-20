@@ -87,10 +87,10 @@ class Volume:
                 row=row, col=1
             )
 
-            self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, (True, 2))
-            self.add_volume_ma(fig, VOLUME_MA_15, 'black', 1)
-            self.add_volume_ma(fig, VOLUME_MA_30, 'black', 1)
-            self.add_volume_ma(fig, VOLUME_MA_60, 'black', 1)
+            self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, (True, row))
+            self.add_volume_ma(fig, VOLUME_MA_15, 'black', 1, (False, row))
+            self.add_volume_ma(fig, VOLUME_MA_30, 'black', 1, (False, row))
+            self.add_volume_ma(fig, VOLUME_MA_60, 'black', 1, (False, row))
 
         enable, row = enable_volume_raw
         if enable:

@@ -105,6 +105,7 @@ class BBand:
         )
 
         fig.add_hline(y=0.15, line_dash='dot', line_color='red', line_width=1, row=row, col=1)
+        fig.add_hline(y=0.5, line_dash='dot', line_color='black', line_width=1, row=row, col=1)
         fig.add_hline(y=0.85, line_dash='dot', line_color='red', line_width=1, row=row, col=1)
 
     def build_graph(self, fig: go.Figure, enable_bband=False, enable_bband_pst=(False, 2)):

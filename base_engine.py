@@ -105,6 +105,7 @@ class BaseEngine:
                     enable_close_price=False,
                     # statistical
                     enable_ema=False,
+                    enable_ma=False,
                     enable_bband=False,
                     enable_bband_pst=(False, 2),
                     enable_macd=(False, 2),
@@ -126,7 +127,7 @@ class BaseEngine:
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 
         self.ema.build_graph(self.fig, enable_ema)
-        self.ma.build_graph(self.fig)
+        self.ma.build_graph(self.fig, enable_ma)
         self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
