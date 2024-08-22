@@ -1,5 +1,5 @@
 import pandas as pd
-from .common import LONG, SHORT
+import plotly.graph_objects as go
 
 
 class Book:
@@ -83,9 +83,26 @@ class Book:
         self.gross = self.position * row['close']
         self.gross_baseline = max(self.gross_baseline, self.gross)
 
-    def finalize(self):
-        self.stock_df[LONG] = pd.Series(self.buy_prices, index=self.buy_indices)
-        self.stock_df[SHORT] = pd.Series(self.sell_prices, index=self.sell_indices)
+    def build_graph(self, fig: go.Figure):
+        fig.add_trace(
+            go.Scatter(
+                name=f'Long',
+                x=self.stock_df.loc[self.buy_indices]['Date'],
+                y=self.buy_prices,
+                mode="markers",
+                marker=dict(size=5, color='black'),
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'Sell',
+                x=self.stock_df.loc[self.sell_indices]['Date'],
+                y=self.sell_prices,
+                mode="markers",
+                marker=dict(size=5, color='purple'),
+            )
+        )
 
     def hit_hard_loss(self) -> bool:
         return self.cost - self.gross > self.cost * self.max_hard_loss
