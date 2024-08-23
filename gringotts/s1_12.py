@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.graph_objects as go
 
 from .trend import MA_20_TREND
 from .factor import belong_to_up_x_percent_in_last_n_days, get_sr_levels_in_last_n_days, up_thru
@@ -34,3 +35,12 @@ class S1U12:
 
             if any(up_thru(self.stock_df['close'], idx, sr_level) for sr_level in sr_levels):
                 self.book.plot_buy(idx)
+
+    def show(self, fig: go.Figure):
+        fig = go.Figure(fig)
+
+        title = f'{fig.layout.title.text} - {__name__} - up thru sr levels'
+        fig.update_layout(title=title)
+
+        self.book.build_graph(fig)
+        fig.show()

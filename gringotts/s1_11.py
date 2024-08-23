@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.graph_objects as go
 
 from statistical.ma import MA_20, MA_5
 
@@ -36,3 +37,12 @@ class S1U11:
                 continue
 
             self.book.plot_buy(idx)
+
+    def show(self, fig: go.Figure):
+        fig = go.Figure(fig)
+
+        title = f'{fig.layout.title.text} - {__name__} - gold cross ma 20'
+        fig.update_layout(title=title)
+
+        self.book.build_graph(fig)
+        fig.show()

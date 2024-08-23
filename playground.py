@@ -5,10 +5,16 @@ from datetime import datetime
 from conf import *
 from base_engine import BaseEngine
 
-from gringotts.common import LONG, SHORT
-from gringotts.bband_trend import BBandTrend
-from gringotts.s1 import S1
-from gringotts.s2 import S2
+from statistical.ma import MA_20
+from gringotts.common import LONG, SELL
+from gringotts.trend import Trend
+from gringotts.s1_1 import S1U1
+from gringotts.s1_0 import S1U0
+from gringotts.s1_3 import S1U3
+from gringotts.s1_10 import S1U10
+from gringotts.s1_11 import S1U11
+from gringotts.s1_12 import S1U12
+from gringotts.s1_12_1 import S1U12V1
 
 STOCK_NAMES_INDEX = [
     IXIC,
@@ -18,28 +24,14 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # IXIC,
-    # SS_000001,
-    # SS_000300,
-    TSLA,
-    # META,
-    # HK_0700,
-    # MRNA,
-    # BILI,
-    # XPEV,
-    # CPNG,
-    # SNOW,
-    # IQ,
-    # JD,
-    # BEKE,
-    # RIVN,
-    # MNSO,
-    # # ZM,
-    # BABA,
     # BA,
-    # PDD,
     # FUTU,
+    PLTR,
     # COIN,
+    # TSLA,
+    # BNTX,
+    # AMD,
+    # SNOW,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -72,6 +64,7 @@ STOCK_NAMES_TIER_1 = [
     BILI,
     LI,
     SNAP,
+    FUTU,
 ]
 
 
@@ -95,65 +88,32 @@ def get_period(_stock_name):
     return default_period()
 
 
-
-class Playground:
-    def __init__(self, stock_df: pd.DataFrame):
-        self.stock_df = stock_df
-
-    def _build_graph_for_long(self, fig: go.Figure):
-        index = self.stock_df[stock_df[LONG] > 0].index
-        x = self.stock_df.loc[index]['Date']
-        y = self.stock_df.loc[index][LONG]
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'long',
-                x=x,
-                y=y,
-                mode="markers",
-                marker=dict(size=6, color='orange'),
-            )
-        )
-
-    def _build_graph_for_short(self, fig: go.Figure):
-        index = self.stock_df[stock_df[SHORT] > 0].index
-        x = self.stock_df.loc[index]['Date']
-        y = self.stock_df.loc[index][SHORT]
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'short',
-                x=x,
-                y=y,
-                mode="markers",
-                marker=dict(size=6, color='purple'),
-            )
-        )
-
-    def build_graph(self, fig: go.Figure):
-        self._build_graph_for_long(fig)
-        self._build_graph_for_short(fig)
-
-
-for stock_name in STOCK_NAMES_TIER_0:
+for stock_name in STOCK_NAMES_TIER_1:
     for (start_date, end_date, interval) in get_period(stock_name):
         de = BaseEngine(stock_name, start_date, end_date, interval)
         de.build_graph(
-                       # enable_close_price=True,
-                       enable_volume_reg=True,
-                       # enable_macd=True,
+                       enable_close_price=True,
+                       enable_ma=True,
+                       enable_min_max=True,
                        # enable_macd=True,
                        # enable_bband=True,
+                       enable_bband_pst=(True, 2),
+                       enable_rsi=(True, 3),
+                       enable_volume_reg=(True, 4),
                        # enable_ema=True,
                        # enable_sr=True,
                        # enable_min_max=True
+                       # enable_rsi=True,
+                       rows=4,
                        )
 
         stock_df, fig = de.stock_df, de.fig
 
-        BBandTrend(stock_df).build_graph(fig)
-        S1(stock_df)
+        Trend(stock_df).build_graph(fig)
 
-        Playground(stock_df).build_graph(fig)
+        S1U10(stock_df).show(fig)
+        S1U11(stock_df).show(fig)
 
-        de.display()
+        S1U12(stock_df).show(fig)
+        S1U12V1(stock_df).show(fig)
+

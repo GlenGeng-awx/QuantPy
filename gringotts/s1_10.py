@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.graph_objects as go
 
 from statistical.bband import BBAND_PST_MA5
 from statistical.rsi import RSI_14
@@ -39,3 +40,12 @@ class S1U10:
                 continue
 
             self.book.plot_buy(idx)
+
+    def show(self, fig: go.Figure):
+        fig = go.Figure(fig)
+
+        title = f'{fig.layout.title.text} - {__name__} - rsi and bband is in strong uptrend'
+        fig.update_layout(title=title)
+
+        self.book.build_graph(fig)
+        fig.show()
