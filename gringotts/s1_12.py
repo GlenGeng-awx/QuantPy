@@ -1,9 +1,7 @@
 import pandas as pd
-import plotly.graph_objects as go
 
 from .trend import MA_20_TREND
 from .factor import belong_to_up_x_percent_in_last_n_days, get_sr_levels_in_last_n_days, up_thru
-from .book import Book
 
 """
 up thru sr levels
@@ -13,34 +11,21 @@ up thru sr levels
 class S1U12:
     def __init__(self, stock_df: pd.DataFrame):
         self.stock_df = stock_df
+        self.name = f'{__class__.__name__} - up thru sr levels'
 
-        self.book = Book(stock_df, max_hard_loss=0.05, max_moving_loss=0.05)
-        self.analyze()
+    def check(self, idx) -> bool:
+        # long term not in bottom
+        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
+            return False
 
-    def analyze(self):
-        for idx in self.stock_df.index[30:]:
-            # long term not in bottom
-            if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
-                continue
+        # short term not in bottom
+        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 10):
+            return False
 
-            # short term not in bottom
-            if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 10):
-                continue
+        if self.stock_df.loc[idx][MA_20_TREND] == 'down':
+            return False
 
-            if self.stock_df.loc[idx][MA_20_TREND] == 'down':
-                continue
+        sr_levels = get_sr_levels_in_last_n_days(self.stock_df, idx, 60)
+        print(f'{self.stock_df.loc[idx]["Date"]}\tsr_level: {sr_levels}')
 
-            sr_levels = get_sr_levels_in_last_n_days(self.stock_df, idx, 60)
-            print(f'{self.stock_df.loc[idx]["Date"]}\tsr_level: {sr_levels}')
-
-            if any(up_thru(self.stock_df['close'], idx, sr_level) for sr_level in sr_levels):
-                self.book.plot_buy(idx)
-
-    def show(self, fig: go.Figure):
-        fig = go.Figure(fig)
-
-        title = f'{fig.layout.title.text} - {__name__} - up thru sr levels'
-        fig.update_layout(title=title)
-
-        self.book.build_graph(fig)
-        fig.show()
+        return any(up_thru(self.stock_df['close'], idx, sr_level) for sr_level in sr_levels)

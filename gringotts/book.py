@@ -41,6 +41,27 @@ class Book:
         self.sell_indices.append(idx)
         self.sell_prices.append(self.stock_df.loc[idx]['close'])
 
+    def build_graph(self, fig: go.Figure, size=5):
+        fig.add_trace(
+            go.Scatter(
+                name=f'Long',
+                x=self.stock_df.loc[self.buy_indices]['Date'],
+                y=self.buy_prices,
+                mode="markers",
+                marker=dict(size=size, color='black'),
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'Sell',
+                x=self.stock_df.loc[self.sell_indices]['Date'],
+                y=self.sell_prices,
+                mode="markers",
+                marker=dict(size=size, color='purple'),
+            )
+        )
+
     def buy(self, idx):
         row = self.stock_df.loc[idx]
 
@@ -82,27 +103,6 @@ class Book:
 
         self.gross = self.position * row['close']
         self.gross_baseline = max(self.gross_baseline, self.gross)
-
-    def build_graph(self, fig: go.Figure):
-        fig.add_trace(
-            go.Scatter(
-                name=f'Long',
-                x=self.stock_df.loc[self.buy_indices]['Date'],
-                y=self.buy_prices,
-                mode="markers",
-                marker=dict(size=5, color='black'),
-            )
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'Sell',
-                x=self.stock_df.loc[self.sell_indices]['Date'],
-                y=self.sell_prices,
-                mode="markers",
-                marker=dict(size=5, color='purple'),
-            )
-        )
 
     def hit_hard_loss(self) -> bool:
         return self.cost - self.gross > self.cost * self.max_hard_loss

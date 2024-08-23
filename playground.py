@@ -1,16 +1,13 @@
-import pandas as pd
-import plotly.graph_objects as go
 from datetime import datetime
 
 from conf import *
 from base_engine import BaseEngine
 
-from statistical.ma import MA_20
-from gringotts.common import LONG, SELL
+from gringotts.fake_runner import FakeRunner
+from gringotts.real_runner import RealRunner
 from gringotts.trend import Trend
-from gringotts.s1_1 import S1U1
-from gringotts.s1_0 import S1U0
-from gringotts.s1_3 import S1U3
+
+from gringotts.s1_9 import S1U9
 from gringotts.s1_10 import S1U10
 from gringotts.s1_11 import S1U11
 from gringotts.s1_12 import S1U12
@@ -111,9 +108,7 @@ for stock_name in STOCK_NAMES_TIER_1:
 
         Trend(stock_df).build_graph(fig)
 
-        S1U10(stock_df).show(fig)
-        S1U11(stock_df).show(fig)
-
-        S1U12(stock_df).show(fig)
-        S1U12V1(stock_df).show(fig)
-
+        # for strategy in [S1U9, S1U10, S1U11, S1U12, S1U12V1]:
+        for strategy in [S1U9]:
+            # FakeRunner(stock_df, strategy).show(fig)
+            RealRunner(stock_df, strategy).show(fig)
