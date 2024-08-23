@@ -18,7 +18,7 @@ class RealRunner:
             self.book.observe(idx)
 
             if self.book.position == 0:
-                if self.strategy.check(idx):
+                if self.strategy.check_long(idx):
                     self.book.buy(idx)
             else:
                 hit = False
@@ -29,6 +29,10 @@ class RealRunner:
 
                 if self.book.hit_moving_loss():
                     print(f'---> moving loss hit')
+                    hit = True
+
+                if self.strategy.check_sell(idx):
+                    print(f'---> sell signal hit')
                     hit = True
 
                 if hit:

@@ -13,7 +13,7 @@ class S1U12V1:
         self.stock_df = stock_df
         self.name = f'{__class__.__name__} - up thru sr levels, retrace and bounds back'
 
-    def check(self, idx) -> bool:
+    def check_long(self, idx) -> bool:
         # retrace
         if not is_local_min(self.stock_df['close'], idx - 1):
             return False
@@ -38,3 +38,6 @@ class S1U12V1:
                     break
 
         return hit
+
+    def check_sell(self, _idx) -> bool:
+        return False

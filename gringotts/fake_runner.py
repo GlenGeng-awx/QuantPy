@@ -14,7 +14,7 @@ class FakeRunner:
 
     def run(self):
         for idx in self.stock_df.index[30:]:
-            if self.strategy.check(idx):
+            if self.strategy.check_long(idx):
                 self.book.plot_buy(idx)
 
     def show(self, fig: go.Figure):

@@ -13,7 +13,7 @@ class S1U12:
         self.stock_df = stock_df
         self.name = f'{__class__.__name__} - up thru sr levels'
 
-    def check(self, idx) -> bool:
+    def check_long(self, idx) -> bool:
         # long term not in bottom
         if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
             return False
@@ -29,3 +29,6 @@ class S1U12:
         print(f'{self.stock_df.loc[idx]["Date"]}\tsr_level: {sr_levels}')
 
         return any(up_thru(self.stock_df['close'], idx, sr_level) for sr_level in sr_levels)
+
+    def check_sell(self, _idx) -> bool:
+        return False

@@ -7,7 +7,7 @@ from .factor import belong_to_up_x_percent_in_last_n_days, is_golden_cross
 
 
 """
-gold cross ma 20 - bad
+gold cross ma 20
 """
 
 
@@ -16,7 +16,7 @@ class S1U11:
         self.stock_df = stock_df
         self.name = f'{__class__.__name__} - gold cross ma 20'
 
-    def check(self, idx) -> bool:
+    def check_long(self, idx) -> bool:
         # long term not in bottom
         if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
             return False
@@ -33,3 +33,6 @@ class S1U11:
             return False
 
         return True
+
+    def check_sell(self, _idx) -> bool:
+        return False
