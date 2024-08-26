@@ -1,7 +1,7 @@
 import pandas as pd
 
-from .strategy import (long_term_not_in_bottom, short_term_not_in_bottom,
-                       ma20_trend_is_down, rsi_in_strong_up, bband_pst_ma5_in_strong_up)
+from .buy_strategy import (long_term_not_in_bottom, short_term_not_in_bottom,
+                           ma20_trend_is_down, rsi_in_strong_up, bband_pst_ma5_in_strong_up)
 
 """
 rsi and bband is in strong uptrend

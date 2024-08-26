@@ -1,5 +1,5 @@
 import copy
-from gringotts.strategy import *
+from gringotts.buy_strategy import *
 
 SWITCHES = [
     'ma20_trend_switch_to_up',                                  # 0
@@ -36,7 +36,7 @@ class TinyModel:
         self.stock_df = stock_df
         self.switches = switches
 
-        self.name = f'{__class__.__name__} - giant - {switches}'
+        self.name = f'{__class__.__name__} {switches}'
 
     def check_long(self, idx) -> bool:
         if self.switches[0] and not ma20_trend_switch_to_up(self.stock_df, idx):

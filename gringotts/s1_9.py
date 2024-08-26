@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .trend import MA_20_TREND
-from .strategy import ma20_trend_switch_to_up
+from .buy_strategy import ma20_trend_switch_to_up
 
 """
 MA_20_TREND switch

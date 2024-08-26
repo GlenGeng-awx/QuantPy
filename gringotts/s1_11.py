@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .strategy import long_term_not_in_bottom, golden_cross_ma20
+from .buy_strategy import long_term_not_in_bottom, golden_cross_ma20
 
 
 """

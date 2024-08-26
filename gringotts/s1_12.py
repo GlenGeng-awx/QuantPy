@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .strategy import long_term_not_in_bottom, short_term_not_in_bottom, ma20_trend_is_down, up_thru_sr_levels
+from .buy_strategy import long_term_not_in_bottom, short_term_not_in_bottom, ma20_trend_is_down, up_thru_sr_levels
 
 """
 up thru sr levels

@@ -33,6 +33,10 @@ class Book:
         self.sell_indices = []
         self.sell_prices = []
 
+        # stat
+        self.positive_count = 0
+        self.negative_count = 0
+
     def plot_buy(self, idx):
         self.buy_indices.append(idx)
         self.buy_prices.append(self.stock_df.loc[idx]['close'])
@@ -82,6 +86,11 @@ class Book:
         inflight_revenue = self.gross - self.cost
         self.revenue += inflight_revenue
 
+        if inflight_revenue > 0:
+            self.positive_count += 1
+        else:
+            self.negative_count += 1
+
         print(f'sell at {row["Date"]} with price {row["close"]:.2f}\n'
               f'\tcost={self.cost:.2f}, gross={self.gross:.2f}\n'
               f'\tper_revenue={inflight_revenue:.2f}, {inflight_revenue / self.cost * 100:.2f}%, '
@@ -113,5 +122,7 @@ class Book:
     def get_stat(self) -> dict:
         return {
             'revenue_pst': self.revenue / self.money_pool * 100,
-            'buy_cnt': len(self.buy_indices)
+            'buy_count': len(self.buy_indices),
+            'positive_count': self.positive_count,
+            'negative_count': self.negative_count
         }

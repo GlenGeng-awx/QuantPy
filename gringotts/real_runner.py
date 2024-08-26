@@ -45,10 +45,12 @@ class RealRunner:
 
         stat = self.book.get_stat()
 
-        revenue_pst, buy_cnt = stat['revenue_pst'], stat['buy_cnt']
+        revenue_pst, buy_cnt = stat['revenue_pst'], stat['buy_count']
+        positive_cnt, negative_cnt = stat['positive_count'], stat['negative_count']
 
         title = fig.layout.title.text
         strategy_name = self.strategy.name
-        fig.update_layout(title=f'{title}: {strategy_name} ---> {revenue_pst:.2f}%, {buy_cnt} trades')
+        fig.update_layout(title=f'{title}<br>{strategy_name} ---> {revenue_pst:.2f}%, {buy_cnt} trades, '
+                                f'{positive_cnt} positive, {negative_cnt} negative')
 
         fig.show()

@@ -2,7 +2,7 @@ import pandas as pd
 
 from statistical.ma import MA_5
 
-from .strategy import golden_cross_ma5, ma20_trend_is_down
+from .buy_strategy import golden_cross_ma5, ma20_trend_is_down
 
 
 """

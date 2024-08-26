@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .strategy import up_thru_sr_level_and_retrace_and_bounce_back
+from .buy_strategy import up_thru_sr_level_and_retrace_and_bounce_back
 
 """
 up thru sr levels, retrace and bounds back
