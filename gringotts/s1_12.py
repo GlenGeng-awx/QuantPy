@@ -1,7 +1,6 @@
 import pandas as pd
 
-from .trend import MA_20_TREND
-from .factor import belong_to_up_x_percent_in_last_n_days, get_sr_levels_in_last_n_days, up_thru
+from .strategy import long_term_not_in_bottom, short_term_not_in_bottom, ma20_trend_is_down, up_thru_sr_levels
 
 """
 up thru sr levels
@@ -14,21 +13,13 @@ class S1U12:
         self.name = f'{__class__.__name__} - up thru sr levels'
 
     def check_long(self, idx) -> bool:
-        # long term not in bottom
-        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
+        if not (long_term_not_in_bottom(self.stock_df, idx) and short_term_not_in_bottom(self.stock_df, idx)):
             return False
 
-        # short term not in bottom
-        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 10):
+        if ma20_trend_is_down(self.stock_df, idx):
             return False
 
-        if self.stock_df.loc[idx][MA_20_TREND] == 'down':
-            return False
-
-        sr_levels = get_sr_levels_in_last_n_days(self.stock_df, idx, 60)
-        print(f'{self.stock_df.loc[idx]["Date"]}\tsr_level: {sr_levels}')
-
-        return any(up_thru(self.stock_df['close'], idx, sr_level) for sr_level in sr_levels)
+        return up_thru_sr_levels(self.stock_df, idx)
 
     def check_sell(self, _idx) -> bool:
         return False

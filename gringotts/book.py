@@ -109,3 +109,9 @@ class Book:
 
     def hit_moving_loss(self) -> bool:
         return self.gross_baseline - self.gross > self.gross_baseline * self.max_moving_loss
+
+    def get_stat(self) -> dict:
+        return {
+            'revenue_pst': self.revenue / self.money_pool * 100,
+            'buy_cnt': len(self.buy_indices)
+        }

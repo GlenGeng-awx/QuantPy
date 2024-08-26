@@ -1,10 +1,7 @@
 import pandas as pd
 
-from statistical.bband import BBAND_PST_MA5
-from statistical.rsi import RSI_14
-
-from .trend import MA_20_TREND
-from .factor import belong_to_up_x_percent_in_last_n_days
+from .strategy import (long_term_not_in_bottom, short_term_not_in_bottom,
+                       ma20_trend_is_down, rsi_in_strong_up, bband_pst_ma5_in_strong_up)
 
 """
 rsi and bband is in strong uptrend
@@ -17,21 +14,16 @@ class S1U10:
         self.name = f'{__class__.__name__} - rsi and bband is in strong uptrend'
 
     def check_long(self, idx) -> bool:
-        # long term not in bottom
-        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 100):
+        if not (long_term_not_in_bottom(self.stock_df, idx) and short_term_not_in_bottom(self.stock_df, idx)):
             return False
 
-        # short term not in bottom
-        if not belong_to_up_x_percent_in_last_n_days(self.stock_df['close'], idx, 0.786, 10):
+        if ma20_trend_is_down(self.stock_df, idx):
             return False
 
-        if self.stock_df.loc[idx][MA_20_TREND] == 'down':
+        if not rsi_in_strong_up(self.stock_df, idx):
             return False
 
-        if self.stock_df.loc[idx][RSI_14] < 65:
-            return False
-
-        if self.stock_df.loc[idx][BBAND_PST_MA5] < 0.8:
+        if not bband_pst_ma5_in_strong_up(self.stock_df, idx):
             return False
 
         return True

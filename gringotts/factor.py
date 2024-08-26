@@ -6,15 +6,15 @@ from technical.min_max import LOCAL_MAX_PRICE_2ND
 # x = 0.382 or 0.5 or 0.618 or 0.786
 # n = 100, 60, 40, 10, 5
 def belong_to_up_x_percent_in_last_n_days(s: pd.Series, idx, x: float = 0.618, n: int = 100) -> bool:
-    lower = s.loc[idx - n:idx].min()
     upper = s.loc[idx - n:idx].max()
+    lower = s.loc[idx - n:idx].min()
     curr = s.loc[idx]
     return curr - lower > (upper - lower) * (1 - x)
 
 
 def belong_to_down_x_percent_in_last_n_days(s: pd.Series, idx, x: float = 0.5, n: int = 40) -> bool:
-    lower = s.loc[idx - n:idx].min()
     upper = s.loc[idx - n:idx].max()
+    lower = s.loc[idx - n:idx].min()
     curr = s.loc[idx]
     return curr - lower < (upper - lower) * x
 
