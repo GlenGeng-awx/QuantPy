@@ -1,4 +1,5 @@
 import json
+import plotly.graph_objects as go
 
 from gringotts.tiny_model import enumerate_switches, TinyModel, BUY_SWITCHES, SELL_SWITCHES
 from gringotts.real_runner import RealRunner
@@ -20,6 +21,10 @@ def calculate_giant_model(stock_df, fd):
     pruned_buy_switches = []
 
     for buy_switches in all_buy_switches:
+        # not enable any feature
+        if not any(buy_switches):
+            continue
+
         runner = RealRunner(stock_df=stock_df,
                             strategy=TinyModel,
                             buy_switches=buy_switches,
@@ -29,7 +34,7 @@ def calculate_giant_model(stock_df, fd):
         if stat['buy_count'] > 0:
             pruned_buy_switches.append((buy_switches, stat['revenue_pst'], stat['buy_count'], stat))
 
-    pruned_buy_switches.sort(key=lambda x: (x[1], x[2]), reverse=True)
+    pruned_buy_switches.sort(key=lambda x: (x[1], -x[2]), reverse=True)
 
     for idx, (buy_switches, _, _, stat) in enumerate(pruned_buy_switches):
         fd.write(f'prune tiny model {idx}\t{json.dumps(stat)}\tbuy;{buy_switches};default_sell\n')
@@ -51,8 +56,34 @@ def calculate_giant_model(stock_df, fd):
 
             results.append((buy_switches, sell_switches, stat['revenue_pst'], stat['buy_count'], stat))
 
-        results.sort(key=lambda x: (x[2], x[3]), reverse=True)
+        results.sort(key=lambda x: (x[2], -x[3]), reverse=True)
         results.insert(0, baseline)
 
         for y, (_, sell_switches, _, _, stat) in enumerate(results[:DISPLAY_TOP + 1]):
-            fd.write(f'search tiny model {x}-{y}\t{json.dumps(stat)} --> buy {buy_switches}, sell {sell_switches}\n')
+            fd.write(f'search tiny model {x}-{y}\t{json.dumps(stat)}\tbuy;{buy_switches};sell;{sell_switches}\n')
+
+
+def display_giant_model(stock_df, fd, fig: go.Figure):
+    buffer = []
+
+    for line in fd:
+        fields = line.strip().split('\t')
+        if not fields[0].startswith('search'):
+            continue
+
+        stat = json.loads(fields[1])
+        revenue_pst, buy_cnt = stat['revenue_pst'], stat['buy_count']
+
+        buy_switches = eval(fields[2].split(';')[1])
+        sell_switches = eval(fields[2].split(';')[3])
+
+        buffer.append((revenue_pst, buy_cnt, buy_switches, sell_switches))
+
+    buffer.sort(key=lambda x: (x[0], -x[1]), reverse=True)
+
+    for (_, _, buy_switches, sell_switches) in buffer[:2]:
+        runner = RealRunner(stock_df=stock_df,
+                            strategy=TinyModel,
+                            buy_switches=buy_switches,
+                            sell_switches=sell_switches)
+        runner.show(fig)

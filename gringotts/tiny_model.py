@@ -70,7 +70,6 @@ class TinyModel:
                  book: Book,
                  buy_switches: list[bool],
                  sell_switches: list[bool],
-                 **kwargs
                  ):
         self.stock_df = stock_df
         self.book = book   # None if fake runner
@@ -78,7 +77,7 @@ class TinyModel:
         self.buy_switches = buy_switches
         self.sell_switches = sell_switches
 
-        self.name = f'{__class__.__name__} buy {buy_switches} sell {sell_switches}'
+        self.name = f'buy {decode_buy_switches(buy_switches)}<br>sell {decode_sell_switches(sell_switches)}'
 
     def check_long(self, idx) -> bool:
         if self.buy_switches[0] and not ma20_trend_switch_to_up(self.stock_df, idx):
@@ -145,8 +144,8 @@ class TinyModel:
 
 
 if __name__ == '__main__':
-    buy_switches = [False, True, False, False, False, False, True, False, False, True]
-    sell_switches = [False, False, False, False, False, True, False, False, False]
+    buy_switches = [False, False, False, True, True, True, False, False, True, False]
+    sell_switches = [False, False, False, True, False, False, False, False, False]
 
     print(f'Buy Switches: {decode_buy_switches(buy_switches)}')
     print(f'Sell Switches: {decode_sell_switches(sell_switches)}')

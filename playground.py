@@ -4,7 +4,7 @@ from conf import *
 from base_engine import BaseEngine
 
 from gringotts.trend import Trend
-from gringotts.giant_model import calculate_giant_model
+from gringotts.giant_model import calculate_giant_model, display_giant_model
 from baseline import calculate_baseline, display_baseline
 
 
@@ -20,18 +20,18 @@ STOCK_NAMES_TIER_0 = [
     FUTU,
     PLTR,
     COIN,
-    # TSLA,
-    # BNTX,
-    # AMD,
-    # SNOW,
+    TSLA,
+    BNTX,
+    AMD,
+    SNOW,
     # HK_0700,
     # SS_000300,
 ]
 
 STOCK_NAMES_TIER_1 = [
-    PDD,
+    # PDD,
     # JD,
-    # BEKE,
+    BEKE,
     # HK_0700,
     # NVDA,
     # AMD,
@@ -82,7 +82,7 @@ def get_period(_stock_name):
     return default_period()
 
 
-for stock_name in STOCK_NAMES_TIER_1:
+for stock_name in STOCK_NAMES_TIER_0:
     for (start_date, end_date, interval) in get_period(stock_name):
         de = BaseEngine(stock_name, start_date, end_date, interval)
         de.build_graph(
@@ -106,7 +106,9 @@ for stock_name in STOCK_NAMES_TIER_1:
 
         with open(f'report/{stock_name}', 'w') as fd:
             print(f'handle {stock_name} at time {datetime.now()}')
-            # display_baseline(stock_df, fig)
-
             calculate_baseline(stock_df, fd)
             calculate_giant_model(stock_df, fd)
+
+        with open(f'report/{stock_name}', 'r') as fd:
+            # display_baseline(stock_df, fig)
+            display_giant_model(stock_df, fd, fig)
