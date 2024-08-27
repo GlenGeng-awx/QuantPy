@@ -1,83 +1,58 @@
-import copy
-from gringotts.buy_strategy import *
+import json
 
-SWITCHES = [
-    'ma20_trend_switch_to_up',                                  # 0
-    'ma20_trend_is_not_down',                                   # 1
-    'golden_cross_ma20',                                        # 2
-    'golden_cross_ma5',                                         # 3
-    'long_term_not_in_bottom',                                  # 4
-    'short_term_not_in_bottom',                                 # 5
-    'rsi_in_strong_up',                                         # 6
-    'bband_pst_ma5_in_strong_up',                               # 7
-    'up_thru_sr_levels',                                        # 8
-    'up_thru_sr_level_and_retrace_and_bounce_back',             # 9
-]
+from gringotts.tiny_model import enumerate_switches, TinyModel, BUY_SWITCHES, SELL_SWITCHES
+from gringotts.real_runner import RealRunner
+
+BUY_SWITCHES_SIZE = len(BUY_SWITCHES)
+SELL_SWITCHES_SIZE = len(SELL_SWITCHES)
+
+# SEARCH_TOP = 50
+# DISPLAY_TOP = 20
+SEARCH_TOP = 2
+DISPLAY_TOP = 2
 
 
-def enumerate_switches(size: int) -> list[list]:
-    if size == 0:
-        return [[]]
+def calculate_giant_model(stock_df, fd):
+    # prune space: strategy that could trigger buy
+    all_buy_switches = enumerate_switches(BUY_SWITCHES_SIZE)
+    default_sell_switches = [False, True, False, False, True, False, False, False, False]
 
-    switches_part1 = enumerate_switches(size - 1)
-    switches_part2 = copy.deepcopy(switches_part1)
+    pruned_buy_switches = []
 
-    for switch in switches_part1:
-        switch.append(False)
+    for buy_switches in all_buy_switches:
+        runner = RealRunner(stock_df=stock_df,
+                            strategy=TinyModel,
+                            buy_switches=buy_switches,
+                            sell_switches=default_sell_switches)
+        stat = runner.book.get_stat()
 
-    for switch in switches_part2:
-        switch.append(True)
+        if stat['buy_count'] > 0:
+            pruned_buy_switches.append((buy_switches, stat['revenue_pst'], stat['buy_count'], stat))
 
-    return switches_part1 + switches_part2
+    pruned_buy_switches.sort(key=lambda x: (x[1], x[2]), reverse=True)
 
+    for idx, (buy_switches, _, _, stat) in enumerate(pruned_buy_switches):
+        fd.write(f'prune tiny model {idx}\t{json.dumps(stat)}\tbuy;{buy_switches};default_sell\n')
 
-class TinyModel:
-    def __init__(self, stock_df: pd.DataFrame, switches: list[bool]):
-        self.stock_df = stock_df
-        self.switches = switches
+    # further search top ones
+    all_sell_switches = enumerate_switches(SELL_SWITCHES_SIZE)
 
-        self.name = f'{__class__.__name__} {switches}'
+    for x, (buy_switches, _, _, stat) in enumerate(pruned_buy_switches[:SEARCH_TOP + 1]):
+        baseline = (buy_switches, default_sell_switches, 0, 0, stat)
 
-    def check_long(self, idx) -> bool:
-        if self.switches[0] and not ma20_trend_switch_to_up(self.stock_df, idx):
-            return False
+        results = []
 
-        if self.switches[1] and ma20_trend_is_down(self.stock_df, idx):
-            return False
+        for sell_switches in all_sell_switches:
+            runner = RealRunner(stock_df=stock_df,
+                                strategy=TinyModel,
+                                buy_switches=buy_switches,
+                                sell_switches=sell_switches)
+            stat = runner.book.get_stat()
 
-        if self.switches[2] and not golden_cross_ma20(self.stock_df, idx):
-            return False
+            results.append((buy_switches, sell_switches, stat['revenue_pst'], stat['buy_count'], stat))
 
-        if self.switches[3] and not golden_cross_ma5(self.stock_df, idx):
-            return False
+        results.sort(key=lambda x: (x[2], x[3]), reverse=True)
+        results.insert(0, baseline)
 
-        if self.switches[4] and not long_term_not_in_bottom(self.stock_df, idx):
-            return False
-
-        if self.switches[5] and not short_term_not_in_bottom(self.stock_df, idx):
-            return False
-
-        if self.switches[6] and not rsi_in_strong_up(self.stock_df, idx):
-            return False
-
-        if self.switches[7] and not bband_pst_ma5_in_strong_up(self.stock_df, idx):
-            return False
-
-        if self.switches[8] and not up_thru_sr_levels(self.stock_df, idx):
-            return False
-
-        if self.switches[9] and not up_thru_sr_level_and_retrace_and_bounce_back(self.stock_df, idx):
-            return False
-
-        return True
-
-    def check_sell(self, idx) -> bool:
-        return False
-
-
-if __name__ == '__main__':
-    switches = [False, True, True, True, False, False, False, False, False, False]
-
-    for idx, enable in enumerate(switches):
-        if enable:
-            print(f'{SWITCHES[idx]}: {enable}')
+        for y, (_, sell_switches, _, _, stat) in enumerate(results[:DISPLAY_TOP + 1]):
+            fd.write(f'search tiny model {x}-{y}\t{json.dumps(stat)} --> buy {buy_switches}, sell {sell_switches}\n')

@@ -3,17 +3,9 @@ import plotly.graph_objects as go
 
 
 class Book:
-    def __init__(self,
-                 stock_df: pd.DataFrame,
-                 money_pool: int = 10_000 * 1_000,
-                 max_hard_loss: float = 0.05,   # 5%
-                 max_moving_loss: float = 0.05  # 5%
-                 ):
+    def __init__(self, stock_df: pd.DataFrame, money_pool: int = 10_000 * 1_000):
         self.stock_df = stock_df
         self.money_pool = money_pool
-
-        self.max_hard_loss = max_hard_loss
-        self.max_moving_loss = max_moving_loss
 
         # lifetime 1
         self.revenue = 0
@@ -76,9 +68,9 @@ class Book:
         self.gross_baseline = self.cost
 
         self.plot_buy(idx)
-
-        print(f'buy at {row["Date"]} with price {row["close"]:.2f}\n'
-              f'\tposition={self.position}, cost={self.cost:.2f}\n')
+        #
+        # print(f'buy at {row["Date"]} with price {row["close"]:.2f}\n'
+        #       f'\tposition={self.position}, cost={self.cost:.2f}\n')
 
     def sell(self, idx):
         row = self.stock_df.loc[idx]
@@ -91,10 +83,10 @@ class Book:
         else:
             self.negative_count += 1
 
-        print(f'sell at {row["Date"]} with price {row["close"]:.2f}\n'
-              f'\tcost={self.cost:.2f}, gross={self.gross:.2f}\n'
-              f'\tper_revenue={inflight_revenue:.2f}, {inflight_revenue / self.cost * 100:.2f}%, '
-              f'revenue={self.revenue:.2f}, {self.revenue / self.cost * 100:.2f}%.\n')
+        # print(f'sell at {row["Date"]} with price {row["close"]:.2f}\n'
+        #       f'\tcost={self.cost:.2f}, gross={self.gross:.2f}\n'
+        #       f'\tper_revenue={inflight_revenue:.2f}, {inflight_revenue / self.cost * 100:.2f}%, '
+        #       f'revenue={self.revenue:.2f}, {self.revenue / self.cost * 100:.2f}%.\n')
 
         self.position = 0
         self.cost = 0
@@ -113,11 +105,11 @@ class Book:
         self.gross = self.position * row['close']
         self.gross_baseline = max(self.gross_baseline, self.gross)
 
-    def hit_hard_loss(self) -> bool:
-        return self.cost - self.gross > self.cost * self.max_hard_loss
+    def get_hard_loss_pst(self) -> float:
+        return (self.cost - self.gross) / self.cost * 100
 
-    def hit_moving_loss(self) -> bool:
-        return self.gross_baseline - self.gross > self.gross_baseline * self.max_moving_loss
+    def get_moving_loss_pst(self) -> float:
+        return (self.gross_baseline - self.gross) / self.gross_baseline * 100
 
     def get_stat(self) -> dict:
         return {
@@ -126,3 +118,8 @@ class Book:
             'positive_count': self.positive_count,
             'negative_count': self.negative_count
         }
+
+    def get_stat_text(self) -> str:
+        stat = self.get_stat()
+        return (f'revenue: {stat["revenue_pst"]:.2f}%, {stat["buy_count"]} total trades, '
+                f'{stat["positive_count"]} positive trades, {stat["negative_count"]} negative trades')

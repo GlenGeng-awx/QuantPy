@@ -5,11 +5,11 @@ from .book import Book
 
 
 class FakeRunner:
-    def __init__(self, stock_df: pd.DataFrame, strategy):
+    def __init__(self, stock_df: pd.DataFrame, strategy, **kwargs):
         self.stock_df = stock_df
-        self.strategy = strategy(stock_df)
+        self.book = Book(stock_df)
 
-        self.book = Book(stock_df, max_hard_loss=0.05, max_moving_loss=0.05)
+        self.strategy = strategy(stock_df=stock_df, book=self.book, **kwargs)
         self.run()
 
     def run(self):
@@ -24,6 +24,6 @@ class FakeRunner:
 
         title = fig.layout.title.text
         strategy_name = self.strategy.name
-        fig.update_layout(title=f'{title} - {strategy_name}')
+        fig.update_layout(title=f'{title} - fake runner<br>{strategy_name}')
 
         fig.show()

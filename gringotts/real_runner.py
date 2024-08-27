@@ -5,12 +5,11 @@ from .book import Book
 
 
 class RealRunner:
-    def __init__(self, strategy, stock_df: pd.DataFrame, *args):
+    def __init__(self, stock_df: pd.DataFrame, strategy, **kwargs):
         self.stock_df = stock_df
-        self.strategy = strategy(stock_df, *args)
+        self.book = Book(stock_df)
 
-        self.book = Book(stock_df, max_hard_loss=0.05, max_moving_loss=0.05)
-        # self.book = Book(stock_df, max_hard_loss=0.1, max_moving_loss=0.1)
+        self.strategy = strategy(stock_df=stock_df, book=self.book, **kwargs)
         self.run()
 
     def run(self):
@@ -21,21 +20,7 @@ class RealRunner:
                 if self.strategy.check_long(idx):
                     self.book.buy(idx)
             else:
-                hit = False
-
-                if self.book.hit_hard_loss():
-                    print(f'---> hard loss hit')
-                    hit = True
-
-                if self.book.hit_moving_loss():
-                    print(f'---> moving loss hit')
-                    hit = True
-
                 if self.strategy.check_sell(idx):
-                    print(f'---> sell signal hit')
-                    hit = True
-
-                if hit:
                     self.book.sell(idx)
 
     def show(self, fig: go.Figure):
@@ -43,14 +28,9 @@ class RealRunner:
         fig = go.Figure(fig)
         self.book.build_graph(fig, size=7)
 
-        stat = self.book.get_stat()
-
-        revenue_pst, buy_cnt = stat['revenue_pst'], stat['buy_count']
-        positive_cnt, negative_cnt = stat['positive_count'], stat['negative_count']
-
-        title = fig.layout.title.text
+        origin_title = fig.layout.title.text
         strategy_name = self.strategy.name
-        fig.update_layout(title=f'{title}<br>{strategy_name} ---> {revenue_pst:.2f}%, {buy_cnt} trades, '
-                                f'{positive_cnt} positive, {negative_cnt} negative')
+        stat_text = self.book.get_stat_text()
 
+        fig.update_layout(title=f'{origin_title} - real runner<br>{strategy_name}<br>{stat_text}')
         fig.show()
