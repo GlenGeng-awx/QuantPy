@@ -1,4 +1,5 @@
 from datetime import datetime
+from multiprocessing import Process
 
 from conf import *
 from base_engine import BaseEngine
@@ -16,99 +17,109 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
+    TSLA,
+    BILI,
+    HK_0700,
+    IXIC,
+    BABA,
+    PDD,
+    COIN,
     BA,
     FUTU,
+    CPNG,
     PLTR,
-    COIN,
-    TSLA,
     BNTX,
     AMD,
     SNOW,
-    # HK_0700,
-    # SS_000300,
+    SS_000300,
+    JD,
+    BEKE,
+    NVDA,
+    IQ,
+    SS_000001,
 ]
 
 STOCK_NAMES_TIER_1 = [
-    # PDD,
-    # JD,
-    BEKE,
-    # HK_0700,
-    # NVDA,
-    # AMD,
-    # BNTX,
-    # CPNG,
-    # TSM,
-    # EBAY,
-    # IXIC,
-    # SS_000001,
-    # TSLA,
-    # COIN,
-    # XPEV,
-    # MRNA,
-    # SNOW,
-    # IQ,
-    # PLTR,
-    # RIVN,
-    # META,
-    # MNSO,
-    # ZM,
-    # BABA,
-    # EDU,
-    # BA,
-    # BILI,
-    # LI,
-    # SNAP,
-    # FUTU,
+    TSM,
+    EBAY,
+    IXIC,
+    XPEV,
+    MRNA,
+    RIVN,
+    META,
+    MNSO,
+    ZM,
+    EDU,
+    LI,
+    SNAP,
 ]
 
 
 def default_period():
     current_date = datetime.now()
 
-    date_0y_ago = datetime(current_date.year, 1, 1).strftime('%Y-%m-%d')
     date_1y_ago = datetime(current_date.year - 1, 1, 1).strftime('%Y-%m-%d')
-    date_5y_ago = datetime(current_date.year - 5, 1, 1).strftime('%Y-%m-%d')
-
     current_date = current_date.strftime('%Y-%m-%d')
 
-    return [
-        # (date_0y_ago, current_date, '1h'),
-        (date_1y_ago, current_date, '1d'),
-        # (date_5y_ago, current_date, '1wk'),
-    ]
+    return date_1y_ago, current_date, '1d'
 
 
-def get_period(_stock_name):
-    return default_period()
+def train_task(stock_name, start_date, end_date, interval):
+    be = BaseEngine(stock_name, start_date, end_date, interval)
+
+    stock_df = be.stock_df
+    Trend(stock_df)
+
+    print(f'start handle {stock_name} at time {datetime.now()}')
+
+    with open(f'report/{stock_name}', 'w') as fd:
+        calculate_baseline(stock_df, fd)
+        calculate_giant_model(stock_df, stock_name, fd)
+
+    print(f'finish handle {stock_name} at time {datetime.now()}')
 
 
-for stock_name in STOCK_NAMES_TIER_0:
-    for (start_date, end_date, interval) in get_period(stock_name):
-        de = BaseEngine(stock_name, start_date, end_date, interval)
-        de.build_graph(
-                       enable_close_price=True,
-                       enable_ma=True,
-                       enable_min_max=True,
-                       # enable_macd=True,
-                       # enable_bband=True,
-                       enable_bband_pst=(True, 2),
-                       enable_rsi=(True, 3),
-                       enable_volume_reg=(True, 4),
-                       # enable_ema=True,
-                       # enable_sr=True,
-                       # enable_min_max=True
-                       # enable_rsi=True,
-                       rows=4,
-                       )
+def display_task(stock_name, start_date, end_date, interval):
+    be = BaseEngine(stock_name, start_date, end_date, interval)
 
-        stock_df, fig = de.stock_df, de.fig
-        Trend(stock_df).build_graph(fig)
+    be.build_graph(
+        enable_close_price=False,
+        # enable_ma=True,
+        enable_min_max=True,
+        enable_wave=True,
+        enable_sr=True,
+        enable_line=True,
+        # enable_macd=True,
+        # enable_bband=True,
+        enable_bband_pst=(True, 3),
+        enable_rsi=(True, 4),
+        enable_volume_reg=(True, 2),
+        # enable_ema=True,
+        # enable_rsi=True,
+        rows=4,
+    )
 
-        with open(f'report/{stock_name}', 'w') as fd:
-            print(f'handle {stock_name} at time {datetime.now()}')
-            calculate_baseline(stock_df, fd)
-            calculate_giant_model(stock_df, fd)
+    stock_df, fig = be.stock_df, be.fig
+    # Trend(stock_df).build_graph(fig)
+    Trend(stock_df)
 
-        with open(f'report/{stock_name}', 'r') as fd:
-            # display_baseline(stock_df, fig)
-            display_giant_model(stock_df, fd, fig)
+    with open(f'report/{stock_name}', 'r') as fd:
+        display_baseline(stock_df, fig)
+        # display_giant_model(stock_df, fd, fig)
+
+
+if __name__ == '__main__':
+    start_date, end_date, interval = default_period()
+
+    # procs = []
+    #
+    # for stock_name in STOCK_NAMES_TIER_0:
+    #     p = Process(target=train_task, args=(stock_name, start_date, end_date, interval))
+    #     p.start()
+    #     procs.append(p)
+    #
+    # for p in procs:
+    #     p.join()
+
+    for stock_name in STOCK_NAMES_TIER_0:
+        display_task(stock_name, start_date, end_date, interval)

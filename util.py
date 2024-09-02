@@ -87,3 +87,8 @@ def interval_to_label(interval: str, abbr=False):
         return 'weeks' if not abbr else 'w'
     else:
         return 'unknown'
+
+
+def get_idx_by_date(stock_df: pd.DataFrame, date: str) -> int:
+    dates = stock_df['Date'].apply(shrink_date_str)
+    return dates[dates == date].index[0]

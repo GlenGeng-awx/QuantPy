@@ -3,8 +3,9 @@ from plotly.subplots import make_subplots
 from technical.price import Price
 from technical.volume import Volume
 from technical.min_max import MinMax
-from technical.sr_level import SupportResistanceLevel
 from technical.wave import Wave
+from technical.sr_level import SupportResistanceLevel
+from technical.line import Line
 from technical.box import Box
 
 from statistical.ema import EMA
@@ -44,8 +45,9 @@ class BaseEngine:
         self.rsi = RSI(self.stock_df)
 
         self.min_max = MinMax(self.stock_df)
-        self.sr_level = SupportResistanceLevel(self.stock_df)
         self.wave = Wave(self.stock_df)
+        self.sr_level = SupportResistanceLevel(self.stock_df, self.stock_name)
+        self.line = Line(self.stock_df, self.stock_name)
         self.box = Box(self.stock_df, self.wave)
 
         self.volume = Volume(self.stock_df)
@@ -92,13 +94,17 @@ class BaseEngine:
         self.fig.update_layout(
             title=title,
             xaxis_rangeslider_visible=False,
-            xaxis_gridcolor='gray',
+            # xaxis_gridcolor='gray',
             hovermode="x unified",
             hoverlabel=dict(
                 namelength=200
             ),
             height=1000,
         )
+
+        # Apply xaxis_gridcolor to all rows
+        for i in range(1, rows + 1):
+            self.fig.update_xaxes(gridcolor='gray', row=i, col=1)
 
     def build_graph(self,
                     enable_candlestick=False,
@@ -112,8 +118,9 @@ class BaseEngine:
                     enable_rsi=(False, 2),
                     # technical
                     enable_min_max=False,
-                    enable_sr=False,
                     enable_wave=False,
+                    enable_sr=False,
+                    enable_line=False,
                     enable_box=False,
                     enable_ratio=False,
                     # volume
@@ -132,8 +139,9 @@ class BaseEngine:
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
 
-        self.sr_level.build_graph(self.fig, self.interval, enable_sr)
         self.wave.build_graph(self.fig, enable_wave)
+        self.sr_level.build_graph(self.fig, enable_sr)
+        self.line.build_graph(self.fig, enable_line)
         self.box.build_graph(self.fig, self.interval, enable_box)
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
 

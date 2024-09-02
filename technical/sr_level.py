@@ -1,52 +1,43 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from .min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD, LOCAL_MIN_PRICE_4TH, LOCAL_MAX_PRICE_4TH
+from technical.core_banking import CORE_BANKING
+from util import get_idx_by_date
 
 
-def get_close_price(stock_df: pd.DataFrame, condition: pd.Series) -> list:
-    return stock_df[condition]['close'].tolist()
+def calculate_sr_level(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
+    x = get_idx_by_date(stock_df, date)
+    y = stock_df.loc[x]['close']
+
+    x1 = x - prev_len
+    date1 = stock_df.loc[x1]['Date']
+
+    x2 = x + post_len
+    date2 = stock_df.loc[x2]['Date']
+
+    return date1, date2, y
 
 
 class SupportResistanceLevel:
-    def __init__(self, stock_df: pd.DataFrame):
+    def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
+        self.stock_name = stock_name
 
-        self.start_date = stock_df['Date'].iloc[0]
-        self.end_date = stock_df['Date'].iloc[-1]
+        self.sr_levels = []
 
-        self.support_levels_3rd = get_close_price(stock_df, stock_df[LOCAL_MIN_PRICE_3RD])
-        self.resistance_levels_3rd = get_close_price(stock_df, stock_df[LOCAL_MAX_PRICE_3RD])
+        for sr_level in CORE_BANKING.get(stock_name, {}).get('sr_levels', []):
+            date1, date2, y = calculate_sr_level(stock_df, *sr_level)
+            self.sr_levels.append((date1, date2, y))
 
-        self.support_levels_4th = get_close_price(stock_df, stock_df[LOCAL_MIN_PRICE_4TH])
-        self.resistance_levels_4th = get_close_price(stock_df, stock_df[LOCAL_MAX_PRICE_4TH])
-
-    def _build_graph(self, fig: go.Figure, prices: list, name: str, color: str, enable=False):
-        x = []
-        y = []
-
-        for price in prices:
-            x.extend([self.start_date, self.end_date, None])
-            y.extend([price, price, None])
-
-        fig.add_trace(
-            go.Scatter(
-                name=name,
-                x=x,
-                y=y,
-                mode='lines',
-                line=dict(width=0.75, color=color),
-                visible=None if enable else 'legendonly',
+    def build_graph(self, fig: go.Figure, enable=False):
+        for i, (date1, date2, y) in enumerate(self.sr_levels):
+            fig.add_trace(
+                go.Scatter(
+                    name=f'sr level-{i}',
+                    x=[date1, date2],
+                    y=[y, y],
+                    mode='lines',
+                    line=dict(width=1, color='red', dash='dash'),
+                    visible=None if enable else 'legendonly',
+                )
             )
-        )
-
-    def build_graph(self, fig: go.Figure, interval: str, enable=False):
-        self._build_graph(fig, self.support_levels_3rd, 'support levels - 3rd', 'green',
-                          True if enable and interval != '1h' else False)
-        self._build_graph(fig, self.resistance_levels_3rd, 'resistance levels - 3rd', 'red',
-                          True if enable and interval != '1h' else False)
-
-        self._build_graph(fig, self.support_levels_4th, 'support levels - 4th', 'green',
-                          True if enable and interval == '1h' else False)
-        self._build_graph(fig, self.resistance_levels_4th, 'resistance levels - 4th', 'red',
-                          True if enable and interval == '1h' else False)
