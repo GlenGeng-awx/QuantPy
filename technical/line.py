@@ -61,11 +61,15 @@ class Line:
         self.primary_lines = []
         self.secondary_lines = []
 
+        self.anchor_dates = []
+
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
             if len(line) == 4:
                 self.primary_lines.append(calculate_primary_line(stock_df, *line))
+                self.anchor_dates.extend((line[0], line[1]))
             else:
                 self.secondary_lines.append(calculate_secondary_line(stock_df, *line))
+                self.anchor_dates.append(line[0])
 
     def build_graph(self, fig: go.Figure, enable=False):
         for i, (start_date, start_y, end_date, end_y) in enumerate(self.primary_lines):
@@ -91,3 +95,19 @@ class Line:
                     visible=None if enable else 'legendonly',
                 )
             )
+
+        y = []
+        for date in self.anchor_dates:
+            x = get_idx_by_date(self.stock_df, date)
+            y.append(self.stock_df.loc[x]['close'])
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'anchor point',
+                x=self.anchor_dates,
+                y=y,
+                mode='markers',
+                marker=dict(size=5, color='blue'),
+                visible=None if enable else 'legendonly',
+            )
+        )

@@ -37,7 +37,7 @@ class SupportResistanceLevel:
                     x=[date1, date2],
                     y=[y, y],
                     mode='lines',
-                    line=dict(width=1, color='red', dash='dash'),
+                    line=dict(width=1, color='blue', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
