@@ -16,41 +16,52 @@ def calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     return k
 
 
-def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_len) -> tuple:
-    k = calculate_k(stock_df, date1, date2)
-
-    x1 = get_idx_by_date(stock_df, date1)
-    y1 = stock_df.loc[x1]['close']
-
-    start_x = x1 - prev_len
-    start_date = stock_df.loc[start_x]['Date']
-    start_y = y1 - k * prev_len
-
-    x2 = get_idx_by_date(stock_df, date2)
-    y2 = stock_df.loc[x2]['close']
-
-    end_x = x2 + post_len
-    end_date = stock_df.loc[end_x]['Date']
-    end_y = y2 + k * post_len
-
-    return start_date, start_y, end_date, end_y
-
-
-def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, date1, date2) -> tuple:
-    k = calculate_k(stock_df, date1, date2)
-
+def calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     x = get_idx_by_date(stock_df, date)
     y = stock_df.loc[x]['close']
 
-    start_x = x - prev_len
-    start_date = stock_df.loc[start_x]['Date']
-    start_y = y - k * prev_len
+    target_x = x + delta
+    target_y = y + k * delta
 
-    end_x = x + post_len
-    end_date = stock_df.loc[end_x]['Date']
-    end_y = y + k * post_len
+    if target_x in stock_df.index:
+        target_date = stock_df.loc[target_x]['Date']
+        return target_date, target_y
+    else:
+        return ()
 
-    return start_date, start_y, end_date, end_y
+
+def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_len) -> tuple:
+    dates, prices = [], []
+
+    k = calculate_k(stock_df, date1, date2)
+
+    for delta in range(-prev_len, 0):
+        point = calculate_point(stock_df, date1, delta, k)
+        if point:
+            dates.append(point[0])
+            prices.append(point[1])
+
+    for delta in range(0, post_len):
+        point = calculate_point(stock_df, date2, delta, k)
+        if point:
+            dates.append(point[0])
+            prices.append(point[1])
+
+    return dates, prices
+
+
+def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, date1, date2) -> tuple:
+    dates, prices = [], []
+
+    k = calculate_k(stock_df, date1, date2)
+
+    for delta in range(-prev_len, post_len):
+        point = calculate_point(stock_df, date, delta, k)
+        if point:
+            dates.append(point[0])
+            prices.append(point[1])
+
+    return dates, prices
 
 
 class Line:
@@ -72,40 +83,40 @@ class Line:
                 self.anchor_dates.append(line[0])
 
     def build_graph(self, fig: go.Figure, enable=False):
-        for i, (start_date, start_y, end_date, end_y) in enumerate(self.primary_lines):
+        for i, (dates, prices) in enumerate(self.primary_lines):
             fig.add_trace(
                 go.Scatter(
                     name=f'primary line-{i}',
-                    x=[start_date, end_date],
-                    y=[start_y, end_y],
+                    x=dates,
+                    y=prices,
                     mode='lines',
                     line=dict(width=1, color='red', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
 
-        for i, (start_date, start_y, end_date, end_y) in enumerate(self.secondary_lines):
+        for i, (dates, prices) in enumerate(self.secondary_lines):
             fig.add_trace(
                 go.Scatter(
                     name=f'secondary line-{i}',
-                    x=[start_date, end_date],
-                    y=[start_y, end_y],
+                    x=dates,
+                    y=prices,
                     mode='lines',
                     line=dict(width=1, color='green', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
 
-        y = []
+        anchor_prices = []
         for date in self.anchor_dates:
-            x = get_idx_by_date(self.stock_df, date)
-            y.append(self.stock_df.loc[x]['close'])
+            idx = get_idx_by_date(self.stock_df, date)
+            anchor_prices.append(self.stock_df.loc[idx]['close'])
 
         fig.add_trace(
             go.Scatter(
                 name=f'anchor point',
                 x=self.anchor_dates,
-                y=y,
+                y=anchor_prices,
                 mode='markers',
                 marker=dict(size=5, color='blue'),
                 visible=None if enable else 'legendonly',
