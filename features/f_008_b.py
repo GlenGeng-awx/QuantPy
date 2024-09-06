@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.macd import MACD_DIF, MACD_DEA
-from features import STEP
+from features.util import STEP
 
 KEY = 'macd golden cross'
 VAL = 8 * STEP

@@ -1,13 +1,10 @@
 from datetime import datetime
-from multiprocessing import Process
 
 from conf import *
 from base_engine import BaseEngine
 
-from gringotts.trend import Trend
-from gringotts.giant_model import calculate_giant_model, display_giant_model
-from baseline import calculate_baseline, display_baseline
-
+from gringotts.giant_model import GiantModel
+import features
 
 STOCK_NAMES_INDEX = [
     IXIC,
@@ -17,39 +14,38 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    TSLA,
+    # TSLA,
     BILI,
-    HK_0700,
-    IXIC,
-    BABA,
-    PDD,
-    COIN,
-    BA,
-    FUTU,
-    CPNG,
-    PLTR,
-    BNTX,
-    AMD,
-    SNOW,
-    SS_000300,
-    JD,
-    BEKE,
-    NVDA,
-    IQ,
-    SS_000001,
+    # HK_0700,
+    # IXIC,
+    # BABA,
+    # PDD,
+    # COIN,
+    # BA,
+    # FUTU,
+    # CPNG,
+    # PLTR,
+    # BNTX,
+    # AMD,
+    # SNOW,
+    # SS_000300,
+    # JD,
+    # BEKE,
+    # NVDA,
+    # IQ,
+    # SS_000001,
+    # RIVN,
+    # MRNA,
+    # MNSO,
+    # EDU,
+    # XPEV,
 ]
 
 STOCK_NAMES_TIER_1 = [
     TSM,
     EBAY,
-    IXIC,
-    XPEV,
-    MRNA,
-    RIVN,
     META,
-    MNSO,
     ZM,
-    EDU,
     LI,
     SNAP,
 ]
@@ -64,19 +60,18 @@ def default_period():
     return date_1y_ago, current_date, '1d'
 
 
-def train_task(stock_name, start_date, end_date, interval):
-    be = BaseEngine(stock_name, start_date, end_date, interval)
-
-    stock_df = be.stock_df
-    Trend(stock_df)
-
-    print(f'start handle {stock_name} at time {datetime.now()}')
-
-    with open(f'report/{stock_name}', 'w') as fd:
-        calculate_baseline(stock_df, fd)
-        calculate_giant_model(stock_df, stock_name, fd)
-
-    print(f'finish handle {stock_name} at time {datetime.now()}')
+# def train_task(stock_name, start_date, end_date, interval):
+#     be = BaseEngine(stock_name, start_date, end_date, interval)
+#
+#     stock_df = be.stock_df
+#
+#     print(f'start handle {stock_name} at time {datetime.now()}')
+#
+#     with open(f'report/{stock_name}', 'w') as fd:
+#         calculate_baseline(stock_df, fd)
+#         calculate_giant_model(stock_df, stock_name, fd)
+#
+#     print(f'finish handle {stock_name} at time {datetime.now()}')
 
 
 def display_task(stock_name, start_date, end_date, interval):
@@ -85,28 +80,31 @@ def display_task(stock_name, start_date, end_date, interval):
     be.build_graph(
         enable_close_price=False,
         # enable_ma=True,
+        # enable_ema=True,
+        # enable_bband=True,
         enable_min_max=True,
         enable_wave=True,
         enable_sr=True,
         enable_line=True,
-        # enable_macd=True,
-        # enable_bband=True,
-        enable_bband_pst=(True, 3),
-        enable_rsi=(True, 4),
-        enable_volume_reg=(True, 2),
-        # enable_ema=True,
-        # enable_rsi=True,
-        rows=4,
+        enable_volume_reg=(True, 3),
+        enable_bband_pst=(True, 4),
+        enable_rsi=(True, 5),
+        enable_macd=(True, 6),
+        rows=6,
     )
 
     stock_df, fig = be.stock_df, be.fig
-    # Trend(stock_df).build_graph(fig)
-    Trend(stock_df)
 
-    with open(f'report/{stock_name}', 'r') as fd:
-        display_baseline(stock_df, fig)
+    # with open(f'report/{stock_name}', 'r') as fd:
+    #     display_baseline(stock_df, fig)
         # display_giant_model(stock_df, fd, fig)
 
+    features.calculate_feature(stock_df)
+    features.plot_feature(stock_df, fig)
+
+    GiantModel(stock_df).run()
+
+    # fig.show()
 
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()

@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_5
-from features import STEP
+from features.util import STEP
 
 KEY = 'above ma5'
 VAL = 2 * STEP

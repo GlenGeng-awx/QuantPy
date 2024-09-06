@@ -1,5 +1,5 @@
 import pandas as pd
-from features import STEP
+from features.util import STEP
 from .f_009_b import get_resistance_levels_in_last_n_days
 
 KEY = 'up thru resistance level, retrace, bounds back'

@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.rsi import RSI_14
-from features import STEP, DELTA
+from features.util import STEP, DELTA
 
 KEY = 'rsi below 30'
 VAL = 7 * STEP + DELTA

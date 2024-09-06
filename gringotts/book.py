@@ -44,7 +44,7 @@ class Book:
                 x=self.stock_df.loc[self.buy_indices]['Date'],
                 y=self.buy_prices,
                 mode="markers",
-                marker=dict(size=size, color='black'),
+                marker=dict(size=size, color='red'),
             )
         )
 

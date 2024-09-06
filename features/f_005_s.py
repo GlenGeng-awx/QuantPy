@@ -1,6 +1,6 @@
 import pandas as pd
 from technical.volume import VOLUME_REG
-from features import STEP, DELTA
+from features.util import STEP, DELTA
 
 KEY = 'down with high vol'
 VAL = 5 * STEP + DELTA

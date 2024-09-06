@@ -1,29 +1,67 @@
-from gringotts.real_runner import RealRunner
-from gringotts.fake_runner import FakeRunner
+import pandas as pd
+import plotly.graph_objects as go
 
-from .s1_9 import S1U9
-from .s1_10 import S1U10
-from .s1_10_1 import S1U10V1
-from .s1_11 import S1U11
-from .s1_11_1 import S1U11V1
-from .s1_12 import S1U12
-from .s1_12_1 import S1U12V1
+from features import (
+    f_001_b, f_001_s,
+    f_002_b, f_002_s,
+    f_003_b, f_003_s,
+    f_004_b, f_004_s,
+    f_005_b, f_005_s,
+    f_006_b, f_006_s,
+    f_007_b, f_007_s,
+    f_008_b, f_008_s,
+    f_009_b,
+    f_010_b,
+)
 
-# STRATEGIES = [S1U9, S1U10, S1U11, S1U11V1, S1U12, S1U12V1]
-STRATEGIES = [S1U10V1]
+FEATURE_BUF = [
+    f_001_b, f_001_s,
+    f_002_b, f_002_s,
+    f_003_b, f_003_s,
+    f_004_b, f_004_s,
+    f_005_b, f_005_s,
+    f_006_b, f_006_s,
+    f_007_b, f_007_s,
+    f_008_b, f_008_s,
+    f_009_b,
+    f_010_b,
+]
 
 
-def calculate_baseline(stock_df, fd):
-    for strategy in STRATEGIES:
-        runner = RealRunner(stock_df=stock_df, strategy=strategy)
-
-        strategy_name = runner.strategy.name
-        stat_text = runner.book.get_stat_text()
-
-        fd.write(f'baseline\t{strategy_name}\t{stat_text}\n')
+def calculate_feature(stock_df: pd.DataFrame):
+    for f in FEATURE_BUF:
+        f.execute(stock_df)
 
 
-def display_baseline(stock_df, fig):
-    for strategy in STRATEGIES:
-        FakeRunner(stock_df=stock_df, strategy=strategy).show(fig)
-        # RealRunner(stock_df=stock_df, strategy=strategy).show(fig)
+def _build_graph(stock_df: pd.DataFrame, fig: go.Figure,
+                 key: str, value: int, color: str, size: float = 3):
+
+    condition = stock_df[key]
+    df = stock_df[condition]
+
+    dates = df['Date']
+    values = [value] * len(df)
+
+    fig.add_trace(
+        go.Scatter(
+            name=key, x=dates, y=values,
+            mode='markers', marker=dict(color=color, size=size),
+        ),
+        row=2, col=1,
+    )
+
+
+def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
+    for params in [
+        (f_001_b.KEY, f_001_b.VAL, 'red', 2),   (f_001_s.KEY, f_001_s.VAL, 'green', 2),
+        (f_002_b.KEY, f_002_b.VAL, 'red', 2),   (f_002_s.KEY, f_002_s.VAL, 'green', 2),
+        (f_003_b.KEY, f_003_b.VAL, 'red'),      (f_003_s.KEY, f_003_s.VAL, 'green'),
+        (f_004_b.KEY, f_004_b.VAL, 'red'),      (f_004_s.KEY, f_004_s.VAL, 'green'),
+        (f_005_b.KEY, f_005_b.VAL, 'red'),      (f_005_s.KEY, f_005_s.VAL, 'green'),
+        (f_006_b.KEY, f_006_b.VAL, 'red', 2),   (f_006_s.KEY, f_006_s.VAL, 'green', 2),
+        (f_007_b.KEY, f_007_b.VAL, 'red', 2),   (f_007_s.KEY, f_007_s.VAL, 'green', 2),
+        (f_008_b.KEY, f_008_b.VAL, 'red'),      (f_008_s.KEY, f_008_s.VAL, 'green'),
+        (f_009_b.KEY, f_009_b.VAL, 'red'),
+        (f_010_b.KEY, f_010_b.VAL, 'red'),
+    ]:
+        _build_graph(stock_df, fig, *params)

@@ -1,89 +1,73 @@
-import json
-import plotly.graph_objects as go
-
-from gringotts.tiny_model import enumerate_switches, TinyModel, BUY_SWITCHES, SELL_SWITCHES
-from gringotts.real_runner import RealRunner
-
-BUY_SWITCHES_SIZE = len(BUY_SWITCHES)
-SELL_SWITCHES_SIZE = len(SELL_SWITCHES)
-
-# SEARCH_TOP = 50
-# DISPLAY_TOP = 20
-SEARCH_TOP = 2
-DISPLAY_TOP = 2
+import copy
+import pandas as pd
+from features import FEATURE_BUF
 
 
-def calculate_giant_model(stock_df, fd):
-    # prune space: strategy that could trigger buy
-    all_buy_switches = enumerate_switches(BUY_SWITCHES_SIZE)
-    default_sell_switches = [False, True, False, False, True, False, False, False, False]
+def enumerate_switches(size: int) -> list[list]:
+    if size == 0:
+        return [[]]
 
-    pruned_buy_switches = []
+    switches_part1 = enumerate_switches(size - 1)
+    switches_part2 = copy.deepcopy(switches_part1)
 
-    for buy_switches in all_buy_switches:
-        # not enable any feature
-        if not any(buy_switches):
-            continue
+    for switch in switches_part1:
+        switch.append(False)
 
-        runner = RealRunner(stock_df=stock_df,
-                            strategy=TinyModel,
-                            buy_switches=buy_switches,
-                            sell_switches=default_sell_switches)
-        stat = runner.book.get_stat()
+    for switch in switches_part2:
+        switch.append(True)
 
-        if stat['buy_count'] > 0:
-            pruned_buy_switches.append((buy_switches, stat['revenue_pst'], stat['buy_count'], stat))
-
-    pruned_buy_switches.sort(key=lambda x: (x[1], -x[2]), reverse=True)
-
-    for idx, (buy_switches, _, _, stat) in enumerate(pruned_buy_switches):
-        fd.write(f'prune tiny model {idx}\t{json.dumps(stat)}\tbuy;{buy_switches};default_sell\n')
-
-    # further search top ones
-    all_sell_switches = enumerate_switches(SELL_SWITCHES_SIZE)
-
-    for x, (buy_switches, _, _, stat) in enumerate(pruned_buy_switches[:SEARCH_TOP + 1]):
-        baseline = (buy_switches, default_sell_switches, 0, 0, stat)
-
-        results = []
-
-        for sell_switches in all_sell_switches:
-            runner = RealRunner(stock_df=stock_df,
-                                strategy=TinyModel,
-                                buy_switches=buy_switches,
-                                sell_switches=sell_switches)
-            stat = runner.book.get_stat()
-
-            results.append((buy_switches, sell_switches, stat['revenue_pst'], stat['buy_count'], stat))
-
-        results.sort(key=lambda x: (x[2], -x[3]), reverse=True)
-        results.insert(0, baseline)
-
-        for y, (_, sell_switches, _, _, stat) in enumerate(results[:DISPLAY_TOP + 1]):
-            fd.write(f'search tiny model {x}-{y}\t{json.dumps(stat)}\tbuy;{buy_switches};sell;{sell_switches}\n')
+    return switches_part1 + switches_part2
 
 
-def display_giant_model(stock_df, fd, fig: go.Figure):
-    buffer = []
+class TinyModel:
+    def __init__(self, stock_df: pd.DataFrame, switch: list[bool]):
+        self.stock_df = stock_df
 
-    for line in fd:
-        fields = line.strip().split('\t')
-        if not fields[0].startswith('search'):
-            continue
+        self.switch = switch
+        self.name = ', '.join([feature.KEY for i, feature in enumerate(FEATURE_BUF) if switch[i]])
 
-        stat = json.loads(fields[1])
-        revenue_pst, buy_cnt = stat['revenue_pst'], stat['buy_count']
+        self.indices = []
 
-        buy_switches = eval(fields[2].split(';')[1])
-        sell_switches = eval(fields[2].split(';')[3])
+        self.successful_trades = 0
+        self.successful_rate = 0
 
-        buffer.append((revenue_pst, buy_cnt, buy_switches, sell_switches))
+    def check_long(self, idx) -> bool:
+        for i, feature in enumerate(FEATURE_BUF):
+            if self.switch[i] and not self.stock_df[feature.KEY][idx]:
+                return False
+        return True
 
-    buffer.sort(key=lambda x: (x[0], -x[1]), reverse=True)
+    def run(self):
+        for idx in self.stock_df.index[:-5]:
+            if self.check_long(idx):
+                self.indices.append(idx)
 
-    for (_, _, buy_switches, sell_switches) in buffer[:2]:
-        runner = RealRunner(stock_df=stock_df,
-                            strategy=TinyModel,
-                            buy_switches=buy_switches,
-                            sell_switches=sell_switches)
-        runner.show(fig)
+        if not self.indices:
+            return
+
+        close = self.stock_df['close']
+
+        for idx in self.indices:
+            if close[idx] < close[idx + 5]:
+                self.successful_trades += 1
+
+        self.successful_rate = self.successful_trades / len(self.indices) * 100
+
+
+class GiantModel:
+    def __init__(self, stock_df: pd.DataFrame):
+        self.stock_df = stock_df
+
+    def run(self):
+        switches = enumerate_switches(len(FEATURE_BUF))
+
+        for i, switch in enumerate(switches):
+            model = TinyModel(self.stock_df, switch)
+            model.run()
+
+            if model.successful_rate > 75 and len(model.indices) >= 2:
+                print(f'{i + 1}/{len(switches)}: {model.successful_rate}% among {len(model.indices)}, {model.name}')
+
+
+if __name__ == '__main__':
+    print(FEATURE_BUF[6].KEY)

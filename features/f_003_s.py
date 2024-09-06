@@ -1,5 +1,5 @@
 import pandas as pd
-from features import STEP, DELTA
+from features.util import STEP, DELTA
 
 KEY = 'yesterday is local max'
 VAL = 3 * STEP + DELTA

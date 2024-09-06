@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.bband import BBAND_PST
-from features import STEP
+from features.util import STEP
 
 KEY = 'bband pst gt 0.85'
 VAL = 6 * STEP

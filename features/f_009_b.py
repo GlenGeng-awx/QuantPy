@@ -1,6 +1,6 @@
 import pandas as pd
 from technical.min_max import LOCAL_MAX_PRICE_2ND
-from features import STEP
+from features.util import STEP
 
 KEY = 'up thru resistance level'
 VAL = 9 * STEP

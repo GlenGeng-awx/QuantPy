@@ -32,5 +32,5 @@ class RealRunner:
         strategy_name = self.strategy.name
         stat_text = self.book.get_stat_text()
 
-        fig.update_layout(title=f'{origin_title} - real runner<br>{strategy_name}<br>{stat_text}')
+        fig.update_layout(title=f'{origin_title} - real runner - {stat_text}<br>{strategy_name}')
         fig.show()

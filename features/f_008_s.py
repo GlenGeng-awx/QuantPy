@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.macd import MACD_DIF, MACD_DEA
-from features import STEP, DELTA
+from features.util import STEP, DELTA
 
 KEY = 'macd death cross'
 VAL = 8 * STEP + DELTA
