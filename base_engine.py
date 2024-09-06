@@ -10,6 +10,7 @@ from technical.box import Box
 
 from statistical.ema import EMA
 from statistical.ma import MA
+from statistical.trend import Trend
 from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
@@ -40,6 +41,7 @@ class BaseEngine:
 
         self.ema = EMA(self.stock_df)
         self.ma = MA(self.stock_df)
+        self.trend = Trend(self.stock_df)
         self.bband = BBand(self.stock_df)
         self.macd = MACD(self.stock_df)
         self.rsi = RSI(self.stock_df)
@@ -53,26 +55,11 @@ class BaseEngine:
         self.volume = Volume(self.stock_df)
 
     def setup_graph(self, rows=2):
-        if rows == 2:
-            self.fig = make_subplots(rows=2, cols=1,
-                                     row_heights=[0.5, 0.25],
-                                     shared_xaxes=True,
-                                     vertical_spacing=0.05,
-                                     )
-        elif rows == 3:
-            self.fig = make_subplots(rows=3, cols=1,
-                                     row_heights=[0.5, 0.25, 0.25],
-                                     shared_xaxes=True,
-                                     vertical_spacing=0.03,
-                                     )
-        elif rows == 4:
-            self.fig = make_subplots(rows=4, cols=1,
-                                     row_heights=[0.5, 0.25, 0.25, 0.25],
-                                     shared_xaxes=True,
-                                     vertical_spacing=0.01,
-                                     )
-        else:
-            raise ValueError(f"Invalid rows: {rows}")
+        self.fig = make_subplots(rows=rows, cols=1,
+                                 row_heights=[0.5] + [0.25] * (rows - 1),
+                                 shared_xaxes=True,
+                                 vertical_spacing=0.02,
+                                 )
 
         rangebreaks = [
             dict(bounds=["sat", "mon"]),  # hide weekends
@@ -96,10 +83,12 @@ class BaseEngine:
             xaxis_rangeslider_visible=False,
             # xaxis_gridcolor='gray',
             hovermode="x unified",
+            hoverdistance=1,  # Only show hoverlabel for the current day
             hoverlabel=dict(
                 namelength=200
             ),
-            height=1000,
+            # height=1000,
+            height=500 + 250 * (rows - 1)
         )
 
         # Apply xaxis_gridcolor to all rows
@@ -112,6 +101,7 @@ class BaseEngine:
                     # statistical
                     enable_ema=False,
                     enable_ma=False,
+                    enable_trend=False,
                     enable_bband=False,
                     enable_bband_pst=(False, 2),
                     enable_macd=(False, 2),
@@ -135,6 +125,7 @@ class BaseEngine:
 
         self.ema.build_graph(self.fig, enable_ema)
         self.ma.build_graph(self.fig, enable_ma)
+        self.trend.build_graph(self.fig, enable_trend)
         self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
