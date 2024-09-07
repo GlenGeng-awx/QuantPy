@@ -2,7 +2,7 @@ import pandas as pd
 from features.util import STEP
 from .f_009_b import get_resistance_levels_in_last_n_days
 
-KEY = 'up thru resistance level, retrace, bounds back'
+KEY = 'up thru r level, retrace, bounds back'
 VAL = 10 * STEP
 
 
@@ -23,7 +23,7 @@ def execute(stock_df: pd.DataFrame, **kwargs):
                     step1 = True
 
             # retrace and bounce back
-            if close[idx - 2] < close[idx - 1] < close[idx] \
+            if close[idx - 1] < close[idx] and close[idx - 1] < close[idx - 2] \
                     and close[idx - 1] > r_level:
                 step2 = True
 
