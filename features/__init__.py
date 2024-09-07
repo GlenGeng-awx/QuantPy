@@ -12,6 +12,7 @@ from features import (
     f_008_b, f_008_s,
     f_009_b,
     f_010_b,
+    f_011_b, f_011_s,
 )
 
 FEATURE_BUF = [
@@ -25,6 +26,7 @@ FEATURE_BUF = [
     f_008_b, f_008_s,
     f_009_b,
     f_010_b,
+    f_011_b, f_011_s,
 ]
 
 
@@ -63,5 +65,6 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_008_b.KEY, f_008_b.VAL, 'red'),      (f_008_s.KEY, f_008_s.VAL, 'green'),
         (f_009_b.KEY, f_009_b.VAL, 'red'),
         (f_010_b.KEY, f_010_b.VAL, 'red'),
+        (f_011_b.KEY, f_011_b.VAL, 'red'),      (f_011_s.KEY, f_011_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)

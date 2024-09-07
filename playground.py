@@ -32,7 +32,7 @@ STOCK_NAMES_TIER_0 = [
     # SS_000300,
     # JD,
     # BEKE,
-    NVDA,
+    # NVDA,
     # IQ,
     # SS_000001,
     # RIVN,
@@ -41,10 +41,10 @@ STOCK_NAMES_TIER_0 = [
     # EDU,
     # XPEV,
     # TSM,
-    # EBAY,
+    # EBAYri,
     # META,
     # ZM,
-    # LI,
+    LI,
     # SNAP,
 ]
 
@@ -86,9 +86,9 @@ def handle_task(stock_name, start_date, end_date, interval):
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    giant_model = GiantModel(stock_df, stock_name)
-    giant_model.run()
-    giant_model.build_graph(fig)
+    # giant_model = GiantModel(stock_df, stock_name)
+    # giant_model.run()
+    # giant_model.build_graph(fig)
 
     fig.show()
 
@@ -96,15 +96,5 @@ def handle_task(stock_name, start_date, end_date, interval):
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()
 
-    procs = []
-
     for stock_name in STOCK_NAMES_TIER_0:
-        p = Process(target=handle_task, args=(stock_name, start_date, end_date, interval))
-        p.start()
-        procs.append(p)
-
-    for p in procs:
-        p.join()
-
-    # for stock_name in STOCK_NAMES_TIER_0:
-    #     handle_task(stock_name, start_date, end_date, interval)
+        handle_task(stock_name, start_date, end_date, interval)

@@ -1,60 +1,12 @@
 import copy
 from datetime import datetime
+from multiprocessing import Process, Queue
+
 import pandas as pd
 import plotly.graph_objects as go
 
 from features import FEATURE_BUF
-
-
-class TinyModel:
-    def __init__(self, stock_df: pd.DataFrame, switch: list[bool]):
-        self.stock_df = stock_df
-
-        self.switch = switch
-        self.abbr = ', '.join([str(i) for i in range(len(switch)) if switch[i]])
-        self.name = ', '.join([feature.KEY for i, feature in enumerate(FEATURE_BUF) if switch[i]])
-
-        self.indices = []
-
-        self.successful_long_trades = 0
-        self.successful_long_rate = 0
-
-        self.successful_short_trades = 0
-        self.successful_short_rate = 0
-
-    def check(self, idx) -> bool:
-        for i, feature in enumerate(FEATURE_BUF):
-            if self.switch[i] and not self.stock_df[feature.KEY][idx]:
-                return False
-        return True
-
-    def run(self):
-        for idx in self.stock_df.index:
-            if self.check(idx):
-                self.indices.append(idx)
-
-        # evaluate the model
-        valid_trade_num = 0
-        step = 5
-        close = self.stock_df['close']
-
-        for idx in self.indices:
-            if idx + step in close:
-                valid_trade_num += 1
-            else:
-                continue
-
-            if close[idx] < close[idx + step]:
-                self.successful_long_trades += 1
-
-            if close[idx] > close[idx + step]:
-                self.successful_short_trades += 1
-
-        if valid_trade_num == 0:
-            return
-
-        self.successful_long_rate = self.successful_long_trades / valid_trade_num * 100
-        self.successful_short_rate = self.successful_short_trades / valid_trade_num * 100
+from gringotts.tiny_model import TinyModel
 
 
 def enumerate_switches(size: int) -> list[list]:
@@ -109,6 +61,35 @@ def show_models(stock_df: pd.DataFrame, fig: go.Figure, models: list[TinyModel],
         )
 
 
+def giant_model_worker(stock_df: pd.DataFrame, stock_name: str,
+                       worker_id: int, switches: list[list[bool]], queue: Queue):
+    worker_tag = f'{stock_name} worker {worker_id}'
+    long_models = []
+    short_models = []
+
+    for i, switch in enumerate(switches):
+        model = TinyModel(stock_df, switch)
+        model.run()
+
+        if model.successful_long_rate >= 80 and len(model.indices) >= 2:
+            print(f'{worker_tag} {i + 1}/{len(switches)} --> long '
+                  f'{model.successful_long_rate}% among {len(model.indices)} with {model.name}')
+            long_models.append(model)
+
+        if model.successful_short_rate >= 80 and len(model.indices) >= 2:
+            print(f'{worker_tag} {i + 1}/{len(switches)} --> short '
+                  f'{model.successful_short_rate}% among {len(model.indices)} with {model.name}')
+            short_models.append(model)
+
+        if (i + 1) % 10_000 == 0:
+            print(f'{worker_tag} {i + 1}/{len(switches)} --> progress {datetime.now().time()}')
+            # break
+
+    queue.put((long_models, short_models))
+    print(f'{worker_tag} finished at {datetime.now().time()}, '
+          f'return {len(long_models)} long models and {len(short_models)} short models')
+
+
 class GiantModel:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
@@ -120,23 +101,30 @@ class GiantModel:
     def run(self):
         switches = enumerate_switches(len(FEATURE_BUF))
 
-        for i, switch in enumerate(switches):
-            model = TinyModel(self.stock_df, switch)
-            model.run()
+        worker_num = 16
+        assert len(switches) % worker_num == 0
+        batch_size = len(switches) // worker_num
 
-            if model.successful_long_rate >= 80 and len(model.indices) >= 2:
-                print(f'{self.stock_name} {i + 1}/{len(switches)} --> long\t'
-                      f'{model.successful_long_rate}% among {len(model.indices)} with {model.name}')
-                self.long_models.append(model)
+        queue = Queue()
+        procs = []
 
-            if model.successful_short_rate >= 80 and len(model.indices) >= 2:
-                print(f'{self.stock_name} {i + 1}/{len(switches)} --> short\t'
-                      f'{model.successful_short_rate}% among {len(model.indices)} with {model.name}')
-                self.short_models.append(model)
+        for i in range(worker_num):
+            start = i * batch_size
+            end = (i + 1) * batch_size
+            proc = Process(target=giant_model_worker,
+                           args=(self.stock_df, self.stock_name, i, switches[start:end], queue))
+            proc.start()
+            procs.append(proc)
 
-            if (i + 1) % 10_000 == 0:
-                print(f'{self.stock_name} {i + 1}/{len(switches)}\t{datetime.now().time()}')
-                # break
+        # for proc in procs:
+        #     print(f'waiting for {proc.pid} to join')
+        #     proc.join()
+
+        for _ in procs:
+            long_models, short_models = queue.get()
+            print(f'got {len(long_models)} long models and {len(short_models)} short models')
+            self.long_models.extend(long_models)
+            self.short_models.extend(short_models)
 
     def build_graph(self, fig: go.Figure):
         self.long_models = shrink_models(self.long_models)
@@ -144,12 +132,3 @@ class GiantModel:
 
         show_models(self.stock_df, fig, self.long_models, 'orange')
         show_models(self.stock_df, fig, self.short_models, 'blue')
-
-
-if __name__ == '__main__':
-    abbrs = [
-        [2, 4, 6],
-    ]
-
-    for abbr in abbrs:
-        print(abbr, ' / '.join([FEATURE_BUF[i].KEY for i in abbr]))
