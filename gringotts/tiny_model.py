@@ -31,8 +31,9 @@ class TinyModel:
 
         # evaluate the model
         valid_trade_num = 0
-        step = 5
         close = self.stock_df['close']
+        step = 5
+        margin = 0.05
 
         for idx in self.indices:
             if idx + step in close:
@@ -40,10 +41,10 @@ class TinyModel:
             else:
                 continue
 
-            if close[idx] < close[idx + step]:
+            if close[idx] * (1 + margin) < close[idx + step]:
                 self.successful_long_trades += 1
 
-            if close[idx] > close[idx + step]:
+            if close[idx] * (1 - margin) > close[idx + step]:
                 self.successful_short_trades += 1
 
         if valid_trade_num == 0:
@@ -55,7 +56,7 @@ class TinyModel:
 
 if __name__ == '__main__':
     abbrs = [
-        [0, 3, 4],
+        [17, 20],
     ]
 
     for abbr in abbrs:

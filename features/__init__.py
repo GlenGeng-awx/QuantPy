@@ -10,7 +10,7 @@ from features import (
     f_006_b, f_006_s,
     f_007_b, f_007_s,
     f_008_b, f_008_s,
-    f_009_b,
+    f_009_b, f_009_s,
     f_010_b,
     f_011_b, f_011_s,
 )
@@ -24,7 +24,7 @@ FEATURE_BUF = [
     f_006_b, f_006_s,
     f_007_b, f_007_s,
     f_008_b, f_008_s,
-    f_009_b,
+    f_009_b, f_009_s,
     f_010_b,
     f_011_b, f_011_s,
 ]
@@ -63,7 +63,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_006_b.KEY, f_006_b.VAL, 'red', 2),   (f_006_s.KEY, f_006_s.VAL, 'green', 2),
         (f_007_b.KEY, f_007_b.VAL, 'red', 2),   (f_007_s.KEY, f_007_s.VAL, 'green', 2),
         (f_008_b.KEY, f_008_b.VAL, 'red'),      (f_008_s.KEY, f_008_s.VAL, 'green'),
-        (f_009_b.KEY, f_009_b.VAL, 'red'),
+        (f_009_b.KEY, f_009_b.VAL, 'red'),      (f_009_s.KEY, f_009_s.VAL, 'green'),
         (f_010_b.KEY, f_010_b.VAL, 'red'),
         (f_011_b.KEY, f_011_b.VAL, 'red'),      (f_011_s.KEY, f_011_s.VAL, 'green'),
     ]:
