@@ -41,10 +41,10 @@ STOCK_NAMES_TIER_0 = [
     # EDU,
     # XPEV,
     # TSM,
-    # EBAYri,
-    # META,
+    # EBAY,
+    META,
     # ZM,
-    LI,
+    # LI,
     # SNAP,
 ]
 
@@ -86,9 +86,9 @@ def handle_task(stock_name, start_date, end_date, interval):
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    # giant_model = GiantModel(stock_df, stock_name)
-    # giant_model.run()
-    # giant_model.build_graph(fig)
+    giant_model = GiantModel(stock_df, stock_name, 'train')
+    giant_model.run()
+    giant_model.build_graph(fig)
 
     fig.show()
 

@@ -9,7 +9,7 @@ from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
 
 
-def enumerate_switches(size: int) -> list[list]:
+def enumerate_switches(size: int) -> list[list[bool]]:
     if size == 0:
         return [[]]
 
@@ -23,6 +23,36 @@ def enumerate_switches(size: int) -> list[list]:
         switch.append(True)
 
     return switches_part1 + switches_part2
+
+
+def serialize_models(stock_name: str, long_models: list[TinyModel], short_models: list[TinyModel]):
+    with open(f'train/{stock_name}.txt', 'w') as f:
+        for model in long_models:
+            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.indices)}\n')
+
+        for model in short_models:
+            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.indices)}\n')
+
+
+def deserialize_models(stock_name: str) -> tuple[list[list[bool]], list[list[bool]]]:
+    long_switches, short_switches = [], []
+
+    with open(f'train/{stock_name}.txt', 'r') as f:
+        for line in f:
+            switch = [False] * len(FEATURE_BUF)
+
+            fields = line.split('\t')
+            parts = fields[1].split(',')
+
+            for part in parts:
+                switch[int(part)] = True
+
+            if fields[0] == 'long':
+                long_switches.append(switch)
+            elif fields[0] == 'short':
+                short_switches.append(switch)
+
+    return long_switches, short_switches
 
 
 def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
@@ -91,14 +121,21 @@ def giant_model_worker(stock_df: pd.DataFrame, stock_name: str,
 
 
 class GiantModel:
-    def __init__(self, stock_df: pd.DataFrame, stock_name: str):
+    def __init__(self, stock_df: pd.DataFrame, stock_name: str, mode: str = 'train'):
         self.stock_df = stock_df
         self.stock_name = stock_name
+        self.mode = mode
 
         self.long_models = []
         self.short_models = []
 
     def run(self):
+        if self.mode == 'train':
+            self._train()
+        else:
+            self._predict()
+
+    def _train(self):
         switches = enumerate_switches(len(FEATURE_BUF))
 
         worker_num = 16
@@ -126,9 +163,24 @@ class GiantModel:
             self.long_models.extend(long_models)
             self.short_models.extend(short_models)
 
-    def build_graph(self, fig: go.Figure):
         self.long_models = shrink_models(self.long_models)
         self.short_models = shrink_models(self.short_models)
 
+        serialize_models(self.stock_name, self.long_models, self.short_models)
+
+    def _predict(self):
+        long_switches, short_switches = deserialize_models(self.stock_name)
+
+        for switch in long_switches:
+            model = TinyModel(self.stock_df, switch)
+            model.run()
+            self.long_models.append(model)
+
+        for switch in short_switches:
+            model = TinyModel(self.stock_df, switch)
+            model.run()
+            self.short_models.append(model)
+
+    def build_graph(self, fig: go.Figure):
         show_models(self.stock_df, fig, self.long_models, 'orange')
         show_models(self.stock_df, fig, self.short_models, 'blue')

@@ -7,7 +7,7 @@ class TinyModel:
         self.stock_df = stock_df
 
         self.switch = switch
-        self.abbr = ', '.join([str(i) for i in range(len(switch)) if switch[i]])
+        self.abbr = ','.join([str(i) for i in range(len(switch)) if switch[i]])
         self.name = ', '.join([feature.KEY for i, feature in enumerate(FEATURE_BUF) if switch[i]])
 
         self.indices = []
@@ -31,9 +31,10 @@ class TinyModel:
 
         # evaluate the model
         valid_trade_num = 0
-        close = self.stock_df['close']
         step = 5
-        margin = 0.05
+        margin = 0.03
+
+        close = self.stock_df['close']
 
         for idx in self.indices:
             if idx + step in close:
@@ -56,7 +57,9 @@ class TinyModel:
 
 if __name__ == '__main__':
     abbrs = [
-        [17, 20],
+        [0, 7],
+        [13],
+        [2, 17],
     ]
 
     for abbr in abbrs:
