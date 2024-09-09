@@ -1,4 +1,3 @@
-import copy
 from datetime import datetime
 from multiprocessing import Process, Queue
 
@@ -6,117 +5,75 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from features import FEATURE_BUF
+import gringotts
 from gringotts.tiny_model import TinyModel
+from gringotts.giant_model_helper import (enumerate_switches, default_switch,
+                                          serialize_models, deserialize_models,
+                                          shrink_models, show_models)
 
 
-def enumerate_switches(size: int) -> list[list[bool]]:
-    if size == 0:
-        return [[]]
+def _model_searcher(stock_df: pd.DataFrame, worker_tag: str,
+                    prefix: list[bool], left_len: int) -> tuple[list[TinyModel], list[TinyModel]]:
+    if left_len == 0:
+        assert len(prefix) == len(FEATURE_BUF)
 
-    switches_part1 = enumerate_switches(size - 1)
-    switches_part2 = copy.deepcopy(switches_part1)
+        success_rate = gringotts.SUCCESSFUL_RATE
+        hit_threshold = gringotts.HIT_THRESHOLD
 
-    for switch in switches_part1:
-        switch.append(False)
-
-    for switch in switches_part2:
-        switch.append(True)
-
-    return switches_part1 + switches_part2
-
-
-def serialize_models(stock_name: str, long_models: list[TinyModel], short_models: list[TinyModel]):
-    with open(f'train/{stock_name}.txt', 'w') as f:
-        for model in long_models:
-            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.indices)}\n')
-
-        for model in short_models:
-            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.indices)}\n')
-
-
-def deserialize_models(stock_name: str) -> tuple[list[list[bool]], list[list[bool]]]:
-    long_switches, short_switches = [], []
-
-    with open(f'train/{stock_name}.txt', 'r') as f:
-        for line in f:
-            switch = [False] * len(FEATURE_BUF)
-
-            fields = line.split('\t')
-            parts = fields[1].split(',')
-
-            for part in parts:
-                switch[int(part)] = True
-
-            if fields[0] == 'long':
-                long_switches.append(switch)
-            elif fields[0] == 'short':
-                short_switches.append(switch)
-
-    return long_switches, short_switches
-
-
-def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
-    # shrink models with same indices, keep the one with shorter name
-    results = {}
-
-    for model in models:
-        model_key = tuple(model.indices)
-
-        if model_key not in results:
-            results[model_key] = model
-        else:
-            if len(model.name) < len(results[model_key].name):
-                results[model_key] = model
-
-    results = list(results.values())
-    results.sort(key=lambda m: len(m.indices), reverse=True)
-    return results
-
-
-def show_models(stock_df: pd.DataFrame, fig: go.Figure, models: list[TinyModel], color: str):
-    for model in models[:15]:
-        indices = model.indices
-        dates = stock_df.loc[indices]['Date']
-        close = stock_df.loc[indices]['close']
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'{model.abbr}',
-                x=dates,
-                y=close,
-                mode='markers',
-                marker=dict(size=8, color=color),
-                visible='legendonly',
-            )
-        )
-
-
-def giant_model_worker(stock_df: pd.DataFrame, stock_name: str,
-                       worker_id: int, switches: list[list[bool]], queue: Queue):
-    worker_tag = f'{stock_name} worker {worker_id}'
-    long_models = []
-    short_models = []
-
-    for i, switch in enumerate(switches):
-        model = TinyModel(stock_df, switch)
+        model = TinyModel(stock_df, prefix)
         model.run()
 
-        if model.successful_long_rate >= 80 and len(model.indices) >= 2:
-            print(f'{worker_tag} {i + 1}/{len(switches)} --> long '
-                  f'{model.successful_long_rate}% among {len(model.indices)} with {model.name}')
+        long_models, short_models = [], []
+
+        if model.successful_long_rate >= success_rate and len(model.indices) >= hit_threshold:
+            print(f'{worker_tag} --> long {model.successful_long_rate}% '
+                  f'among {len(model.indices)} with {model.name}')
             long_models.append(model)
 
-        if model.successful_short_rate >= 80 and len(model.indices) >= 2:
-            print(f'{worker_tag} {i + 1}/{len(switches)} --> short '
-                  f'{model.successful_short_rate}% among {len(model.indices)} with {model.name}')
+        if model.successful_short_rate >= success_rate and len(model.indices) >= hit_threshold:
+            print(f'{worker_tag} --> short {model.successful_short_rate}% '
+                  f'among {len(model.indices)} with {model.name}')
             short_models.append(model)
 
-        if (i + 1) % 10_000 == 0:
-            print(f'{worker_tag} {i + 1}/{len(switches)} --> progress {datetime.now().time()}')
-            # break
+        return long_models, short_models
 
+    else:
+        hint_switch = prefix + default_switch(left_len)
+        assert len(hint_switch) == len(FEATURE_BUF)
+
+        model = TinyModel(stock_df, hint_switch)
+        model.run()
+
+        if not model.indices:
+            # print(f'{worker_tag} prune {2 ** left_len} models for {prefix}')
+            return [], []
+
+        long_models, short_models = [], []
+
+        true_part = _model_searcher(stock_df,worker_tag, prefix + [True], left_len - 1)
+        long_models.extend(true_part[0])
+        short_models.extend(true_part[1])
+
+        false_part = _model_searcher(stock_df, worker_tag, prefix + [False], left_len - 1)
+        long_models.extend(false_part[0])
+        short_models.extend(false_part[1])
+
+        return long_models, short_models
+
+
+def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, worker_id: int,
+                       prefixes: list[list[bool]], left_len, queue: Queue):
+    worker_tag = f'{stock_name} worker {worker_id}'
+    prefix = prefixes[worker_id]
+
+    start_time = datetime.now()
+
+    long_models, short_models = _model_searcher(stock_df, worker_tag, prefix, left_len)
     queue.put((long_models, short_models))
-    print(f'{worker_tag} finished at {datetime.now().time()}, '
+
+    end_time = datetime.now()
+    time_cost = (end_time - start_time).total_seconds()
+    print(f'{worker_tag} with {prefix} finished at {end_time.time()}, cost {time_cost}s, '
           f'return {len(long_models)} long models and {len(short_models)} short models')
 
 
@@ -136,26 +93,18 @@ class GiantModel:
             self._predict()
 
     def _train(self):
-        switches = enumerate_switches(len(FEATURE_BUF))
-
-        worker_num = 16
-        assert len(switches) % worker_num == 0
-        batch_size = len(switches) // worker_num
+        mask = gringotts.MASK
+        switches = enumerate_switches(mask)
 
         queue = Queue()
         procs = []
 
-        for i in range(worker_num):
-            start = i * batch_size
-            end = (i + 1) * batch_size
-            proc = Process(target=giant_model_worker,
-                           args=(self.stock_df, self.stock_name, i, switches[start:end], queue))
+        for worker_id in range(2 ** mask):
+            proc = Process(
+                target=giant_model_worker,
+                args=(self.stock_df, self.stock_name, worker_id, switches, len(FEATURE_BUF) - mask, queue))
             proc.start()
             procs.append(proc)
-
-        # for proc in procs:
-        #     print(f'waiting for {proc.pid} to join')
-        #     proc.join()
 
         for _ in procs:
             long_models, short_models = queue.get()
@@ -181,6 +130,6 @@ class GiantModel:
             model.run()
             self.short_models.append(model)
 
-    def build_graph(self, fig: go.Figure):
-        show_models(self.stock_df, fig, self.long_models, 'orange')
-        show_models(self.stock_df, fig, self.short_models, 'blue')
+    def build_graph(self, fig: go.Figure, enable=False):
+        show_models(self.stock_df, fig, self.long_models, 'orange', enable)
+        show_models(self.stock_df, fig, self.short_models, 'blue', enable)

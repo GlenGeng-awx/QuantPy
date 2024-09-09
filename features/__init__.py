@@ -2,17 +2,19 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from features import (
-    f_001_b, f_001_s,
-    f_002_b, f_002_s,
-    f_003_b, f_003_s,
-    f_004_b, f_004_s,
-    f_005_b, f_005_s,
-    f_006_b, f_006_s,
-    f_007_b, f_007_s,
-    f_008_b, f_008_s,
-    f_009_b, f_009_s,
-    f_010_b,
-    f_011_b, f_011_s,
+    f_001_b, f_001_s,       # above ma20 / below ma20
+    f_002_b, f_002_s,       # above ma5 / below ma5
+    f_003_b, f_003_s,       # yesterday is local min / yesterday is local max
+    f_004_b, f_004_s,       # trend switch up / trend switch down
+    f_005_b, f_005_s,       # up with high volume / down with high volume
+    f_006_b, f_006_s,       # bband pst gt 0.85 / bband pst lt 0.15
+    f_007_b, f_007_s,       # rsi above 70 / rsi below 30
+    f_008_b, f_008_s,       # macd golden cross / macd death cross
+    f_009_b, f_009_s,       # up thru r level / down thru s level
+    f_010_b,                # up thru r level, retrace, bounds back
+    f_011_b, f_011_s,       # incr 10 pst in last 3d / decr 10 pst in last 3d
+    f_012_b, f_012_s,       # incr 20 pst in last 10d / decr 20 pst in last 10d
+    f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
 )
 
 FEATURE_BUF = [
@@ -27,6 +29,8 @@ FEATURE_BUF = [
     f_009_b, f_009_s,
     f_010_b,
     f_011_b, f_011_s,
+    f_012_b, f_012_s,
+    f_013_b, f_013_s,
 ]
 
 
@@ -66,5 +70,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_009_b.KEY, f_009_b.VAL, 'red'),      (f_009_s.KEY, f_009_s.VAL, 'green'),
         (f_010_b.KEY, f_010_b.VAL, 'red'),
         (f_011_b.KEY, f_011_b.VAL, 'red'),      (f_011_s.KEY, f_011_s.VAL, 'green'),
+        (f_012_b.KEY, f_012_b.VAL, 'red'),      (f_012_s.KEY, f_012_s.VAL, 'green'),
+        (f_013_b.KEY, f_013_b.VAL, 'red'),      (f_013_s.KEY, f_013_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)

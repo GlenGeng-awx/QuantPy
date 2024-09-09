@@ -1,5 +1,6 @@
 import pandas as pd
 from features import FEATURE_BUF
+import gringotts
 
 
 class TinyModel:
@@ -30,11 +31,11 @@ class TinyModel:
                 self.indices.append(idx)
 
         # evaluate the model
-        valid_trade_num = 0
-        step = 5
-        margin = 0.03
+        step = gringotts.STEP
+        margin = gringotts.MARGIN
 
         close = self.stock_df['close']
+        valid_trade_num = 0
 
         for idx in self.indices:
             if idx + step in close:
@@ -56,6 +57,9 @@ class TinyModel:
 
 
 if __name__ == '__main__':
+    for i in range(len(FEATURE_BUF)):
+        print(f'{i} {FEATURE_BUF[i].KEY}')
+
     abbrs = [
         [0, 7],
         [13],

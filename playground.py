@@ -42,10 +42,35 @@ STOCK_NAMES_TIER_0 = [
     # XPEV,
     # TSM,
     # EBAY,
-    META,
+    # META,
     # ZM,
     # LI,
     # SNAP,
+    # TTD,
+    # NIO,
+    # YY,
+    # MCD,
+    # PFE,
+    # GILD,
+    # TCOM,
+    # MRK,
+    # ADBE,
+    # DIS,
+    # TME,
+    # GS,
+    # SEA,
+    # ERIC,
+    # UBER,
+    # INTC,
+    # MS,
+    # OKTA,
+    CFLT,
+    QCOM,
+    ETSY,
+    SHOP,
+    GTLB,
+    PINS,
+    SQ,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -88,13 +113,23 @@ def handle_task(stock_name, start_date, end_date, interval):
 
     giant_model = GiantModel(stock_df, stock_name, 'train')
     giant_model.run()
-    giant_model.build_graph(fig)
+    giant_model.build_graph(fig, enable=True)
 
     fig.show()
 
 
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()
+
+    # procs = []
+    #
+    # for stock_name in STOCK_NAMES_TIER_0:
+    #     p = Process(target=handle_task, args=(stock_name, start_date, end_date, interval))
+    #     p.start()
+    #     procs.append(p)
+    #
+    # for p in procs:
+    #     p.join()
 
     for stock_name in STOCK_NAMES_TIER_0:
         handle_task(stock_name, start_date, end_date, interval)
