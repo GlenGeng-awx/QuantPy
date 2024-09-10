@@ -13,26 +13,27 @@ from gringotts.giant_model_helper import (enumerate_switches, default_switch,
 
 
 def _model_searcher(stock_df: pd.DataFrame, worker_tag: str,
-                    prefix: list[bool], left_len: int) -> tuple[list[TinyModel], list[TinyModel]]:
+                    prefix: list[bool], left_len: int,
+                    input_indices: list[int]) -> tuple[list[TinyModel], list[TinyModel]]:
     if left_len == 0:
         assert len(prefix) == len(FEATURE_BUF)
 
         success_rate = gringotts.SUCCESSFUL_RATE
         hit_threshold = gringotts.HIT_THRESHOLD
 
-        model = TinyModel(stock_df, prefix)
+        model = TinyModel(stock_df, prefix, input_indices, len(prefix) - 1)
         model.run()
 
         long_models, short_models = [], []
 
-        if model.successful_long_rate >= success_rate and len(model.indices) >= hit_threshold:
+        if model.successful_long_rate >= success_rate and len(model.output_indices) >= hit_threshold:
             print(f'{worker_tag} --> long {model.successful_long_rate}% '
-                  f'among {len(model.indices)} with {model.name}')
+                  f'among {len(model.output_indices)} with {model.name}')
             long_models.append(model)
 
-        if model.successful_short_rate >= success_rate and len(model.indices) >= hit_threshold:
+        if model.successful_short_rate >= success_rate and len(model.output_indices) >= hit_threshold:
             print(f'{worker_tag} --> short {model.successful_short_rate}% '
-                  f'among {len(model.indices)} with {model.name}')
+                  f'among {len(model.output_indices)} with {model.name}')
             short_models.append(model)
 
         return long_models, short_models
@@ -41,20 +42,20 @@ def _model_searcher(stock_df: pd.DataFrame, worker_tag: str,
         hint_switch = prefix + default_switch(left_len)
         assert len(hint_switch) == len(FEATURE_BUF)
 
-        model = TinyModel(stock_df, hint_switch)
+        model = TinyModel(stock_df, hint_switch, input_indices, len(prefix) - 1)
         model.run()
 
-        if not model.indices:
+        if len(model.output_indices) < gringotts.HIT_THRESHOLD:
             # print(f'{worker_tag} prune {2 ** left_len} models for {prefix}')
             return [], []
 
         long_models, short_models = [], []
 
-        true_part = _model_searcher(stock_df,worker_tag, prefix + [True], left_len - 1)
+        true_part = _model_searcher(stock_df,worker_tag, prefix + [True], left_len - 1, model.output_indices)
         long_models.extend(true_part[0])
         short_models.extend(true_part[1])
 
-        false_part = _model_searcher(stock_df, worker_tag, prefix + [False], left_len - 1)
+        false_part = _model_searcher(stock_df, worker_tag, prefix + [False], left_len - 1, model.output_indices)
         long_models.extend(false_part[0])
         short_models.extend(false_part[1])
 
@@ -69,7 +70,7 @@ def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, worker_id: int,
 
     start_time = datetime.now()
 
-    long_models, short_models = _model_searcher(stock_df, worker_tag, prefix, left_len)
+    long_models, short_models = _model_searcher(stock_df, worker_tag, prefix, left_len, stock_df.index.tolist())
     queue.put((long_models, short_models))
 
     end_time = datetime.now()
@@ -122,12 +123,12 @@ class GiantModel:
         long_switches, short_switches = deserialize_models(self.stock_name)
 
         for switch in long_switches:
-            model = TinyModel(self.stock_df, switch)
+            model = TinyModel(self.stock_df, switch, self.stock_df.index.tolist())
             model.run()
             self.long_models.append(model)
 
         for switch in short_switches:
-            model = TinyModel(self.stock_df, switch)
+            model = TinyModel(self.stock_df, switch, self.stock_df.index.tolist())
             model.run()
             self.short_models.append(model)
 

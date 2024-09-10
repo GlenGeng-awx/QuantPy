@@ -9,6 +9,6 @@ HIT_THRESHOLD = 5           # hit threshold  for both long and short
 #
 # for tiny_model.py
 #
-RECALL_STEP = 3             # step for checking the past
+RECALL_STEP = 5             # step for checking the past
 FORECAST_STEP = 5           # step for checking the future
 MARGIN = 0.03               # margin for checking the trade

@@ -30,10 +30,10 @@ def default_switch(size: int) -> list[bool]:
 def serialize_models(stock_name: str, long_models: list[TinyModel], short_models: list[TinyModel]):
     with open(f'train/{stock_name}.txt', 'w') as f:
         for model in long_models:
-            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.indices)}\n')
+            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.output_indices)}\n')
 
         for model in short_models:
-            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.indices)}\n')
+            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.output_indices)}\n')
 
 
 def deserialize_models(stock_name: str) -> tuple[list[list[bool]], list[list[bool]]]:
@@ -62,7 +62,7 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
     results = {}
 
     for model in models:
-        model_key = tuple(model.indices)
+        model_key = tuple(model.output_indices)
 
         if model_key not in results:
             results[model_key] = model
@@ -71,14 +71,14 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
                 results[model_key] = model
 
     results = list(results.values())
-    results.sort(key=lambda m: len(m.indices), reverse=True)
+    results.sort(key=lambda m: len(m.output_indices), reverse=True)
     return results
 
 
 def show_models(stock_df: pd.DataFrame, fig: go.Figure,
                 models: list[TinyModel], color: str, enable=False):
     for model in models[:15]:
-        indices = model.indices
+        indices = model.output_indices
         dates = stock_df.loc[indices]['Date']
         close = stock_df.loc[indices]['close']
 

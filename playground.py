@@ -15,29 +15,29 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # TSLA,
+    TSLA,
     # BILI,
-    # HK_0700,
     # IXIC,
-    # BABA,
     # PDD,
     # COIN,
+    # PLTR,
+    # SNOW,
+    # IQ,
+    # RIVN,
+    # MRNA,
+    # MNSO,
+    # HK_0700,
+    # BABA,
     # BA,
     # FUTU,
     # CPNG,
-    # PLTR,
     # BNTX,
     # AMD,
-    # SNOW,
     # SS_000300,
     # JD,
     # BEKE,
     # NVDA,
-    # IQ,
     # SS_000001,
-    # RIVN,
-    # MRNA,
-    # MNSO,
     # EDU,
     # XPEV,
     # TSM,
@@ -48,7 +48,7 @@ STOCK_NAMES_TIER_0 = [
     # SNAP,
     # TTD,
     # NIO,
-    # YY,
+    # # YY,
     # MCD,
     # PFE,
     # GILD,
@@ -64,13 +64,13 @@ STOCK_NAMES_TIER_0 = [
     # INTC,
     # MS,
     # OKTA,
-    CFLT,
-    QCOM,
-    ETSY,
-    SHOP,
-    GTLB,
-    PINS,
-    SQ,
+    # CFLT,
+    # QCOM,
+    # ETSY,
+    # SHOP,
+    # GTLB,
+    # PINS,
+    # SQ,
 ]
 
 STOCK_NAMES_TIER_1 = [
@@ -115,7 +115,7 @@ def handle_task(stock_name, start_date, end_date, interval):
     giant_model.run()
     giant_model.build_graph(fig, enable=True)
 
-    fig.show()
+    # fig.show()
 
 
 if __name__ == '__main__':
