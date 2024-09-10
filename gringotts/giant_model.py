@@ -65,6 +65,7 @@ def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, worker_id: int,
                        prefixes: list[list[bool]], left_len, queue: Queue):
     worker_tag = f'{stock_name} worker {worker_id}'
     prefix = prefixes[worker_id]
+    print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
     start_time = datetime.now()
 
@@ -108,7 +109,7 @@ class GiantModel:
 
         for _ in procs:
             long_models, short_models = queue.get()
-            print(f'got {len(long_models)} long models and {len(short_models)} short models')
+            # print(f'got {len(long_models)} long models and {len(short_models)} short models')
             self.long_models.extend(long_models)
             self.short_models.extend(short_models)
 

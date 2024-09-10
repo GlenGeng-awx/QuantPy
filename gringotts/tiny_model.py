@@ -11,6 +11,10 @@ class TinyModel:
         self.abbr = ','.join([str(i) for i in range(len(switch)) if switch[i]])
         self.name = ', '.join([feature.KEY for i, feature in enumerate(FEATURE_BUF) if switch[i]])
 
+        self.recall_step = gringotts.RECALL_STEP
+        self.forecast_step = gringotts.FORECAST_STEP
+        self.margin = gringotts.MARGIN
+
         self.indices = []
 
         self.successful_long_trades = 0
@@ -19,34 +23,32 @@ class TinyModel:
         self.successful_short_trades = 0
         self.successful_short_rate = 0
 
-    def check(self, idx) -> bool:
+    def _check(self, idx) -> bool:
         for i, feature in enumerate(FEATURE_BUF):
-            if self.switch[i] and not self.stock_df[feature.KEY][idx]:
+            if self.switch[i] and \
+                    not self.stock_df[feature.KEY].loc[idx - self.recall_step + 1:idx].any():
                 return False
         return True
 
-    def run(self):
+    def _filter(self):
         for idx in self.stock_df.index:
-            if self.check(idx):
+            if self._check(idx):
                 self.indices.append(idx)
 
-        # evaluate the model
-        step = gringotts.STEP
-        margin = gringotts.MARGIN
-
+    def _evaluate(self):
         close = self.stock_df['close']
         valid_trade_num = 0
 
         for idx in self.indices:
-            if idx + step in close:
+            if idx + self.forecast_step in close:
                 valid_trade_num += 1
             else:
                 continue
 
-            if close[idx] * (1 + margin) < close[idx + step]:
+            if close[idx] * (1 + self.margin) < close[idx + self.forecast_step]:
                 self.successful_long_trades += 1
 
-            if close[idx] * (1 - margin) > close[idx + step]:
+            if close[idx] * (1 - self.margin) > close[idx + self.forecast_step]:
                 self.successful_short_trades += 1
 
         if valid_trade_num == 0:
@@ -55,15 +57,17 @@ class TinyModel:
         self.successful_long_rate = self.successful_long_trades / valid_trade_num * 100
         self.successful_short_rate = self.successful_short_trades / valid_trade_num * 100
 
+    def run(self):
+        self._filter()
+        self._evaluate()
+
 
 if __name__ == '__main__':
-    for i in range(len(FEATURE_BUF)):
-        print(f'{i} {FEATURE_BUF[i].KEY}')
+    # for j in range(len(FEATURE_BUF)):
+    #     print(f'{j} {FEATURE_BUF[j].KEY}')
 
     abbrs = [
-        [0, 7],
-        [13],
-        [2, 17],
+        [1, 2, 5, 15],
     ]
 
     for abbr in abbrs:
