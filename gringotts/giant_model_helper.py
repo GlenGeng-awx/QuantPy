@@ -76,7 +76,7 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
 
 
 def show_models(stock_df: pd.DataFrame, fig: go.Figure,
-                models: list[TinyModel], color: str, enable=False):
+                models: list[TinyModel], color: str, size: int = 8, enable=False):
     for model in models[:15]:
         indices = model.output_indices
         dates = stock_df.loc[indices]['Date']
@@ -88,7 +88,7 @@ def show_models(stock_df: pd.DataFrame, fig: go.Figure,
                 x=dates,
                 y=close,
                 mode='markers',
-                marker=dict(size=8, color=color),
+                marker=dict(size=size, color=color),
                 visible=None if enable else 'legendonly',
             )
         )

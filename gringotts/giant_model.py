@@ -133,5 +133,5 @@ class GiantModel:
             self.short_models.append(model)
 
     def build_graph(self, fig: go.Figure, enable=False):
-        show_models(self.stock_df, fig, self.long_models, 'orange', enable)
-        show_models(self.stock_df, fig, self.short_models, 'blue', enable)
+        show_models(self.stock_df, fig, self.long_models, 'orange', 9, enable)
+        show_models(self.stock_df, fig, self.short_models, 'black', 7, enable)

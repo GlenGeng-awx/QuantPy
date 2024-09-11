@@ -15,6 +15,8 @@ from features import (
     f_011_b, f_011_s,       # incr 10 pst in last 3d / decr 10 pst in last 3d
     f_012_b, f_012_s,       # incr 20 pst in last 10d / decr 20 pst in last 10d
     f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
+    f_014_b, f_014_s,       # high volume / low volume
+    f_015_b, f_015_s,       # incr +8 pst / decr +8 pst
 )
 
 FEATURE_BUF = [
@@ -31,6 +33,8 @@ FEATURE_BUF = [
     f_011_b, f_011_s,
     f_012_b, f_012_s,
     f_013_b, f_013_s,
+    f_014_b, f_014_s,
+    f_015_b, f_015_s,
 ]
 
 
@@ -72,5 +76,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_011_b.KEY, f_011_b.VAL, 'red'),      (f_011_s.KEY, f_011_s.VAL, 'green'),
         (f_012_b.KEY, f_012_b.VAL, 'red'),      (f_012_s.KEY, f_012_s.VAL, 'green'),
         (f_013_b.KEY, f_013_b.VAL, 'red'),      (f_013_s.KEY, f_013_s.VAL, 'green'),
+        (f_014_b.KEY, f_014_b.VAL, 'red', 2),   (f_014_s.KEY, f_014_s.VAL, 'green', 2),
+        (f_015_b.KEY, f_015_b.VAL, 'red'),      (f_015_s.KEY, f_015_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)
