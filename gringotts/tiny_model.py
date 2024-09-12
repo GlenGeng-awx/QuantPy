@@ -1,12 +1,18 @@
 import pandas as pd
 from features import FEATURE_BUF
-import gringotts
+from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE
 
 
 class TinyModel:
-    def __init__(self, stock_df: pd.DataFrame, switch: list[bool],
+    def __init__(self, stock_df: pd.DataFrame, conf: dict, switch: list[bool],
                  input_indices: list[int], train_position: int = None):
         self.stock_df = stock_df
+
+        self.recall_step = conf[RECALL_STEP]
+        self.forecast_step = conf[FORECAST_STEP]
+        self.margin = conf[MARGIN]
+        self.hit_threshold = conf[HIT_THRESHOLD]
+        self.successful_rate = conf[SUCCESSFUL_RATE]
 
         self.switch = switch
         self.abbr = ','.join([str(i) for i in range(len(switch)) if switch[i]])
@@ -16,10 +22,6 @@ class TinyModel:
         self.train_position = train_position
 
         self.output_indices = []
-
-        self.recall_step = gringotts.RECALL_STEP
-        self.forecast_step = gringotts.FORECAST_STEP
-        self.margin = gringotts.MARGIN
 
         self.successful_long_trades = 0
         self.successful_long_rate = 0
@@ -77,13 +79,21 @@ class TinyModel:
         self._filter()
         self._evaluate()
 
+    def pass_long(self):
+        return self.successful_long_rate >= self.successful_rate \
+            and len(self.output_indices) >= self.hit_threshold
+
+    def pass_short(self):
+        return self.successful_short_rate >= self.successful_rate \
+            and len(self.output_indices) >= self.hit_threshold
+
 
 if __name__ == '__main__':
-    # for j in range(len(FEATURE_BUF)):
-    #     print(f'{j} {FEATURE_BUF[j].KEY}')
+    for j in range(len(FEATURE_BUF)):
+        print(f'{j} {FEATURE_BUF[j].KEY}')
 
     abbrs = [
-        [1, 2, 5, 15],
+        [6, 21, 27],
     ]
 
     for abbr in abbrs:

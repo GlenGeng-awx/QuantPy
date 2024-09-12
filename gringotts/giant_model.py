@@ -5,33 +5,30 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from features import FEATURE_BUF
-import gringotts
+from gringotts import MASK, HIT_THRESHOLD, RECALL_STEP, MARGIN
 from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import (enumerate_switches, default_switch,
                                           serialize_models, deserialize_models,
                                           shrink_models, show_models)
 
 
-def _model_searcher(stock_df: pd.DataFrame, worker_tag: str,
+def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
                     prefix: list[bool], left_len: int,
                     input_indices: list[int]) -> tuple[list[TinyModel], list[TinyModel]]:
     if left_len == 0:
         assert len(prefix) == len(FEATURE_BUF)
 
-        success_rate = gringotts.SUCCESSFUL_RATE
-        hit_threshold = gringotts.HIT_THRESHOLD
-
-        model = TinyModel(stock_df, prefix, input_indices, len(prefix) - 1)
+        model = TinyModel(stock_df, conf, prefix, input_indices, len(prefix) - 1)
         model.run()
 
         long_models, short_models = [], []
 
-        if model.successful_long_rate >= success_rate and len(model.output_indices) >= hit_threshold:
+        if model.pass_long():
             print(f'{worker_tag} --> long {model.successful_long_rate}% '
                   f'among {len(model.output_indices)} with {model.name}')
             long_models.append(model)
 
-        if model.successful_short_rate >= success_rate and len(model.output_indices) >= hit_threshold:
+        if model.pass_short():
             print(f'{worker_tag} --> short {model.successful_short_rate}% '
                   f'among {len(model.output_indices)} with {model.name}')
             short_models.append(model)
@@ -42,35 +39,35 @@ def _model_searcher(stock_df: pd.DataFrame, worker_tag: str,
         hint_switch = prefix + default_switch(left_len)
         assert len(hint_switch) == len(FEATURE_BUF)
 
-        model = TinyModel(stock_df, hint_switch, input_indices, len(prefix) - 1)
+        model = TinyModel(stock_df, conf, hint_switch, input_indices, len(prefix) - 1)
         model.run()
 
-        if len(model.output_indices) < gringotts.HIT_THRESHOLD:
+        if len(model.output_indices) < conf[HIT_THRESHOLD]:
             # print(f'{worker_tag} prune {2 ** left_len} models for {prefix}')
             return [], []
 
         long_models, short_models = [], []
 
-        true_part = _model_searcher(stock_df,worker_tag, prefix + [True], left_len - 1, model.output_indices)
+        true_part = _model_searcher(stock_df, conf, worker_tag, prefix + [True], left_len - 1, model.output_indices)
         long_models.extend(true_part[0])
         short_models.extend(true_part[1])
 
-        false_part = _model_searcher(stock_df, worker_tag, prefix + [False], left_len - 1, model.output_indices)
+        false_part = _model_searcher(stock_df, conf, worker_tag, prefix + [False], left_len - 1, model.output_indices)
         long_models.extend(false_part[0])
         short_models.extend(false_part[1])
 
         return long_models, short_models
 
 
-def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, worker_id: int,
+def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, worker_id: int,
                        prefixes: list[list[bool]], left_len, queue: Queue):
-    worker_tag = f'{stock_name} worker {worker_id}'
+    worker_tag = f'{stock_name} {conf[RECALL_STEP]}d {conf[MARGIN] * 100}% - worker {worker_id}'
     prefix = prefixes[worker_id]
     print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
     start_time = datetime.now()
 
-    long_models, short_models = _model_searcher(stock_df, worker_tag, prefix, left_len, stock_df.index.tolist())
+    long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len, stock_df.index.tolist())
     queue.put((long_models, short_models))
 
     end_time = datetime.now()
@@ -80,9 +77,10 @@ def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, worker_id: int,
 
 
 class GiantModel:
-    def __init__(self, stock_df: pd.DataFrame, stock_name: str, mode: str = 'train'):
+    def __init__(self, stock_df: pd.DataFrame, stock_name: str, conf: dict, mode: str = 'train'):
         self.stock_df = stock_df
         self.stock_name = stock_name
+        self.conf = conf
         self.mode = mode
 
         self.long_models = []
@@ -95,7 +93,7 @@ class GiantModel:
             self._predict()
 
     def _train(self):
-        mask = gringotts.MASK
+        mask = self.conf[MASK]
         switches = enumerate_switches(mask)
 
         queue = Queue()
@@ -104,7 +102,8 @@ class GiantModel:
         for worker_id in range(2 ** mask):
             proc = Process(
                 target=giant_model_worker,
-                args=(self.stock_df, self.stock_name, worker_id, switches, len(FEATURE_BUF) - mask, queue))
+                args=(self.stock_df, self.stock_name, self.conf, worker_id,
+                      switches, len(FEATURE_BUF) - mask, queue))
             proc.start()
             procs.append(proc)
 
@@ -117,21 +116,27 @@ class GiantModel:
         self.long_models = shrink_models(self.long_models)
         self.short_models = shrink_models(self.short_models)
 
-        serialize_models(self.stock_name, self.long_models, self.short_models)
+        # serialize_models(self.stock_name, self.long_models, self.short_models)
 
     def _predict(self):
         long_switches, short_switches = deserialize_models(self.stock_name)
 
         for switch in long_switches:
-            model = TinyModel(self.stock_df, switch, self.stock_df.index.tolist())
+            model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index.tolist())
             model.run()
             self.long_models.append(model)
 
         for switch in short_switches:
-            model = TinyModel(self.stock_df, switch, self.stock_df.index.tolist())
+            model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index.tolist())
             model.run()
             self.short_models.append(model)
 
     def build_graph(self, fig: go.Figure, enable=False):
+        origin_title = fig.layout.title.text
+        strategy_name = (f'recall {self.conf[RECALL_STEP]}d, '
+                         f'margin {self.conf[MARGIN] * 100}%, least hit {self.conf[HIT_THRESHOLD]}')
+
+        fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
+
         show_models(self.stock_df, fig, self.long_models, 'orange', 9, enable)
         show_models(self.stock_df, fig, self.short_models, 'black', 7, enable)

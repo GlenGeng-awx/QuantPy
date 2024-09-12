@@ -4,42 +4,46 @@ from multiprocessing import Process
 from conf import *
 from base_engine import BaseEngine
 
+from gringotts import confs
 from gringotts.giant_model import GiantModel
 import features
 
 STOCK_NAMES_INDEX = [
     IXIC,
-    # SS_000300,
-    # SS_000001,
+    SS_000300,
+    SS_000001,
     # GC_F,
 ]
 
 STOCK_NAMES_TIER_0 = [
-    TSLA,
+    BABA,
+    IQ,
+    AMD,
+    PFE,
+    NIO,
+    NVDA,
+    RIVN,
+    XPEV,
+    EDU,
+]
+
+STOCK_NAMES_TIER_1 = [
+    # TSLA,
+    # HK_0700,
     # BILI,
     # IXIC,
-    # PDD,
-    # COIN,
-    # PLTR,
-    # SNOW,
-    # IQ,
-    # RIVN,
-    # MRNA,
-    # MNSO,
-    # HK_0700,
-    # BABA,
-    # BA,
-    # FUTU,
-    # CPNG,
+    PDD,
+    COIN,
+    PLTR,
+    SNOW,
+    MRNA,
+    MNSO,
+    BA,
+    FUTU,
+    CPNG,
     # BNTX,
-    # AMD,
-    # SS_000300,
     # JD,
     # BEKE,
-    # NVDA,
-    # SS_000001,
-    # EDU,
-    # XPEV,
     # TSM,
     # EBAY,
     # META,
@@ -47,10 +51,8 @@ STOCK_NAMES_TIER_0 = [
     # LI,
     # SNAP,
     # TTD,
-    # NIO,
-    # # YY,
+    # YY,
     # MCD,
-    # PFE,
     # GILD,
     # TCOM,
     # MRK,
@@ -73,10 +75,6 @@ STOCK_NAMES_TIER_0 = [
     # SQ,
 ]
 
-STOCK_NAMES_TIER_1 = [
-
-]
-
 
 def default_period():
     current_date = datetime.now()
@@ -87,7 +85,7 @@ def default_period():
     return date_1y_ago, current_date, '1d'
 
 
-def handle_task(stock_name, start_date, end_date, interval):
+def handle_task(stock_name, conf, start_date, end_date, interval):
     be = BaseEngine(stock_name, start_date, end_date, interval)
 
     be.build_graph(
@@ -111,25 +109,26 @@ def handle_task(stock_name, start_date, end_date, interval):
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    giant_model = GiantModel(stock_df, stock_name, 'train')
+    giant_model = GiantModel(stock_df, stock_name, conf, 'train')
     giant_model.run()
     giant_model.build_graph(fig, enable=True)
 
-    # fig.show()
+    fig.show()
 
 
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()
 
-    # procs = []
-    #
-    # for stock_name in STOCK_NAMES_TIER_0:
-    #     p = Process(target=handle_task, args=(stock_name, start_date, end_date, interval))
-    #     p.start()
-    #     procs.append(p)
-    #
-    # for p in procs:
-    #     p.join()
+    for stock_name in STOCK_NAMES_TIER_1:
+        procs = []
 
-    for stock_name in STOCK_NAMES_TIER_0:
-        handle_task(stock_name, start_date, end_date, interval)
+        for conf in confs:
+            p = Process(target=handle_task, args=(stock_name, conf, start_date, end_date, interval))
+            p.start()
+            procs.append(p)
+
+        for p in procs:
+            p.join()
+
+    # for stock_name in STOCK_NAMES_TIER_0:
+    #     handle_task(stock_name, {}, start_date, end_date, interval)

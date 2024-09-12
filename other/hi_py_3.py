@@ -1,18 +1,4 @@
 #
-# example for *args
-#
-def impl(a: str, b: str, c: list):
-    print(f"impl(a={a}, b={b}, c={c})")
-
-
-def test(name: str, *args):
-    impl(*args)
-
-
-test("test", "1", "2", [4, 5, 6])
-
-
-#
 # example for **kwargs
 #
 def process_kwargs(**kwargs):
@@ -25,17 +11,32 @@ process_kwargs(name="Alice", age=30, city="Wonderland")
 
 
 # Passing kwargs to another function
-def another_function(name, age, city):
+def another_function(name, age, city, **kwargs):
     print(f"Name: {name}, Age: {age}, City: {city}")
-
-
-kwargs = {"name": "Alice", "age": 30, "city": "Wonderland"}
-another_function(**kwargs)
+    print(kwargs)
 
 
 def yet_another_function(x, y, z, **kwargs):
     print(f"x: {x}, y: {y}, z: {z}")
     print(kwargs)
+    another_function(**kwargs)
 
 
+kwargs = {"name": "Alice", "age": 30, "city": "Wonderland"}
+another_function(**kwargs)
 yet_another_function(x=1, y=2, z=3, name="Alice", age=30, city="Wonderland", country="USA")
+
+
+d1 = {
+    'a': 1,
+    'b': 2,
+    'c': 3,
+}
+
+d2 = {
+    **d1,
+    'c': 4,
+}
+
+print(d1)
+print(d2)
