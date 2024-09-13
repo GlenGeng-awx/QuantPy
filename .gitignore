@@ -45,3 +45,5 @@ bin/
 __pycache__/
 data/*.csv
 repo/*.csv
+awx/
+train/

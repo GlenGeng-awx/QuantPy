@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 
 from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
+from gringotts import RECALL_STEP, MARGIN
 
 
 def enumerate_switches(size: int) -> list[list[bool]]:
@@ -27,8 +28,10 @@ def default_switch(size: int) -> list[bool]:
     return [False] * size
 
 
-def serialize_models(stock_name: str, long_models: list[TinyModel], short_models: list[TinyModel]):
-    with open(f'train/{stock_name}.txt', 'w') as f:
+def serialize_models(stock_name: str, conf: dict,
+                     long_models: list[TinyModel], short_models: list[TinyModel]):
+    filename = f'train/{stock_name}_{conf[RECALL_STEP]}_{conf[MARGIN]}.txt'
+    with open(filename, 'w') as f:
         for model in long_models:
             f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.output_indices)}\n')
 
@@ -36,10 +39,11 @@ def serialize_models(stock_name: str, long_models: list[TinyModel], short_models
             f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.output_indices)}\n')
 
 
-def deserialize_models(stock_name: str) -> tuple[list[list[bool]], list[list[bool]]]:
+def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], list[list[bool]]]:
     long_switches, short_switches = [], []
 
-    with open(f'train/{stock_name}.txt', 'r') as f:
+    filename = f'train/{stock_name}_{conf[RECALL_STEP]}_{conf[MARGIN]}.txt'
+    with open(filename, 'r') as f:
         for line in f:
             switch = [False] * len(FEATURE_BUF)
 

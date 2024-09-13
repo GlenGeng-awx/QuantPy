@@ -116,10 +116,10 @@ class GiantModel:
         self.long_models = shrink_models(self.long_models)
         self.short_models = shrink_models(self.short_models)
 
-        # serialize_models(self.stock_name, self.long_models, self.short_models)
+        serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def _predict(self):
-        long_switches, short_switches = deserialize_models(self.stock_name)
+        long_switches, short_switches = deserialize_models(self.stock_name, self.conf)
 
         for switch in long_switches:
             model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index.tolist())

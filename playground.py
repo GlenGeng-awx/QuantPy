@@ -4,11 +4,11 @@ from multiprocessing import Process
 from conf import *
 from base_engine import BaseEngine
 
-from gringotts import confs
+from gringotts import stock_confs, index_confs
 from gringotts.giant_model import GiantModel
 import features
 
-STOCK_NAMES_INDEX = [
+INDEX_NAMES = [
     IXIC,
     SS_000300,
     SS_000001,
@@ -16,31 +16,30 @@ STOCK_NAMES_INDEX = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    BABA,
-    IQ,
-    AMD,
-    PFE,
-    NIO,
+    # BABA,
+    # IQ,
+    # AMD,
+    # PFE,
+    # NIO,
     NVDA,
-    RIVN,
-    XPEV,
-    EDU,
+    # RIVN,
+    # XPEV,
+    # EDU,
 ]
 
 STOCK_NAMES_TIER_1 = [
     # TSLA,
     # HK_0700,
     # BILI,
-    # IXIC,
-    PDD,
-    COIN,
-    PLTR,
-    SNOW,
-    MRNA,
-    MNSO,
-    BA,
-    FUTU,
-    CPNG,
+    # PDD,
+    # COIN,
+    # PLTR,
+    # SNOW,
+    # MRNA,
+    # MNSO,
+    # BA,
+    # FUTU,
+    # CPNG,
     # BNTX,
     # JD,
     # BEKE,
@@ -60,7 +59,7 @@ STOCK_NAMES_TIER_1 = [
     # DIS,
     # TME,
     # GS,
-    # SEA,
+    # SE,
     # ERIC,
     # UBER,
     # INTC,
@@ -109,9 +108,11 @@ def handle_task(stock_name, conf, start_date, end_date, interval):
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    giant_model = GiantModel(stock_df, stock_name, conf, 'train')
-    giant_model.run()
-    giant_model.build_graph(fig, enable=True)
+    if conf is not None:
+        giant_model = GiantModel(stock_df, stock_name, conf, 'train')
+        # giant_model = GiantModel(stock_df, stock_name, conf, 'predict')
+        giant_model.run()
+        giant_model.build_graph(fig, enable=True)
 
     fig.show()
 
@@ -119,10 +120,13 @@ def handle_task(stock_name, conf, start_date, end_date, interval):
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()
 
-    for stock_name in STOCK_NAMES_TIER_1:
-        procs = []
+    for stock_name in STOCK_NAMES_TIER_0:
+        handle_task(stock_name, None, start_date, end_date, interval)
 
-        for conf in confs:
+        start_time = datetime.now()
+
+        procs = []
+        for conf in stock_confs:
             p = Process(target=handle_task, args=(stock_name, conf, start_date, end_date, interval))
             p.start()
             procs.append(p)
@@ -130,5 +134,18 @@ if __name__ == '__main__':
         for p in procs:
             p.join()
 
-    # for stock_name in STOCK_NAMES_TIER_0:
-    #     handle_task(stock_name, {}, start_date, end_date, interval)
+        end_time = datetime.now()
+        time_cost = (end_time - start_time).total_seconds()
+        print(f'{stock_name} finished at {end_time.time()}, cost {time_cost}s')
+
+    # for stock_name in INDEX_NAMES:
+    #     handle_task(stock_name, None, start_date, end_date, interval)
+    #
+    #     procs = []
+    #     for conf in index_confs:
+    #         p = Process(target=handle_task, args=(stock_name, conf, start_date, end_date, interval))
+    #         p.start()
+    #         procs.append(p)
+    #
+    #     for p in procs:
+    #         p.join()

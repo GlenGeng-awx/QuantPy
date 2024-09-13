@@ -20,52 +20,40 @@ base_conf = {
     FORECAST_STEP: 5,
 }
 
-conf_3 = {
-    **base_conf,
-    MARGIN: 0.03, HIT_THRESHOLD: 8,
-}
+recall_3 = {RECALL_STEP: 3, MASK: 0}
+recall_4 = {RECALL_STEP: 4, MASK: 1}
+recall_5 = {RECALL_STEP: 5, MASK: 2}
 
-conf_5 = {
-    **base_conf,
-    MARGIN: 0.05, HIT_THRESHOLD: 5,
-}
+stock_margin_3 = {MARGIN: 0.03, HIT_THRESHOLD: 8}
+stock_margin_5 = {MARGIN: 0.05, HIT_THRESHOLD: 5}
+stock_margin_9 = {MARGIN: 0.09, HIT_THRESHOLD: 2}
 
-conf_10 = {
-    **base_conf,
-    MARGIN: 0.10, HIT_THRESHOLD: 2,
-}
+index_margin_1 = {MARGIN: 0.01, HIT_THRESHOLD: 8}
+index_margin_3 = {MARGIN: 0.03, HIT_THRESHOLD: 5}
+index_margin_5 = {MARGIN: 0.05, HIT_THRESHOLD: 2}
 
-confs = [
-    # recall 3d
+stock_confs = [
     {
-        RECALL_STEP: 3, **conf_3,
-    },
-    {
-        RECALL_STEP: 3, **conf_5,
-    },
-    {
-        RECALL_STEP: 3, **conf_10,
-    },
-
-    # recall 4d
-    {
-        RECALL_STEP: 4, **conf_3,
-    },
-    {
-        RECALL_STEP: 4, **conf_5,
-    },
-    {
-        RECALL_STEP: 4, **conf_10,
-    },
-
-    # recall 5d
-    {
-        RECALL_STEP: 5, **conf_3,
-    },
-    {
-        RECALL_STEP: 5, **conf_5,
-    },
-    {
-        RECALL_STEP: 5, **conf_10,
-    },
+        **base_conf,
+        **recall_step,
+        **margin,
+    }
+    for recall_step in (recall_3, recall_4, recall_5) for margin in (stock_margin_3, stock_margin_5, stock_margin_9)
 ]
+
+index_confs = [
+    {
+        **base_conf,
+        **recall_step,
+        **margin,
+    }
+    for recall_step in (recall_3, recall_4, recall_5) for margin in (index_margin_1, index_margin_3, index_margin_5)
+]
+
+
+if __name__ == '__main__':
+    for conf in stock_confs:
+        print(conf)
+
+    for conf in index_confs:
+        print(conf)
