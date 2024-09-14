@@ -18,6 +18,8 @@ from features import (
     f_014_b, f_014_s,       # high volume / low volume
     f_015_b, f_015_s,       # incr +8 pst / decr +8 pst
     f_016_b, f_016_s,       # long lower shadow / long upper shadow
+    f_017_b, f_017_s,       # long red bar / long green bar
+    f_018_b, f_018_s,       # short red bar / short green bar
 )
 
 FEATURE_BUF = [
@@ -37,6 +39,8 @@ FEATURE_BUF = [
     f_014_b, f_014_s,
     f_015_b, f_015_s,
     f_016_b, f_016_s,
+    f_017_b, f_017_s,
+    f_018_b, f_018_s,
 ]
 
 
@@ -81,5 +85,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_014_b.KEY, f_014_b.VAL, 'red', 2),   (f_014_s.KEY, f_014_s.VAL, 'green', 2),
         (f_015_b.KEY, f_015_b.VAL, 'red'),      (f_015_s.KEY, f_015_s.VAL, 'green'),
         (f_016_b.KEY, f_016_b.VAL, 'red'),      (f_016_s.KEY, f_016_s.VAL, 'green'),
+        (f_017_b.KEY, f_017_b.VAL, 'red'),      (f_017_s.KEY, f_017_s.VAL, 'green'),
+        (f_018_b.KEY, f_018_b.VAL, 'red', 2),   (f_018_s.KEY, f_018_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)
