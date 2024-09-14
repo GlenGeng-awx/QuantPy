@@ -68,9 +68,14 @@ def load_data(symbol, interval):
     return pd.read_csv(file_name)
 
 
-def calculate_next_n_workday(from_date, n):
+def get_next_n_workday(from_date, n):
     date_range = pd.bdate_range(start=from_date, periods=n+1)
     return date_range[-1].strftime("%Y-%m-%d")
+
+
+def get_prev_n_workday(from_date, n):
+    date_range = pd.bdate_range(end=from_date, periods=n+1)
+    return date_range[0].strftime('%Y-%m-%d')
 
 
 def shrink_date_str(date_str) -> str:
@@ -92,3 +97,9 @@ def interval_to_label(interval: str, abbr=False):
 def get_idx_by_date(stock_df: pd.DataFrame, date: str) -> int:
     dates = stock_df['Date'].apply(shrink_date_str)
     return dates[dates == date].index[0]
+
+
+if __name__ == '__main__':
+    today = datetime.now().strftime('%Y-%m-%d')
+    print(get_next_n_workday(today, 5))
+    print(get_prev_n_workday(today, 5))

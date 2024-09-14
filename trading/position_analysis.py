@@ -4,7 +4,7 @@ from itertools import groupby
 from datetime import datetime
 
 from conf import *
-from util import load_data, calculate_next_n_workday
+from util import load_data, get_next_n_workday
 from .trading_record import TRADING_RECORDS
 from .trading_record_display import TradingRecordDisplay
 
@@ -90,7 +90,7 @@ class PositionAnalysis:
             # current round of game is over, reset cost of tomorrow to 0
             if position == 0:
                 cost = 0
-                next_date = calculate_next_n_workday(date, 1)
+                next_date = get_next_n_workday(date, 1)
                 cost_map[next_date] = cost
 
         self.position_map = position_map

@@ -16,36 +16,36 @@ INDEX_NAMES = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # BABA,
-    # IQ,
-    # AMD,
     # PFE,
-    # NIO,
-    NVDA,
     # RIVN,
-    # XPEV,
-    # EDU,
+    # IQ,
+    # META,
+    # NIO,
+    # BILI,
+    # PDD,
+    FUTU,
 ]
 
 STOCK_NAMES_TIER_1 = [
+    # BABA,
     # TSLA,
     # HK_0700,
-    # BILI,
-    # PDD,
+    # AMD,
+    # NVDA,
+    # XPEV,
+    # EDU,
     # COIN,
     # PLTR,
     # SNOW,
     # MRNA,
     # MNSO,
     # BA,
-    # FUTU,
     # CPNG,
     # BNTX,
     # JD,
     # BEKE,
     # TSM,
     # EBAY,
-    # META,
     # ZM,
     # LI,
     # SNAP,
@@ -58,20 +58,20 @@ STOCK_NAMES_TIER_1 = [
     # ADBE,
     # DIS,
     # TME,
-    # GS,
-    # SE,
-    # ERIC,
-    # UBER,
-    # INTC,
-    # MS,
-    # OKTA,
-    # CFLT,
-    # QCOM,
-    # ETSY,
-    # SHOP,
-    # GTLB,
-    # PINS,
-    # SQ,
+    GS,
+    SEA,
+    ERIC,
+    UBER,
+    INTC,
+    MS,
+    OKTA,
+    CFLT,
+    QCOM,
+    ETSY,
+    SHOP,
+    GTLB,
+    PINS,
+    SQ,
 ]
 
 
@@ -84,10 +84,10 @@ def default_period():
     return date_1y_ago, current_date, '1d'
 
 
-def handle_task(stock_name, conf, start_date, end_date, interval):
-    be = BaseEngine(stock_name, start_date, end_date, interval)
+def handle_task(stock_name: str, conf: dict, mode: str, start_date, end_date, interval):
+    base_engine = BaseEngine(stock_name, start_date, end_date, interval)
 
-    be.build_graph(
+    base_engine.build_graph(
         enable_close_price=False,
         # enable_ma=True,
         # enable_ema=True,
@@ -103,31 +103,46 @@ def handle_task(stock_name, conf, start_date, end_date, interval):
         rows=6,
     )
 
-    stock_df, fig = be.stock_df, be.fig
+    stock_df, fig = base_engine.stock_df, base_engine.fig
 
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    if conf is not None:
+    if mode == 'probe':
+        fig.show()
+
+    elif mode == 'train':
         giant_model = GiantModel(stock_df, stock_name, conf, 'train')
-        # giant_model = GiantModel(stock_df, stock_name, conf, 'predict')
         giant_model.run()
         giant_model.build_graph(fig, enable=True)
 
-    fig.show()
+        fig.show()
+
+    elif mode == 'predict':
+        giant_model = GiantModel(stock_df, stock_name, conf, 'predict')
+        giant_model.run()
+        giant_model.build_graph(fig, enable=True)
+
+        if giant_model.need_attention():
+            fig.show()
+
+    else:
+        pass
 
 
 if __name__ == '__main__':
     start_date, end_date, interval = default_period()
 
-    for stock_name in STOCK_NAMES_TIER_0:
-        handle_task(stock_name, None, start_date, end_date, interval)
+    for stock_name in STOCK_NAMES_TIER_1:
+        handle_task(stock_name, {}, 'probe', start_date, end_date, interval)
 
         start_time = datetime.now()
-
         procs = []
-        for conf in stock_confs:
-            p = Process(target=handle_task, args=(stock_name, conf, start_date, end_date, interval))
+        confs = index_confs if stock_name in INDEX_NAMES else stock_confs
+
+        for conf in confs:
+            p = Process(target=handle_task,
+                        args=(stock_name, conf, 'predict', start_date, end_date, interval))
             p.start()
             procs.append(p)
 
@@ -137,15 +152,3 @@ if __name__ == '__main__':
         end_time = datetime.now()
         time_cost = (end_time - start_time).total_seconds()
         print(f'{stock_name} finished at {end_time.time()}, cost {time_cost}s')
-
-    # for stock_name in INDEX_NAMES:
-    #     handle_task(stock_name, None, start_date, end_date, interval)
-    #
-    #     procs = []
-    #     for conf in index_confs:
-    #         p = Process(target=handle_task, args=(stock_name, conf, start_date, end_date, interval))
-    #         p.start()
-    #         procs.append(p)
-    #
-    #     for p in procs:
-    #         p.join()

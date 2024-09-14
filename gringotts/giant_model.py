@@ -4,6 +4,7 @@ from multiprocessing import Process, Queue
 import pandas as pd
 import plotly.graph_objects as go
 
+from util import get_prev_n_workday
 from features import FEATURE_BUF
 from gringotts import MASK, HIT_THRESHOLD, RECALL_STEP, MARGIN
 from gringotts.tiny_model import TinyModel
@@ -130,6 +131,17 @@ class GiantModel:
             model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index.tolist())
             model.run()
             self.short_models.append(model)
+
+    def need_attention(self) -> bool:
+        today = datetime.now().strftime('%Y-%m-%d')
+        watermark = get_prev_n_workday(today, 5)
+
+        for model in self.long_models + self.short_models:
+            for idx in model.output_indices:
+                date = self.stock_df.loc[idx]['Date']
+                if date >= watermark:
+                    return True
+        return False
 
     def build_graph(self, fig: go.Figure, enable=False):
         origin_title = fig.layout.title.text

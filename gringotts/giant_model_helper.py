@@ -81,7 +81,7 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
 
 def show_models(stock_df: pd.DataFrame, fig: go.Figure,
                 models: list[TinyModel], color: str, size: int = 8, enable=False):
-    for model in models[:15]:
+    for model in models:
         indices = model.output_indices
         dates = stock_df.loc[indices]['Date']
         close = stock_df.loc[indices]['close']
