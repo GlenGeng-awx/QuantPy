@@ -33,10 +33,10 @@ def serialize_models(stock_name: str, conf: dict,
     filename = f'train/{stock_name}_{conf[RECALL_STEP]}_{conf[MARGIN]}.txt'
     with open(filename, 'w') as f:
         for model in long_models:
-            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {len(model.output_indices)}\n')
+            f.write(f'long\t{model.abbr}\t{model.successful_long_rate}% {model.valid_trade_num}\n')
 
         for model in short_models:
-            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {len(model.output_indices)}\n')
+            f.write(f'short\t{model.abbr}\t{model.successful_short_rate}% {model.valid_trade_num}\n')
 
 
 def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], list[list[bool]]]:
@@ -75,7 +75,7 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
                 results[model_key] = model
 
     results = list(results.values())
-    results.sort(key=lambda m: len(m.output_indices), reverse=True)
+    results.sort(key=lambda m: m.valid_trade_num, reverse=True)
     return results
 
 
@@ -86,9 +86,16 @@ def show_models(stock_df: pd.DataFrame, fig: go.Figure,
         dates = stock_df.loc[indices]['Date']
         close = stock_df.loc[indices]['close']
 
+        if color == 'orange':
+            model_name = (f'{model.abbr}<br>{model.valid_trade_num:02}|{int(model.successful_long_rate)}%|'
+                          f'+{model.expect_long_margin:.2f}%|-{model.expect_short_margin:.2f}%')
+        else:
+            model_name = (f'{model.abbr}<br>{model.valid_trade_num:02}|{int(model.successful_short_rate)}%|'
+                          f'+{model.expect_short_margin:.2f}%|-{model.expect_long_margin:.2f}%')
+
         fig.add_trace(
             go.Scatter(
-                name=f'{model.abbr}',
+                name=f'{model_name}',
                 x=dates,
                 y=close,
                 mode='markers',

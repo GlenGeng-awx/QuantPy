@@ -20,9 +20,9 @@ base_conf = {
     FORECAST_STEP: 5,
 }
 
-recall_3 = {RECALL_STEP: 3, MASK: 0}
-recall_4 = {RECALL_STEP: 4, MASK: 1}
-recall_5 = {RECALL_STEP: 5, MASK: 2}
+recall_3 = {RECALL_STEP: 3, MASK: 1}
+recall_4 = {RECALL_STEP: 4, MASK: 2}
+recall_5 = {RECALL_STEP: 5, MASK: 3}
 
 stock_margin_3 = {MARGIN: 0.03, HIT_THRESHOLD: 8}
 stock_margin_5 = {MARGIN: 0.05, HIT_THRESHOLD: 5}

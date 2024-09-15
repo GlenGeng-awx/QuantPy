@@ -26,12 +26,12 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 
         if model.pass_long():
             print(f'{worker_tag} --> long {model.successful_long_rate}% '
-                  f'among {len(model.output_indices)} with {model.name}')
+                  f'among {model.valid_trade_num} with {model.name}')
             long_models.append(model)
 
         if model.pass_short():
             print(f'{worker_tag} --> short {model.successful_short_rate}% '
-                  f'among {len(model.output_indices)} with {model.name}')
+                  f'among {model.valid_trade_num} with {model.name}')
             short_models.append(model)
 
         return long_models, short_models
