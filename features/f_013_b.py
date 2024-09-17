@@ -1,7 +1,7 @@
 import pandas as pd
 from features.util import STEP
 
-KEY = 'yesterday is min of last 20d'
+KEY = 'yesterday min of last 20d'
 VAL = 13 * STEP
 
 

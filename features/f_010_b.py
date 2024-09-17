@@ -2,7 +2,7 @@ import pandas as pd
 from features.util import STEP
 from .f_009_b import get_resistance_levels_in_last_n_days
 
-KEY = 'up thru r level, retrace, bounds back'
+KEY = 'up thru r level, <br>retrace, bounds back'
 VAL = 10 * STEP
 
 

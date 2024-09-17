@@ -4,7 +4,7 @@ from multiprocessing import Process
 from conf import *
 from base_engine import BaseEngine
 
-from gringotts import stock_confs, index_confs
+from gringotts import train_confs, predict_confs, MODE
 from gringotts.giant_model import GiantModel
 import features
 
@@ -16,17 +16,23 @@ INDEX_NAMES = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # PFE,
-    # RIVN,
-    # IQ,
-    # META,
     # NIO,
-    # BILI,
+    # IQ,
+    # PINS,
+    # MRNA,
+    # RIVN,
+    # META,
+    # EBAY,
+    # CPNG,
+    # PLTR,
+    # LI,
     # PDD,
-    FUTU,
+    # BILI,
+    # FUTU,
 ]
 
 STOCK_NAMES_TIER_1 = [
+    # PFE,
     # BABA,
     # TSLA,
     # HK_0700,
@@ -35,20 +41,15 @@ STOCK_NAMES_TIER_1 = [
     # XPEV,
     # EDU,
     # COIN,
-    # PLTR,
     # SNOW,
-    # MRNA,
     # MNSO,
     # BA,
-    # CPNG,
     # BNTX,
     # JD,
     # BEKE,
     # TSM,
-    # EBAY,
     # ZM,
-    # LI,
-    # SNAP,
+    SNAP,
     # TTD,
     # YY,
     # MCD,
@@ -58,20 +59,19 @@ STOCK_NAMES_TIER_1 = [
     # ADBE,
     # DIS,
     # TME,
-    GS,
-    SEA,
-    ERIC,
-    UBER,
-    INTC,
-    MS,
-    OKTA,
-    CFLT,
-    QCOM,
-    ETSY,
-    SHOP,
-    GTLB,
-    PINS,
-    SQ,
+    # GS,
+    # SEA,
+    # ERIC,
+    # UBER,
+    # INTC,
+    # MS,
+    # OKTA,
+    # CFLT,
+    # QCOM,
+    # ETSY,
+    # SHOP,
+    # GTLB,
+    # SQ,
 ]
 
 
@@ -84,14 +84,11 @@ def default_period():
     return date_1y_ago, current_date, '1d'
 
 
-def handle_task(stock_name: str, conf: dict, mode: str, start_date, end_date, interval):
+def handle_task(stock_name: str, conf: dict, start_date, end_date, interval):
     base_engine = BaseEngine(stock_name, start_date, end_date, interval)
 
     base_engine.build_graph(
         enable_close_price=False,
-        # enable_ma=True,
-        # enable_ema=True,
-        # enable_bband=True,
         enable_min_max=True,
         enable_wave=True,
         enable_sr=True,
@@ -108,47 +105,68 @@ def handle_task(stock_name: str, conf: dict, mode: str, start_date, end_date, in
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    if mode == 'probe':
+    if conf[MODE] == 'probe':
+        fig.show()
+        return
+
+    giant_model = GiantModel(stock_df, stock_name, conf)
+    giant_model.run()
+    giant_model.build_graph(fig, enable=True)
+
+    if conf[MODE] == 'train':
         fig.show()
 
-    elif mode == 'train':
-        giant_model = GiantModel(stock_df, stock_name, conf, 'train')
-        giant_model.run()
-        giant_model.build_graph(fig, enable=True)
-
+    if conf[MODE] == 'predict' and giant_model.need_attention():
         fig.show()
 
-    elif mode == 'predict':
-        giant_model = GiantModel(stock_df, stock_name, conf, 'predict')
-        giant_model.run()
-        giant_model.build_graph(fig, enable=True)
 
-        if giant_model.need_attention():
-            fig.show()
-
-    else:
-        pass
-
-
-if __name__ == '__main__':
+def handle_stock(stock_name: str, case: int):
+    start_time = datetime.now()
     start_date, end_date, interval = default_period()
 
-    for stock_name in STOCK_NAMES_TIER_1:
-        handle_task(stock_name, {}, 'probe', start_date, end_date, interval)
+    if case == 0:
+        handle_task(stock_name, {MODE: 'probe'}, start_date, end_date, interval)
 
-        start_time = datetime.now()
+    if case == 1:
         procs = []
-        confs = index_confs if stock_name in INDEX_NAMES else stock_confs
 
-        for conf in confs:
+        for conf in train_confs:
             p = Process(target=handle_task,
-                        args=(stock_name, conf, 'predict', start_date, end_date, interval))
+                        args=(stock_name, conf, start_date, end_date, interval))
             p.start()
             procs.append(p)
 
         for p in procs:
             p.join()
 
-        end_time = datetime.now()
-        time_cost = (end_time - start_time).total_seconds()
-        print(f'{stock_name} finished at {end_time.time()}, cost {time_cost}s')
+    if case == 2:
+        # for confs in predict_confs:
+        #     for conf in confs:
+        #         handle_task(stock_name, conf, start_date, end_date, interval)
+        #
+        #         procs = []
+
+        procs = []
+
+        for confs in predict_confs:
+            for conf in confs:
+                p = Process(target=handle_task,
+                            args=(stock_name, conf, start_date, end_date, interval))
+                p.start()
+                procs.append(p)
+
+        for p in procs:
+            p.join()
+
+    end_time = datetime.now()
+    time_cost = (end_time - start_time).total_seconds()
+    print(f'{stock_name} finished at {end_time.time()}, cost {time_cost}s')
+
+
+if __name__ == '__main__':
+
+    # 0: probe
+    # 1: train
+    # 2: predict
+    for stock_name in STOCK_NAMES_TIER_1:
+        handle_stock(stock_name, 2)
