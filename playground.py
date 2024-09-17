@@ -10,8 +10,8 @@ import features
 
 INDEX_NAMES = [
     IXIC,
-    SS_000300,
-    SS_000001,
+    # SS_000300,
+    # SS_000001,
     # GC_F,
 ]
 
@@ -27,7 +27,7 @@ STOCK_NAMES_TIER_0 = [
     # PLTR,
     # LI,
     # PDD,
-    # BILI,
+    BILI,
     # FUTU,
 ]
 
@@ -49,7 +49,7 @@ STOCK_NAMES_TIER_1 = [
     # BEKE,
     # TSM,
     # ZM,
-    SNAP,
+    # SNAP,
     # TTD,
     # YY,
     # MCD,
@@ -58,6 +58,9 @@ STOCK_NAMES_TIER_1 = [
     # MRK,
     # ADBE,
     # DIS,
+]
+
+STOCK_NAMES_TIER_2 = [
     # TME,
     # GS,
     # SEA,
@@ -71,7 +74,7 @@ STOCK_NAMES_TIER_1 = [
     # ETSY,
     # SHOP,
     # GTLB,
-    # SQ,
+    SQ,
 ]
 
 
@@ -106,16 +109,16 @@ def handle_task(stock_name: str, conf: dict, start_date, end_date, interval):
     features.plot_feature(stock_df, fig)
 
     if conf[MODE] == 'probe':
-        fig.show()
+        # fig.show()
         return
 
     giant_model = GiantModel(stock_df, stock_name, conf)
     giant_model.run()
     giant_model.build_graph(fig, enable=True)
 
-    if conf[MODE] == 'train':
-        fig.show()
-
+    # if conf[MODE] == 'train':
+    #     fig.show()
+    #
     if conf[MODE] == 'predict' and giant_model.need_attention():
         fig.show()
 
@@ -168,5 +171,5 @@ if __name__ == '__main__':
     # 0: probe
     # 1: train
     # 2: predict
-    for stock_name in STOCK_NAMES_TIER_1:
+    for stock_name in STOCK_NAMES_TIER_2:
         handle_stock(stock_name, 2)

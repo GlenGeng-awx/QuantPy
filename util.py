@@ -50,7 +50,7 @@ def min_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
 
 def load_data(symbol, interval):
     """ interval is 1h, 1d or 1wk """
-    file_name = f'./data/{symbol}_{interval}.csv'
+    file_name = f'./storage/stock_data/{symbol}_{interval}.csv'
 
     start_date = '2023-01-01' if interval == '1h' else '2015-01-01'
     end_date = datetime(datetime.now().year, 12, 31).strftime('%Y-%m-%d')

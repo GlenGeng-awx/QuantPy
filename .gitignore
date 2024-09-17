@@ -46,4 +46,4 @@ __pycache__/
 data/*.csv
 repo/*.csv
 awx/
-train/
+storage/

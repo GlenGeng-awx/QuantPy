@@ -126,6 +126,7 @@ class GiantModel:
         self.long_models = shrink_models(self.long_models)
         self.short_models = shrink_models(self.short_models)
 
+        # to train dir
         serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def _predict(self):
@@ -142,6 +143,9 @@ class GiantModel:
             model.phase1()
             model.phase2()
             self.short_models.append(model)
+
+        # to predict dir
+        serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def need_attention(self) -> bool:
         today = datetime.now().strftime('%Y-%m-%d')
