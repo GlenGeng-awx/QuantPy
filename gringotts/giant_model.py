@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 from util import get_prev_n_workday
 from features import FEATURE_BUF
-from gringotts import MODE, MASK, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD
+from gringotts import MODE, MASK, CROSS, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD
 from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import (enumerate_switches, default_switch,
                                           serialize_models, deserialize_models,
@@ -17,6 +17,7 @@ INITIAL_DROP = 20
 
 # at leaf, do filter and evaluation
 # at non-leaf, just do filter and decide to go or not go
+# conf mode is training
 def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
                     prefix: list[bool], left_len: int,
                     input_indices: list[int]) -> tuple[list[TinyModel], list[TinyModel]]:
@@ -48,7 +49,8 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
         model = TinyModel(stock_df, conf, hint_switch, input_indices, len(prefix) - 1)
         model.phase1()
 
-        if len(model.filter.output_indices) < 2:
+        min_hit_threshold = min(evaluator_conf[HIT_THRESHOLD] for evaluator_conf in conf['evaluators'])
+        if len(model.filter.output_indices) < min_hit_threshold:
             return [], []
 
         long_models, short_models = [], []
@@ -130,7 +132,8 @@ class GiantModel:
         serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def _predict(self):
-        long_switches, short_switches = deserialize_models(self.stock_name, self.conf)
+        stock_name = self.conf[CROSS] if self.conf[CROSS] else self.stock_name
+        long_switches, short_switches = deserialize_models(stock_name, self.conf)
 
         for switch in long_switches:
             model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index[INITIAL_DROP:].tolist())
@@ -164,8 +167,8 @@ class GiantModel:
         strategy_name = f'{self.conf[MODE]} << recall {self.conf[RECALL_STEP]}d >> '
 
         if self.conf[MODE] == 'predict':
-            strategy_name += f'forecast {self.conf[FORECAST_STEP]}d ' + \
-                             f'({self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
+            strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
+                             f'{self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
 
         fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
 

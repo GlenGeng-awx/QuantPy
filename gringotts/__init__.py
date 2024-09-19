@@ -1,8 +1,11 @@
+from conf import *
+
 #
 # keys for configuration
 #
 MODE = 'mode'                           # train or predict
 MASK = 'mask'                           # used in train, launch 2 ** mask process per stock
+CROSS = 'cross'                         # used in predict, cross stock validation
 
 RECALL_STEP = 'recall_step'             # step for checking the past
 
@@ -16,17 +19,11 @@ evaluators = [
         FORECAST_STEP: 5,
         MARGIN: margin,
         HIT_THRESHOLD: hit_threshold,
-        SUCCESSFUL_RATE: 80,
+        SUCCESSFUL_RATE: 90,
     }
     for (margin, hit_threshold) in [
-        (0.01, 8),
-        (0.03, 8),
-        (0.05, 5),
-        (0.07, 5),
-        (0.09, 3),
-        (0.12, 3),
-        (0.15, 2),
-        (0.18, 2),
+        (0.05, 8),
+        (0.10, 3),
     ]
 ]
 
@@ -56,6 +53,8 @@ predict_confs = [
         {
             MODE: 'predict',
             RECALL_STEP: 3,
+            CROSS: '',
+            # CROSS: TSLA,
             **evaluator,
         } for evaluator in evaluators
     ],
@@ -63,6 +62,8 @@ predict_confs = [
         {
             MODE: 'predict',
             RECALL_STEP: 4,
+            CROSS: '',
+            # CROSS: TSLA,
             **evaluator,
         } for evaluator in evaluators
     ],
@@ -70,6 +71,8 @@ predict_confs = [
         {
             MODE: 'predict',
             RECALL_STEP: 5,
+            CROSS: '',
+            # CROSS: TSLA,
             **evaluator,
         } for evaluator in evaluators
     ],

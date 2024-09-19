@@ -1,7 +1,11 @@
-import yfinance as yf
-import pandas as pd
 import os
 from datetime import datetime
+
+import yfinance as yf
+import pandas as pd
+import plotly.io as pio
+
+pio.renderers.default = "browser"
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)

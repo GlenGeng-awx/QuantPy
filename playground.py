@@ -10,14 +10,14 @@ import features
 
 INDEX_NAMES = [
     IXIC,
-    # SS_000300,
-    # SS_000001,
+    SS_000300,
+    SS_000001,
     # GC_F,
 ]
 
 STOCK_NAMES_TIER_0 = [
-    # NIO,
-    # IQ,
+    NIO,
+    IQ,
     # PINS,
     # MRNA,
     # RIVN,
@@ -27,53 +27,50 @@ STOCK_NAMES_TIER_0 = [
     # PLTR,
     # LI,
     # PDD,
-    BILI,
+    # BILI,
     # FUTU,
+    TSLA,
 ]
 
 STOCK_NAMES_TIER_1 = [
-    # PFE,
-    # BABA,
-    # TSLA,
-    # HK_0700,
-    # AMD,
-    # NVDA,
-    # XPEV,
-    # EDU,
-    # COIN,
-    # SNOW,
-    # MNSO,
-    # BA,
-    # BNTX,
-    # JD,
-    # BEKE,
-    # TSM,
-    # ZM,
-    # SNAP,
-    # TTD,
-    # YY,
-    # MCD,
-    # GILD,
-    # TCOM,
-    # MRK,
-    # ADBE,
-    # DIS,
-]
-
-STOCK_NAMES_TIER_2 = [
-    # TME,
-    # GS,
-    # SEA,
-    # ERIC,
-    # UBER,
-    # INTC,
-    # MS,
-    # OKTA,
-    # CFLT,
-    # QCOM,
-    # ETSY,
-    # SHOP,
-    # GTLB,
+    PFE,
+    BABA,
+    HK_0700,
+    AMD,
+    NVDA,
+    XPEV,
+    EDU,
+    COIN,
+    SNOW,
+    MNSO,
+    BA,
+    BNTX,
+    JD,
+    BEKE,
+    TSM,
+    ZM,
+    SNAP,
+    TTD,
+    YY,
+    MCD,
+    GILD,
+    TCOM,
+    MRK,
+    ADBE,
+    DIS,
+    TME,
+    GS,
+    SEA,
+    ERIC,
+    UBER,
+    INTC,
+    MS,
+    OKTA,
+    CFLT,
+    QCOM,
+    ETSY,
+    SHOP,
+    GTLB,
     SQ,
 ]
 
@@ -116,11 +113,13 @@ def handle_task(stock_name: str, conf: dict, start_date, end_date, interval):
     giant_model.run()
     giant_model.build_graph(fig, enable=True)
 
-    # if conf[MODE] == 'train':
-    #     fig.show()
-    #
+    if conf[MODE] == 'train':
+        fig.show()
+
     if conf[MODE] == 'predict' and giant_model.need_attention():
         fig.show()
+
+    # fig.show()
 
 
 def handle_stock(stock_name: str, case: int):
@@ -143,12 +142,6 @@ def handle_stock(stock_name: str, case: int):
             p.join()
 
     if case == 2:
-        # for confs in predict_confs:
-        #     for conf in confs:
-        #         handle_task(stock_name, conf, start_date, end_date, interval)
-        #
-        #         procs = []
-
         procs = []
 
         for confs in predict_confs:
@@ -171,5 +164,5 @@ if __name__ == '__main__':
     # 0: probe
     # 1: train
     # 2: predict
-    for stock_name in STOCK_NAMES_TIER_2:
+    for stock_name in STOCK_NAMES_TIER_0:
         handle_stock(stock_name, 2)

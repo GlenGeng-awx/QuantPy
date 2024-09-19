@@ -135,7 +135,7 @@ class _EvaluatorInPredict:
         self.hit_threshold = hit_threshold
         self.successful_rate = successful_rate
 
-        self.valid_trade_num = None
+        self.valid_trade_num = 0
 
         self.successful_long_rate = 0
         self.expect_long_margin = 0
@@ -173,7 +173,7 @@ class _EvaluatorInPredict:
             total_long_margin += (max_close - close[idx]) / close[idx] * 100
             total_short_margin += (close[idx] - min_close) / close[idx] * 100
 
-        if valid_trade_num < self.hit_threshold:
+        if valid_trade_num == 0:
             return
 
         self.valid_trade_num = valid_trade_num
@@ -187,25 +187,17 @@ class _EvaluatorInPredict:
         self.pass_long = self.successful_long_rate >= self.successful_rate
         self.pass_short = self.successful_short_rate >= self.successful_rate
 
-    def _long_name(self):
-        name = f'L {self.forecast_step}d {self.margin * 100:.1f}% {self.hit_threshold}'
-        name += f'|{self.valid_trade_num:02} {int(self.successful_long_rate)}% <br>'
+    def name(self):
+        name = 'N '
+        if self.pass_long:
+            name = 'L '
+        elif self.pass_short:
+            name = 'S '
+
+        name += f'{self.forecast_step}d {self.margin * 100:.1f}% {self.hit_threshold}<br>'
+        name += f'{self.valid_trade_num:02} L {int(self.successful_long_rate)}% S {int(self.successful_short_rate)}%<br>'
         name += f'EXP +{self.expect_long_margin:.1f}% -{self.expect_short_margin:.1f}%'
         return name
-
-    def _short_name(self):
-        name = f'S {self.forecast_step}d {self.margin * 100:.1f}% {self.hit_threshold}'
-        name += f'|{self.valid_trade_num:02} {int(self.successful_short_rate)}% <br>'
-        name += f'EXP +{self.expect_short_margin:.1f}% -{self.expect_long_margin:.1f}%'
-        return name
-
-    def name(self):
-        if self.pass_long:
-            return self._long_name()
-        elif self.pass_short:
-            return self._short_name()
-        else:
-            return ''
 
 
 # during train, one switch has multiple evaluators, each do a coarse evaluation
