@@ -22,8 +22,9 @@ evaluators = [
         SUCCESSFUL_RATE: 90,
     }
     for (margin, hit_threshold) in [
-        (0.05, 8),
-        (0.10, 3),
+        (0.05, 7),
+        (0.10, 5),
+        (0.20, 3),
     ]
 ]
 
@@ -37,13 +38,13 @@ train_confs = [
     {
         MODE: 'train',
         RECALL_STEP: 4,
-        MASK: 2,
+        MASK: 3,
         'evaluators': evaluators,
     },
     {
         MODE: 'train',
         RECALL_STEP: 5,
-        MASK: 3,
+        MASK: 4,
         'evaluators': evaluators,
     },
 ]
