@@ -6,80 +6,14 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from conf import *
 from base_engine import BaseEngine
 from util import get_prev_n_workday, shrink_date_str
-from playground import default_period, STOCK_NAMES_TIER_0, STOCK_NAMES_TIER_1, STOCK_NAMES_TIER_2, INDEX_NAMES
+from playground import default_period, STOCK_NAMES_TIER_0, STOCK_NAMES_TIER_1, INDEX_NAMES
 
-RECALL_DAYS = 20
-
-#
-# long_stats = {}
-# short_stats = {}
-#
-# with open(filename) as fd:
-#     for line in fd:
-#         fields = line.strip().split('\t')
-#         direction = fields[0]
-#         features = [int(x) for x in fields[1].split(',')]
-#
-#         if direction == 'long':
-#             for feature in features:
-#                 long_stats[feature] = long_stats.get(feature, 0) + 1
-#
-#         if direction == 'short':
-#             for feature in features:
-#                 short_stats[feature] = short_stats.get(feature, 0) + 1
-#
-# long_stats = sorted(long_stats.items(), key=lambda x: x[1], reverse=True)
-# short_stats = sorted(short_stats.items(), key=lambda x: x[1], reverse=True)
-#
-# print(f'Long stats for {stock_name}')
-# for (idx, freq) in long_stats:
-#     print(f'{idx} - {FEATURE_BUF[idx].KEY}: {freq}')
-#
-# print(f'Short stats for {stock_name}')
-# for (idx, freq) in short_stats:
-#     print(f'{idx} - {FEATURE_BUF[idx].KEY}: {freq}')
+SCAN_DAYS = 20
 
 
-def dig_stock(stock_name) -> tuple[int, int, dict]:
-    base_engine = BaseEngine(stock_name, *default_period())
-    stock_df = base_engine.stock_df
-
-    today = datetime.now().strftime('%Y-%m-%d')
-    watermark = get_prev_n_workday(today, RECALL_DAYS)
-
-    total_rule_num = 0
-    total_hit_num = 0
-
-    # date -> long/short -> hit_num
-    hit_stats = {}
-
-    for date in pd.bdate_range(end=today, periods=RECALL_DAYS + 1):
-        date = date.strftime('%Y-%m-%d')
-        hit_stats[date] = {'long': 0, 'short': 0}
-
-    for filename in glob(f'./storage/predict/{stock_name}*.txt'):
-        with open(filename) as fd:
-            for line in fd:
-                total_rule_num += 1
-
-                fields = line.strip().split('\t')
-                direction = fields[0]
-                indices = eval(fields[4])
-
-                for idx in indices:
-                    date = shrink_date_str(stock_df.loc[idx]['Date'])
-                    if date < watermark:
-                        continue
-
-                    total_hit_num += 1
-                    hit_stats[date][direction] += 1
-
-    return total_rule_num, total_hit_num, hit_stats
-
-
+# 20 stocks per graph
 def setup_graph(stock_names: list[str]):
     rows = len(stock_names)
 
@@ -104,6 +38,44 @@ def setup_graph(stock_names: list[str]):
     return fig
 
 
+# scan last 20 days
+def calculate_hit_stats(stock_name) -> tuple[int, int, dict]:
+    base_engine = BaseEngine(stock_name, *default_period())
+    stock_df = base_engine.stock_df
+
+    today = datetime.now().strftime('%Y-%m-%d')
+    watermark = get_prev_n_workday(today, SCAN_DAYS)
+
+    total_rule_num = 0
+    total_hit_num = 0
+
+    # date -> long/short -> hit_num
+    hit_stats = {}
+
+    for date in pd.bdate_range(end=today, periods=SCAN_DAYS + 1):
+        date = date.strftime('%Y-%m-%d')
+        hit_stats[date] = {'long': 0, 'short': 0}
+
+    for filename in glob(f'./storage/predict/{stock_name}*.txt'):
+        with open(filename) as fd:
+            for line in fd:
+                total_rule_num += 1
+
+                fields = line.strip().split('\t')
+                direction = fields[0]
+                indices = eval(fields[4])
+
+                for idx in indices:
+                    date = shrink_date_str(stock_df.loc[idx]['Date'])
+                    if date < watermark:
+                        continue
+
+                    total_hit_num += 1
+                    hit_stats[date][direction] += 1
+
+    return total_rule_num, total_hit_num, hit_stats
+
+
 def plot_hit_stats(hit_stats: dict, fig: go.Figure, row: int):
     hit_stats = list(hit_stats.items())
     hit_stats.sort(key=lambda x: x[0])
@@ -117,17 +89,24 @@ def plot_hit_stats(hit_stats: dict, fig: go.Figure, row: int):
 
 
 if __name__ == '__main__':
+    all_names = STOCK_NAMES_TIER_0 + STOCK_NAMES_TIER_1
 
-    stock_names = STOCK_NAMES_TIER_2
+    curr = 0
+    step = 20
 
-    fig = setup_graph(stock_names)
+    while curr < len(all_names):
+        print(f'Processing {curr} to {curr + step - 1}')
+        sub_names = all_names[curr:curr + step]
 
-    for row, stock_name in enumerate(stock_names):
-        total_rule_num, total_hit_num, hit_stats = dig_stock(stock_name)
-        plot_hit_stats(hit_stats, fig, row + 1)
+        fig = setup_graph(sub_names)
 
-        print(f'{stock_name} -> total_rule_num: {total_rule_num}')
-        print(f'{stock_name} -> total_hit_num: {total_hit_num}')
-        print(f'{stock_name} -> hit stats for : {json.dumps(hit_stats, indent=4)}')
+        for row, stock_name in enumerate(sub_names):
+            total_rule_num, total_hit_num, hit_stats = calculate_hit_stats(stock_name)
+            plot_hit_stats(hit_stats, fig, row + 1)
 
-    fig.show()
+            print(f'{stock_name} -> total_rule_num: {total_rule_num}')
+            print(f'{stock_name} -> total_hit_num: {total_hit_num}')
+            print(f'{stock_name} -> hit stats for : {json.dumps(hit_stats, indent=4)}')
+
+        fig.show()
+        curr += step

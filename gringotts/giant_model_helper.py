@@ -34,7 +34,7 @@ def serialize_models(stock_name: str, conf: dict,
     if conf[MODE] == 'train':
         filename = f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d.txt'
     else:
-        filename = f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]}_{conf[HIT_THRESHOLD]}.txt'
+        filename = f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}.txt'
 
     with open(filename, 'w') as f:
         for model in long_models:
