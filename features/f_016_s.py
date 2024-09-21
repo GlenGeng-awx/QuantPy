@@ -13,7 +13,10 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     indices = []
 
     for idx in _open.index:
-        if high[idx] > max(_open[idx], close[idx]) * 1.035:
+        min_price = min(_open[idx], close[idx])
+        max_price = max(_open[idx], close[idx])
+
+        if high[idx] > max_price * 1.03 and (high[idx] - max_price) > 1.5 * (max_price - min_price):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

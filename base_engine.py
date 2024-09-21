@@ -48,7 +48,7 @@ class BaseEngine:
 
         self.min_max = MinMax(self.stock_df)
         self.wave = Wave(self.stock_df)
-        self.sr_level = SupportResistanceLevel(self.stock_df, self.stock_name)
+        self.sr_level = SupportResistanceLevel(self.stock_df)
         self.line = Line(self.stock_df, self.stock_name)
         self.box = Box(self.stock_df, self.wave)
 

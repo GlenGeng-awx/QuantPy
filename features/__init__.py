@@ -21,8 +21,8 @@ from features import (
     f_017_b, f_017_s,       # long red bar / long green bar
     f_018_b, f_018_s,       # short red bar / short green bar
     f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
-    f_020_b, f_020_s,       # price incr 3d / price decr 3d
-    f_021_b, f_021_s,       # short lower shadow / short upper shadow
+    f_020_b, f_020_s,       # price incr 5d / price decr 5d
+    f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
 )
 
 FEATURE_BUF = [

@@ -1,19 +1,19 @@
 import pandas as pd
 from features.util import STEP, DELTA
 
-KEY = 'short upper shadow'
+KEY = 'decr with short lower shadow'
 VAL = 21 * STEP + DELTA
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
     _open = stock_df['open']
     close = stock_df['close']
-    high = stock_df['high']
+    low = stock_df['low']
 
     indices = []
 
     for idx in _open.index:
-        if high[idx] < max(_open[idx], close[idx]) * 1.005:
+        if _open[idx] > close[idx] and low[idx] * 1.005 > close[idx]:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
