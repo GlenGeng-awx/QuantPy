@@ -1,7 +1,7 @@
 import pandas as pd
 from features.util import STEP
 
-KEY = 'incr with short upper shadow'
+KEY = 'short upper shadow'
 VAL = 21 * STEP
 
 

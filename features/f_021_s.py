@@ -1,7 +1,7 @@
 import pandas as pd
 from features.util import STEP, DELTA
 
-KEY = 'decr with short lower shadow'
+KEY = 'short lower shadow'
 VAL = 21 * STEP + DELTA
 
 

@@ -23,6 +23,8 @@ from features import (
     f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
     f_020_b, f_020_s,       # price incr 5d / price decr 5d
     f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
+    f_022_b, f_022_s,       # up to sr level / down away sr level
+    f_023_b, f_023_s,       # up away sr level / down to sr level
 )
 
 FEATURE_BUF = [
@@ -47,6 +49,8 @@ FEATURE_BUF = [
     f_019_b, f_019_s,
     f_020_b, f_020_s,
     f_021_b, f_021_s,
+    f_022_b, f_022_s,
+    f_023_b, f_023_s,
 ]
 
 
@@ -96,5 +100,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_019_b.KEY, f_019_b.VAL, 'red', 2),   (f_019_s.KEY, f_019_s.VAL, 'green', 2),
         (f_020_b.KEY, f_020_b.VAL, 'red', 2),   (f_020_s.KEY, f_020_s.VAL, 'green', 2),
         (f_021_b.KEY, f_021_b.VAL, 'red', 2),   (f_021_s.KEY, f_021_s.VAL, 'green', 2),
+        (f_022_b.KEY, f_022_b.VAL, 'red', 2),   (f_022_s.KEY, f_022_s.VAL, 'green', 2),
+        (f_023_b.KEY, f_023_b.VAL, 'red', 2),   (f_023_s.KEY, f_023_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)
