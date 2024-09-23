@@ -4,8 +4,8 @@ from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESS
 
 
 # one filter for each combination of recall_step and switch
-# during train, input_indices is the output of previous step
-# during predict, input_indices is the whole index
+# during train, input_indices is the output_indices of previous step
+# during predict, input_indices is specified by caller
 class _Filter:
     def __init__(self, stock_df: pd.DataFrame, recall_step: int, switch: list[bool],
                  input_indices: list[int], train_position: int = None):
@@ -73,6 +73,9 @@ class _EvaluatorInTrain:
     def evaluate(self, output_indices: list[int]):
         # prune is important in train
         if len(output_indices) < self.hit_threshold:
+            return
+
+        if output_indices[-1] - output_indices[0] < 10:
             return
 
         valid_trade_num = 0

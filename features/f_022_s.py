@@ -17,8 +17,7 @@ def execute(stock_df: pd.DataFrame, **kwargs):
             continue
 
         if close[idx] < close[idx - 1] and close[idx] * 1.05 > above_sr_level:
-            indices.ap
-            pend(idx)
+            indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
     stock_df[KEY] = s.reindex(stock_df.index, fill_value=False)

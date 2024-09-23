@@ -1,14 +1,13 @@
-from conf import *
-
 #
 # keys for configuration
 #
 MODE = 'mode'                           # train or predict
 MASK = 'mask'                           # used in train, launch 2 ** mask process per stock
-CROSS = 'cross'                         # used in predict, cross stock validation
+
+FROM_DATE = 'from_date'                 # start date for training or predicting
+TO_DATE = 'to_date'                     # end date for training or predicting
 
 RECALL_STEP = 'recall_step'             # step for checking the past
-
 FORECAST_STEP = 'forecast_step'         # step for checking the future
 MARGIN = 'margin'                       # margin for checking the trade
 HIT_THRESHOLD = 'hit_threshold'         # hit threshold for both long and short
@@ -22,61 +21,62 @@ evaluators = [
         SUCCESSFUL_RATE: 90,
     }
     for (margin, hit_threshold) in [
-        (0.05, 7),
-        (0.10, 5),
-        (0.20, 3),
+        # (0.02, 3),     # for index
+        (0.04, 3),       # for stock
+        # (0.10, 4),
+        # (0.20, 3),
     ]
 ]
 
 train_confs = [
+    # {
+    #     MODE: 'train',
+    #     RECALL_STEP: 3,
+    #     MASK: 4,
+    #     'evaluators': evaluators,
+    # },
     {
         MODE: 'train',
-        RECALL_STEP: 3,
-        MASK: 1,
-        'evaluators': evaluators,
-    },
-    {
-        MODE: 'train',
+        FROM_DATE: '',
+        TO_DATE: '',
+
         RECALL_STEP: 4,
-        MASK: 3,
-        'evaluators': evaluators,
-    },
-    {
-        MODE: 'train',
-        RECALL_STEP: 5,
         MASK: 4,
         'evaluators': evaluators,
     },
+    # {
+    #     MODE: 'train',
+    #     RECALL_STEP: 5,
+    #     MASK: 4,
+    #     'evaluators': evaluators,
+    # },
 ]
 
 predict_confs = [
+    # [
+    #     {
+    #         MODE: 'predict',
+    #         RECALL_STEP: 3,
+    #         **evaluator,
+    #     } for evaluator in evaluators
+    # ],
     [
         {
             MODE: 'predict',
-            RECALL_STEP: 3,
-            CROSS: '',
-            # CROSS: TSLA,
-            **evaluator,
-        } for evaluator in evaluators
-    ],
-    [
-        {
-            MODE: 'predict',
+            FROM_DATE: '',
+            TO_DATE: '',
+
             RECALL_STEP: 4,
-            CROSS: '',
-            # CROSS: TSLA,
             **evaluator,
         } for evaluator in evaluators
     ],
-    [
-        {
-            MODE: 'predict',
-            RECALL_STEP: 5,
-            CROSS: '',
-            # CROSS: TSLA,
-            **evaluator,
-        } for evaluator in evaluators
-    ],
+    # [
+    #     {
+    #         MODE: 'predict',
+    #         RECALL_STEP: 5,
+    #         **evaluator,
+    #     } for evaluator in evaluators
+    # ],
 ]
 
 

@@ -12,3 +12,11 @@ print(prev_list)
 print(list1)
 print(list2)
 
+
+list3 = []
+if not list3:
+    print('list3 is empty')
+
+print(len(list3))
+
+print(list3.__sizeof__())

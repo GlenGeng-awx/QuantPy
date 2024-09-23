@@ -4,15 +4,13 @@ from multiprocessing import Process, Queue
 import pandas as pd
 import plotly.graph_objects as go
 
-from util import get_prev_n_workday
+from util import get_indices_of_period
 from features import FEATURE_BUF
-from gringotts import MODE, MASK, CROSS, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD
+from gringotts import MODE, MASK, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, FROM_DATE, TO_DATE
 from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import (enumerate_switches, default_switch,
                                           serialize_models, deserialize_models,
                                           shrink_models, show_models)
-
-INITIAL_DROP = 20
 
 
 # at leaf, do filter and evaluation
@@ -69,16 +67,15 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 
 
 # prepare to kick off _model_searcher
-def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, worker_id: int,
-                       prefixes: list[list[bool]], left_len, queue: Queue):
+def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, input_indices: list[int],
+                       worker_id: int, prefixes: list[list[bool]], left_len, queue: Queue):
     worker_tag = f'{stock_name} recall {conf[RECALL_STEP]}d - worker {worker_id}'
     prefix = prefixes[worker_id]
     print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
     start_time = datetime.now()
 
-    long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len,
-                                                stock_df.index[INITIAL_DROP:].tolist())
+    long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len, input_indices)
     queue.put((long_models, short_models))
 
     end_time = datetime.now()
@@ -94,6 +91,9 @@ class GiantModel:
         self.stock_df = stock_df
         self.stock_name = stock_name
         self.conf = conf
+
+        from_idx, to_idx = get_indices_of_period(stock_df, conf[FROM_DATE], conf[TO_DATE])
+        self.input_indices = stock_df.loc[from_idx:to_idx].index.tolist()
 
         self.long_models = []
         self.short_models = []
@@ -114,8 +114,8 @@ class GiantModel:
         for worker_id in range(2 ** mask):
             proc = Process(
                 target=giant_model_worker,
-                args=(self.stock_df, self.stock_name, self.conf, worker_id,
-                      switches, len(FEATURE_BUF) - mask, queue))
+                args=(self.stock_df, self.stock_name, self.conf, self.input_indices,
+                      worker_id, switches, len(FEATURE_BUF) - mask, queue))
             proc.start()
             procs.append(proc)
 
@@ -132,17 +132,16 @@ class GiantModel:
         serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def _predict(self):
-        stock_name = self.conf[CROSS] if self.conf[CROSS] else self.stock_name
-        long_switches, short_switches = deserialize_models(stock_name, self.conf)
+        long_switches, short_switches = deserialize_models(self.stock_name, self.conf)
 
         for switch in long_switches:
-            model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index[INITIAL_DROP:].tolist())
+            model = TinyModel(self.stock_df, self.conf, switch, self.input_indices)
             model.phase1()
             model.phase2()
             self.long_models.append(model)
 
         for switch in short_switches:
-            model = TinyModel(self.stock_df, self.conf, switch, self.stock_df.index[INITIAL_DROP:].tolist())
+            model = TinyModel(self.stock_df, self.conf, switch, self.input_indices)
             model.phase1()
             model.phase2()
             self.short_models.append(model)
@@ -151,20 +150,13 @@ class GiantModel:
         serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def need_attention(self) -> bool:
-        today = datetime.now().strftime('%Y-%m-%d')
-        watermark = get_prev_n_workday(today, 5)
-
-        for model in self.long_models + self.short_models:
-            for idx in model.filter.output_indices:
-                date = self.stock_df.loc[idx]['Date']
-                if date >= watermark:
-                    return True
-        return False
+        return any(model.filter.output_indices for model in self.long_models + self.short_models)
 
     def build_graph(self, fig: go.Figure, enable=False):
         origin_title = fig.layout.title.text
 
         strategy_name = f'{self.conf[MODE]} << recall {self.conf[RECALL_STEP]}d >> '
+        strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] '
 
         if self.conf[MODE] == 'predict':
             strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
@@ -172,5 +164,8 @@ class GiantModel:
 
         fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
 
-        show_models(self.stock_df, fig, self.long_models, 'orange', 9, enable)
-        show_models(self.stock_df, fig, self.short_models, 'black', 7, enable)
+        fig.add_vline(x=self.conf[FROM_DATE], line_dash="dash", line_width=0.5, line_color='red', row=1)
+        fig.add_vline(x=self.conf[TO_DATE], line_dash="dash", line_width=0.5, line_color='red', row=1)
+
+        show_models(self.stock_df, fig, self.long_models, 'orange', 7, enable)
+        show_models(self.stock_df, fig, self.short_models, 'black', 5, enable)
