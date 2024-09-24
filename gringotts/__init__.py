@@ -7,6 +7,9 @@ MASK = 'mask'                           # used in train, launch 2 ** mask proces
 FROM_DATE = 'from_date'                 # start date for training or predicting
 TO_DATE = 'to_date'                     # end date for training or predicting
 
+TRAIN_FROM_DATE = 'train_from_date'     # used in predict, start date for training
+TRAIN_TO_DATE = 'train_to_date'         # used in predict, end date for training
+
 RECALL_STEP = 'recall_step'             # step for checking the past
 FORECAST_STEP = 'forecast_step'         # step for checking the future
 MARGIN = 'margin'                       # margin for checking the trade
@@ -65,6 +68,9 @@ predict_confs = [
             MODE: 'predict',
             FROM_DATE: '',
             TO_DATE: '',
+
+            TRAIN_FROM_DATE: '',
+            TRAIN_TO_DATE: '',
 
             RECALL_STEP: 4,
             **evaluator,

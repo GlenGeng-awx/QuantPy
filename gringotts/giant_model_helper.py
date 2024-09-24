@@ -5,8 +5,8 @@ import plotly.graph_objects as go
 
 from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
-from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE
-
+from gringotts import (RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE,
+                       FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE)
 
 def enumerate_switches(size: int) -> list[list[bool]]:
     if size == 0:
@@ -32,9 +32,10 @@ def default_switch(size: int) -> list[bool]:
 def serialize_models(stock_name: str, conf: dict,
                      long_models: list[TinyModel], short_models: list[TinyModel]):
     if conf[MODE] == 'train':
-        filename = f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d.txt'
+        filename = f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
     else:
-        filename = f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}.txt'
+        filename = f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}' \
+                   f'_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
 
     with open(filename, 'w') as f:
         for model in long_models:
@@ -47,6 +48,8 @@ def serialize_models(stock_name: str, conf: dict,
 def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], list[list[bool]]]:
     # which file to go
     recall_step = conf[RECALL_STEP]
+    from_date = conf[TRAIN_FROM_DATE]
+    to_date = conf[TRAIN_TO_DATE]
 
     # which evaluator to pick
     forecast_step = conf[FORECAST_STEP]
@@ -55,7 +58,7 @@ def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], l
 
     long_switches, short_switches = [], []
 
-    filename = f'./storage/train/{stock_name}_{recall_step}d.txt'
+    filename = f'./storage/train/{stock_name}_{recall_step}d_{from_date}_{to_date}.txt'
     with open(filename, 'r') as f:
         for line in f:
             # long '\t' 16,33 '\t' L 5d 1.0% 8|17 82%;L 5d 3.0% 8|17 82% '\t' up thru r level, short red bar \t indices

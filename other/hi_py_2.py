@@ -17,6 +17,8 @@ list3 = []
 if not list3:
     print('list3 is empty')
 
-print(len(list3))
+list3.append(1)
 
-print(list3.__sizeof__())
+print(len(list3))
+print('len', list3.__len__())
+print('size', list3.__sizeof__())
