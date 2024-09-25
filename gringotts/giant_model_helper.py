@@ -2,11 +2,8 @@ import copy
 
 import pandas as pd
 import plotly.graph_objects as go
-
-from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
-from gringotts import (RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE,
-                       FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE)
+
 
 def enumerate_switches(size: int) -> list[list[bool]]:
     if size == 0:
@@ -26,72 +23,6 @@ def enumerate_switches(size: int) -> list[list[bool]]:
 
 def default_switch(size: int) -> list[bool]:
     return [False] * size
-
-
-# long/short \t switch \t evaluators \t switch name \t indices
-def serialize_models(stock_name: str, conf: dict,
-                     long_models: list[TinyModel], short_models: list[TinyModel]):
-    if conf[MODE] == 'train':
-        filename = f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
-    else:
-        filename = f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}' \
-                   f'_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
-
-    with open(filename, 'w') as f:
-        for model in long_models:
-            f.write(f'long\t{model.filter.abbr()}\t{model.name()}\t{model.filter.output_indices}\n')
-
-        for model in short_models:
-            f.write(f'short\t{model.filter.abbr()}\t{model.name()}\t{model.filter.output_indices}\n')
-
-
-def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], list[list[bool]]]:
-    # which file to go
-    recall_step = conf[RECALL_STEP]
-    from_date = conf[TRAIN_FROM_DATE]
-    to_date = conf[TRAIN_TO_DATE]
-
-    # which evaluator to pick
-    forecast_step = conf[FORECAST_STEP]
-    margin = conf[MARGIN]
-    hit_threshold = conf[HIT_THRESHOLD]
-
-    long_switches, short_switches = [], []
-
-    filename = f'./storage/train/{stock_name}_{recall_step}d_{from_date}_{to_date}.txt'
-    with open(filename, 'r') as f:
-        for line in f:
-            # long '\t' 16,33 '\t' L 5d 1.0% 8|17 82%;L 5d 3.0% 8|17 82% '\t' up thru r level, short red bar \t indices
-            fields = line.split('\t')
-
-            direction = fields[0]
-
-            # 16,33
-            parts = fields[1].split(',')
-            switch = [False] * len(FEATURE_BUF)
-            for part in parts:
-                switch[int(part)] = True
-
-            hit = False
-            evaluators = fields[2].split(';')
-            for evaluator in evaluators:
-                # L 5d 1.0% 8
-                evaluator_conf = evaluator.split('|')[0].split(' ')
-                if evaluator_conf[1] == f'{forecast_step}d' \
-                        and evaluator_conf[2] == f'{margin * 100:.1f}%' \
-                        and evaluator_conf[3] == f'{hit_threshold}':
-                    hit = True
-                    break
-
-            if not hit:
-                continue
-
-            if direction == 'long':
-                long_switches.append(switch)
-            elif direction == 'short':
-                short_switches.append(switch)
-
-    return long_switches, short_switches
 
 
 def shrink_models(models: list[TinyModel]) -> list[TinyModel]:

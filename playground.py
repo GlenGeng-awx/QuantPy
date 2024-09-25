@@ -6,7 +6,8 @@ from conf import *
 from base_engine import BaseEngine
 from util import shrink_date_str
 
-from gringotts import train_confs, predict_confs, MODE, FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE
+from gringotts import (train_confs, predict_confs, dev_confs, MODE, FROM_DATE, TO_DATE,
+                       TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
 from gringotts.giant_model import GiantModel
 import features
 
@@ -111,6 +112,8 @@ def handle_task(stock_name: str, conf: dict, start_date, end_date, interval):
         fig.show()
         return
 
+    print('ATTENTION!!!', conf)
+
     giant_model = GiantModel(stock_df, stock_name, conf)
     giant_model.run()
     giant_model.build_graph(fig, enable=True)
@@ -120,6 +123,9 @@ def handle_task(stock_name: str, conf: dict, start_date, end_date, interval):
 
     # if conf[MODE] == 'predict' and giant_model.need_attention():
     if conf[MODE] == 'predict':
+        fig.show()
+
+    if conf[MODE] == 'dev':
         fig.show()
 
 
@@ -133,26 +139,21 @@ def dispatch(stock_name: str, case: int, period: dict = None):
         for conf in train_confs:
             conf = conf.copy()
             conf.update(period)
-            print('ATTENTION!!!', conf)
-
             handle_task(stock_name, conf, *default_period())
 
     if case == 2:
-        procs = []
-
         for confs in predict_confs:
             for conf in confs:
                 conf = conf.copy()
                 conf.update(period)
-                print('ATTENTION!!!', conf)
+                handle_task(stock_name, conf, *default_period())
 
-                p = Process(target=handle_task,
-                            args=(stock_name, conf, *default_period()))
-                p.start()
-                procs.append(p)
-
-        for p in procs:
-            p.join()
+    if case == 3:
+        for confs in dev_confs:
+            for conf in confs:
+                conf = conf.copy()
+                conf.update(period)
+                handle_task(stock_name, conf, *default_period())
 
     end_time = datetime.now()
     time_cost = (end_time - start_time).total_seconds()
@@ -194,32 +195,48 @@ if __name__ == '__main__':
     # 0: probe
     # 1: train
     # 2: predict
+    # 3: dev
     for stock_name in STOCK_NAMES_TIER_1:
-        # handle_stock(stock_name, 0)
+        # dispatch(stock_name, 0)
         # continue
 
         base_engine = BaseEngine(stock_name, *default_period())
         stock_df = base_engine.stock_df
 
-        for train_from_date, train_to_date, predict_from_date, predict_to_date in get_periods(stock_df, 5):
+        for train_from_date, train_to_date, predict_from_date, predict_to_date in get_periods(stock_df, 1):
+            # train
             period = {
                 FROM_DATE: train_from_date,
                 TO_DATE: train_to_date,
             }
             dispatch(stock_name, 1, period)
 
+            # predict
             period = {
-                TRAIN_FROM_DATE: train_from_date,
-                TRAIN_TO_DATE: train_to_date,
                 FROM_DATE: train_from_date,
                 TO_DATE: train_to_date,
+
+                TRAIN_FROM_DATE: train_from_date,
+                TRAIN_TO_DATE: train_to_date,
             }
             dispatch(stock_name, 2, period)
 
+            # predict
             period = {
-                TRAIN_FROM_DATE: train_from_date,
-                TRAIN_TO_DATE: train_to_date,
                 FROM_DATE: predict_from_date,
                 TO_DATE: predict_to_date,
+
+                TRAIN_FROM_DATE: train_from_date,
+                TRAIN_TO_DATE: train_to_date,
             }
             dispatch(stock_name, 2, period)
+
+            # dev
+            period = {
+                FROM_DATE: train_from_date,
+                TO_DATE: predict_to_date,
+
+                PREDICT_FROM_DATE: predict_from_date,
+                PREDICT_TO_DATE: predict_to_date,
+            }
+            dispatch(stock_name, 3, period)

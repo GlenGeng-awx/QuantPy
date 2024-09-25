@@ -8,10 +8,8 @@ from util import get_indices_of_period
 from features import FEATURE_BUF
 from gringotts import MODE, MASK, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, FROM_DATE, TO_DATE
 from gringotts.tiny_model import TinyModel
-from gringotts.giant_model_helper import (enumerate_switches, default_switch,
-                                          serialize_models, deserialize_models,
-                                          shrink_models, show_models)
-
+from gringotts.giant_model_helper import enumerate_switches, default_switch, shrink_models, show_models
+from gringotts.giant_model_serde import serialize_models, deserialize_models
 
 # at leaf, do filter and evaluation
 # at non-leaf, just do filter and decide to go or not go
@@ -102,7 +100,7 @@ class GiantModel:
         if self.conf[MODE] == 'train':
             self._train()
         else:
-            self._predict()
+            self._predict_or_dev()
 
     def _train(self):
         mask = self.conf[MASK]
@@ -131,7 +129,7 @@ class GiantModel:
         # to train dir
         serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
-    def _predict(self):
+    def _predict_or_dev(self):
         long_switches, short_switches = deserialize_models(self.stock_name, self.conf)
 
         for switch in long_switches:
@@ -146,8 +144,9 @@ class GiantModel:
             model.phase2()
             self.short_models.append(model)
 
-        # to predict dir
-        serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
+        if self.conf[MODE] == 'predict':
+            # to predict dir
+            serialize_models(self.stock_name, self.conf, self.long_models, self.short_models)
 
     def need_attention(self) -> bool:
         return any(model.filter.output_indices for model in self.long_models + self.short_models)
@@ -158,7 +157,7 @@ class GiantModel:
         strategy_name = f'{self.conf[MODE]} << recall {self.conf[RECALL_STEP]}d >> '
         strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] '
 
-        if self.conf[MODE] == 'predict':
+        if self.conf[MODE] != 'train':
             strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
                              f'{self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
 

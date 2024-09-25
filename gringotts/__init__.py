@@ -1,14 +1,17 @@
 #
 # keys for configuration
 #
-MODE = 'mode'                           # train or predict
+MODE = 'mode'                           # train/predict/dev
 MASK = 'mask'                           # used in train, launch 2 ** mask process per stock
 
-FROM_DATE = 'from_date'                 # start date for training or predicting
-TO_DATE = 'to_date'                     # end date for training or predicting
+FROM_DATE = 'from_date'                 # start date for train/predict/dev
+TO_DATE = 'to_date'                     # end date for train/predict/dev
 
-TRAIN_FROM_DATE = 'train_from_date'     # used in predict, start date for training
-TRAIN_TO_DATE = 'train_to_date'         # used in predict, end date for training
+TRAIN_FROM_DATE = 'train_from_date'     # used in predict, start date for train
+TRAIN_TO_DATE = 'train_to_date'         # used in predict, end date for train
+
+PREDICT_FROM_DATE = 'predict_from_date' # used in dev, start date for predict
+PREDICT_TO_DATE = 'predict_to_date'     # used in dev, end date for predict
 
 RECALL_STEP = 'recall_step'             # step for checking the past
 FORECAST_STEP = 'forecast_step'         # step for checking the future
@@ -26,18 +29,10 @@ evaluators = [
     for (margin, hit_threshold) in [
         # (0.02, 3),     # for index
         (0.04, 3),       # for stock
-        # (0.10, 4),
-        # (0.20, 3),
     ]
 ]
 
 train_confs = [
-    # {
-    #     MODE: 'train',
-    #     RECALL_STEP: 3,
-    #     MASK: 4,
-    #     'evaluators': evaluators,
-    # },
     {
         MODE: 'train',
         FROM_DATE: '',
@@ -47,22 +42,9 @@ train_confs = [
         MASK: 4,
         'evaluators': evaluators,
     },
-    # {
-    #     MODE: 'train',
-    #     RECALL_STEP: 5,
-    #     MASK: 4,
-    #     'evaluators': evaluators,
-    # },
 ]
 
 predict_confs = [
-    # [
-    #     {
-    #         MODE: 'predict',
-    #         RECALL_STEP: 3,
-    #         **evaluator,
-    #     } for evaluator in evaluators
-    # ],
     [
         {
             MODE: 'predict',
@@ -76,16 +58,27 @@ predict_confs = [
             **evaluator,
         } for evaluator in evaluators
     ],
-    # [
-    #     {
-    #         MODE: 'predict',
-    #         RECALL_STEP: 5,
-    #         **evaluator,
-    #     } for evaluator in evaluators
-    # ],
 ]
 
+dev_confs = [
+    [
+        {
+            MODE: 'dev',
+            FROM_DATE: '',
+            TO_DATE: '',
+
+            PREDICT_FROM_DATE: '',
+            PREDICT_TO_DATE: '',
+
+            RECALL_STEP: 4,
+            **evaluator,
+        } for evaluator in evaluators
+    ],
+]
 
 if __name__ == '__main__':
-    print(train_confs)
-    print(predict_confs)
+    import json
+
+    print(json.dumps(train_confs, indent=4))
+    print(json.dumps(predict_confs, indent=4))
+    print(json.dumps(dev_confs, indent=4))
