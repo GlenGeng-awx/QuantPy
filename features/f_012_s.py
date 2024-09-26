@@ -1,17 +1,19 @@
 import pandas as pd
 from features.util import STEP, DELTA
+from features.f_011_s import get_decr_benchmark
 
-KEY = 'decr 20 pst in last 10d'
+KEY = 'decr top 10% in last 10d'
 VAL = 12 * STEP + DELTA
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
+    benchmark = get_decr_benchmark(stock_df, 10)
     close = stock_df['close']
 
     indices = []
 
     for idx in close.index[10:]:
-        if close[idx] < close[idx - 10] * 0.8:
+        if close[idx] < close[idx - 10] * (1 - benchmark):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
