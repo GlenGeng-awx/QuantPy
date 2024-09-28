@@ -163,8 +163,8 @@ class GiantModel:
 
         fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
 
-        fig.add_vline(x=self.conf[FROM_DATE], line_dash="dash", line_width=0.5, line_color='red', row=1)
-        fig.add_vline(x=self.conf[TO_DATE], line_dash="dash", line_width=0.5, line_color='red', row=1)
+        fig.add_vline(x=self.conf[FROM_DATE], line_dash="dash", line_width=1, line_color='red', row=1)
+        fig.add_vline(x=self.conf[TO_DATE], line_dash="dash", line_width=1, line_color='red', row=1)
 
         show_models(self.stock_df, fig, self.long_models, 'orange', 7, enable)
         show_models(self.stock_df, fig, self.short_models, 'black', 5, enable)

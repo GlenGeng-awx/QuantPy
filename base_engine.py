@@ -139,7 +139,7 @@ class BaseEngine:
         self.volume.build_graph(self.fig, enable_volume_raw, enable_volume_reg)
 
         TradingRecordDisplay(self.fig, self.stock_name, self.interval).build_graph()
-        RatioForcastDisplay(self.fig, self.stock_df, self.stock_name, enable_ratio).build_graph()
+        # RatioForcastDisplay(self.fig, self.stock_df, self.stock_name, enable_ratio).build_graph()
 
     def display(self):
         self.fig.show()

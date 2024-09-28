@@ -212,7 +212,7 @@ class TinyModel:
 
         if train_position is not None:
             self.evaluators = [
-                _EvaluatorInTrain(stock_df, **eval_conf) for eval_conf in conf['evaluators']
+                _EvaluatorInTrain(stock_df, conf[FORECAST_STEP], **eval_conf) for eval_conf in conf['evaluators']
             ]
         else:
             self.evaluators = [

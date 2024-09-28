@@ -6,11 +6,12 @@ from gringotts import (RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE,
 
 def get_ser_file(stock_name: str, conf: dict) -> str:
     if conf[MODE] == 'train':
-        return f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
+        return f'./storage/train/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+               f'_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
 
     if conf[MODE] == 'predict':
-        return f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}' \
-               f'_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
+        return f'./storage/predict/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+               f'_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
 
     raise ValueError(f'invalid mode: {conf[MODE]}')
 
@@ -18,12 +19,13 @@ def get_ser_file(stock_name: str, conf: dict) -> str:
 def get_de_file(stock_name: str, conf: dict) -> str:
     if conf[MODE] == 'predict':
         # predict use train
-        return f'./storage/train/{stock_name}_{conf[RECALL_STEP]}d_{conf[TRAIN_FROM_DATE]}_{conf[TRAIN_TO_DATE]}.txt'
+        return f'./storage/train/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+               f'_{conf[TRAIN_FROM_DATE]}_{conf[TRAIN_TO_DATE]}.txt'
 
     if conf[MODE] == 'dev':
         # dev use predict
-        return f'./storage/predict/{stock_name}_{conf[RECALL_STEP]}d_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}' \
-               f'_{conf[PREDICT_FROM_DATE]}_{conf[PREDICT_TO_DATE]}.txt'
+        return f'./storage/predict/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+               f'_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}_{conf[PREDICT_FROM_DATE]}_{conf[PREDICT_TO_DATE]}.txt'
 
     raise ValueError(f'invalid mode: {conf[MODE]}')
 
