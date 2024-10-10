@@ -5,7 +5,7 @@ from technical.core_banking import CORE_BANKING
 from util import get_idx_by_date
 
 
-def calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
+def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     x1 = get_idx_by_date(stock_df, date1)
     y1 = stock_df.loc[x1]['close']
 
@@ -16,7 +16,7 @@ def calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     return k
 
 
-def calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
+def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     x = get_idx_by_date(stock_df, date)
     y = stock_df.loc[x]['close']
 
@@ -33,16 +33,16 @@ def calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
 def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_len) -> tuple:
     dates, prices = [], []
 
-    k = calculate_k(stock_df, date1, date2)
+    k = _calculate_k(stock_df, date1, date2)
 
     for delta in range(-prev_len, 0):
-        point = calculate_point(stock_df, date1, delta, k)
+        point = _calculate_point(stock_df, date1, delta, k)
         if point:
             dates.append(point[0])
             prices.append(point[1])
 
     for delta in range(0, post_len):
-        point = calculate_point(stock_df, date2, delta, k)
+        point = _calculate_point(stock_df, date2, delta, k)
         if point:
             dates.append(point[0])
             prices.append(point[1])
@@ -53,10 +53,10 @@ def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_
 def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, date1, date2) -> tuple:
     dates, prices = [], []
 
-    k = calculate_k(stock_df, date1, date2)
+    k = _calculate_k(stock_df, date1, date2)
 
     for delta in range(-prev_len, post_len):
-        point = calculate_point(stock_df, date, delta, k)
+        point = _calculate_point(stock_df, date, delta, k)
         if point:
             dates.append(point[0])
             prices.append(point[1])

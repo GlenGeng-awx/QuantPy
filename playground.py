@@ -21,39 +21,41 @@ INDEX_NAMES = [
 ]
 
 STOCK_NAMES_TIER_0 = [
-    TSLA,
-    PLTR,
-    NIO,
-    MRNA,
-    PFE,
-    RIVN,
+    AMD,
     ZM,
+    TSM,
+    BA,
+    SQ,
+    PINS,
+    IQ,
+    RIVN,
+    CPNG,
+    ADBE,
 ]
 
 STOCK_NAMES_TIER_1 = [
+    NIO,
+    TSLA,
+    PLTR,
+    MRNA,
+    PFE,
     COIN,
-    IQ,
-    PINS,
     META,
     EBAY,
-    CPNG,
     LI,
     PDD,
     BILI,
     FUTU,
     BABA,
     HK_0700,
-    AMD,
     NVDA,
     XPEV,
     EDU,
     SNOW,
     MNSO,
-    BA,
     BNTX,
     JD,
     BEKE,
-    TSM,
     SNAP,
     TTD,
     YY,
@@ -61,7 +63,6 @@ STOCK_NAMES_TIER_1 = [
     GILD,
     TCOM,
     MRK,
-    ADBE,
     DIS,
     TME,
     GS,
@@ -76,7 +77,6 @@ STOCK_NAMES_TIER_1 = [
     ETSY,
     SHOP,
     GTLB,
-    SQ,
 ]
 
 
@@ -89,7 +89,7 @@ def default_period() -> tuple:
     return date_1y_ago, current_date, '1d'
 
 
-def prepare(stock_name: str) -> tuple:
+def prepare(stock_name: str) -> BaseEngine:
     base_engine = BaseEngine(stock_name, *default_period())
 
     base_engine.build_graph(
@@ -110,8 +110,7 @@ def prepare(stock_name: str) -> tuple:
     features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
-    fig.show()
-    return stock_df, fig
+    return base_engine
 
 
 # return 400/200/100 period
@@ -119,7 +118,8 @@ def prepare(stock_name: str) -> tuple:
 def get_periods(stock_df: pd.DataFrame) -> list[list[str]]:
     idx_of_last_friday = None
 
-    for idx in reversed(stock_df.index[:-6]):
+    # for idx in reversed(stock_df.index[:-6]):
+    for idx in reversed(stock_df.index[:-11]):
         date_str = stock_df.loc[idx]['Date']
         date = datetime.strptime(shrink_date_str(date_str), '%Y-%m-%d')
 
@@ -228,8 +228,10 @@ if __name__ == '__main__':
     # 2: predict full
     # 3: predict partial
     # 4: dev
-    for stock_name in STOCK_NAMES_TIER_0:
-        stock_df, fig = prepare(stock_name)
+    for stock_name in INDEX_NAMES:
+        base_engine = prepare(stock_name)
+        stock_df, fig = base_engine.stock_df, base_engine.fig
+        fig.show()
 
         # train
         dispatch(stock_name, stock_df, fig, 1)
@@ -238,7 +240,7 @@ if __name__ == '__main__':
         dispatch(stock_name, stock_df, fig, 2)
 
         # predict partial
-        # dispatch(stock_name, stock_df, fig, 3)
+        dispatch(stock_name, stock_df, fig, 3)
 
         # dev
-        # dispatch(stock_name, stock_df, fig, 4)
+        dispatch(stock_name, stock_df, fig, 4)
