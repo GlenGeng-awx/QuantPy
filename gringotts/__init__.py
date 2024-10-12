@@ -19,31 +19,51 @@ MARGIN = 'margin'                       # margin for checking the trade
 HIT_THRESHOLD = 'hit_threshold'         # hit threshold for both long and short
 SUCCESSFUL_RATE = 'successful_rate'     # successful rate for both long and short
 
-evaluators = [
+#
+# history 400, recall 4, forecast 10, expect margin 20, hit 4
+# history 200, recall 4, forecast  5, expect margin 10, hit 4
+# history 100, recall 4, forecast  3, expect margin  5, hit 4
+#
+
+evaluators_10d = [
+    {
+        MARGIN: margin,
+        HIT_THRESHOLD: hit_threshold,
+        SUCCESSFUL_RATE: 80,
+    }
+    for (margin, hit_threshold) in [
+        (0.18, 4),
+        (0.20, 4),
+        (0.22, 4),
+    ]
+]
+
+evaluators_5d = [
+    {
+        MARGIN: margin,
+        HIT_THRESHOLD: hit_threshold,
+        SUCCESSFUL_RATE: 80,
+    }
+    for (margin, hit_threshold) in [
+        (0.08, 4),
+        (0.10, 4),
+        (0.12, 4),
+    ]
+]
+
+evaluators_3d = [
     {
         MARGIN: margin,
         HIT_THRESHOLD: hit_threshold,
         SUCCESSFUL_RATE: 90,
     }
     for (margin, hit_threshold) in [
-        (0.02, 4),
-        (0.04, 4),
-        (0.06, 4),
-        (0.08, 4),
-        (0.10, 4),
-        (0.12, 4),
-        (0.14, 4),
-        (0.16, 4),
-        (0.18, 4),
-        (0.20, 4),
-        (0.22, 4),
-        (0.24, 4),
+        (0.03, 4),
+        (0.05, 4),
+        (0.07, 4),
     ]
 ]
 
-# history 400, recall 4, forecast 10, expect margin 20, hit 4
-# history 200, recall 4, forecast  5, expect margin 10, hit 4
-# history 100, recall 4, forecast  3, expect margin  5, hit 4
 train_confs = [
     {
         MODE: 'train',
@@ -56,7 +76,8 @@ train_confs = [
         MASK: 4,
         'evaluators': evaluators,
     }
-    for forecast_step in [10, 5, 3]
+    for forecast_step, evaluators in zip([10, 5, 3],
+                                         [evaluators_10d, evaluators_5d, evaluators_3d])
 ]
 
 predict_confs = [
@@ -73,9 +94,11 @@ predict_confs = [
             FORECAST_STEP: forecast_step,
 
             **evaluator,
-        } for evaluator in evaluators
+        }
+        for evaluator in evaluators
     ]
-    for forecast_step in [10, 5, 3]
+    for forecast_step, evaluators in zip([10, 5, 3],
+                                         [evaluators_10d, evaluators_5d, evaluators_3d])
 ]
 
 dev_confs = [
@@ -92,10 +115,13 @@ dev_confs = [
             FORECAST_STEP: forecast_step,
 
             **evaluator,
-        } for evaluator in evaluators
+        }
+        for evaluator in evaluators
     ]
-    for forecast_step in [10, 5, 3]
+    for forecast_step, evaluators in zip([10, 5, 3],
+                                         [evaluators_10d, evaluators_5d, evaluators_3d])
 ]
+
 
 if __name__ == '__main__':
     import json

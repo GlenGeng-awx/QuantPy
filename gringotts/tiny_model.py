@@ -75,6 +75,7 @@ class _EvaluatorInTrain:
         if len(output_indices) < self.hit_threshold:
             return
 
+        # span is important
         if output_indices[-1] - output_indices[0] < 10:
             return
 

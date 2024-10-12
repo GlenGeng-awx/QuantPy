@@ -1,4 +1,3 @@
-# Stock Name
 IXIC = "^IXIC"
 SS_000300 = "000300.SS"
 SS_000001 = "000001.SS"
@@ -64,3 +63,73 @@ SHOP = "SHOP"
 GTLB = "GTLB"
 PINS = "PINS"
 SQ = "SQ"
+
+INDEX_NAMES = [
+    IXIC,
+    SS_000300,
+    SS_000001,
+    # GC_F,
+]
+
+STOCK_NAMES_TIER_0 = [
+    AMD,
+    ZM,
+    TSM,
+    BA,
+    SQ,
+    PINS,
+    IQ,
+    RIVN,
+    CPNG,
+    ADBE,
+]
+
+STOCK_NAMES_TIER_1 = [
+    NIO,
+    TSLA,
+    PLTR,
+    MRNA,
+    PFE,
+    COIN,
+    META,
+    PDD,
+    EBAY,
+    LI,
+    BILI,
+    FUTU,
+    BABA,
+    HK_0700,
+    NVDA,
+    XPEV,
+    EDU,
+    SNOW,
+    MNSO,
+    BNTX,
+    JD,
+    BEKE,
+    SNAP,
+    TTD,
+    YY,
+    MCD,
+    GILD,
+    TCOM,
+    MRK,
+    DIS,
+    TME,
+    GS,
+    SEA,
+    ERIC,
+    UBER,
+    INTC,
+    MS,
+    OKTA,
+    CFLT,
+    QCOM,
+    ETSY,
+    SHOP,
+    GTLB,
+]
+
+ALL = INDEX_NAMES + STOCK_NAMES_TIER_0 + STOCK_NAMES_TIER_1
+
+BIG_DATE = '2024-10-08'

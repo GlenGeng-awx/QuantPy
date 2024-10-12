@@ -43,7 +43,6 @@ bin/
 .DS_Store
 
 __pycache__/
-data/*.csv
-repo/*.csv
 awx/
-storage/
+tmp/
+stock_data/

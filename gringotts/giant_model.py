@@ -67,7 +67,7 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 # prepare to kick off _model_searcher
 def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, input_indices: list[int],
                        worker_id: int, prefixes: list[list[bool]], left_len, queue: Queue):
-    worker_tag = f'{stock_name} recall {conf[RECALL_STEP]}d - worker {worker_id}'
+    worker_tag = f'{stock_name} recall {conf[RECALL_STEP]}d forecast {conf[FORECAST_STEP]}d - worker {worker_id}'
     prefix = prefixes[worker_id]
     print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
@@ -154,8 +154,8 @@ class GiantModel:
     def build_graph(self, fig: go.Figure, enable=False):
         origin_title = fig.layout.title.text
 
-        strategy_name = f'{self.conf[MODE]} << recall {self.conf[RECALL_STEP]}d >> '
-        strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] '
+        strategy_name = f'{self.conf[MODE]} < recall {self.conf[RECALL_STEP]}d > '
+        strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] total {len(self.input_indices)} days '
 
         if self.conf[MODE] != 'train':
             strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
