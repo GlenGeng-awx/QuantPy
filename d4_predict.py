@@ -54,6 +54,8 @@ if __name__ == '__main__':
         giant_models_p = predict(_stock_name, _stock_df, BIG_DATE)
 
         for giant_model_p in giant_models_p:
+            if not giant_model_p.need_attention():
+                continue
             fig = go.Figure(_fig)
             giant_model_p.build_graph(fig, enable=True)
             fig.show()

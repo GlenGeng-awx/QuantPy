@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
-from gringotts import (predict_confs, dev_confs, FROM_DATE, TO_DATE,
+from gringotts import (predict_confs, dev_confs, FORECAST_STEP, FROM_DATE, TO_DATE,
                        TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
 from gringotts.giant_model import GiantModel
 
@@ -75,6 +75,22 @@ def dev(stock_name: str, stock_df: pd.DataFrame, to_date: str):
     return giant_models
 
 
+def hit(giant_models: list[GiantModel]) -> bool:
+    hit_10d, hit_5d, hit_3d = False, False, False
+
+    for giant_model in giant_models:
+        if not giant_model.need_attention():
+            continue
+        if giant_model.conf[FORECAST_STEP] == 10:
+            hit_10d = True
+        if giant_model.conf[FORECAST_STEP] == 5:
+            hit_5d = True
+        if giant_model.conf[FORECAST_STEP] == 3:
+            hit_3d = True
+
+    return hit_10d and hit_5d and hit_3d
+
+
 if __name__ == '__main__':
     from conf import *
 
@@ -84,6 +100,10 @@ if __name__ == '__main__':
 
         giant_models_p = predict_partial(_stock_name, _stock_df, BIG_DATE)
         giant_models_d = dev(_stock_name, _stock_df, BIG_DATE)
+
+        if not hit(giant_models_p):
+            print(f'{_stock_name} not hit 10d/5d/3d')
+            continue
 
         for giant_model_p, giant_model_d in zip(giant_models_p, giant_models_d):
             if giant_model_p.need_attention():
