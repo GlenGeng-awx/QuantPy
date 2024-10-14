@@ -39,7 +39,7 @@ def preload(stock_name: str) -> BaseEngine:
 if __name__ == '__main__':
     from conf import *
 
-    for _stock_name in ALL:
+    for _stock_name in [SS_000300]:
         _base_engine = preload(_stock_name)
         _fig = _base_engine.fig
         _fig.show()

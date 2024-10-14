@@ -34,7 +34,7 @@ def get_predict_partial_period(stock_df: pd.DataFrame) -> tuple:
 
 if __name__ == '__main__':
     from conf import PDD, BIG_DATE
-    from d0_preload import preload
+    from d1_1_preload import preload
 
     _base_engine = preload(PDD)
     _stock_df = _base_engine.stock_df
