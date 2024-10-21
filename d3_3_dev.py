@@ -31,7 +31,11 @@ def hit(giant_models: list[GiantModel]) -> bool:
         if giant_model.conf[FORECAST_STEP] == 3:
             hit_3d = True
 
-    return hit_10d and hit_5d and hit_3d
+    # return hit_10d and hit_5d and hit_3d
+    # return hit_10d and hit_5d and not hit_3d
+    # return hit_10d and not hit_5d and hit_3d
+    # return not hit_10d and hit_5d and hit_3d
+    return True
 
 
 if __name__ == '__main__':

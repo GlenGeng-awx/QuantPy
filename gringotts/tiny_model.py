@@ -8,7 +8,7 @@ from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESS
 # during predict, input_indices is specified by caller
 class _Filter:
     def __init__(self, stock_df: pd.DataFrame, recall_step: int, switch: list[bool],
-                 input_indices: list[int], train_position: int = None):
+                 input_indices: list[int], train_position: int = None, train_ctx: dict = None):
         self.stock_df = stock_df
 
         self.recall_step = recall_step
@@ -16,13 +16,15 @@ class _Filter:
 
         self.input_indices = input_indices
         self.train_position = train_position
+        self.train_ctx = train_ctx
 
         self.output_indices = []  # #
 
     def _filter_in_train(self, idx):
         if self.switch[self.train_position]:
             feature = FEATURE_BUF[self.train_position]
-            return self.stock_df[feature.KEY].loc[idx - self.recall_step + 1:idx].any()
+            # return self.stock_df[feature.KEY].loc[idx - self.recall_step + 1:idx].any()
+            return self.train_ctx[idx][feature.KEY]
         return True
 
     def _filter_in_predict(self, idx):
@@ -53,9 +55,10 @@ class _Filter:
 # given a filter, evaluate the performance of the model
 # during train, just do a coarse evaluation
 class _EvaluatorInTrain:
-    def __init__(self, stock_df: pd.DataFrame,
+    def __init__(self, stock_df: pd.DataFrame, train_ctx: dict,
                  forecast_step: int, margin: float, hit_threshold: int, successful_rate: float):
         self.stock_df = stock_df
+        self.train_ctx = train_ctx
 
         self.forecast_step = forecast_step
         self.margin = margin
@@ -91,10 +94,12 @@ class _EvaluatorInTrain:
                 break
             valid_trade_num += 1
 
-            if close[idx] * (1 + self.margin) < close[idx + self.forecast_step]:
+            # if close[idx] * (1 + self.margin) < close[idx + self.forecast_step]:
+            if self.train_ctx[idx][self.forecast_step][self.margin]['long']:
                 successful_long_trades += 1
 
-            if close[idx] * (1 - self.margin) > close[idx + self.forecast_step]:
+            # if close[idx] * (1 - self.margin) > close[idx + self.forecast_step]:
+            if self.train_ctx[idx][self.forecast_step][self.margin]['short']:
                 successful_short_trades += 1
 
         if valid_trade_num < self.hit_threshold:
@@ -208,12 +213,13 @@ class _EvaluatorInPredict:
 # during predict, one switch has only one evaluator, do a fine evaluation
 class TinyModel:
     def __init__(self, stock_df: pd.DataFrame, conf: dict, switch: list[bool],
-                 input_indices: list[int], train_position: int = None):
-        self.filter = _Filter(stock_df, conf[RECALL_STEP], switch, input_indices, train_position)
+                 input_indices: list[int], train_position: int = None, train_ctx: dict = None):
+        self.filter = _Filter(stock_df, conf[RECALL_STEP], switch, input_indices, train_position, train_ctx)
 
         if train_position is not None:
             self.evaluators = [
-                _EvaluatorInTrain(stock_df, conf[FORECAST_STEP], **eval_conf) for eval_conf in conf['evaluators']
+                _EvaluatorInTrain(stock_df, train_ctx, conf[FORECAST_STEP], **eval_conf)
+                for eval_conf in conf['evaluators']
             ]
         else:
             self.evaluators = [
