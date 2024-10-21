@@ -35,7 +35,7 @@ def execute(stock_df: pd.DataFrame, **kwargs):
         if above_sr_level is None:
             continue
 
-        if close[idx] > close[idx - 1] and close[idx] * 1.05 > above_sr_level:
+        if close[idx] > close[idx - 1] and close[idx] * 1.03 > above_sr_level:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

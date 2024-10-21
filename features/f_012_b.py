@@ -2,7 +2,7 @@ import pandas as pd
 from features.util import STEP
 from features.f_011_b import get_incr_benchmark
 
-KEY = 'incr top 10% in last 10d'
+KEY = 'incr top 10% last 10d'
 VAL = 12 * STEP
 
 

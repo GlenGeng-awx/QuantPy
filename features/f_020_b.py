@@ -1,7 +1,7 @@
 import pandas as pd
 from features.util import STEP
 
-KEY = 'price incr 5d'
+KEY = 'price incr 3d'
 VAL = 20 * STEP
 
 
@@ -10,8 +10,8 @@ def execute(stock_df: pd.DataFrame, **kwargs):
 
     indices = []
 
-    for idx in close.index[4:]:
-        if close[idx] > close[idx - 1] > close[idx - 2] > close[idx - 3] > close[idx - 4]:
+    for idx in close.index[2:]:
+        if close[idx] > close[idx - 1] > close[idx - 2]:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

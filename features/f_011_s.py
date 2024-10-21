@@ -1,7 +1,7 @@
 import pandas as pd
 from features.util import STEP, DELTA
 
-KEY = 'decr top 10% in last 3d'
+KEY = 'decr top 10% last 3d'
 VAL = 11 * STEP + DELTA
 
 

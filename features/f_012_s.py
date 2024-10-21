@@ -2,7 +2,7 @@ import pandas as pd
 from features.util import STEP, DELTA
 from features.f_011_s import get_decr_benchmark
 
-KEY = 'decr top 10% in last 10d'
+KEY = 'decr top 10% last 10d'
 VAL = 12 * STEP + DELTA
 
 

@@ -10,13 +10,24 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     close = stock_df['close']
     high = stock_df['high']
 
+    pst = []
+    for idx in _open.index:
+        max_price = max(_open[idx], close[idx])
+        pst.append(high[idx] / max_price)
+
+    pst.sort()
+    if len(pst) < 10:
+        return
+
+    threshold = pst[-len(pst) // 10]
+    print(f'long upper shadow threshold: {(threshold - 1) * 100:.2f}%')
+
     indices = []
 
     for idx in _open.index:
-        min_price = min(_open[idx], close[idx])
         max_price = max(_open[idx], close[idx])
 
-        if high[idx] > max_price * 1.03 and (high[idx] - max_price) > 1.5 * (max_price - min_price):
+        if max_price * threshold < high[idx]:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
