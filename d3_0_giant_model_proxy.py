@@ -31,7 +31,7 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
     # 10/5/3
     # 80/80/90
     for (train_from_date, train_to_date), forecast_step, successful_rate \
-            in zip(train_periods, [10, 5, 3], [80, 80, 90]):
+            in zip(train_periods, [10, 5, 3], [80, 80, 80]):
         train_conf = {
             MODE: 'train',
             MASK: 4,

@@ -35,14 +35,13 @@ def hit(giant_models: list[GiantModel]) -> bool:
     # return hit_10d and hit_5d and not hit_3d
     # return hit_10d and not hit_5d and hit_3d
     # return not hit_10d and hit_5d and hit_3d
-    return True
+    return hit_10d and hit_5d
 
 
 if __name__ == '__main__':
     from conf import *
 
-
-    for _stock_name in [AMD, SNAP, MNSO, TME]:
+    for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
 
