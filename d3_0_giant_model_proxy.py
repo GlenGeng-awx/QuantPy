@@ -30,8 +30,8 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
     # 400/200/100
     # 10/5/3
     # 80/80/90
-    for (train_from_date, train_to_date), forecast_step, successful_rate \
-            in zip(train_periods, [10, 5, 3], [80, 80, 80]):
+    for (train_from_date, train_to_date), forecast_step, hit_threshold, successful_rate \
+            in zip(train_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
         train_conf = {
             MODE: 'train',
             MASK: 4,
@@ -45,7 +45,7 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
             'evaluators': [
                 {
                     MARGIN: calculate_margin(stock_name, forecast_step),
-                    HIT_THRESHOLD: 4,
+                    HIT_THRESHOLD: hit_threshold,
                     SUCCESSFUL_RATE: successful_rate,
                 }
             ]

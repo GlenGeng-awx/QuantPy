@@ -25,6 +25,11 @@ from features import (
     f_009_b, f_009_s,       # up thru r level / down thru s level
     f_010_b,                # up thru r level, retrace, bounds back
 
+    # up/down to/thru/away sr level
+    f_022_b, f_022_s,       # up to sr level / down away sr level
+    f_023_b, f_023_s,       # up away sr level / down to sr level
+    f_024_b, f_024_s,       # up thru sr level / down thru sr level
+
     # price incr/decr significantly last 1d/3d/10d
     f_015_b, f_015_s,       # incr top 10% today / decr top 10% today
     f_011_b, f_011_s,       # incr top 10% last 3d / decr top 10% last 3d
@@ -42,10 +47,9 @@ from features import (
     f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
     f_020_b, f_020_s,       # price incr 3d / price decr 3d
 
-    # up/down to/thru/away sr level
-    f_022_b, f_022_s,       # up to sr level / down away sr level
-    f_023_b, f_023_s,       # up away sr level / down to sr level
-    f_024_b, f_024_s,       # up thru sr level / down thru sr level
+    # up/down engulfing/harami
+    f_027_b, f_027_s,       # up engulfing / down engulfing
+    f_028_b, f_028_s,       # up harami / down harami
 )
 
 FEATURE_BUF = [
@@ -75,6 +79,8 @@ FEATURE_BUF = [
     f_024_b, f_024_s,
     f_025_b, f_025_s,
     f_026_b, f_026_s,
+    f_027_b, f_027_s,
+    f_028_b, f_028_s,
 ]
 
 
@@ -129,5 +135,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_024_b.KEY, f_024_b.VAL, 'red'),      (f_024_s.KEY, f_024_s.VAL, 'green'),
         (f_025_b.KEY, f_025_b.VAL, 'red', 2),   (f_025_s.KEY, f_025_s.VAL, 'green', 2),
         (f_026_b.KEY, f_026_b.VAL, 'red', 2),   (f_026_s.KEY, f_026_s.VAL, 'green', 2),
+        (f_027_b.KEY, f_027_b.VAL, 'red'),      (f_027_s.KEY, f_027_s.VAL, 'green'),
+        (f_028_b.KEY, f_028_b.VAL, 'red'),      (f_028_s.KEY, f_028_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)

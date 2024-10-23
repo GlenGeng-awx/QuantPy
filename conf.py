@@ -66,8 +66,8 @@ SQ = "SQ"
 
 INDEX_NAMES = [
     IXIC,
-    SS_000300,
-    SS_000001,
+    # SS_000300,
+    # SS_000001,
     # GC_F,
 ]
 
@@ -110,7 +110,7 @@ STOCK_NAMES_TIER_1 = [
     SNAP,
     TTD,
     YY,
-    MCD,
+    # MCD,
     GILD,
     TCOM,
     MRK,

@@ -14,7 +14,7 @@ if __name__ == '__main__':
     from conf import *
     from d1_1_preload import preload
 
-    for _stock_name in [SNAP]:
+    for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
 
