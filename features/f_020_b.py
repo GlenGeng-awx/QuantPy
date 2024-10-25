@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'price incr 3d'
 VAL = 20 * STEP
+RECALL_DAYS = 2
 
 
 def price_incr_n_days(stock_df: pd.DataFrame, n: int, key: str):

@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'yesterday is local min'
 VAL = 3 * STEP
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'up to sr level'
 VAL = 22 * STEP
+RECALL_DAYS = 2
 
 
 def get_above_sr_level(stock_df: pd.DataFrame, idx):

@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'trend switch up'
 VAL = 4 * STEP
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

@@ -4,6 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'vol decr 3d'
 VAL = 19 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def vol_decr_n_days(stock_df: pd.DataFrame, n: int, key: str):

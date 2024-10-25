@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'down touch ma20'
 VAL = 25 * STEP
+RECALL_DAYS = 2
 
 
 def down_touch_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):

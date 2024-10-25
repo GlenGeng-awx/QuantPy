@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'long red bar'
 VAL = 17 * STEP
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

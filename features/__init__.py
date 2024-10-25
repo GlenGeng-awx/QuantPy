@@ -67,6 +67,9 @@ from features import (
     # red/green bar
     f_038_b, f_038_s,       # real red bar / real green bar
     f_039_b, f_039_s,       # fake red bar / fake green bar
+
+    # weekday
+    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4
 )
 
 FEATURE_BUF = [
@@ -109,6 +112,7 @@ FEATURE_BUF = [
     f_037_b, f_037_s,
     f_038_b, f_038_s,
     f_039_b, f_039_s,
+    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4
 ]
 
 
@@ -175,6 +179,11 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_036_b.KEY, f_036_b.VAL, 'red'),      (f_036_s.KEY, f_036_s.VAL, 'green'),
         (f_037_b.KEY, f_037_b.VAL, 'red'),      (f_037_s.KEY, f_037_s.VAL, 'green'),
         (f_038_b.KEY, f_038_b.VAL, 'red', 2),   (f_038_s.KEY, f_038_s.VAL, 'green', 2),
-        (f_039_b.KEY, f_039_b.VAL, 'red'),      (f_039_s.KEY, f_039_s.VAL, 'green'),
+        (f_039_b.KEY, f_039_b.VAL, 'red', 2),   (f_039_s.KEY, f_039_s.VAL, 'green', 2),
+        (f_040_0.KEY, f_040_0.VAL, 'red', 2),
+        (f_040_1.KEY, f_040_1.VAL, 'red', 2),
+        (f_040_2.KEY, f_040_2.VAL, 'red', 2),
+        (f_040_3.KEY, f_040_3.VAL, 'red', 2),
+        (f_040_4.KEY, f_040_4.VAL, 'red', 2),
     ]:
         _build_graph(stock_df, fig, *params)

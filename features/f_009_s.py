@@ -4,6 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'down thru s level'
 VAL = 9 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def get_support_levels_in_last_n_days(stock_df: pd.DataFrame, idx, n=80) -> list:

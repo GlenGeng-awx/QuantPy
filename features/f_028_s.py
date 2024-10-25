@@ -3,6 +3,7 @@ from features.util import STEP, DELTA
 
 KEY = 'down harami'
 VAL = 28 * STEP + DELTA
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

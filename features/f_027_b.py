@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'up engulfing'
 VAL = 27 * STEP
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

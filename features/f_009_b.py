@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'up thru r level'
 VAL = 9 * STEP
+RECALL_DAYS = 2
 
 
 def get_resistance_levels_in_last_n_days(stock_df: pd.DataFrame, idx, n=80) -> list:

@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'up thru sr level'
 VAL = 24 * STEP
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

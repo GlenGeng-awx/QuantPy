@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'incr top 10% last 3d'
 VAL = 11 * STEP
+RECALL_DAYS = 3
 
 
 def get_incr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:

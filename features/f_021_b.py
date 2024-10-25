@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'short upper shadow'
 VAL = 21 * STEP
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

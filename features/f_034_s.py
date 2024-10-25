@@ -4,6 +4,7 @@ from features.f_019_s import vol_decr_n_days
 
 KEY = 'vol decr 5d'
 VAL = 34 * STEP + DELTA
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

@@ -3,6 +3,7 @@ from features.util import STEP
 
 KEY = 'up harami'
 VAL = 28 * STEP
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

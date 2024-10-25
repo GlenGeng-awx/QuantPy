@@ -4,6 +4,7 @@ from features.f_011_b import incr_top_10pst_in_last_n_days
 
 KEY = 'incr top 10% last 5d'
 VAL = 33 * STEP
+RECALL_DAYS = 4
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

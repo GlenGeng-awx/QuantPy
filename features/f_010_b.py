@@ -4,6 +4,7 @@ from .f_009_b import get_resistance_levels_in_last_n_days
 
 KEY = 'up thru r level, <br>retrace, bounds back'
 VAL = 10 * STEP
+RECALL_DAYS = 4
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

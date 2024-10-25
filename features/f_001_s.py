@@ -4,6 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'down thru ma20'
 VAL = 1 * STEP + DELTA
+RECALL_DAYS = 4
 
 
 def down_thru_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):

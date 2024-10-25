@@ -4,6 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'macd death cross'
 VAL = 8 * STEP + DELTA
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

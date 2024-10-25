@@ -4,6 +4,7 @@ from features.f_013_b import yesterday_is_min_of_last_n_days
 
 KEY = 'yesterday min of last 5d'
 VAL = 31 * STEP
+RECALL_DAYS = 1
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

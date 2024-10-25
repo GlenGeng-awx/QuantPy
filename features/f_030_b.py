@@ -5,6 +5,7 @@ from features.f_025_b import down_touch_ma
 
 KEY = 'down touch ma60'
 VAL = 30 * STEP
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

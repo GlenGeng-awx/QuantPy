@@ -19,7 +19,7 @@ def get_train_context(stock_df: pd.DataFrame, recall_step: int,
         # for filter
         for feature in FEATURE_BUF:
             key = feature.KEY
-            context[idx][key] = stock_df[key].loc[idx - recall_step + 1:idx].any()
+            context[idx][key] = stock_df[key].loc[idx - feature.RECALL_DAYS + 1:idx].any()
 
         # for evaluator
         if idx + forecast_step not in close:

@@ -5,6 +5,7 @@ from features.f_001_b import up_thru_ma
 
 KEY = 'up thru ma60'
 VAL = 29 * STEP
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

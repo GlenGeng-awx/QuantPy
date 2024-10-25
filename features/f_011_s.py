@@ -3,6 +3,7 @@ from features.util import STEP, DELTA
 
 KEY = 'decr top 10% last 3d'
 VAL = 11 * STEP + DELTA
+RECALL_DAYS = 3
 
 
 def get_decr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:

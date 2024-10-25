@@ -4,6 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'up touch ma20'
 VAL = 25 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def up_touch_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):

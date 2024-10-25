@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'up thru ma20'
 VAL = 1 * STEP
+RECALL_DAYS = 4
 
 
 def up_thru_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):

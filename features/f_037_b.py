@@ -4,6 +4,7 @@ from features.f_020_b import price_incr_n_days
 
 KEY = 'price incr 7d'
 VAL = 37 * STEP
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

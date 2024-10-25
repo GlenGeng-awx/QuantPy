@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'macd golden cross'
 VAL = 8 * STEP
+RECALL_DAYS = 5
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

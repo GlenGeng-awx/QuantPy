@@ -30,7 +30,7 @@ class _Filter:
     def _filter_in_predict(self, idx):
         for i, feature in enumerate(FEATURE_BUF):
             if self.switch[i] and \
-                    not self.stock_df[feature.KEY].loc[idx - self.recall_step + 1:idx].any():
+                    not self.stock_df[feature.KEY].loc[idx - feature.RECALL_DAYS + 1:idx].any():
                 return False
         return True
 

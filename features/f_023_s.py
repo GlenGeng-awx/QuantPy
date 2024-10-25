@@ -4,6 +4,7 @@ from features.f_023_b import get_below_sr_level
 
 KEY = 'down to sr level'
 VAL = 23 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

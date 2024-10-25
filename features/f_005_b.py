@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'up with high vol'
 VAL = 5 * STEP
+RECALL_DAYS = 4
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

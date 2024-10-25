@@ -4,6 +4,7 @@ from features.util import STEP
 
 KEY = 'vol incr 3d'
 VAL = 19 * STEP
+RECALL_DAYS = 2
 
 
 def vol_incr_n_days(stock_df: pd.DataFrame, n: int, key: str):

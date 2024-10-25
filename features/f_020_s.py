@@ -3,6 +3,7 @@ from features.util import STEP, DELTA
 
 KEY = 'price decr 3d'
 VAL = 20 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def price_decr_n_days(stock_df: pd.DataFrame, n: int, key: str):

@@ -3,6 +3,7 @@ from features.util import STEP, DELTA
 
 KEY = 'yesterday max of last 20d'
 VAL = 13 * STEP + DELTA
+RECALL_DAYS = 5
 
 
 def yesterday_is_max_of_last_n_days(stock_df: pd.DataFrame, n: int, output_key):
