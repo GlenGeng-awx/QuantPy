@@ -19,15 +19,19 @@ def get_incr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:
     return benchmark
 
 
-def execute(stock_df: pd.DataFrame, **kwargs):
-    benchmark = get_incr_benchmark(stock_df, 3)
+def incr_top_10pst_in_last_n_days(stock_df: pd.DataFrame, n: int, output_key: str):
+    benchmark = get_incr_benchmark(stock_df, n)
     close = stock_df['close']
 
     indices = []
 
-    for idx in close.index[3:]:
-        if close[idx] > close[idx - 3] * (1 + benchmark):
+    for idx in close.index[n:]:
+        if close[idx] > close[idx - n] * (1 + benchmark):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
-    stock_df[KEY] = s.reindex(stock_df.index, fill_value=False)
+    stock_df[output_key] = s.reindex(stock_df.index, fill_value=False)
+
+
+def execute(stock_df: pd.DataFrame, **kwargs):
+    incr_top_10pst_in_last_n_days(stock_df, 3, KEY)

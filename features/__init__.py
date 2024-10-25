@@ -2,14 +2,22 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from features import (
-    # ma 20/5
+    # up/down thru ma 60/20/5
+    f_029_b, f_029_s,       # up thru ma60 / down thru ma60
     f_001_b, f_001_s,       # up thru ma20 / down thru ma20
-    f_002_b, f_002_s,       # up thru ma5 / down thru ma5
-    f_025_b, f_025_s,       # down touch ma20 / up touch ma20
-    f_026_b, f_026_s,       # down touch ma5 / up touch ma5
+    f_002_b, f_002_s,       # up thru ma5  / down thru ma5
 
-    # min/max
+    # up/down touch ma 60/20/5
+    f_030_b, f_030_s,       # down touch ma60 / up touch ma60
+    f_025_b, f_025_s,       # down touch ma20 / up touch ma20
+    f_026_b, f_026_s,       # down touch ma5  / up touch ma5
+
+    # local min/max
     f_003_b, f_003_s,       # yesterday is local min / yesterday is local max
+
+    # min/max of last 5d/10d/20d
+    f_031_b, f_031_s,       # yesterday is min of last  5d / yesterday is max of last  5d
+    f_032_b, f_032_s,       # yesterday is min of last 10d / yesterday is max of last 10d
     f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
 
     f_005_b, f_005_s,       # up with high volume / down with high volume
@@ -27,12 +35,13 @@ from features import (
 
     # up/down to/thru/away sr level
     f_022_b, f_022_s,       # up to sr level / down away sr level
-    f_023_b, f_023_s,       # up away sr level / down to sr level
     f_024_b, f_024_s,       # up thru sr level / down thru sr level
+    f_023_b, f_023_s,       # up away sr level / down to sr level
 
-    # price incr/decr significantly last 1d/3d/10d
-    f_015_b, f_015_s,       # incr top 10% today / decr top 10% today
-    f_011_b, f_011_s,       # incr top 10% last 3d / decr top 10% last 3d
+    # incr/decr top 10pst last 1d/3d/5d/10d
+    f_015_b, f_015_s,       # incr top 10% today    / decr top 10% today
+    f_011_b, f_011_s,       # incr top 10% last 3d  / decr top 10% last 3d
+    f_033_b, f_033_s,       # incr top 10% last 5d  / decr top 10% last 5d
     f_012_b, f_012_s,       # incr top 10% last 10d / decr top 10% last 10d
 
     # short/long red/green bar
@@ -43,13 +52,21 @@ from features import (
     f_016_b, f_016_s,       # long lower shadow / long upper shadow
     f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
 
-    # vol/price incr/decr 3d
+    # vol/price incr/decr 3d/5d/7d
     f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
+    f_034_b, f_034_s,       # vol incr 5d / vol decr 5d
+    f_035_b, f_035_s,       # vol incr 7d / vol decr 7d
     f_020_b, f_020_s,       # price incr 3d / price decr 3d
+    f_036_b, f_036_s,       # price incr 5d / price decr 5d
+    f_037_b, f_037_s,       # price incr 7d / price decr 7d
 
     # up/down engulfing/harami
     f_027_b, f_027_s,       # up engulfing / down engulfing
     f_028_b, f_028_s,       # up harami / down harami
+
+    # red/green bar
+    f_038_b, f_038_s,       # real red bar / real green bar
+    f_039_b, f_039_s,       # fake red bar / fake green bar
 )
 
 FEATURE_BUF = [
@@ -81,6 +98,17 @@ FEATURE_BUF = [
     f_026_b, f_026_s,
     f_027_b, f_027_s,
     f_028_b, f_028_s,
+    f_029_b, f_029_s,
+    f_030_b, f_030_s,
+    f_031_b, f_031_s,
+    f_032_b, f_032_s,
+    f_033_b, f_033_s,
+    f_034_b, f_034_s,
+    f_035_b, f_035_s,
+    f_036_b, f_036_s,
+    f_037_b, f_037_s,
+    f_038_b, f_038_s,
+    f_039_b, f_039_s,
 ]
 
 
@@ -137,5 +165,16 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_026_b.KEY, f_026_b.VAL, 'red', 2),   (f_026_s.KEY, f_026_s.VAL, 'green', 2),
         (f_027_b.KEY, f_027_b.VAL, 'red'),      (f_027_s.KEY, f_027_s.VAL, 'green'),
         (f_028_b.KEY, f_028_b.VAL, 'red'),      (f_028_s.KEY, f_028_s.VAL, 'green'),
+        (f_029_b.KEY, f_029_b.VAL, 'red'),      (f_029_s.KEY, f_029_s.VAL, 'green'),
+        (f_030_b.KEY, f_030_b.VAL, 'red'),      (f_030_s.KEY, f_030_s.VAL, 'green'),
+        (f_031_b.KEY, f_031_b.VAL, 'red'),      (f_031_s.KEY, f_031_s.VAL, 'green'),
+        (f_032_b.KEY, f_032_b.VAL, 'red'),      (f_032_s.KEY, f_032_s.VAL, 'green'),
+        (f_033_b.KEY, f_033_b.VAL, 'red'),      (f_033_s.KEY, f_033_s.VAL, 'green'),
+        (f_034_b.KEY, f_034_b.VAL, 'red'),      (f_034_s.KEY, f_034_s.VAL, 'green'),
+        (f_035_b.KEY, f_035_b.VAL, 'red'),      (f_035_s.KEY, f_035_s.VAL, 'green'),
+        (f_036_b.KEY, f_036_b.VAL, 'red'),      (f_036_s.KEY, f_036_s.VAL, 'green'),
+        (f_037_b.KEY, f_037_b.VAL, 'red'),      (f_037_s.KEY, f_037_s.VAL, 'green'),
+        (f_038_b.KEY, f_038_b.VAL, 'red', 2),   (f_038_s.KEY, f_038_s.VAL, 'green', 2),
+        (f_039_b.KEY, f_039_b.VAL, 'red'),      (f_039_s.KEY, f_039_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)

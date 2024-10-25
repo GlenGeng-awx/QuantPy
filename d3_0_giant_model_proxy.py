@@ -34,7 +34,7 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
             in zip(train_periods, [3], [4, 4, 4], [90, 90, 90]):
         train_conf = {
             MODE: 'train',
-            MASK: 4,
+            MASK: 3,
 
             FROM_DATE: train_from_date,
             TO_DATE: train_to_date,

@@ -1,11 +1,11 @@
 import pandas as pd
-from statistical.ma import MA_5
+from statistical.ma import MA_60
 from features.util import STEP, DELTA
 from features.f_001_s import down_thru_ma
 
-KEY = 'down thru ma5'
-VAL = 2 * STEP + DELTA
+KEY = 'down thru ma60'
+VAL = 29 * STEP + DELTA
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
-    down_thru_ma(stock_df, MA_5, KEY)
+    down_thru_ma(stock_df, MA_60, KEY)

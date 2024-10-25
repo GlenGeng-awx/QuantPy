@@ -6,14 +6,18 @@ KEY = 'vol incr 3d'
 VAL = 19 * STEP
 
 
-def execute(stock_df: pd.DataFrame, **kwargs):
+def vol_incr_n_days(stock_df: pd.DataFrame, n: int, key: str):
     volume_reg = stock_df[VOLUME_REG]
 
     indices = []
 
-    for idx in volume_reg.index[2:]:
-        if volume_reg[idx] > volume_reg[idx - 1] > volume_reg[idx - 2]:
+    for idx in volume_reg.index[n:]:
+        if all(volume_reg[idx - i] > volume_reg[idx - i - 1] for i in range(n)):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)
-    stock_df[KEY] = s.reindex(stock_df.index, fill_value=False)
+    stock_df[key] = s.reindex(stock_df.index, fill_value=False)
+
+
+def execute(stock_df: pd.DataFrame, **kwargs):
+    vol_incr_n_days(stock_df, 3, KEY)
