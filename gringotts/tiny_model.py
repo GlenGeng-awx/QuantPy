@@ -1,20 +1,19 @@
 import pandas as pd
 from features import FEATURE_BUF
-from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE
+from gringotts import FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE
 
 
-# one filter for each combination of recall_step and switch
+# one filter for each switch
 # during train, input_indices is the output_indices of previous step
 # during predict, input_indices is specified by caller
 class _Filter:
-    def __init__(self, stock_df: pd.DataFrame, recall_step: int, switch: list[bool],
+    def __init__(self, stock_df: pd.DataFrame, switch: list[bool],
                  input_indices: list[int], train_position: int = None, train_ctx: dict = None):
         self.stock_df = stock_df
 
-        self.recall_step = recall_step
         self.switch = switch
-
         self.input_indices = input_indices
+
         self.train_position = train_position
         self.train_ctx = train_ctx
 
@@ -23,7 +22,6 @@ class _Filter:
     def _filter_in_train(self, idx):
         if self.switch[self.train_position]:
             feature = FEATURE_BUF[self.train_position]
-            # return self.stock_df[feature.KEY].loc[idx - self.recall_step + 1:idx].any()
             return self.train_ctx[idx][feature.KEY]
         return True
 
@@ -214,7 +212,7 @@ class _EvaluatorInPredict:
 class TinyModel:
     def __init__(self, stock_df: pd.DataFrame, conf: dict, switch: list[bool],
                  input_indices: list[int], train_position: int = None, train_ctx: dict = None):
-        self.filter = _Filter(stock_df, conf[RECALL_STEP], switch, input_indices, train_position, train_ctx)
+        self.filter = _Filter(stock_df, switch, input_indices, train_position, train_ctx)
 
         if train_position is not None:
             self.evaluators = [

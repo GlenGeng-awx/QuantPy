@@ -1,16 +1,15 @@
 from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
-from gringotts import (RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE,
-                       FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
+from gringotts import (FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE, FROM_DATE, TO_DATE,
+                       TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
 
 
 def get_ser_file(stock_name: str, conf: dict) -> str:
     if conf[MODE] == 'train':
-        return f'./tmp/train/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
-               f'_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
+        return f'./tmp/train/{stock_name}_f{conf[FORECAST_STEP]}d_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
 
     if conf[MODE] == 'predict':
-        return f'./tmp/predict/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+        return f'./tmp/predict/{stock_name}_f{conf[FORECAST_STEP]}d' \
                f'_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}_{conf[FROM_DATE]}_{conf[TO_DATE]}.txt'
 
     raise ValueError(f'invalid mode: {conf[MODE]}')
@@ -19,12 +18,11 @@ def get_ser_file(stock_name: str, conf: dict) -> str:
 def get_de_file(stock_name: str, conf: dict) -> str:
     if conf[MODE] == 'predict':
         # predict use train
-        return f'./tmp/train/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
-               f'_{conf[TRAIN_FROM_DATE]}_{conf[TRAIN_TO_DATE]}.txt'
+        return f'./tmp/train/{stock_name}_f{conf[FORECAST_STEP]}d_{conf[TRAIN_FROM_DATE]}_{conf[TRAIN_TO_DATE]}.txt'
 
     if conf[MODE] == 'dev':
         # dev use predict
-        return f'./tmp/predict/{stock_name}_r{conf[RECALL_STEP]}d_f{conf[FORECAST_STEP]}d' \
+        return f'./tmp/predict/{stock_name}_f{conf[FORECAST_STEP]}d' \
                f'_{conf[MARGIN]:.2f}_{conf[HIT_THRESHOLD]}_{conf[PREDICT_FROM_DATE]}_{conf[PREDICT_TO_DATE]}.txt'
 
     raise ValueError(f'invalid mode: {conf[MODE]}')

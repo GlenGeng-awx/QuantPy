@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 from gringotts.giant_model import GiantModel
-from gringotts import (MODE, MASK, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE,
+from gringotts import (MODE, MASK, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE,
                        FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
 
 from d2_1_periods import get_train_periods, get_predict_periods, get_predict_partial_period
@@ -27,11 +27,12 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
     train_confs = []
     train_periods = get_train_periods(stock_df, to_date)
 
-    # 400/200/100
+    # 400/400/400
     # 10/5/3
-    # 80/80/90
+    # 4/4/4
+    # 90/90/90
     for (train_from_date, train_to_date), forecast_step, hit_threshold, successful_rate \
-            in zip(train_periods, [3], [4, 4, 4], [90, 90, 90]):
+            in zip(train_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
         train_conf = {
             MODE: 'train',
             MASK: 3,
@@ -39,7 +40,6 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
             FROM_DATE: train_from_date,
             TO_DATE: train_to_date,
 
-            RECALL_STEP: 2,
             FORECAST_STEP: forecast_step,
 
             'evaluators': [
@@ -58,11 +58,11 @@ def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> li
 def get_predict_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[dict]:
     predict_confs = []
 
-    train_periods = get_train_periods(stock_df, to_date)        # 400/200/100
-    predict_periods = get_predict_periods(stock_df, to_date)    # 400/200/100
+    train_periods = get_train_periods(stock_df, to_date)        # 400/400/400
+    predict_periods = get_predict_periods(stock_df, to_date)    # 400/400/400
 
-    for (train_from_date, train_to_date), (predict_from_date, predict_to_date), forecast_step, successful_rate \
-            in zip(train_periods, predict_periods, [3], [90, 90, 90]):
+    for (train_from_date, train_to_date), (predict_from_date, predict_to_date), forecast_step, hit_threshold, successful_rate \
+            in zip(train_periods, predict_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
         predict_conf = {
             MODE: 'predict',
             FROM_DATE: predict_from_date,
@@ -71,11 +71,9 @@ def get_predict_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> 
             TRAIN_FROM_DATE: train_from_date,
             TRAIN_TO_DATE: train_to_date,
 
-            RECALL_STEP: 2,
             FORECAST_STEP: forecast_step,
-
             MARGIN: calculate_margin(stock_name, forecast_step),
-            HIT_THRESHOLD: 4,
+            HIT_THRESHOLD: hit_threshold,
             SUCCESSFUL_RATE: successful_rate,
         }
         predict_confs.append(predict_conf)
@@ -89,8 +87,8 @@ def get_predict_partial_confs(stock_name: str, stock_df: pd.DataFrame, to_date: 
     train_periods = get_train_periods(stock_df, to_date)
     predict_partial_from_period, predict_partial_to_period = get_predict_partial_period(stock_df)
 
-    for (train_from_date, train_to_date), forecast_step, successful_rate \
-            in zip(train_periods, [3], [90, 90, 90]):
+    for (train_from_date, train_to_date), forecast_step, hit_threshold, successful_rate \
+            in zip(train_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
         predict_partial_conf = {
             MODE: 'predict',
             FROM_DATE: predict_partial_from_period,
@@ -99,11 +97,9 @@ def get_predict_partial_confs(stock_name: str, stock_df: pd.DataFrame, to_date: 
             TRAIN_FROM_DATE: train_from_date,
             TRAIN_TO_DATE: train_to_date,
 
-            RECALL_STEP: 2,
             FORECAST_STEP: forecast_step,
-
             MARGIN: calculate_margin(stock_name, forecast_step),
-            HIT_THRESHOLD: 4,
+            HIT_THRESHOLD: hit_threshold,
             SUCCESSFUL_RATE: successful_rate,
         }
         predict_partial_confs.append(predict_partial_conf)
@@ -117,8 +113,8 @@ def get_dev_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list
     train_periods = get_train_periods(stock_df, to_date)
     predict_partial_from_period, predict_partial_to_period = get_predict_partial_period(stock_df)
 
-    for (train_from_date, _), forecast_step, successful_rate \
-            in zip(train_periods, [3], [90, 90, 90]):
+    for (train_from_date, _), forecast_step, hit_threshold, successful_rate \
+            in zip(train_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
         dev_conf = {
             MODE: 'dev',
             FROM_DATE: train_from_date,
@@ -127,11 +123,9 @@ def get_dev_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list
             PREDICT_FROM_DATE: predict_partial_from_period,
             PREDICT_TO_DATE: predict_partial_to_period,
 
-            RECALL_STEP: 2,
             FORECAST_STEP: forecast_step,
-
             MARGIN: calculate_margin(stock_name, forecast_step),
-            HIT_THRESHOLD: 4,
+            HIT_THRESHOLD: hit_threshold,
             SUCCESSFUL_RATE: successful_rate,
         }
         dev_confs.append(dev_conf)

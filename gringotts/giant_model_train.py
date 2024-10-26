@@ -3,13 +3,12 @@ from datetime import datetime
 from multiprocessing import Queue
 
 from features import FEATURE_BUF
-from gringotts import RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD
+from gringotts import FORECAST_STEP, MARGIN, HIT_THRESHOLD
 from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import default_switch
 
 
-def get_train_context(stock_df: pd.DataFrame, recall_step: int,
-                      forecast_step: int, margins: list[float]) -> dict:
+def get_train_context(stock_df: pd.DataFrame, forecast_step: int, margins: list[float]) -> dict:
     context = {}
     close = stock_df['close']
 
@@ -76,13 +75,15 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 
         long_models, short_models = [], []
 
-        true_part = _model_searcher(stock_df, conf, worker_tag,
-                                    prefix + [True], left_len - 1, model.filter.output_indices, train_ctx)
+        true_part = _model_searcher(stock_df, conf,
+                                    worker_tag, prefix + [True], left_len - 1,
+                                    model.filter.output_indices, train_ctx)
         long_models.extend(true_part[0])
         short_models.extend(true_part[1])
 
-        false_part = _model_searcher(stock_df, conf, worker_tag,
-                                     prefix + [False], left_len - 1, model.filter.output_indices, train_ctx)
+        false_part = _model_searcher(stock_df, conf,
+                                     worker_tag, prefix + [False], left_len - 1,
+                                     model.filter.output_indices, train_ctx)
         long_models.extend(false_part[0])
         short_models.extend(false_part[1])
 
@@ -92,13 +93,12 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 # prepare to kick off _model_searcher
 def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, input_indices: list[int],
                        worker_id: int, prefixes: list[list[bool]], left_len, queue: Queue):
-    worker_tag = f'{stock_name} recall {conf[RECALL_STEP]}d forecast {conf[FORECAST_STEP]}d - worker {worker_id}'
+    worker_tag = f'{stock_name} forecast {conf[FORECAST_STEP]}d - worker {worker_id}'
     prefix = prefixes[worker_id]
     print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
     start_time = datetime.now()
-    train_ctx = get_train_context(stock_df, conf[RECALL_STEP],
-                                  conf[FORECAST_STEP], [conf['evaluators'][0][MARGIN]])
+    train_ctx = get_train_context(stock_df, conf[FORECAST_STEP], [conf['evaluators'][0][MARGIN]])
 
     long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len, input_indices, train_ctx)
     queue.put((long_models, short_models))

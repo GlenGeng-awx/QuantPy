@@ -2,13 +2,13 @@ import pandas as pd
 from util import shrink_date_str, get_idx_by_date
 
 
-# return 400/200/100 period in the format of [(from_date, to_date)]
+# return 400/400/400 period in the format of [(from_date, to_date)]
 def get_train_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
     to_idx = get_idx_by_date(stock_df, to_date)
 
     periods = []
 
-    for sz in [400, 200, 100]:
+    for sz in [400, 400, 400]:
         from_idx = to_idx - sz
         from_date = shrink_date_str(stock_df.loc[from_idx]['Date'])
         periods.append((from_date, to_date))
@@ -16,7 +16,7 @@ def get_train_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
     return periods
 
 
-# return 400/200/100 period in the format of [(from_date, today)]
+# return 400/400/400 period in the format of [(from_date, today)]
 def get_predict_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
     train_periods = get_train_periods(stock_df, to_date)
     today = shrink_date_str(stock_df.iloc[-1]['Date'])
@@ -26,9 +26,9 @@ def get_predict_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
 
 
 def get_predict_partial_period(stock_df: pd.DataFrame) -> tuple:
-    yesterday = shrink_date_str(stock_df.iloc[-2]['Date'])
+    last_5day = shrink_date_str(stock_df.iloc[-5]['Date'])
     today = shrink_date_str(stock_df.iloc[-1]['Date'])
-    return yesterday, today
+    return last_5day, today
 
 
 if __name__ == '__main__':

@@ -4,15 +4,15 @@ from multiprocessing import Process, Queue
 
 from util import get_indices_of_period
 from features import FEATURE_BUF
-from gringotts import MODE, MASK, RECALL_STEP, FORECAST_STEP, MARGIN, HIT_THRESHOLD, FROM_DATE, TO_DATE
+from gringotts import MODE, MASK, FORECAST_STEP, MARGIN, HIT_THRESHOLD, FROM_DATE, TO_DATE
 from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import enumerate_switches, shrink_models, show_models
 from gringotts.giant_model_serde import serialize_models, deserialize_models
 from gringotts.giant_model_train import giant_model_worker
 
 
-# during train, for one recall step, handle multiple coarse evaluators in a multiprocess way
-# during predict, for one recall step, handle one fine evaluator deserializing from file
+# during train, handle multiple coarse evaluators in a multiprocess way
+# during predict, handle one fine evaluator deserializing from file
 class GiantModel:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str, conf: dict):
         self.stock_df = stock_df
@@ -48,7 +48,6 @@ class GiantModel:
 
         for _ in procs:
             long_models, short_models = queue.get()
-            # print(f'got {len(long_models)} long models and {len(short_models)} short models')
             self.long_models.extend(long_models)
             self.short_models.extend(short_models)
 
@@ -83,12 +82,11 @@ class GiantModel:
     def build_graph(self, fig: go.Figure, enable=False):
         origin_title = fig.layout.title.text
 
-        strategy_name = f'{self.conf[MODE]} < recall {self.conf[RECALL_STEP]}d > '
+        strategy_name = f'{self.conf[MODE]} < forecast {self.conf[FORECAST_STEP]}d > '
         strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] total {len(self.input_indices)} days '
 
         if self.conf[MODE] != 'train':
-            strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
-                             f'{self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
+            strategy_name += f'({self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
 
         fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
 
