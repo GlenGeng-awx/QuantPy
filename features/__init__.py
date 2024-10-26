@@ -12,10 +12,10 @@ from features import (
     f_025_b, f_025_s,       # down touch ma20 / up touch ma20
     f_026_b, f_026_s,       # down touch ma5  / up touch ma5
 
-    # local min/max
+    # yesterday is local min/max
     f_003_b, f_003_s,       # yesterday is local min / yesterday is local max
 
-    # min/max of last 5d/10d/20d
+    # yesterday is min/max of last 5d/10d/20d
     f_031_b, f_031_s,       # yesterday is min of last  5d / yesterday is max of last  5d
     f_032_b, f_032_s,       # yesterday is min of last 10d / yesterday is max of last 10d
     f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
@@ -69,7 +69,12 @@ from features import (
     f_039_b, f_039_s,       # fake red bar / fake green bar
 
     # weekday
-    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4
+    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4,
+
+    # close/low/high incr/decr
+    f_041_b, f_041_s,       # close incr / close decr
+    f_042_b, f_042_s,       # low incr   / low decr
+    f_043_b, f_043_s,       # high incr  / high decr
 )
 
 FEATURE_BUF = [
@@ -112,7 +117,10 @@ FEATURE_BUF = [
     f_037_b, f_037_s,
     f_038_b, f_038_s,
     f_039_b, f_039_s,
-    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4
+    f_040_0, f_040_1, f_040_2, f_040_3, f_040_4,
+    f_041_b, f_041_s,
+    f_042_b, f_042_s,
+    f_043_b, f_043_s,
 ]
 
 
@@ -185,5 +193,8 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_040_2.KEY, f_040_2.VAL, 'red', 2),
         (f_040_3.KEY, f_040_3.VAL, 'red', 2),
         (f_040_4.KEY, f_040_4.VAL, 'red', 2),
+        (f_041_b.KEY, f_041_b.VAL, 'red', 2),   (f_041_s.KEY, f_041_s.VAL, 'green', 2),
+        (f_042_b.KEY, f_042_b.VAL, 'red', 2),   (f_042_s.KEY, f_042_s.VAL, 'green', 2),
+        (f_043_b.KEY, f_043_b.VAL, 'red', 2),   (f_043_s.KEY, f_043_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)

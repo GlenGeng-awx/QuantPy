@@ -4,7 +4,7 @@ from features.f_013_s import yesterday_is_max_of_last_n_days
 
 KEY = 'yesterday max of last 10d'
 VAL = 32 * STEP + DELTA
-RECALL_DAYS = 2
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

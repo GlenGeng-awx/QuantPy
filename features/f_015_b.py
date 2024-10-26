@@ -4,7 +4,7 @@ from features.f_011_b import incr_top_10pst_in_last_n_days
 
 KEY = 'incr top 10% today'
 VAL = 15 * STEP
-RECALL_DAYS = 2
+RECALL_DAYS = 1
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
