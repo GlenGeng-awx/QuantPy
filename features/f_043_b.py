@@ -1,6 +1,6 @@
 import pandas as pd
 from features.util import STEP
-from features.f_041_b import price_incr
+from features.f_042_b import price_incr
 
 KEY = 'high incr'
 VAL = 43 * STEP

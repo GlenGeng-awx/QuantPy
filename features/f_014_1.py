@@ -13,7 +13,7 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     indices = []
 
     for idx in volume_reg.index:
-        if -1 < volume_reg[idx] < 1:
+        if -0.5 < volume_reg[idx] < 0.5:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

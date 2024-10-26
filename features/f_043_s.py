@@ -1,6 +1,6 @@
 import pandas as pd
 from features.util import STEP, DELTA
-from features.f_041_s import price_decr
+from features.f_042_s import price_decr
 
 KEY = 'high decr'
 VAL = 43 * STEP + DELTA

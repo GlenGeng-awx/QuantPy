@@ -15,12 +15,12 @@ from features import (
     # yesterday is local min/max
     f_003_b, f_003_s,       # yesterday is local min / yesterday is local max
 
-    # yesterday is min/max of last 5d/10d/20d
-    f_031_b, f_031_s,       # yesterday is min of last  5d / yesterday is max of last  5d
-    f_032_b, f_032_s,       # yesterday is min of last 10d / yesterday is max of last 10d
-    f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
-    f_044_b, f_044_s,       # yesterday is min of last 60d / yesterday is max of last 60d
-    f_045_b, f_045_s,       # yesterday is min of last 100d / yesterday is max of last 100d
+    # yesterday is min/max of last 5d/10d/20d/60d/120d
+    f_031_b, f_031_s,       # yesterday is min of last   5d / yesterday is max of last   5d
+    f_032_b, f_032_s,       # yesterday is min of last  10d / yesterday is max of last  10d
+    f_013_b, f_013_s,       # yesterday is min of last  20d / yesterday is max of last  20d
+    f_044_b, f_044_s,       # yesterday is min of last  60d / yesterday is max of last  60d
+    f_045_b, f_045_s,       # yesterday is min of last 120d / yesterday is max of last 120d
 
     # vol
     f_005_b, f_005_s,           # extreme high vol / extreme low vol
@@ -55,10 +55,14 @@ from features import (
     f_016_b, f_016_s,       # long lower shadow / long upper shadow
     f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
 
-    # vol/price incr/decr 3d/5d/7d
+    # vol incr/decr 1d/3d/5d/7d
+    f_046_b, f_046_s,       # vol incr 1d / vol decr 1d
     f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
     f_034_b, f_034_s,       # vol incr 5d / vol decr 5d
     f_035_b, f_035_s,       # vol incr 7d / vol decr 7d
+
+    # price incr/decr 1d/3d/5d/7d
+    f_041_b, f_041_s,       # price incr 1d / price decr 1d
     f_020_b, f_020_s,       # price incr 3d / price decr 3d
     f_036_b, f_036_s,       # price incr 5d / price decr 5d
     f_037_b, f_037_s,       # price incr 7d / price decr 7d
@@ -74,8 +78,7 @@ from features import (
     # weekday
     f_040_0, f_040_1, f_040_2, f_040_3, f_040_4,
 
-    # close/low/high incr/decr
-    f_041_b, f_041_s,       # close incr / close decr
+    # low/high incr/decr
     f_042_b, f_042_s,       # low incr   / low decr
     f_043_b, f_043_s,       # high incr  / high decr
 )
@@ -126,6 +129,7 @@ FEATURE_BUF = [
     f_043_b, f_043_s,
     f_044_b, f_044_s,
     f_045_b, f_045_s,
+    f_046_b, f_046_s,
 ]
 
 
@@ -203,5 +207,6 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_043_b.KEY, f_043_b.VAL, 'red', 2),   (f_043_s.KEY, f_043_s.VAL, 'green', 2),
         (f_044_b.KEY, f_044_b.VAL, 'red'),      (f_044_s.KEY, f_044_s.VAL, 'green'),
         (f_045_b.KEY, f_045_b.VAL, 'red'),      (f_045_s.KEY, f_045_s.VAL, 'green'),
+        (f_046_b.KEY, f_046_b.VAL, 'red', 2),   (f_046_s.KEY, f_046_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)
