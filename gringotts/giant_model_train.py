@@ -8,7 +8,7 @@ from gringotts.tiny_model import TinyModel
 from gringotts.giant_model_helper import default_switch
 
 
-def get_train_context(stock_df: pd.DataFrame, forecast_step: int, margins: list[float]) -> dict:
+def get_train_context(stock_df: pd.DataFrame, evaluators: list[dict]) -> dict:
     context = {}
     close = stock_df['close']
 
@@ -21,15 +21,18 @@ def get_train_context(stock_df: pd.DataFrame, forecast_step: int, margins: list[
             context[idx][key] = stock_df[key].loc[idx - feature.RECALL_DAYS + 1:idx].any()
 
         # for evaluator
-        if idx + forecast_step not in close:
-            continue
+        for evaluator in evaluators:
+            forecast_step = evaluator[FORECAST_STEP]
+            margin = evaluator[MARGIN]
 
-        context[idx][forecast_step] = {}
+            if idx + forecast_step not in close:
+                continue
 
-        for margin in margins:
-            context[idx][forecast_step][margin] = {
-                'long': close[idx] * (1 + margin) < close[idx + forecast_step],
-                'short': close[idx] * (1 - margin) > close[idx + forecast_step]
+            context[idx][forecast_step] = {
+                margin: {
+                    'long': close[idx] * (1 + margin) < close[idx + forecast_step],
+                    'short': close[idx] * (1 - margin) > close[idx + forecast_step],
+                }
             }
 
     return context
@@ -93,12 +96,12 @@ def _model_searcher(stock_df: pd.DataFrame, conf: dict, worker_tag: str,
 # prepare to kick off _model_searcher
 def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, input_indices: list[int],
                        worker_id: int, prefixes: list[list[bool]], left_len, queue: Queue):
-    worker_tag = f'{stock_name} forecast {conf[FORECAST_STEP]}d - worker {worker_id}'
+    worker_tag = f'{stock_name} - worker {worker_id}'
     prefix = prefixes[worker_id]
     print(f'{worker_tag} with {prefix} started at {datetime.now().time()}')
 
     start_time = datetime.now()
-    train_ctx = get_train_context(stock_df, conf[FORECAST_STEP], [conf['evaluators'][0][MARGIN]])
+    train_ctx = get_train_context(stock_df, conf['evaluators'])
 
     long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len, input_indices, train_ctx)
     queue.put((long_models, short_models))

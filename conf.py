@@ -67,7 +67,7 @@ SQ = "SQ"
 INDEX_NAMES = [
     IXIC,
     SS_000300,
-    SS_000001,
+    # SS_000001,
     # GC_F,
 ]
 

@@ -13,7 +13,7 @@ def predict(stock_name: str, stock_df: pd.DataFrame, to_date: str):
 if __name__ == '__main__':
     from conf import *
 
-    for _stock_name in [SS_000300]:
+    for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
 

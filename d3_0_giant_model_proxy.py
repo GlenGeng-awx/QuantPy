@@ -23,36 +23,34 @@ def calculate_margin(stock_name: str, forecast_step: int) -> float:
         raise ValueError(f'Unknown forecast_step: {forecast_step}')
 
 
+# 400/400/400
+# 10/5/3
+# 4/4/4
+# 90/90/90
 def get_train_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[dict]:
-    train_confs = []
     train_periods = get_train_periods(stock_df, to_date)
+    train_from_date, train_to_date = train_periods[0]
 
-    # 400/400/400
-    # 10/5/3
-    # 4/4/4
-    # 90/90/90
-    for (train_from_date, train_to_date), forecast_step, hit_threshold, successful_rate \
-            in zip(train_periods, [10, 5, 3], [4, 4, 4], [90, 90, 90]):
-        train_conf = {
-            MODE: 'train',
-            MASK: 3,
+    train_conf = {
+        MODE: 'train',
+        MASK: 4,
 
-            FROM_DATE: train_from_date,
-            TO_DATE: train_to_date,
+        FROM_DATE: train_from_date,
+        TO_DATE: train_to_date,
 
-            FORECAST_STEP: forecast_step,
+        'evaluators': [
+            {
+                FORECAST_STEP: forecast_step,
+                MARGIN: calculate_margin(stock_name, forecast_step),
+                HIT_THRESHOLD: hit_threshold,
+                SUCCESSFUL_RATE: successful_rate,
+            }
+            for forecast_step, hit_threshold, successful_rate in
+                zip([10, 5, 3], [4, 4, 4], [90, 90, 90])
+        ]
+    }
 
-            'evaluators': [
-                {
-                    MARGIN: calculate_margin(stock_name, forecast_step),
-                    HIT_THRESHOLD: hit_threshold,
-                    SUCCESSFUL_RATE: successful_rate,
-                }
-            ]
-        }
-        train_confs.append(train_conf)
-
-    return train_confs
+    return [train_conf]
 
 
 def get_predict_confs(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[dict]:

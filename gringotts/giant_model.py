@@ -82,11 +82,11 @@ class GiantModel:
     def build_graph(self, fig: go.Figure, enable=False):
         origin_title = fig.layout.title.text
 
-        strategy_name = f'{self.conf[MODE]} < forecast {self.conf[FORECAST_STEP]}d > '
-        strategy_name += f'[{self.conf[FROM_DATE]}, {self.conf[TO_DATE]}] total {len(self.input_indices)} days '
+        strategy_name = f'{self.conf[MODE]} [{self.conf[FROM_DATE]} ~ {self.conf[TO_DATE]}] {len(self.input_indices)} days '
 
         if self.conf[MODE] != 'train':
-            strategy_name += f'({self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
+            strategy_name += f'(forecast {self.conf[FORECAST_STEP]}d, ' + \
+                             f'{self.conf[MARGIN] * 100:.1f}%, {self.conf[HIT_THRESHOLD]})'
 
         fig.update_layout(title=f'{origin_title}<br>{strategy_name}')
 
