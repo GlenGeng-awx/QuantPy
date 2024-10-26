@@ -1,9 +1,9 @@
 import pandas as pd
 from technical.volume import VOLUME_REG
-from features.util import STEP, DELTA
+from features.util import STEP
 
-KEY = 'low volume'
-VAL = 14 * STEP + DELTA
+KEY = 'high vol'
+VAL = 14 * STEP
 RECALL_DAYS = 2
 
 
@@ -13,7 +13,7 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     indices = []
 
     for idx in volume_reg.index:
-        if volume_reg[idx] < -1:
+        if volume_reg[idx] > 1:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

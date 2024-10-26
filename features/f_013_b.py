@@ -3,7 +3,7 @@ from features.util import STEP
 
 KEY = 'yesterday min of last 20d'
 VAL = 13 * STEP
-RECALL_DAYS = 5
+RECALL_DAYS = 3
 
 
 def yesterday_is_min_of_last_n_days(stock_df: pd.DataFrame, n: int, output_key):

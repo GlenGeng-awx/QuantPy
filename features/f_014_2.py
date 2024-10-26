@@ -2,9 +2,9 @@ import pandas as pd
 from technical.volume import VOLUME_REG
 from features.util import STEP, DELTA
 
-KEY = 'extreme low vol'
-VAL = 5 * STEP + DELTA
-RECALL_DAYS = 5
+KEY = 'low vol'
+VAL = 14 * STEP + DELTA
+RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
@@ -12,8 +12,8 @@ def execute(stock_df: pd.DataFrame, **kwargs):
 
     indices = []
 
-    for idx in volume_reg.index[1:]:
-        if volume_reg[idx] < -2:
+    for idx in volume_reg.index:
+        if volume_reg[idx] < -1:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

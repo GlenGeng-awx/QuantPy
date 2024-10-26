@@ -19,9 +19,12 @@ from features import (
     f_031_b, f_031_s,       # yesterday is min of last  5d / yesterday is max of last  5d
     f_032_b, f_032_s,       # yesterday is min of last 10d / yesterday is max of last 10d
     f_013_b, f_013_s,       # yesterday is min of last 20d / yesterday is max of last 20d
+    f_044_b, f_044_s,       # yesterday is min of last 60d / yesterday is max of last 60d
+    f_045_b, f_045_s,       # yesterday is min of last 100d / yesterday is max of last 100d
 
-    f_005_b, f_005_s,       # up with high volume / down with high volume
-    f_014_b, f_014_s,       # high volume / low volume
+    # vol
+    f_005_b, f_005_s,           # extreme high vol / extreme low vol
+    f_014_0, f_014_1, f_014_2,  # high vol / normal vol / low vol
 
     # statistics
     f_004_b, f_004_s,       # trend switch up / trend switch down
@@ -91,7 +94,7 @@ FEATURE_BUF = [
     f_011_b, f_011_s,
     f_012_b, f_012_s,
     f_013_b, f_013_s,
-    f_014_b, f_014_s,
+    f_014_0, f_014_1, f_014_2,
     f_015_b, f_015_s,
     f_016_b, f_016_s,
     f_017_b, f_017_s,
@@ -121,6 +124,8 @@ FEATURE_BUF = [
     f_041_b, f_041_s,
     f_042_b, f_042_s,
     f_043_b, f_043_s,
+    f_044_b, f_044_s,
+    f_045_b, f_045_s,
 ]
 
 
@@ -162,7 +167,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_011_b.KEY, f_011_b.VAL, 'red'),      (f_011_s.KEY, f_011_s.VAL, 'green'),
         (f_012_b.KEY, f_012_b.VAL, 'red'),      (f_012_s.KEY, f_012_s.VAL, 'green'),
         (f_013_b.KEY, f_013_b.VAL, 'red'),      (f_013_s.KEY, f_013_s.VAL, 'green'),
-        (f_014_b.KEY, f_014_b.VAL, 'red', 2),   (f_014_s.KEY, f_014_s.VAL, 'green', 2),
+        (f_014_0.KEY, f_014_0.VAL, 'red', 2),   (f_014_1.KEY, f_014_1.VAL, 'green', 2),   (f_014_2.KEY, f_014_2.VAL, 'green', 2),
         (f_015_b.KEY, f_015_b.VAL, 'red'),      (f_015_s.KEY, f_015_s.VAL, 'green'),
         (f_016_b.KEY, f_016_b.VAL, 'red'),      (f_016_s.KEY, f_016_s.VAL, 'green'),
         (f_017_b.KEY, f_017_b.VAL, 'red'),      (f_017_s.KEY, f_017_s.VAL, 'green'),
@@ -196,5 +201,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_041_b.KEY, f_041_b.VAL, 'red', 2),   (f_041_s.KEY, f_041_s.VAL, 'green', 2),
         (f_042_b.KEY, f_042_b.VAL, 'red', 2),   (f_042_s.KEY, f_042_s.VAL, 'green', 2),
         (f_043_b.KEY, f_043_b.VAL, 'red', 2),   (f_043_s.KEY, f_043_s.VAL, 'green', 2),
+        (f_044_b.KEY, f_044_b.VAL, 'red'),      (f_044_s.KEY, f_044_s.VAL, 'green'),
+        (f_045_b.KEY, f_045_b.VAL, 'red'),      (f_045_s.KEY, f_045_s.VAL, 'green'),
     ]:
         _build_graph(stock_df, fig, *params)
