@@ -255,7 +255,7 @@ class TinyModel:
 
 if __name__ == '__main__':
     for j in range(len(FEATURE_BUF)):
-        print(f'{j} {FEATURE_BUF[j].KEY}')
+        print(f'{j}\t{FEATURE_BUF[j].KEY:40}\t{FEATURE_BUF[j].RECALL_DAYS}d')
 
     abbrs = [
         [10, 29],

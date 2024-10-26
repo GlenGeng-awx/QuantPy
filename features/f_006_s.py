@@ -4,7 +4,7 @@ from features.util import STEP, DELTA
 
 KEY = 'bband pst lt 0.15'
 VAL = 6 * STEP + DELTA
-RECALL_DAYS = 5
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):

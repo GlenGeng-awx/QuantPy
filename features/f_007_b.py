@@ -4,7 +4,7 @@ from features.util import STEP
 
 KEY = 'rsi above 70'
 VAL = 7 * STEP
-RECALL_DAYS = 5
+RECALL_DAYS = 3
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
