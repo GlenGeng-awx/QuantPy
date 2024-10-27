@@ -26,21 +26,34 @@ def default_switch(size: int) -> list[bool]:
 
 
 def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
-    # shrink models with same indices, keep the one with shorter name
+    # grouping
     results = {}
-
     for model in models:
         model_key = tuple(model.filter.output_indices)
 
         if model_key not in results:
-            results[model_key] = model
+            results[model_key] = [model]
         else:
-            if len(model.filter.abbr()) < len(results[model_key].filter.abbr()):
-                results[model_key] = model
+            results[model_key].append(model)
 
-    results = list(results.values())
-    results.sort(key=lambda m: len(m.filter.output_indices), reverse=True)
-    return results
+    # shrinking
+    shrank = []
+    for hits in results.values():
+        for candidate in hits:
+            s0 = set(candidate.filter.abbr())
+            included = False
+
+            for hit in hits:
+                s1 = set(hit.filter.abbr())
+
+                if s0 != s1 and s1.issubset(s0):
+                    included = True
+
+            if not included:
+                shrank.append(candidate)
+
+    shrank.sort(key=lambda m: len(m.filter.output_indices), reverse=True)
+    return shrank
 
 
 def show_models(stock_df: pd.DataFrame, fig: go.Figure,

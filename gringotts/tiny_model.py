@@ -43,8 +43,8 @@ class _Filter:
             if self._dispatch(idx):
                 self.output_indices.append(idx)
 
-    def abbr(self):
-        return ','.join([str(i) for i in range(len(self.switch)) if self.switch[i]])
+    def abbr(self) -> list[str]:
+        return [str(i) for i in range(len(self.switch)) if self.switch[i]]
 
     def name(self):
         return ', '.join([feature.KEY for i, feature in enumerate(FEATURE_BUF) if self.switch[i]])
@@ -248,7 +248,7 @@ class TinyModel:
         return ';'.join(eval_names) + '\t' + filter_name
 
     def label(self):
-        filter_label = f'{self.filter.abbr()}'
+        filter_label = f'{",".join(self.filter.abbr())}'
         eval_names = [evaluator.name() for evaluator in self.evaluators if evaluator.name()]
         return '<br>'.join([filter_label] + eval_names)
 

@@ -14,11 +14,11 @@ def calculate_margin(stock_name: str, forecast_step: int) -> float:
     margin = MARGINS[stock_name][str(forecast_step)]
 
     if forecast_step == 10:
-        return min(margin['incr'], margin['decr'], 0.18)
+        return min(margin['incr'], margin['decr'], 0.20)
     elif forecast_step == 5:
-        return min(margin['incr'], margin['decr'], 0.08)
+        return min(margin['incr'], margin['decr'], 0.10)
     elif forecast_step == 3:
-        return min(margin['incr'], margin['decr'], 0.03)
+        return min(margin['incr'], margin['decr'], 0.05)
     else:
         raise ValueError(f'Unknown forecast_step: {forecast_step}')
 

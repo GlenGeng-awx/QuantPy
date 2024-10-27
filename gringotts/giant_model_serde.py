@@ -38,12 +38,12 @@ def serialize_models(stock_name: str, conf: dict,
         for model in long_models:
             if not model.filter.output_indices:
                 continue
-            f.write(f'long\t{model.filter.abbr()}\t{model.name()}\t{model.filter.output_indices}\n')
+            f.write(f'long\t{",".join(model.filter.abbr())}\t{model.name()}\t{model.filter.output_indices}\n')
 
         for model in short_models:
             if not model.filter.output_indices:
                 continue
-            f.write(f'short\t{model.filter.abbr()}\t{model.name()}\t{model.filter.output_indices}\n')
+            f.write(f'short\t{",".join(model.filter.abbr())}\t{model.name()}\t{model.filter.output_indices}\n')
 
 
 def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], list[list[bool]]]:
