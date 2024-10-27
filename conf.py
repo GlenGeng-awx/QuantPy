@@ -3,6 +3,12 @@ SS_000300 = "000300.SS"
 SS_000001 = "000001.SS"
 GC_F = "GC=F"
 
+GOOG = "GOOG"
+AMZN = "AMZN"
+PYPL = "PYPL"
+AAPL = "AAPL"
+NFLX = "NFLX"
+
 TSLA = "TSLA"
 RIVN = "RIVN"
 LI = "LI"
@@ -66,12 +72,17 @@ SQ = "SQ"
 
 INDEX_NAMES = [
     IXIC,
-    SS_000300,
+    # SS_000300,
     # SS_000001,
     # GC_F,
 ]
 
 STOCK_NAMES_TIER_0 = [
+    GOOG,
+    AMZN,
+    PYPL,
+    AAPL,
+    NFLX,
     AMD,
     ZM,
     TSM,
