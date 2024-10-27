@@ -6,6 +6,7 @@ VAL = 40 * STEP + 0
 RECALL_DAYS = 1
 
 
+# 0: Monday, 1: Tuesday, 2: Wednesday, 3: Thursday, 4: Friday, 5: Saturday, 6: Sunday
 def weekday_is_n(stock_df: pd.DataFrame, n: int, key: str):
     indices = []
 

@@ -26,6 +26,10 @@ from features import (
     f_005_b, f_005_s,           # extreme high vol / extreme low vol
     f_014_0, f_014_1, f_014_2,  # high vol / normal vol / low vol
 
+    # red/green bar
+    f_038_b, f_038_s,       # real red bar / real green bar
+    f_039_b, f_039_s,       # fake red bar / fake green bar
+
     # statistics
     f_004_b, f_004_s,       # trend switch up / trend switch down
     f_006_b, f_006_s,       # bband pst gt 0.85 / bband pst lt 0.15
@@ -37,15 +41,35 @@ from features import (
     f_010_b,                # up thru r level, retrace, bounds back
 
     # up/down to/thru/away sr level
-    f_022_b, f_022_s,       # up to sr level / down away sr level
+    f_022_b, f_022_s,       # up to   sr level / down away sr level
     f_024_b, f_024_s,       # up thru sr level / down thru sr level
-    f_023_b, f_023_s,       # up away sr level / down to sr level
+    f_023_b, f_023_s,       # up away sr level / down to   sr level
 
     # incr/decr top 10pst last 1d/3d/5d/10d
     f_015_b, f_015_s,       # incr top 10% today    / decr top 10% today
     f_011_b, f_011_s,       # incr top 10% last 3d  / decr top 10% last 3d
     f_033_b, f_033_s,       # incr top 10% last 5d  / decr top 10% last 5d
     f_012_b, f_012_s,       # incr top 10% last 10d / decr top 10% last 10d
+
+    # vol incr/decr 1d/3d/5d
+    f_046_b, f_046_s,       # vol incr 1d / vol decr 1d
+    f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
+    f_034_b, f_034_s,       # vol incr 5d / vol decr 5d
+
+    # close incr/decr 1d/3d/5d
+    f_041_b, f_041_s,       # close incr 1d / close decr 1d
+    f_020_b, f_020_s,       # close incr 3d / close decr 3d
+    f_036_b, f_036_s,       # close incr 5d / close decr 5d
+
+    # low incr/decr 1d/3d/5d
+    f_042_b, f_042_s,       # low incr 1d / low decr 1d
+    f_050_b, f_050_s,       # low incr 3d / low decr 3d
+    f_052_b, f_052_s,       # low incr 5d / low decr 5d
+
+    # high incr/decr 1d/3d/5d
+    f_043_b, f_043_s,       # high incr 1d / high decr 1d
+    f_054_b, f_054_s,       # high incr 3d / high decr 2d
+    f_056_b, f_056_s,       # high incr 5d / high decr 3d
 
     # short/long red/green bar
     f_017_b, f_017_s,       # long red bar / long green bar
@@ -55,32 +79,12 @@ from features import (
     f_016_b, f_016_s,       # long lower shadow / long upper shadow
     f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
 
-    # vol incr/decr 1d/3d/5d/7d
-    f_046_b, f_046_s,       # vol incr 1d / vol decr 1d
-    f_019_b, f_019_s,       # vol incr 3d / vol decr 3d
-    f_034_b, f_034_s,       # vol incr 5d / vol decr 5d
-    f_035_b, f_035_s,       # vol incr 7d / vol decr 7d
-
-    # price incr/decr 1d/3d/5d/7d
-    f_041_b, f_041_s,       # price incr 1d / price decr 1d
-    f_020_b, f_020_s,       # price incr 3d / price decr 3d
-    f_036_b, f_036_s,       # price incr 5d / price decr 5d
-    f_037_b, f_037_s,       # price incr 7d / price decr 7d
-
     # up/down engulfing/harami
     f_027_b, f_027_s,       # up engulfing / down engulfing
     f_028_b, f_028_s,       # up harami / down harami
 
-    # red/green bar
-    f_038_b, f_038_s,       # real red bar / real green bar
-    f_039_b, f_039_s,       # fake red bar / fake green bar
-
     # weekday
     f_040_0, f_040_1, f_040_2, f_040_3, f_040_4,
-
-    # low/high incr/decr
-    f_042_b, f_042_s,       # low incr   / low decr
-    f_043_b, f_043_s,       # high incr  / high decr
 )
 
 FEATURE_BUF = [
@@ -118,9 +122,7 @@ FEATURE_BUF = [
     f_032_b, f_032_s,
     f_033_b, f_033_s,
     f_034_b, f_034_s,
-    f_035_b, f_035_s,
     f_036_b, f_036_s,
-    f_037_b, f_037_s,
     f_038_b, f_038_s,
     f_039_b, f_039_s,
     f_040_0, f_040_1, f_040_2, f_040_3, f_040_4,
@@ -130,6 +132,10 @@ FEATURE_BUF = [
     f_044_b, f_044_s,
     f_045_b, f_045_s,
     f_046_b, f_046_s,
+    f_050_b, f_050_s,
+    f_052_b, f_052_s,
+    f_054_b, f_054_s,
+    f_056_b, f_056_s,
 ]
 
 
@@ -192,9 +198,7 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_032_b.KEY, f_032_b.VAL, 'red'),      (f_032_s.KEY, f_032_s.VAL, 'green'),
         (f_033_b.KEY, f_033_b.VAL, 'red'),      (f_033_s.KEY, f_033_s.VAL, 'green'),
         (f_034_b.KEY, f_034_b.VAL, 'red'),      (f_034_s.KEY, f_034_s.VAL, 'green'),
-        (f_035_b.KEY, f_035_b.VAL, 'red'),      (f_035_s.KEY, f_035_s.VAL, 'green'),
         (f_036_b.KEY, f_036_b.VAL, 'red'),      (f_036_s.KEY, f_036_s.VAL, 'green'),
-        (f_037_b.KEY, f_037_b.VAL, 'red'),      (f_037_s.KEY, f_037_s.VAL, 'green'),
         (f_038_b.KEY, f_038_b.VAL, 'red', 2),   (f_038_s.KEY, f_038_s.VAL, 'green', 2),
         (f_039_b.KEY, f_039_b.VAL, 'red', 2),   (f_039_s.KEY, f_039_s.VAL, 'green', 2),
         (f_040_0.KEY, f_040_0.VAL, 'red', 2),
@@ -208,5 +212,9 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_044_b.KEY, f_044_b.VAL, 'red'),      (f_044_s.KEY, f_044_s.VAL, 'green'),
         (f_045_b.KEY, f_045_b.VAL, 'red'),      (f_045_s.KEY, f_045_s.VAL, 'green'),
         (f_046_b.KEY, f_046_b.VAL, 'red', 2),   (f_046_s.KEY, f_046_s.VAL, 'green', 2),
+        (f_050_b.KEY, f_050_b.VAL, 'red', 2),   (f_050_s.KEY, f_050_s.VAL, 'green', 2),
+        (f_052_b.KEY, f_052_b.VAL, 'red', 2),   (f_052_s.KEY, f_052_s.VAL, 'green', 2),
+        (f_054_b.KEY, f_054_b.VAL, 'red', 2),   (f_054_s.KEY, f_054_s.VAL, 'green', 2),
+        (f_056_b.KEY, f_056_b.VAL, 'red', 2),   (f_056_s.KEY, f_056_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)

@@ -1,4 +1,5 @@
 import copy
+from datetime import datetime
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -26,6 +27,8 @@ def default_switch(size: int) -> list[bool]:
 
 
 def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
+    start_time = datetime.now()
+
     # grouping
     results = {}
     for model in models:
@@ -48,11 +51,13 @@ def shrink_models(models: list[TinyModel]) -> list[TinyModel]:
 
                 if s0 != s1 and s1.issubset(s0):
                     included = True
+                    break
 
             if not included:
                 shrank.append(candidate)
 
     shrank.sort(key=lambda m: len(m.filter.output_indices), reverse=True)
+    print(f'shrink_models: {len(models)} -> {len(shrank)} in {(datetime.now() - start_time).total_seconds()}s')
     return shrank
 
 

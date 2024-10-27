@@ -28,10 +28,13 @@ def get_train_context(stock_df: pd.DataFrame, evaluators: list[dict]) -> dict:
             if idx + forecast_step not in close:
                 continue
 
+            max_close = close.loc[idx:idx + forecast_step].max()
+            min_close = close.loc[idx:idx + forecast_step].min()
+
             context[idx][forecast_step] = {
                 margin: {
-                    'long': close[idx] * (1 + margin) < close[idx + forecast_step],
-                    'short': close[idx] * (1 - margin) > close[idx + forecast_step],
+                    'long': close[idx] * (1 + margin) < close[idx + forecast_step] and min_close > close[idx] * 0.97,
+                    'short': close[idx] * (1 - margin) > close[idx + forecast_step] and max_close < close[idx] * 1.03,
                 }
             }
 
