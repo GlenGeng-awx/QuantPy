@@ -845,7 +845,7 @@ MARGINS = {
 if __name__ == '__main__':
     import json
     from conf import *
-    from d1_1_preload import preload
+    from d1_preload import preload
     from features.f_011_b import get_incr_benchmark
     from features.f_011_s import get_decr_benchmark
 

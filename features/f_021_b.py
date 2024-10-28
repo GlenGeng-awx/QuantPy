@@ -1,32 +1,26 @@
 import pandas as pd
 from features.util import STEP
+from features.f_016_b import get_lower_shadow_threshold
 
-KEY = 'short upper shadow'
+KEY = 'short lower shadow'
 VAL = 21 * STEP
 RECALL_DAYS = 2
 
 
 def execute(stock_df: pd.DataFrame, **kwargs):
-    _open = stock_df['open']
-    close = stock_df['close']
-    high = stock_df['high']
-
-    pst = []
-    for idx in _open.index:
-        if _open[idx] < close[idx]:
-            pst.append(high[idx] / close[idx])
-
-    pst.sort()
-    if len(pst) < 10:
+    short_threshold, _ = get_lower_shadow_threshold(stock_df)
+    if short_threshold is None:
         return
 
-    threshold = pst[len(pst) // 10]
-    print(f'short upper shadow threshold: {(threshold - 1) * 100:.2f}%')
-
+    _open = stock_df['open']
+    close = stock_df['close']
+    low = stock_df['low']
     indices = []
 
     for idx in _open.index:
-        if _open[idx] < close[idx] and high[idx] < close[idx] * threshold:
+        min_price = min(_open[idx], close[idx])
+
+        if low[idx] * short_threshold > min_price:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

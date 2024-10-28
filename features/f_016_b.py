@@ -6,7 +6,7 @@ VAL = 16 * STEP
 RECALL_DAYS = 2
 
 
-def execute(stock_df: pd.DataFrame, **kwargs):
+def get_lower_shadow_threshold(stock_df: pd.DataFrame) -> (float, float):
     _open = stock_df['open']
     close = stock_df['close']
     low = stock_df['low']
@@ -18,17 +18,31 @@ def execute(stock_df: pd.DataFrame, **kwargs):
 
     pst.sort()
     if len(pst) < 10:
+        return None, None
+
+    short_threshold = pst[len(pst) // 10]
+    long_threshold = pst[-len(pst) // 10]
+
+    print(f'short lower shadow threshold: {(short_threshold - 1) * 100:.2f}%')
+    print(f'long lower shadow threshold: {(long_threshold - 1) * 100:.2f}%')
+    return short_threshold, long_threshold
+
+
+def execute(stock_df: pd.DataFrame, **kwargs):
+    _, long_threshold = get_lower_shadow_threshold(stock_df)
+    if long_threshold is None:
         return
 
-    threshold = pst[-len(pst) // 10]
-    print(f'long lower shadow threshold: {(threshold - 1) * 100:.2f}%')
+    _open = stock_df['open']
+    close = stock_df['close']
+    low = stock_df['low']
 
     indices = []
 
     for idx in _open.index:
         min_price = min(_open[idx], close[idx])
 
-        if low[idx] * threshold < min_price:
+        if low[idx] * long_threshold < min_price:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

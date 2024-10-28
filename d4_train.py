@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from gringotts.giant_model import GiantModel
-from d3_0_giant_model_proxy import get_train_confs, run_giant_models
+from d3_giant_model_proxy import get_train_confs, run_giant_models
 
 
 def train(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantModel]:
@@ -12,7 +12,7 @@ def train(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantMo
 
 if __name__ == '__main__':
     from conf import *
-    from d1_1_preload import preload
+    from d1_preload import preload
 
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)

@@ -77,7 +77,7 @@ from features import (
 
     # short/long upper/lower shadow
     f_016_b, f_016_s,       # long lower shadow / long upper shadow
-    f_021_b, f_021_s,       # incr with short upper shadow / decr with short lower shadow
+    f_021_b, f_021_s,       # short lower shadow / short upper shadow
 
     # up/down engulfing/harami
     f_027_b, f_027_s,       # up engulfing / down engulfing

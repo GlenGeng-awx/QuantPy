@@ -4,8 +4,8 @@ import plotly.graph_objects as go
 from gringotts import FORECAST_STEP
 from gringotts.giant_model import GiantModel
 
-from d1_1_preload import preload
-from d3_0_giant_model_proxy import get_predict_partial_confs, get_dev_confs, run_giant_models
+from d1_preload import preload
+from d3_giant_model_proxy import get_predict_partial_confs, get_dev_confs, run_giant_models
 
 
 def predict_partial(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantModel]:

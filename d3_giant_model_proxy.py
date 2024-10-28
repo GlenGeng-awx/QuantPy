@@ -2,12 +2,41 @@ from datetime import datetime
 import json
 import pandas as pd
 
+from util import shrink_date_str, get_idx_by_date
 from gringotts.giant_model import GiantModel
 from gringotts import (MODE, MASK, FORECAST_STEP, MARGIN, HIT_THRESHOLD, SUCCESSFUL_RATE,
                        FROM_DATE, TO_DATE, TRAIN_FROM_DATE, TRAIN_TO_DATE, PREDICT_FROM_DATE, PREDICT_TO_DATE)
 
-from d2_1_periods import get_train_periods, get_predict_periods, get_predict_partial_period
-from d2_2_margins import MARGINS
+from d2_margins import MARGINS
+
+
+# return 400/400/400 period in the format of [(from_date, to_date)]
+def get_train_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
+    to_idx = get_idx_by_date(stock_df, to_date)
+
+    periods = []
+
+    for sz in [400, 400, 400]:
+        from_idx = to_idx - sz
+        from_date = shrink_date_str(stock_df.loc[from_idx]['Date'])
+        periods.append((from_date, to_date))
+
+    return periods
+
+
+# return 400/400/400 period in the format of [(from_date, today)]
+def get_predict_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
+    train_periods = get_train_periods(stock_df, to_date)
+    today = shrink_date_str(stock_df.iloc[-1]['Date'])
+
+    predict_periods = [(train_from_date, today) for (train_from_date, _) in train_periods]
+    return predict_periods
+
+
+def get_predict_partial_period(stock_df: pd.DataFrame) -> tuple:
+    last_5day = shrink_date_str(stock_df.iloc[-5]['Date'])
+    today = shrink_date_str(stock_df.iloc[-1]['Date'])
+    return last_5day, today
 
 
 def calculate_margin(stock_name: str, forecast_step: int) -> float:
@@ -151,7 +180,7 @@ def run_giant_models(stock_name: str, stock_df: pd.DataFrame, confs: list[dict])
 
 if __name__ == '__main__':
     from conf import *
-    from d1_1_preload import preload
+    from d1_preload import preload
 
     for _stock_name in [SNAP]:
         _base_engine = preload(_stock_name)
