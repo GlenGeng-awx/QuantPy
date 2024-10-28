@@ -6,9 +6,8 @@ from util import get_indices_of_period
 from features import FEATURE_BUF
 from gringotts import MODE, MASK, FORECAST_STEP, MARGIN, HIT_THRESHOLD, FROM_DATE, TO_DATE
 from gringotts.tiny_model import TinyModel
-from gringotts.giant_model_helper import enumerate_switches, shrink_models, show_models
-from gringotts.giant_model_serde import serialize_models, deserialize_models
-from gringotts.giant_model_train import giant_model_worker
+from gringotts.giant_model_serde import serialize_models, deserialize_models, show_models
+from gringotts.giant_model_train import enumerate_switches, giant_model_worker, shrink_models
 
 
 # during train, handle multiple coarse evaluators in a multiprocess way

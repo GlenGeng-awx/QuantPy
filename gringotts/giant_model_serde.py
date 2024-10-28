@@ -1,3 +1,6 @@
+import pandas as pd
+import plotly.graph_objects as go
+
 from features import FEATURE_BUF
 from gringotts.tiny_model import TinyModel
 from gringotts import (FORECAST_STEP, MARGIN, HIT_THRESHOLD, MODE, FROM_DATE, TO_DATE,
@@ -93,3 +96,22 @@ def deserialize_models(stock_name: str, conf: dict) -> tuple[list[list[bool]], l
                 short_switches.append(switch)
 
     return long_switches, short_switches
+
+
+def show_models(stock_df: pd.DataFrame, fig: go.Figure,
+                models: list[TinyModel], color: str, size: int = 8, enable=False):
+    for model in models:
+        indices = model.filter.output_indices
+        dates = stock_df.loc[indices]['Date']
+        close = stock_df.loc[indices]['close']
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'{model.label()}',
+                x=dates,
+                y=close,
+                mode='markers',
+                marker=dict(size=size, color=color),
+                visible=None if enable else 'legendonly',
+            )
+        )
