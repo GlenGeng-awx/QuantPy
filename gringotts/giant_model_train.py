@@ -5,7 +5,7 @@ from multiprocessing import Queue
 from features import FEATURE_BUF
 from gringotts import FORECAST_STEP, MARGIN, HIT_THRESHOLD
 from gringotts.tiny_model import TinyModel
-from gringotts.giant_model_helper import default_switch
+from gringotts.giant_model_helper import default_switch, shrink_models
 
 
 def get_train_context(stock_df: pd.DataFrame, evaluators: list[dict]) -> dict:
@@ -107,9 +107,12 @@ def giant_model_worker(stock_df: pd.DataFrame, stock_name: str, conf: dict, inpu
     train_ctx = get_train_context(stock_df, conf['evaluators'])
 
     long_models, short_models = _model_searcher(stock_df, conf, worker_tag, prefix, left_len, input_indices, train_ctx)
-    queue.put((long_models, short_models))
 
     end_time = datetime.now()
     time_cost = (end_time - start_time).total_seconds()
     print(f'{worker_tag} with {prefix} finished at {end_time.time()}, cost {time_cost}s, '
           f'return {len(long_models)} long models and {len(short_models)} short models')
+
+    long_models = shrink_models(long_models)
+    short_models = shrink_models(short_models)
+    queue.put((long_models, short_models))
