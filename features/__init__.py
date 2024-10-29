@@ -71,6 +71,11 @@ from features import (
     f_054_b, f_054_s,       # high incr 3d / high decr 2d
     f_056_b, f_056_s,       # high incr 5d / high decr 3d
 
+    # baseline incr/decr 1d/3d/5d
+    f_057_b, f_057_s,       # baseline incr 1d / baseline decr 1d
+    f_058_b, f_058_s,       # baseline incr 3d / baseline decr 3d
+    f_059_b, f_059_s,       # baseline incr 5d / baseline decr 5d
+
     # short/long red/green bar
     f_017_b, f_017_s,       # long red bar / long green bar
     f_018_b, f_018_s,       # short red bar / short green bar
@@ -136,6 +141,9 @@ FEATURE_BUF = [
     f_052_b, f_052_s,
     f_054_b, f_054_s,
     f_056_b, f_056_s,
+    f_057_b, f_057_s,
+    f_058_b, f_058_s,
+    f_059_b, f_059_s,
 ]
 
 
@@ -216,5 +224,8 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_052_b.KEY, f_052_b.VAL, 'red', 2),   (f_052_s.KEY, f_052_s.VAL, 'green', 2),
         (f_054_b.KEY, f_054_b.VAL, 'red', 2),   (f_054_s.KEY, f_054_s.VAL, 'green', 2),
         (f_056_b.KEY, f_056_b.VAL, 'red', 2),   (f_056_s.KEY, f_056_s.VAL, 'green', 2),
+        (f_057_b.KEY, f_057_b.VAL, 'red', 2),   (f_057_s.KEY, f_057_s.VAL, 'green', 2),
+        (f_058_b.KEY, f_058_b.VAL, 'red', 2),   (f_058_s.KEY, f_058_s.VAL, 'green', 2),
+        (f_059_b.KEY, f_059_b.VAL, 'red', 2),   (f_059_s.KEY, f_059_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)

@@ -32,6 +32,7 @@ def hit(giant_models: list[GiantModel]) -> bool:
             hit_3d = True
 
     return (hit_10d and hit_5d) or (hit_10d and hit_3d) or (hit_5d and hit_3d)
+    # return True
 
 
 if __name__ == '__main__':
