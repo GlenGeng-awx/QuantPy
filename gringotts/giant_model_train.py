@@ -53,8 +53,8 @@ def get_train_context(stock_df: pd.DataFrame, evaluators: list[dict]) -> dict:
 
             context[idx][forecast_step] = {
                 margin: {
-                    'long': close[idx] * (1 + margin) < close[idx + forecast_step] and min_close > close[idx] * 0.97,
-                    'short': close[idx] * (1 - margin) > close[idx + forecast_step] and max_close < close[idx] * 1.03,
+                    'long': close[idx] * (1 + margin) < close[idx + forecast_step] and min_close > close[idx] * 0.98,
+                    'short': close[idx] * (1 - margin) > close[idx + forecast_step] and max_close < close[idx] * 1.02,
                 }
             }
 
