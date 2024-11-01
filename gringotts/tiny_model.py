@@ -251,15 +251,3 @@ class TinyModel:
         filter_label = f'{",".join(self.filter.abbr())}'
         eval_names = [evaluator.name() for evaluator in self.evaluators if evaluator.name()]
         return '<br>'.join([filter_label] + eval_names)
-
-
-if __name__ == '__main__':
-    for j in range(len(FEATURE_BUF)):
-        print(f'{j}\t{FEATURE_BUF[j].KEY:40}\t{FEATURE_BUF[j].RECALL_DAYS}d')
-
-    abbrs = [
-        [10, 29],
-    ]
-
-    for abbr in abbrs:
-        print(abbr, ' / '.join([FEATURE_BUF[i].KEY for i in abbr]))
