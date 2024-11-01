@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 from features.f_017_b import get_red_bar_threshold
 
 KEY = 'short red bar'

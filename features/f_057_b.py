@@ -1,7 +1,7 @@
 import pandas as pd
 from util import load_data, get_idx_by_date, shrink_date_str
 from conf import IXIC
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'baseline incr 1d'
 VAL = 57 * STEP

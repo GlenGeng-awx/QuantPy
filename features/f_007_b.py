@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.rsi import RSI_14
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'rsi above 70'
 VAL = 7 * STEP

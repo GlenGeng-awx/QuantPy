@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 from features.f_020_b import close_incr_n_days
 
 KEY = 'close incr 5d'

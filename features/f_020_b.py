@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'close incr 3d'
 VAL = 20 * STEP

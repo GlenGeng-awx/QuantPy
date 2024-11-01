@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_017_s import get_green_bar_threshold
 
 KEY = 'short green bar'

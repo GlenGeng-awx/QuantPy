@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'up engulfing'
 VAL = 27 * STEP

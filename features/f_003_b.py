@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'yesterday is local min'
 VAL = 3 * STEP

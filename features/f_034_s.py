@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_019_s import vol_decr_n_days
 
 KEY = 'vol decr 5d'

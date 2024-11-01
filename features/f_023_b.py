@@ -1,6 +1,6 @@
 import pandas as pd
 from technical.sr_level import SR_LEVEL, SIZE
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'up away sr level'
 VAL = 23 * STEP

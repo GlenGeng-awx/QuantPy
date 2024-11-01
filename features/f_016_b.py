@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'long lower shadow'
 VAL = 16 * STEP

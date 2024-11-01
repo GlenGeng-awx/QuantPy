@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_5
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_025_s import up_touch_ma
 
 KEY = 'up touch ma5'

@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.trend import MA_20_TREND
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'trend switch down'
 VAL = 4 * STEP + DELTA

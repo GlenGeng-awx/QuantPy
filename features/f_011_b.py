@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'incr top 10% last 3d'
 VAL = 11 * STEP

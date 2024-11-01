@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_20
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'down thru ma20'
 VAL = 1 * STEP + DELTA

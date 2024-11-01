@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_042_s import price_decr_n_days
 
 KEY = 'high decr 3d'

@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_016_s import get_upper_shadow_threshold
 
 KEY = 'short upper shadow'

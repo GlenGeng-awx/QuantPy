@@ -1,6 +1,6 @@
 import pandas as pd
 from technical.sr_level import SR_LEVEL, SIZE
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'down thru sr level'
 VAL = 24 * STEP + DELTA

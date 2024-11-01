@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'down harami'
 VAL = 28 * STEP + DELTA

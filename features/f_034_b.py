@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 from features.f_019_b import vol_incr_n_days
 
 KEY = 'vol incr 5d'

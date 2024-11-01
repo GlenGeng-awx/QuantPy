@@ -1,6 +1,6 @@
 import pandas as pd
 from technical.min_max import LOCAL_MIN_PRICE_2ND
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'down thru s level'
 VAL = 9 * STEP + DELTA

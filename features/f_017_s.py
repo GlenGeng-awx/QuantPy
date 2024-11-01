@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'long green bar'
 VAL = 17 * STEP + DELTA

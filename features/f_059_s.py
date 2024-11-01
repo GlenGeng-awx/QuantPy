@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_057_s import baseline_decr_n_days
 
 KEY = 'baseline decr 5d'

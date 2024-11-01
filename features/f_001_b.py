@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_20
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'up thru ma20'
 VAL = 1 * STEP

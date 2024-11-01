@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_60
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_001_s import down_thru_ma
 
 KEY = 'down thru ma60'

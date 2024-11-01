@@ -25,6 +25,8 @@ from features import (
     # vol
     f_005_b, f_005_s,           # extreme high vol / extreme low vol
     f_014_0, f_014_1, f_014_2,  # high vol / normal vol / low vol
+    f_060_b, f_060_s,           # vol is min of last  5d / vol is max of last  5d
+    f_061_b, f_061_s,           # vol is min of last 10d / vol is max of last 10d
 
     # red/green bar
     f_038_b, f_038_s,       # real red bar / real green bar
@@ -144,6 +146,8 @@ FEATURE_BUF = [
     f_057_b, f_057_s,
     f_058_b, f_058_s,
     f_059_b, f_059_s,
+    f_060_b, f_060_s,
+    f_061_b, f_061_s,
 ]
 
 
@@ -227,5 +231,19 @@ def plot_feature(stock_df: pd.DataFrame, fig: go.Figure):
         (f_057_b.KEY, f_057_b.VAL, 'red', 2),   (f_057_s.KEY, f_057_s.VAL, 'green', 2),
         (f_058_b.KEY, f_058_b.VAL, 'red', 2),   (f_058_s.KEY, f_058_s.VAL, 'green', 2),
         (f_059_b.KEY, f_059_b.VAL, 'red', 2),   (f_059_s.KEY, f_059_s.VAL, 'green', 2),
+        (f_060_b.KEY, f_060_b.VAL, 'red', 2),   (f_060_s.KEY, f_060_s.VAL, 'green', 2),
+        (f_061_b.KEY, f_061_b.VAL, 'red', 2),   (f_061_s.KEY, f_061_s.VAL, 'green', 2),
     ]:
         _build_graph(stock_df, fig, *params)
+
+
+if __name__ == '__main__':
+    for i in range(len(FEATURE_BUF)):
+        print(f'{i:<10}\t{FEATURE_BUF[i].KEY:40}\t{FEATURE_BUF[i].RECALL_DAYS}d')
+
+    abbrs = [
+        [10, 29],
+    ]
+
+    for abbr in abbrs:
+        print(abbr, ' / '.join([FEATURE_BUF[i].KEY for i in abbr]))

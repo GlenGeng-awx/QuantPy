@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'low decr 1d'
 VAL = 42 * STEP + DELTA

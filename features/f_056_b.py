@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 from features.f_042_b import price_incr_n_days
 
 KEY = 'high incr 5d'

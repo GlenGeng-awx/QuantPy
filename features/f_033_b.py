@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP
+from features.common import STEP
 from features.f_011_b import incr_top_10pst_in_last_n_days
 
 KEY = 'incr top 10% last 5d'

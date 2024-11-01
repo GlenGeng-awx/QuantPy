@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 from features.f_023_b import get_below_sr_level
 
 KEY = 'down to sr level'

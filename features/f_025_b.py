@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_20
-from features.util import STEP
+from features.common import STEP
 
 KEY = 'down touch ma20'
 VAL = 25 * STEP
@@ -8,6 +8,7 @@ RECALL_DAYS = 2
 
 
 def down_touch_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):
+    _open = stock_df['open']
     close = stock_df['close']
     low = stock_df['low']
     ma = stock_df[ma_key]
@@ -15,7 +16,7 @@ def down_touch_ma(stock_df: pd.DataFrame, ma_key: str, output_key: str):
     indices = []
 
     for idx in close.index:
-        if close[idx] > ma[idx] and ma[idx] * 1.005 > low[idx]:
+        if _open[idx] > ma[idx] and close[idx] > ma[idx] and ma[idx] * 1.005 > low[idx]:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

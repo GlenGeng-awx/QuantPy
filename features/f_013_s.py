@@ -1,5 +1,5 @@
 import pandas as pd
-from features.util import STEP, DELTA
+from features.common import STEP, DELTA
 
 KEY = 'yesterday max of last 20d'
 VAL = 13 * STEP + DELTA
