@@ -5,7 +5,7 @@ from gringotts import FORECAST_STEP
 from gringotts.giant_model import GiantModel
 
 from d1_preload import preload
-from d3_giant_model_proxy import get_predict_partial_confs, get_dev_confs, run_giant_models
+from gringotts.giant_model_proxy import get_predict_partial_confs, get_dev_confs, run_giant_models
 
 
 def predict_partial(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantModel]:
@@ -31,12 +31,16 @@ def hit(giant_models: list[GiantModel]) -> bool:
         if giant_model.conf[FORECAST_STEP] == 3:
             hit_3d = True
 
-    return (hit_10d and hit_5d) or (hit_10d and hit_3d) or (hit_5d and hit_3d)
-    # return True
+    # return (hit_10d and hit_5d) or (hit_10d and hit_3d) or (hit_5d and hit_3d)
+    return True
 
 
 if __name__ == '__main__':
     from conf import *
+
+    import os
+    # Set the working directory to QuantPy
+    os.chdir('/Users/glen.geng/workspace/QuantPy')
 
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)

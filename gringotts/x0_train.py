@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from gringotts.giant_model import GiantModel
-from d3_giant_model_proxy import get_train_confs, run_giant_models
+from gringotts.giant_model_proxy import get_train_confs, run_giant_models
 
 
 def train(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantModel]:
@@ -13,6 +13,10 @@ def train(stock_name: str, stock_df: pd.DataFrame, to_date: str) -> list[GiantMo
 if __name__ == '__main__':
     from conf import *
     from d1_preload import preload
+
+    import os
+    # Set the working directory to QuantPy
+    os.chdir('/Users/glen.geng/workspace/QuantPy')
 
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)

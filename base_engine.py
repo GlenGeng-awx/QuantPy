@@ -91,9 +91,9 @@ class BaseEngine:
             height=500 + 250 * (rows - 1)
         )
 
-        # Apply xaxis_gridcolor to all rows
-        for i in range(1, rows + 1):
-            self.fig.update_xaxes(gridcolor='gray', row=i, col=1)
+        # # Apply xaxis_gridcolor to all rows
+        # for i in range(1, rows + 1):
+        #     self.fig.update_xaxes(gridcolor='gray', row=i, col=1)
 
     def build_graph(self,
                     enable_candlestick=False,

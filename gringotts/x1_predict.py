@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from d1_preload import preload
-from d3_giant_model_proxy import get_predict_confs, run_giant_models
+from gringotts.giant_model_proxy import get_predict_confs, run_giant_models
 
 
 def predict(stock_name: str, stock_df: pd.DataFrame, to_date: str):
@@ -12,6 +12,10 @@ def predict(stock_name: str, stock_df: pd.DataFrame, to_date: str):
 
 if __name__ == '__main__':
     from conf import *
+
+    import os
+    # Set the working directory to QuantPy
+    os.chdir('/Users/glen.geng/workspace/QuantPy')
 
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)

@@ -34,8 +34,8 @@ def get_predict_periods(stock_df: pd.DataFrame, to_date: str) -> list[tuple]:
 
 
 def get_predict_partial_period(stock_df: pd.DataFrame) -> tuple:
-    last_5day = shrink_date_str(stock_df.iloc[-5]['Date'])
-    today = shrink_date_str(stock_df.iloc[-1]['Date'])
+    last_5day = shrink_date_str(stock_df.iloc[-20]['Date'])
+    today = shrink_date_str(stock_df.iloc[-5]['Date'])
     return last_5day, today
 
 
