@@ -4,13 +4,13 @@ from d1_preload import preload
 
 KEYS = [
     'up thru ma60',                     'down thru ma60',
-    'up thru sr level',                 'down thru sr level',
-
-    'yesterday min of last 120d',       'yesterday max of last 120d',
     'macd golden cross',                'macd death cross',
 
     'incr top 10% today',               'decr top 10% today',
     'incr top 10% last 3d',             'decr top 10% last 3d',
+
+    'up thru sr level',                 'down thru sr level',
+    'yesterday min of last 120d',       'yesterday max of last 120d',
 
     'long red bar',                     'long green bar',
     'up engulfing',                     'down engulfing',

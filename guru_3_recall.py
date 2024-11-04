@@ -50,7 +50,7 @@ if __name__ == '__main__':
     procs = []
 
     for _stock_name in ALL:
-        proc = Process(target=recall, args=(_stock_name, GURU_REPO[COIN]))
+        proc = Process(target=recall, args=(_stock_name, GURU_REPO[SS_000300]))
         procs.append(proc)
         proc.start()
 

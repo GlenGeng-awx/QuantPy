@@ -30,10 +30,10 @@ if __name__ == '__main__':
     import json
     from conf import *
 
-    stock_name = COIN
+    stock_name = SS_000300
     to_date = '2024-11-01'
-    recall_days = 2
-    features_per_day = 10
+    recall_days = 3
+    features_per_day = 15
 
     stats = extract(stock_name, to_date, recall_days, features_per_day)
     print(json.dumps(stats, indent=4))
