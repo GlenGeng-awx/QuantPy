@@ -1,2 +1,0 @@
-STEP = 5
-DELTA = 1

@@ -31,9 +31,10 @@ def preload(stock_name: str) -> BaseEngine:
 
     stock_df, fig = base_engine.stock_df, base_engine.fig
 
-    features.calculate_feature(stock_df)
+    stock_df = features.calculate_feature(stock_df)
     features.plot_feature(stock_df, fig)
 
+    base_engine.stock_df = stock_df
     return base_engine
 
 

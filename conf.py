@@ -5,9 +5,24 @@ GC_F = "GC=F"
 
 GOOG = "GOOG"
 AMZN = "AMZN"
-PYPL = "PYPL"
+PYPL = "PYPL"           # PayPal
 AAPL = "AAPL"
 NFLX = "NFLX"
+MSFT= "MSFT"            # Microsoft
+ASML = "ASML"
+WMT = "WMT"             # Walmart
+JPM = "JPM"             # JPMorgan
+XOM = "XOM"             # Exxon Mobil
+NVO = "NVO"             # Novo Nordisk
+ORCL = "ORCL"           # Oracle
+MA = "MA"               # Mastercard
+PG = "PG"               # Procter & Gamble
+JNJ = "JNJ"             # Johnson & Johnson
+LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
+KO = "KO"               # Coca-Cola
+BAC = "BAC"             # Bank of America
+CVX = "CVX"             # Chevron
+DELl = "DELL"           # Dell Technologies
 
 TSLA = "TSLA"
 RIVN = "RIVN"
@@ -25,7 +40,7 @@ SNOW = "SNOW"
 
 NVDA = "NVDA"
 AMD = "AMD"
-TSM = "TSM"
+TSM = "TSM"             # Taiwan Semiconductor Manufacturing Company
 BA = "BA"
 
 ZM = "ZM"
@@ -33,8 +48,8 @@ SNAP = "SNAP"
 EBAY = "EBAY"
 IQ = "IQ"
 
-HK_0700 = "0700.HK"   # Tencent
-HK_1211 = "1211.HK"   # BYD
+HK_0700 = "0700.HK"     # Tencent
+HK_1211 = "1211.HK"     # BYD
 BABA = "BABA"
 JD = "JD"
 BEKE = "BEKE"
@@ -44,30 +59,30 @@ EDU = "EDU"
 CPNG = "CPNG"
 FUTU = "FUTU"
 
-TTD = "TTD"
+TTD = "TTD"             # The Trade Desk
 NIO = "NIO"
 YY = "YY"
-MCD = "MCD"
-PFE = "PFE"
+MCD = "MCD"             # McDonald's
+PFE = "PFE"             # Pfizer
 GILD = "GILD"
 TCOM = "TCOM"
-MRK = "MRK"
+MRK = "MRK"             # Merck & Co.
 ADBE = "ADBE"
 DIS = "DIS"
-TME = "TME"
-GS = "GS"
+TME = "TME"             # Tencent Music Entertainment Group
+GS = "GS"               # Goldman Sachs
 SEA = "SE"
 ERIC = "ERIC"
 UBER = "UBER"
 INTC = "INTC"
-MS = "MS"
+MS = "MS"               # Morgan Stanley
 OKTA = "OKTA"
 CFLT = "CFLT"
-QCOM = "QCOM"
+QCOM = "QCOM"           # Qualcomm
 ETSY = "ETSY"
 SHOP = "SHOP"
 GTLB = "GTLB"
-PINS = "PINS"
+PINS = "PINS"           # Pinterest
 SQ = "SQ"
 
 INDEX_NAMES = [
@@ -93,6 +108,21 @@ STOCK_NAMES_TIER_0 = [
     RIVN,
     CPNG,
     ADBE,
+    MSFT,
+    ASML,
+    WMT,
+    JPM,
+    XOM,
+    NVO,
+    ORCL,
+    MA,
+    PG,
+    JNJ,
+    LVMUY,
+    KO,
+    BAC,
+    CVX,
+    DELl,
 ]
 
 STOCK_NAMES_TIER_1 = [
