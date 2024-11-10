@@ -16,22 +16,22 @@ from features import (
     h_01, h_02,             # yesterday is local min / yesterday is local max
 
     # yesterday is min/max of last 5d/10d/20d/60d/120d
-    h_11, h_12,             # yesterday is min of last   5d / yesterday is max of last   5d
-    h_13, h_14,             # yesterday is min of last  10d / yesterday is max of last  10d
-    h_15, h_16,             # yesterday is min of last  20d / yesterday is max of last  20d
-    h_17, h_18,             # yesterday is min of last  60d / yesterday is max of last  60d
-    h_19, h_20,             # yesterday is min of last 120d / yesterday is max of last 120d
+    h_11, h_12,             # yesterday is min of last 5d   / yesterday max of last 5d
+    h_13, h_14,             # yesterday is min of last 10d  / yesterday max of last 10d
+    h_15, h_16,             # yesterday is min of last 20d  / yesterday max of last 20d
+    h_17, h_18,             # yesterday is min of last 60d  / yesterday max of last 60d
+    h_19, h_20,             # yesterday is min of last 120d / yesterday max of last 120d
 
     # vol
-    i_01, i_02,             # extreme high vol / extreme low vol
+    i_01, i_02,             # extreme high vol      / extreme low vol
     i_03, i_04, i_05,       # high vol / normal vol / low vol
-    i_06, i_07,             # vol is min of last  5d / vol is max of last  5d
-    i_08, i_09,             # vol is min of last 10d / vol is max of last 10d
+    i_06, i_07,             # vol min of last 5d    / vol max of last 5d
+    i_08, i_09,             # vol min of last 10d   / vol max of last 10d
 
     # statistics
-    j_01, j_02,             # trend switch up / trend switch down
+    j_01, j_02,             # trend switch up   / trend switch down
     j_03, j_04,             # bband pst gt 0.85 / bband pst lt 0.15
-    j_05, j_06,             # rsi above 70 / rsi below 30
+    j_05, j_06,             # rsi above 70      / rsi below 30
     j_07, j_08,             # macd golden cross / macd death cross
 
     # s level / r level
@@ -39,9 +39,9 @@ from features import (
     k_03,                   # up thru r level, retrace, bounds back
 
     # up/down to/thru/away sr level
-    k_11, k_12,             # up to   sr level / down away sr level
+    k_11, k_12,             # up to sr level   / down away sr level
     k_13, k_14,             # up thru sr level / down thru sr level
-    k_15, k_16,             # up away sr level / down to   sr level
+    k_15, k_16,             # up away sr level / down to sr level
 
     # incr/decr top 10pst last 1d/3d/5d/10d
     k_21, k_22,             # incr top 10% today    / decr top 10% today
@@ -96,7 +96,7 @@ from features import (
 )
 
 FEATURE_BUF = [
-    m_11, m_12, m_13, m_14,
+    m_11, m_12, m_13, m_14, m_01, m_02, m_03, m_04,
     m_21, m_22, m_23, m_24,
     m_31, m_32, m_33, m_34, m_35, m_36,
     g_01, g_02, g_03, g_04, g_05, g_06,
@@ -112,7 +112,6 @@ FEATURE_BUF = [
     l_21, l_22, l_23, l_24, l_25, l_26,
     l_31, l_32, l_33, l_34, l_35, l_36,
     l_41, l_42, l_43, l_44, l_45, l_46,
-    m_01, m_02, m_03, m_04,
     w_01, w_02, w_03, w_04, w_05,
 ]
 

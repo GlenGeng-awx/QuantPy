@@ -52,13 +52,13 @@ class MinMax:
         self._build_graph(fig, LOCAL_MAX_PRICE_1ST, 'red', 3)
         self._build_graph(fig, LOCAL_MIN_PRICE_1ST, 'green', 3)
 
-        self._build_graph(fig, LOCAL_MAX_PRICE_2ND, 'red', 3,
-                          True if enable and interval == '1d' else False)
-        self._build_graph(fig, LOCAL_MIN_PRICE_2ND, 'green', 3,
-                          True if enable and interval == '1d' else False)
+        self._build_graph(fig, LOCAL_MAX_PRICE_2ND, 'red', 3)
+        self._build_graph(fig, LOCAL_MIN_PRICE_2ND, 'green', 3)
 
-        self._build_graph(fig, LOCAL_MAX_PRICE_3RD, 'red', 4)
-        self._build_graph(fig, LOCAL_MIN_PRICE_3RD, 'green', 4)
+        self._build_graph(fig, LOCAL_MAX_PRICE_3RD, 'red', 6,
+                          True if enable and interval == '1d' else False)
+        self._build_graph(fig, LOCAL_MIN_PRICE_3RD, 'green', 6,
+                          True if enable and interval == '1d' else False)
 
         self._build_graph(fig, LOCAL_MAX_PRICE_4TH, 'red', 4,
                           True if enable and interval == '1h' else False)

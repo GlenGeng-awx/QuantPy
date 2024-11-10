@@ -16,12 +16,12 @@ def preload(stock_name: str) -> BaseEngine:
     base_engine = BaseEngine(stock_name, *_default_period())
 
     base_engine.build_graph(
-        enable_candlestick=True,
-        # enable_wave=True,
-        enable_close_price=False,
+        # enable_candlestick=True,
+        enable_wave=True,
         enable_min_max=True,
         enable_sr=True,
-        enable_line=True,
+        enable_line=False,
+        enable_close_price=False,
         enable_volume_reg=(True, 3),
         enable_bband_pst=(True, 4),
         enable_rsi=(True, 5),

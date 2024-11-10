@@ -61,7 +61,8 @@ class Wave:
                 x=self.wave_1st[1],
                 y=self.wave_1st[2],
                 line=dict(width=1, color='black'),
-                visible=None if enable else 'legendonly',
+                # visible=None if enable else 'legendonly',
+                visible='legendonly',
             )
         )
 
@@ -81,7 +82,8 @@ class Wave:
                 x=self.wave_3rd[1],
                 y=self.wave_3rd[2],
                 line=dict(width=1, color='black'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
+                # visible='legendonly',
             )
         )
 
