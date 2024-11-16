@@ -1,11 +1,14 @@
 import pandas as pd
 
 
-def eval_short(*args) -> (int, float):
-    return fix_days(*args)
+def eval_short(*args) -> list[str]:
+    return [
+        fix_days(*args),
+        fix_days_with_hard_loss(*args),
+    ]
 
 
-def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> (int, float):
+def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
     sz = 15
     total_pnl = 0
     hit_num = 0
@@ -13,18 +16,18 @@ def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> (int, float):
     for idx in indices:
         if idx + sz in stock_df.index:
             pnl = 1 - stock_df.loc[idx + sz]['close'] / stock_df.loc[idx]['close']
-            print(f'{name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
+            print(f'short -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
                   f'{sz}d, pnl: {pnl:.2%}')
 
             total_pnl += pnl
             hit_num += 1
 
-    return hit_num, total_pnl
+    return f'{hit_num}, {total_pnl:.2%}'
 
 
-def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> (int, float):
+def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> str:
     sz = 15
-    hard_loss = 0.10
+    hard_loss = 0.01
 
     total_pnl = 0
     hit_num = 0
@@ -40,14 +43,14 @@ def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) ->
 
             if fail_fast is not None:
                 pnl = 1 - stock_df.loc[idx + fail_fast]['close'] / stock_df.loc[idx]['close']
-                print(f'{name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + fail_fast]["Date"]}, '
+                print(f'short -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + fail_fast]["Date"]}, '
                       f'{fail_fast}d, pnl: {pnl:.2%}')
             else:
                 pnl = 1 - stock_df.loc[idx + sz]['close'] / stock_df.loc[idx]['close']
-                print(f'{name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
+                print(f'short -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
                       f'{sz}d, pnl: {pnl:.2%}')
 
             total_pnl += pnl
             hit_num += 1
 
-    return hit_num, total_pnl
+    return f'{hit_num}, {total_pnl:.2%}'
