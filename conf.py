@@ -85,36 +85,40 @@ GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
 SQ = "SQ"
 
-INDEX_NAMES = [
+NASDAQ_GIANTS = [
     IXIC,
-    SS_000300,
-    SS_000001,
-    # GC_F,
-]
-
-STOCK_NAMES_TIER_0 = [
     GOOG,
     AMZN,
-    PYPL,
     AAPL,
+    META,
+    MSFT,
+    NVDA,
     NFLX,
+    ORCL,
+    TSLA,
+    PYPL,
+    GS,
+    MS,
+]
+
+NASDAQ_SEMI_CONDUCT = [
+    ASML,
     AMD,
-    ZM,
     TSM,
+    INTC,
+]
+
+NASDAQ_OTHER = [
+    ZM,
     BA,
     SQ,
     PINS,
-    IQ,
     RIVN,
-    CPNG,
     ADBE,
-    MSFT,
-    ASML,
     WMT,
     JPM,
     XOM,
     NVO,
-    ORCL,
     MA,
     PG,
     JNJ,
@@ -123,46 +127,23 @@ STOCK_NAMES_TIER_0 = [
     BAC,
     CVX,
     DELl,
-]
-
-STOCK_NAMES_TIER_1 = [
-    NIO,
-    TSLA,
     PLTR,
     MRNA,
     PFE,
     COIN,
-    META,
-    PDD,
     EBAY,
-    LI,
-    BILI,
-    FUTU,
-    BABA,
-    HK_0700,
-    NVDA,
-    XPEV,
-    EDU,
     SNOW,
-    MNSO,
     BNTX,
-    JD,
-    BEKE,
     SNAP,
     TTD,
-    YY,
     MCD,
     GILD,
     TCOM,
     MRK,
     DIS,
-    TME,
-    GS,
     SEA,
     ERIC,
     UBER,
-    INTC,
-    MS,
     OKTA,
     CFLT,
     QCOM,
@@ -171,6 +152,29 @@ STOCK_NAMES_TIER_1 = [
     GTLB,
 ]
 
-ALL = INDEX_NAMES + STOCK_NAMES_TIER_0 + STOCK_NAMES_TIER_1
+NASDAQ_CN = [
+    SS_000300,
+    SS_000001,
+    IQ,
+    BILI,
+    CPNG,
+    NIO,
+    XPEV,
+    LI,
+    PDD,
+    BABA,
+    JD,
+    FUTU,
+    MNSO,
+    BEKE,
+    EDU,
+    YY,
+    TME,
+]
 
-BIG_DATE = '2024-09-27'
+HK = [
+    HK_0700,
+    HK_1211,
+]
+
+ALL = HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS

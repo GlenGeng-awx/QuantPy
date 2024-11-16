@@ -21,7 +21,7 @@ def probe(stock_name):
 if __name__ == '__main__':
     procs = []
 
-    for _stock_name in ALL:
+    for _stock_name in NASDAQ_GIANTS:
         proc = Process(target=probe, args=(_stock_name,))
         procs.append(proc)
         proc.start()
