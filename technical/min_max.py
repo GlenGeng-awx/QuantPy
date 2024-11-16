@@ -60,7 +60,7 @@ class MinMax:
         self._build_graph(fig, LOCAL_MIN_PRICE_3RD, 'green', 6,
                           True if enable and interval == '1d' else False)
 
-        self._build_graph(fig, LOCAL_MAX_PRICE_4TH, 'red', 4,
-                          True if enable and interval == '1h' else False)
-        self._build_graph(fig, LOCAL_MIN_PRICE_4TH, 'green', 4,
-                          True if enable and interval == '1h' else False)
+        self._build_graph(fig, LOCAL_MAX_PRICE_4TH, 'red', 8,
+                          True if enable and interval == '1d' else False)
+        self._build_graph(fig, LOCAL_MIN_PRICE_4TH, 'green', 8,
+                          True if enable and interval == '1d' else False)

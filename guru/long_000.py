@@ -2,7 +2,7 @@ import pandas as pd
 from technical.min_max import LOCAL_MIN_PRICE_3RD
 from technical.sr_level import SR_LEVEL_MIN
 
-FROM = 35  # 27, 30, 35
+FROM = 50  # 27, 30, 35
 TO = 20
 
 

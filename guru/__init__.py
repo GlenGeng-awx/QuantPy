@@ -12,11 +12,12 @@ from guru import (
     long_003, short_003,        # long lower shadow     / long upper shadow
     long_004, short_004,        # up thru ma5           / down thru ma5
     long_005, short_005,        # up thru ma20          / down thru ma20
+    long_006, short_006,        # up thru ma60          / down thru ma60
 )
 
 STRATEGY = [
-    long_001, long_002, long_003, long_004, long_005,
-    short_001, short_002, short_003, short_004, short_005,
+    long_001, long_002, long_003, long_004, long_005, long_006,
+    short_001, short_002, short_003, short_004, short_005, short_006,
 ]
 
 
