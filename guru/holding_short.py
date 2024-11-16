@@ -27,7 +27,7 @@ def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
 
 def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> str:
     sz = 15
-    hard_loss = 0.01
+    hard_loss = 0.03
 
     total_pnl = 0
     hit_num = 0
@@ -36,7 +36,7 @@ def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) ->
         if idx + sz in stock_df.index:
             fail_fast = None
 
-            for i in range(1, sz):
+            for i in range(2, sz):
                 if stock_df.loc[idx + i]['close'] >= stock_df.loc[idx]['close'] * (1 + hard_loss):
                     fail_fast = i
                     break
