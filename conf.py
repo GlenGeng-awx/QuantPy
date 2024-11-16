@@ -22,7 +22,7 @@ LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
 KO = "KO"               # Coca-Cola
 BAC = "BAC"             # Bank of America
 CVX = "CVX"             # Chevron
-DELl = "DELL"           # Dell Technologies
+DELL = "DELL"           # Dell Technologies
 
 TSLA = "TSLA"
 RIVN = "RIVN"
@@ -99,6 +99,7 @@ NASDAQ_GIANTS = [
     PYPL,
     GS,
     MS,
+    JPM,
 ]
 
 NASDAQ_SEMI_CONDUCT = [
@@ -106,6 +107,16 @@ NASDAQ_SEMI_CONDUCT = [
     AMD,
     TSM,
     INTC,
+    QCOM,
+]
+
+NASDAQ_MEDICAL = [
+    NVO,
+    JNJ,
+    MRNA,
+    PFE,
+    BNTX,
+    GILD,
 ]
 
 NASDAQ_OTHER = [
@@ -116,28 +127,21 @@ NASDAQ_OTHER = [
     RIVN,
     ADBE,
     WMT,
-    JPM,
     XOM,
-    NVO,
     MA,
     PG,
-    JNJ,
     LVMUY,
     KO,
     BAC,
     CVX,
-    DELl,
+    DELL,
     PLTR,
-    MRNA,
-    PFE,
     COIN,
     EBAY,
     SNOW,
-    BNTX,
     SNAP,
     TTD,
     MCD,
-    GILD,
     TCOM,
     MRK,
     DIS,
@@ -146,7 +150,6 @@ NASDAQ_OTHER = [
     UBER,
     OKTA,
     CFLT,
-    QCOM,
     ETSY,
     SHOP,
     GTLB,
@@ -177,4 +180,4 @@ HK = [
     HK_1211,
 ]
 
-ALL = HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS
+ALL = HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS + NASDAQ_MEDICAL

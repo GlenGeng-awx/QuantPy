@@ -9,7 +9,7 @@ def eval_long(*args) -> list[str]:
 
 
 def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
-    sz = 15
+    sz = 20
     total_pnl = 0
     hit_num = 0
 
@@ -26,7 +26,7 @@ def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
 
 
 def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> str:
-    sz = 15
+    sz = 20
     hard_loss = 0.03
 
     total_pnl = 0
