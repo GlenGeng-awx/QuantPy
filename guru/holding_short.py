@@ -1,14 +1,14 @@
 import pandas as pd
 
 
-def eval_short(*args) -> list[str]:
+def eval_short(*args) -> list[(str, int, float)]:
     return [
         fix_days(*args),
         fix_days_with_hard_loss(*args),
     ]
 
 
-def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
+def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> (str, int, float):
     sz = 20
     total_pnl = 0
     hit_num = 0
@@ -22,10 +22,10 @@ def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> str:
             total_pnl += pnl
             hit_num += 1
 
-    return f'{hit_num}, {total_pnl:.2%}'
+    return f'{hit_num}, {total_pnl:.2%}, fix', hit_num, total_pnl
 
 
-def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> str:
+def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> (str, int, float):
     sz = 20
     hard_loss = 0.03
 
@@ -53,4 +53,4 @@ def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) ->
             total_pnl += pnl
             hit_num += 1
 
-    return f'{hit_num}, {total_pnl:.2%}'
+    return f'{hit_num}, {total_pnl:.2%}, hard', hit_num, total_pnl

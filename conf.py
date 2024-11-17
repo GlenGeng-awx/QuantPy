@@ -65,7 +65,7 @@ YY = "YY"
 MCD = "MCD"             # McDonald's
 PFE = "PFE"             # Pfizer
 GILD = "GILD"
-TCOM = "TCOM"
+TCOM = "TCOM"           # Trip.com
 MRK = "MRK"             # Merck & Co.
 ADBE = "ADBE"
 DIS = "DIS"
@@ -142,7 +142,6 @@ NASDAQ_OTHER = [
     SNAP,
     TTD,
     MCD,
-    TCOM,
     MRK,
     DIS,
     SEA,
@@ -173,11 +172,12 @@ NASDAQ_CN = [
     EDU,
     YY,
     TME,
+    TCOM,
 ]
 
 HK = [
     HK_0700,
-    HK_1211,
+    # HK_1211,
 ]
 
 ALL = HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS + NASDAQ_MEDICAL

@@ -10,14 +10,14 @@ from guru import (
     long_001, short_001,        # long green bar        / long red bar
     long_002, short_002,        # decr top 10% last 10d / incr top 10% last 10d
     long_003, short_003,        # long lower shadow     / long upper shadow
-    # long_004, short_004,        # up thru ma5           / down thru ma5
+    long_004, short_004,        # up thru ma5           / down thru ma5
     long_005, short_005,        # up thru ma20          / down thru ma20
     long_006, short_006,        # up thru ma60          / down thru ma60
 )
 
 STRATEGY = [
-    long_001, long_002, long_003, long_005, long_006,
-    short_001, short_002, short_003, short_005, short_006,
+    long_001, long_002, long_003, long_004, long_005, long_006,
+    short_001, short_002, short_003, short_004, short_005, short_006,
 ]
 
 
@@ -38,11 +38,21 @@ def execute_strategy(stock_df: pd.DataFrame, from_idx, to_idx, strategy) -> tupl
 
 def get_pnl_tag(stock_df: pd.DataFrame, indices, strategy) -> str:
     if strategy.TYPE == 'long':
-        return '<br>'.join(eval_long(stock_df, indices, strategy.NAME))
+        results = eval_long(stock_df, indices, strategy.NAME)
+
+        if all([total_pnl / hit_num < 0.1 for (_, hit_num, total_pnl) in results]):
+            return ''
+        return '<br>'.join(tag for (tag, _, _) in results)
+
     elif strategy.TYPE == 'short':
-        return '<br>'.join(eval_short(stock_df, indices, strategy.NAME))
+        results = eval_short(stock_df, indices, strategy.NAME)
+
+        if all([total_pnl / hit_num < 0.1 for (_, hit_num, total_pnl) in results]):
+            return ''
+        return '<br>'.join(tag for (tag, _, _) in results)
+
     else:
-        return ''
+        raise ValueError(f'Unknown strategy type: {strategy.TYPE}')
 
 
 def plot_strategy(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, strategy) -> bool:
@@ -51,6 +61,8 @@ def plot_strategy(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, stra
         return False
 
     pnl_tag = get_pnl_tag(stock_df, indices, strategy)
+    if pnl_tag == '':
+        return False
 
     fig.add_trace(
         go.Scatter(
