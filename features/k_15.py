@@ -13,7 +13,7 @@ def get_below_sr_level(stock_df: pd.DataFrame, idx):
     df1 = stock_df[condition]
 
     # sr level before idx - SIZE
-    df2 = df1.loc[:idx - SIZE]
+    df2 = df1.loc[idx - 180:idx - SIZE]
 
     if df2.size == 0:
         return None
