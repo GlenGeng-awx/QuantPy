@@ -16,13 +16,13 @@ def fix_days(stock_df: pd.DataFrame, indices: list, name: str) -> (str, int, flo
     for idx in indices:
         if idx + sz in stock_df.index:
             pnl = stock_df.loc[idx + sz]['close'] / stock_df.loc[idx]['close'] - 1
-            print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
-                  f'{sz}d, pnl: {pnl:.2%}')
+            # print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
+            #       f'{sz}d, pnl: {pnl:.2%}')
 
             total_pnl += pnl
             hit_num += 1
 
-    return f'{hit_num}, {total_pnl:.2%}, fix', hit_num, total_pnl
+    return f'{hit_num}, {total_pnl:.2%}, long fix', hit_num, total_pnl
 
 
 def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) -> (str, int, float):
@@ -43,14 +43,14 @@ def fix_days_with_hard_loss(stock_df: pd.DataFrame, indices: list, name: str) ->
 
             if fail_fast is not None:
                 pnl = stock_df.loc[idx + fail_fast]['close'] / stock_df.loc[idx]['close'] - 1
-                print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + fail_fast]["Date"]}, '
-                      f'{fail_fast}d, pnl: {pnl:.2%}')
+                # print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + fail_fast]["Date"]}, '
+                #       f'{fail_fast}d, pnl: {pnl:.2%}')
             else:
                 pnl = stock_df.loc[idx + sz]['close'] / stock_df.loc[idx]['close'] - 1
-                print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
-                      f'{sz}d, pnl: {pnl:.2%}')
+                # print(f'long -> {name} from {stock_df.loc[idx]["Date"]} to {stock_df.loc[idx + sz]["Date"]}, '
+                #       f'{sz}d, pnl: {pnl:.2%}')
 
             total_pnl += pnl
             hit_num += 1
 
-    return f'{hit_num}, {total_pnl:.2%}, hard', hit_num, total_pnl
+    return f'{hit_num}, {total_pnl:.2%}, long hard', hit_num, total_pnl

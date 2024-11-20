@@ -1,75 +1,99 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from .util import get_index
 from .holding_long import eval_long
 from .holding_short import eval_short
 
 from guru import (
-    # sr level & min max 3rd
-    long_001, short_001,        # long green bar        / long red bar
-    long_002, short_002,        # decr top 10% last 10d / incr top 10% last 10d
-    long_003, short_003,        # long lower shadow     / long upper shadow
-    long_004, short_004,        # up thru ma5           / down thru ma5
-    long_005, short_005,        # up thru ma20          / down thru ma20
-    long_006, short_006,        # up thru ma60          / down thru ma60
+    guru_1,         # sr level
+    guru_2,         # ma
+    guru_3,         # shape
+    guru_4,         # volume
+    guru_5,         # post check
 )
 
-STRATEGY = [
-    long_001, long_002, long_003, long_004, long_005, long_006,
-    short_001, short_002, short_003, short_004, short_005, short_006,
-]
+
+def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
+    if from_idx is not None and to_idx is not None:
+        return stock_df.index[from_idx:to_idx]
+
+    if from_idx is not None and to_idx is None:
+        return stock_df.index[from_idx:]
+
+    if from_idx is None and to_idx is not None:
+        return stock_df.index[:to_idx]
+
+    if from_idx is None and to_idx is None:
+        return stock_df.index
 
 
-def execute_strategy(stock_df: pd.DataFrame, from_idx, to_idx, strategy) -> tuple:
+def filter_index(stock_df: pd.DataFrame, idx: int, ops: list) -> bool:
+    for op in ops:
+        if not op(stock_df, idx):
+            return False
+    return True
+
+
+def execute_ops(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, ops) -> bool:
     indices = []
+
     for idx in get_index(stock_df, from_idx, to_idx):
-        if strategy.check(stock_df, idx):
+        if filter_index(stock_df, idx, ops):
             indices.append(idx)
 
     if not indices:
-        return strategy.NAME, strategy.COLOR, None, None, None
+        return False
+
+    name = ','.join(op.__name__ for op in ops)
+
+    long_results = eval_long(stock_df, indices, name)
+    enable_long = all(hit_num >= 3 and total_pnl / hit_num >= 0.20 for (_, hit_num, total_pnl) in long_results)
+
+    short_results = eval_short(stock_df, indices, name)
+    enable_short = all(hit_num >= 3 and total_pnl / hit_num >= 0.20 for (_, hit_num, total_pnl) in short_results)
+
+    if not enable_long and not enable_short:
+        return False
 
     dates = stock_df.loc[indices]['Date'].tolist()
     close = stock_df.loc[indices]['close'].tolist()
 
-    return strategy.NAME, strategy.COLOR, dates, close, indices
+    pnl_tag = ''
+    color = ''
 
+    if enable_long:
+        pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
+        color = 'orange'
 
-def get_pnl_tag(stock_df: pd.DataFrame, indices, strategy) -> str:
-    if strategy.TYPE == 'long':
-        results = eval_long(stock_df, indices, strategy.NAME)
+    if enable_short:
+        pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
+        color = 'black'
 
-        if all([total_pnl / hit_num < 0.1 for (_, hit_num, total_pnl) in results]):
-            return ''
-        return '<br>'.join(tag for (tag, _, _) in results)
+    print(f'{name} ---> {pnl_tag}')
 
-    elif strategy.TYPE == 'short':
-        results = eval_short(stock_df, indices, strategy.NAME)
+    name = '<br>'.join(op.__name__ for op in ops)
 
-        if all([total_pnl / hit_num < 0.1 for (_, hit_num, total_pnl) in results]):
-            return ''
-        return '<br>'.join(tag for (tag, _, _) in results)
+    # fig.add_trace(
+    #     go.Scatter(
+    #         name=f'{name}<br>{pnl_tag}',
+    #         x=dates, y=close,
+    #         mode='markers', marker=dict(size=10, color=color),
+    #         visible='legendonly',
+    #     )
+    # )
 
-    else:
-        raise ValueError(f'Unknown strategy type: {strategy.TYPE}')
-
-
-def plot_strategy(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, strategy) -> bool:
-    name, color, dates, close, indices = execute_strategy(stock_df, from_idx, to_idx, strategy)
-    if not indices:
-        return False
-
-    pnl_tag = get_pnl_tag(stock_df, indices, strategy)
-    if pnl_tag == '':
-        return False
-
-    fig.add_trace(
-        go.Scatter(
-            name=f'{name}<br>{pnl_tag}',
-            x=dates, y=close,
-            mode='markers', marker=dict(size=10, color=color),
-            # visible='legendonly',
-        )
-    )
     return True
+
+
+def train(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx) -> bool:
+    hit = False
+
+    for op1 in guru_1.operators:
+        for op2 in guru_2.operators:
+            for op3 in guru_3.operators:
+                for op4 in guru_4.operators:
+                    for op5 in guru_5.operators:
+                        if execute_ops(stock_df, fig, from_idx, to_idx, [op1, op2, op3, op4, op5]):
+                            hit = True
+
+    return hit
