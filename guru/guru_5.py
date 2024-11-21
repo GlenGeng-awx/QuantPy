@@ -1,39 +1,63 @@
 import pandas as pd
 
 """
-    post_noop
+    statistic_noop
 
-    1 day after up / 1 day after down
-    2 day after up / 2 day after down
+    trend switch up   / trend switch down
+    bband pst gt 0.85 / bband pst lt 0.15
+    rsi above 70      / rsi below 30
+    macd golden cross / macd death cross
 """
 
 
-def post_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def statistic_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def one_day_after_up(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df.loc[idx + 1]['close'] > stock_df.loc[idx]['close']
+def trend_switch_up(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['trend switch up'][idx]
 
 
-def two_day_after_up(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df.loc[idx + 2]['close'] > stock_df.loc[idx]['close']
+def trend_switch_down(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['trend switch down'][idx]
 
 
-def one_day_after_down(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df.loc[idx + 1]['close'] < stock_df.loc[idx]['close']
+def bband_pst_gt_0_85(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['bband pst gt 0.85'][idx]
 
 
-def two_day_after_down(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df.loc[idx + 2]['close'] < stock_df.loc[idx]['close']
+def bband_pst_lt_0_15(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['bband pst lt 0.15'][idx]
+
+
+def rsi_above_70(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['rsi above 70'][idx]
+
+
+def rsi_below_30(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['rsi below 30'][idx]
+
+
+def macd_golden_cross(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['macd golden cross'][idx]
+
+
+def macd_death_cross(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['macd death cross'][idx]
 
 
 operators = [
-    post_noop,
+    statistic_noop,
 
-    one_day_after_up,
-    two_day_after_up,
+    trend_switch_up,
+    trend_switch_down,
 
-    one_day_after_down,
-    two_day_after_down
+    bband_pst_gt_0_85,
+    bband_pst_lt_0_15,
+
+    rsi_above_70,
+    rsi_below_30,
+
+    macd_golden_cross,
+    macd_death_cross
 ]

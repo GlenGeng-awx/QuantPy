@@ -4,11 +4,14 @@ from .holding_long import eval_long
 from .holding_short import eval_short
 
 from guru import (
-    guru_1,         # sr level
-    guru_2,         # ma
-    guru_3,         # shape
-    guru_4,         # vol
-    guru_5,         # post
+    guru_1,  # sr level
+    guru_2,  # ma
+    guru_3,  # shape
+    guru_4,  # vol
+    guru_5,  # statistic
+    guru_6,  # yesterday min max
+    guru_7,  # price
+    guru_9,  # post
 )
 
 
@@ -28,7 +31,7 @@ def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
 
 # return (pnl_tag, color)
 def eval_ops(stock_df: pd.DataFrame, indices: list, name: str) -> tuple:
-    profit = 0.05  # 0.05, 0.20
+    profit = 0.20  # 0.05, 0.20
 
     if indices[-1] - indices[0] < 10:
         return None, None

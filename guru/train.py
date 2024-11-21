@@ -7,14 +7,25 @@ from guru import (
     guru_2,  # ma
     guru_3,  # shape
     guru_4,  # vol
-    guru_5,  # post
+    guru_5,  # statistic
+    guru_6,  # yesterday min max
+    guru_7,  # price
+    guru_9,  # post
 )
 
 
 def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
     train_ctx = {}
 
-    total_ops = guru_1.operators + guru_2.operators + guru_3.operators + guru_4.operators + guru_5.operators
+    total_ops = guru_1.operators \
+                + guru_2.operators \
+                + guru_3.operators \
+                + guru_4.operators \
+                + guru_5.operators \
+                + guru_6.operators \
+                + guru_7.operators \
+                + guru_9.operators
+
     for op in total_ops:
         hits = set()
         for idx in get_index(stock_df, from_idx, to_idx):
@@ -29,6 +40,8 @@ def filter_ops(train_ctx: dict, ops: list) -> list:
     hits = train_ctx[ops[0].__name__]
     for op in ops[1:]:
         hits = hits.intersection(train_ctx[op.__name__])
+        if len(hits) <= 1:
+            return []
     return sorted(list(hits))
 
 
@@ -50,10 +63,16 @@ def train_ops(stock_df: pd.DataFrame, fd, train_ctx: dict, ops) -> bool:
 
 def train(stock_df: pd.DataFrame, fd, from_idx, to_idx):
     train_ctx = build_train_ctx(stock_df, from_idx, to_idx)
+    print('finish build train ctx')
 
     for op1 in guru_1.operators:
         for op2 in guru_2.operators:
             for op3 in guru_3.operators:
                 for op4 in guru_4.operators:
                     for op5 in guru_5.operators:
-                        train_ops(stock_df, fd, train_ctx, [op1, op2, op3, op4, op5])
+                        for op6 in guru_6.operators:
+                            for op7 in guru_7.operators:
+                                for op9 in guru_9.operators:
+                                    train_ops(stock_df, fd,
+                                              train_ctx,
+                                              [op1, op2, op3, op4, op5, op6, op7, op9])

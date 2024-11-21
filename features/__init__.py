@@ -16,11 +16,11 @@ from features import (
     h_01, h_02,             # yesterday is local min / yesterday is local max
 
     # yesterday is min/max of last 5d/10d/20d/60d/120d
-    h_11, h_12,             # yesterday is min of last 5d   / yesterday max of last 5d
-    h_13, h_14,             # yesterday is min of last 10d  / yesterday max of last 10d
-    h_15, h_16,             # yesterday is min of last 20d  / yesterday max of last 20d
-    h_17, h_18,             # yesterday is min of last 60d  / yesterday max of last 60d
-    h_19, h_20,             # yesterday is min of last 120d / yesterday max of last 120d
+    h_11, h_12,             # yesterday min of last 5d   / yesterday max of last 5d
+    h_13, h_14,             # yesterday min of last 10d  / yesterday max of last 10d
+    h_15, h_16,             # yesterday min of last 20d  / yesterday max of last 20d
+    h_17, h_18,             # yesterday min of last 60d  / yesterday max of last 60d
+    h_19, h_20,             # yesterday min of last 120d / yesterday max of last 120d
 
     # vol
     i_01, i_02,             # extreme high vol      / extreme low vol
