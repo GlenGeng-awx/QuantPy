@@ -6,8 +6,8 @@ from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
     primary features: sr level min/max
     ----------------------------------
 
-    sr level min + local min 3rd, in last 20 ~ 27
-    sr level max + local max 3rd, in last 20 ~ 27
+    sr level min + local min 3rd, in last 20 ~ 30
+    sr level max + local max 3rd, in last 20 ~ 30
 
     up to sr level,     in last 3d
     down to sr level,   in last 3d
@@ -21,12 +21,12 @@ from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 
 
 def sr_min_plus_min_3rd(stock_df: pd.DataFrame, idx: int) -> bool:
-    df = stock_df.loc[idx - 27:idx - 20]
+    df = stock_df.loc[idx - 30:idx - 20]
     return df[SR_LEVEL_MIN].any() and df[LOCAL_MIN_PRICE_3RD].any()
 
 
 def sr_max_plus_max_3rd(stock_df: pd.DataFrame, idx: int) -> bool:
-    df = stock_df.loc[idx - 27:idx - 20]
+    df = stock_df.loc[idx - 30:idx - 20]
     return df[SR_LEVEL_MAX].any() and df[LOCAL_MAX_PRICE_3RD].any()
 
 

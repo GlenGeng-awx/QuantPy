@@ -58,10 +58,10 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, ops) -
     if not indices:
         return False
 
-    if indices[-1] < stock_df.index[-10]:
+    if indices[-1] < stock_df.index[-5]:
         return False
 
-    # if not (stock_df.index[-20] < indices[-1] < stock_df.index[-10]):
+    # if not (stock_df.index[-20] < indices[-1] < stock_df.index[-5]):
     #     return False
 
     name = ','.join(op.__name__ for op in ops)
