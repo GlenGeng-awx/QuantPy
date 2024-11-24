@@ -22,6 +22,7 @@ def preload(stock_name: str) -> BaseEngine:
         enable_sr=True,
         enable_line=False,
         enable_close_price=False,
+        enable_position=True,
         enable_volume_reg=(True, 3),
         enable_bband_pst=(True, 4),
         enable_rsi=(True, 5),

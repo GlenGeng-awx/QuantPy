@@ -48,7 +48,7 @@ def filter_idx(stock_df: pd.DataFrame, idx: int, ops: list) -> bool:
     return True
 
 
-def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, ops) -> bool:
+def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to_idx, ops) -> bool:
     indices = []
 
     for idx in get_index(stock_df, from_idx, to_idx):
@@ -65,12 +65,12 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, ops) -
     #     return False
 
     name = ','.join(op.__name__ for op in ops)
-    pnl_tag, color = eval_ops(stock_df, indices, name)
+    pnl_tag, color = eval_ops(stock_df, stock_name, indices, name)
 
     if pnl_tag is None:
         return False
 
-    print(f'{name} ---> {pnl_tag}')
+    print(f'{stock_name} {name} ---> {pnl_tag}')
 
     dates = stock_df.loc[indices]['Date'].tolist()
     close = stock_df.loc[indices]['close'].tolist()
@@ -88,11 +88,11 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, from_idx, to_idx, ops) -
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to_idx):
-    hit = False
     all_ops = parse_all_ops(stock_name)
 
+    hit = False
     for ops in all_ops:
-        hit |= predict_ops(stock_df, fig, from_idx, to_idx, ops)
+        hit |= predict_ops(stock_df, fig, stock_name, from_idx, to_idx, ops)
 
     if hit:
         fig.show()

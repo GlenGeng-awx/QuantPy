@@ -1,5 +1,6 @@
 import pandas as pd
 
+from conf import *
 from .holding_long import eval_long
 from .holding_short import eval_short
 
@@ -30,8 +31,8 @@ def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
 
 
 # return (pnl_tag, color)
-def eval_ops(stock_df: pd.DataFrame, indices: list, name: str) -> tuple:
-    profit = 0.20  # 0.05 or index, 0.20 or other
+def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list, name: str) -> tuple:
+    profit = 0.05 if stock_name in INDEX else 0.20
 
     if indices[-1] - indices[0] < 10:
         return None, None
