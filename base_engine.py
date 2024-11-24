@@ -15,8 +15,7 @@ from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
 
-from trading.trading_record_display import TradingRecordDisplay
-from trading.ratio_analysis_and_display import RatioForcastDisplay
+from trading.position_display import PositionDisplay
 
 from util import load_data, shrink_date_str, interval_to_label
 
@@ -53,6 +52,7 @@ class BaseEngine:
         self.box = Box(self.stock_df, self.wave)
 
         self.volume = Volume(self.stock_df)
+        self.position = PositionDisplay(self.stock_name)
 
     def setup_graph(self, rows=2):
         self.fig = make_subplots(rows=rows, cols=1,
@@ -112,7 +112,7 @@ class BaseEngine:
                     enable_sr=False,
                     enable_line=False,
                     enable_box=False,
-                    enable_ratio=False,
+                    enable_position=True,
                     # volume
                     enable_volume_raw=(False, 2),
                     enable_volume_reg=(False, 2),
@@ -137,9 +137,7 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
 
         self.volume.build_graph(self.fig, enable_volume_raw, enable_volume_reg)
-
-        TradingRecordDisplay(self.fig, self.stock_name, self.interval).build_graph()
-        # RatioForcastDisplay(self.fig, self.stock_df, self.stock_name, enable_ratio).build_graph()
+        self.position.build_graph(self.fig, enable_position)
 
     def display(self):
         self.fig.show()
