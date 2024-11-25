@@ -4,17 +4,6 @@ from conf import *
 from .holding_long import eval_long
 from .holding_short import eval_short
 
-from guru import (
-    guru_1,  # sr level
-    guru_2,  # ma
-    guru_3,  # shape
-    guru_4,  # vol
-    guru_5,  # statistic
-    guru_6,  # yesterday min max
-    guru_7,  # price
-    guru_9,  # post
-)
-
 
 def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
     if from_idx is not None and to_idx is not None:

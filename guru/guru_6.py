@@ -3,7 +3,6 @@ import pandas as pd
 """
     yesterday_min_max_noop
 
-    yesterday is local min     / yesterday is local max
     yesterday min of last 5d   / yesterday max of last 5d
     yesterday min of last 10d  / yesterday max of last 10d
     yesterday min of last 20d  / yesterday max of last 20d
@@ -14,14 +13,6 @@ import pandas as pd
 
 def yesterday_min_max_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
-
-
-def yesterday_is_local_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday is local min'][idx]
-
-
-def yesterday_is_local_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday is local max'][idx]
 
 
 def yesterday_min_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
@@ -66,9 +57,6 @@ def yesterday_max_of_last_120d(stock_df: pd.DataFrame, idx: int) -> bool:
 
 operators = [
     yesterday_min_max_noop,
-
-    yesterday_is_local_min,
-    yesterday_is_local_max,
 
     yesterday_min_of_last_5d,
     yesterday_max_of_last_5d,

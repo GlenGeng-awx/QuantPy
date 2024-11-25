@@ -10,6 +10,7 @@ from guru import (
     guru_5,  # statistic
     guru_6,  # yesterday min max
     guru_7,  # price
+    guru_8,  # weekday
     guru_9,  # post
 )
 
@@ -24,6 +25,7 @@ def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
                 + guru_5.operators \
                 + guru_6.operators \
                 + guru_7.operators \
+                + guru_8.operators \
                 + guru_9.operators
 
     for op in total_ops:
@@ -73,9 +75,10 @@ def train(stock_df: pd.DataFrame, stock_name, from_idx, to_idx):
                         for op5 in guru_5.operators:
                             for op6 in guru_6.operators:
                                 for op7 in guru_7.operators:
-                                    for op9 in guru_9.operators:
-                                        train_ops(stock_df,
-                                                  stock_name,
-                                                  fd,
-                                                  train_ctx,
-                                                  [op1, op2, op3, op4, op5, op6, op7, op9])
+                                    for op8 in guru_8.operators:
+                                        for op9 in guru_9.operators:
+                                            train_ops(stock_df,
+                                                      stock_name,
+                                                      fd,
+                                                      train_ctx,
+                                                      [op1, op2, op3, op4, op5, op6, op7, op8, op9])

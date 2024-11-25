@@ -10,6 +10,7 @@ from guru import (
     guru_5,  # statistic
     guru_6,  # yesterday min max
     guru_7,  # price
+    guru_8,  # weekday
     guru_9,  # post
 )
 
@@ -22,6 +23,7 @@ def get_op(op_name):
                 + guru_5.operators \
                 + guru_6.operators \
                 + guru_7.operators \
+                + guru_8.operators \
                 + guru_9.operators
 
     for op in total_ops:
