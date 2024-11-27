@@ -3,14 +3,14 @@ import plotly.graph_objects as go
 from guru import get_index, eval_ops
 
 from guru import (
-    guru_1,  # sr level
+    guru_1,  # primary
     guru_2,  # ma
     guru_3,  # shape
     guru_4,  # vol
     guru_5,  # statistic
     guru_6,  # yesterday min max
     guru_7,  # price
-    guru_8,  # weekday
+    guru_8,  # sr level min/max
     guru_9,  # post
 )
 
@@ -60,18 +60,18 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to
     if not indices:
         return False
 
-    if indices[-1] < stock_df.index[-5]:
+    if indices[-1] < stock_df.index[-100]:
         return False
 
-    # if not (stock_df.index[-20] < indices[-1] < stock_df.index[-5]):
+    # if not (stock_df.index[-20] < indices[-1] < stock_df.index[-10]):
     #     return False
 
-    name = ','.join(op.__name__ for op in ops)
-    pnl_tag, color = eval_ops(stock_df, stock_name, indices, name)
+    pnl_tag, color = eval_ops(stock_df, stock_name, indices)
 
     if pnl_tag is None:
         return False
 
+    name = ','.join(op.__name__ for op in ops)
     print(f'{stock_name} {name} ---> {pnl_tag}')
 
     dates = stock_df.loc[indices]['Date'].tolist()

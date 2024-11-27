@@ -3,14 +3,14 @@ import pandas as pd
 from guru import get_index, eval_ops
 
 from guru import (
-    guru_1,  # sr level
+    guru_1,  # primary
     guru_2,  # ma
     guru_3,  # shape
     guru_4,  # vol
     guru_5,  # statistic
     guru_6,  # yesterday min max
     guru_7,  # price
-    guru_8,  # weekday
+    guru_8,  # sr level min/max
     guru_9,  # post
 )
 
@@ -52,11 +52,11 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, train_ctx: dict, ops) -> b
     if not indices:
         return False
 
-    name = ','.join(op.__name__ for op in ops)
-    pnl_tag, color = eval_ops(stock_df, stock_name, indices, name)
+    pnl_tag, color = eval_ops(stock_df, stock_name, indices)
     if pnl_tag is None:
         return False
 
+    name = ','.join(op.__name__ for op in ops)
     print(f'{stock_name} {name} ---> {pnl_tag}')
     fd.write(f'{name}\t{pnl_tag}\n')
     fd.flush()
