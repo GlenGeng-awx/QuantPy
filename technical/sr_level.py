@@ -1,14 +1,12 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-SR_LEVEL = 'sr_level'
 SR_LEVEL_MIN = 'sr_level_min'
 SR_LEVEL_MAX = 'sr_level_max'
 SIZE = 20
 
 
 def calculate_sr_level(stock_df: pd.DataFrame):
-    indices = []
     min_indices = []
     max_indices = []
 
@@ -16,15 +14,10 @@ def calculate_sr_level(stock_df: pd.DataFrame):
 
     for idx in close.index[SIZE:-SIZE]:
         if close.loc[idx - SIZE:idx + SIZE].idxmax() == idx:
-            indices.append(idx)
             max_indices.append(idx)
 
         if close.loc[idx - SIZE:idx + SIZE].idxmin() == idx:
-            indices.append(idx)
             min_indices.append(idx)
-
-    stock_df[SR_LEVEL] = pd.Series([True] * len(indices),
-                                   index=indices).reindex(stock_df.index, fill_value=False)
 
     stock_df[SR_LEVEL_MIN] = pd.Series([True] * len(min_indices),
                                        index=min_indices).reindex(stock_df.index, fill_value=False)

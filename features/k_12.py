@@ -1,7 +1,7 @@
 import pandas as pd
-from features.k_11 import get_above_sr_level
+from features.k_11 import get_above_sr_level_min
 
-KEY = 'down away sr level'
+KEY = 'down away sr level min'
 COLOR = 'green'
 
 
@@ -11,11 +11,11 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     indices = []
 
     for idx in close.index[1:]:
-        above_sr_level = get_above_sr_level(stock_df, idx)
-        if above_sr_level is None:
+        above_sr_level_min = get_above_sr_level_min(stock_df, idx)
+        if above_sr_level_min is None:
             continue
 
-        if close[idx] < close[idx - 1] and close[idx] * 1.03 > above_sr_level:
+        if close[idx] < close[idx - 1] and close[idx] * 1.03 > above_sr_level_min:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

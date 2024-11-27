@@ -1,18 +1,18 @@
 import pandas as pd
-from technical.sr_level import SR_LEVEL_MIN, SIZE
+from technical.sr_level import SR_LEVEL_MAX, SIZE
 
-KEY = 'up away sr level min'
+KEY = 'up away sr level max'
 COLOR = 'red'
 
 
-def get_below_sr_level_min(stock_df: pd.DataFrame, idx):
+def get_below_sr_level_max(stock_df: pd.DataFrame, idx):
     close = stock_df['close']
 
-    # sr level min below idx
-    condition = (stock_df[SR_LEVEL_MIN]) & (close < close[idx])
+    # sr level max below idx
+    condition = (stock_df[SR_LEVEL_MAX]) & (close < close[idx])
     df1 = stock_df[condition]
 
-    # sr level min before idx - SIZE
+    # sr level max before idx - SIZE
     df2 = df1.loc[idx - 180:idx - SIZE]
 
     if df2.size == 0:
@@ -30,11 +30,11 @@ def execute(stock_df: pd.DataFrame, **kwargs):
     indices = []
 
     for idx in close.index[1:]:
-        below_sr_level_min = get_below_sr_level_min(stock_df, idx)
-        if below_sr_level_min is None:
+        below_sr_level_max = get_below_sr_level_max(stock_df, idx)
+        if below_sr_level_max is None:
             continue
 
-        if close[idx - 1] < close[idx] < below_sr_level_min * 1.03:
+        if close[idx - 1] < close[idx] < below_sr_level_max * 1.03:
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

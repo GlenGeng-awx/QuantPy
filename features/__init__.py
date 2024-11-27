@@ -38,10 +38,14 @@ from features import (
     k_01, k_02,             # up thru r level / down thru s level
     k_03,                   # up thru r level, retrace, bounds back
 
-    # up/down to/thru/away sr level
-    k_11, k_12,             # up to sr level   / down away sr level
-    k_13, k_14,             # up thru sr level / down thru sr level
-    k_15, k_16,             # up away sr level / down to sr level
+    # up/down to/thru/away sr level min/max
+    k_11, k_12,             # up to sr level min   / down away sr level min
+    k_13, k_14,             # up thru sr level min / down thru sr level min
+    k_15, k_16,             # up away sr level min / down to sr level min
+
+    k_31, k_32,             # up to sr level max   / down away sr level max
+    k_33, k_34,             # up thru sr level max / down thru sr level max
+    k_35, k_36,             # up away sr level max / down to sr level max
 
     # incr/decr top 10pst last 1d/3d/5d/10d
     k_21, k_22,             # incr top 10% today    / decr top 10% today
@@ -106,6 +110,7 @@ FEATURE_BUF = [
     j_01, j_02, j_03, j_04,j_05, j_06, j_07, j_08,
     k_01, k_02, k_03,
     k_11, k_12, k_13, k_14, k_15, k_16,
+    k_31, k_32, k_33, k_34, k_35, k_36,
     k_21, k_22, k_23, k_24, k_25, k_26, k_27, k_28,
     l_01, l_02, l_03, l_04, l_05, l_06,
     l_11, l_12, l_13, l_14, l_15, l_16,
