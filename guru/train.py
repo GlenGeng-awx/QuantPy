@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 from d2_margins import MARGINS
 from guru import get_index, total_ops
@@ -34,6 +35,8 @@ def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
 def filter_ops(train_ctx: dict, ops: list) -> list:
     hits = train_ctx[ops[0].__name__]
     for op in ops[1:]:
+        if 'noop' in op.__name__:
+            continue
         hits = hits.intersection(train_ctx[op.__name__])
         if len(hits) <= 1:
             return []
@@ -48,7 +51,7 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     # eval long
     long_results = eval_long(stock_df, indices)
 
-    if any(hit_num >= 2 and total_pnl / hit_num >= long_profit for (_, hit_num, total_pnl) in long_results):
+    if any(hit_num >= 2 and total_pnl >= long_profit * hit_num for (_, hit_num, total_pnl) in long_results):
         pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
         color = 'orange'
         return pnl_tag, color
@@ -56,7 +59,7 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     # eval short
     short_results = eval_short(stock_df, indices)
 
-    if any(hit_num >= 2 and total_pnl / hit_num >= short_profit for (_, hit_num, total_pnl) in short_results):
+    if any(hit_num >= 2 and total_pnl >= short_profit * hit_num for (_, hit_num, total_pnl) in short_results):
         pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
         color = 'black'
         return pnl_tag, color
@@ -84,6 +87,8 @@ def train(stock_df: pd.DataFrame, stock_name, from_idx, to_idx):
     train_ctx = build_train_ctx(stock_df, from_idx, to_idx)
     print(f'finish build train ctx for {stock_name}')
 
+    start_time = datetime.now()
+
     with open(f'./tmp/{stock_name}.res', 'w') as fd:
         for op1 in guru_1.operators:
             for op2 in guru_2.operators:
@@ -99,3 +104,7 @@ def train(stock_df: pd.DataFrame, stock_name, from_idx, to_idx):
                                                       fd,
                                                       train_ctx,
                                                       [op1, op2, op3, op4, op5, op6, op7, op8, op9])
+
+    end_time = datetime.now()
+    time_cost = (end_time - start_time).total_seconds()
+    print(f'{stock_name} train finished, cost: {time_cost}s')
