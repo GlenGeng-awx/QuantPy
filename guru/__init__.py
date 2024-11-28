@@ -1,8 +1,26 @@
 import pandas as pd
 
-from d2_margins import MARGINS
-from .holding_long import eval_long
-from .holding_short import eval_short
+from guru import (
+    guru_1,  # primary
+    guru_2,  # ma
+    guru_3,  # shape
+    guru_4,  # vol
+    guru_5,  # statistic
+    guru_6,  # yesterday min max
+    guru_7,  # price
+    guru_8,  # sr level min/max
+    guru_9,  # post
+)
+
+total_ops = guru_1.operators \
+            + guru_2.operators \
+            + guru_3.operators \
+            + guru_4.operators \
+            + guru_5.operators \
+            + guru_6.operators \
+            + guru_7.operators \
+            + guru_8.operators \
+            + guru_9.operators
 
 
 def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
@@ -19,28 +37,4 @@ def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
         return stock_df.index
 
 
-# return (pnl_tag, color)
-def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    long_profit = min(MARGINS[stock_name]['15']['incr'], 0.20)
-    short_profit = min(MARGINS[stock_name]['15']['decr'], 0.20)
 
-    if indices[-1] - indices[0] < 10:
-        return None, None
-
-    # eval long
-    long_results = eval_long(stock_df, indices)
-
-    if all(hit_num >= 2 and total_pnl / hit_num >= long_profit for (_, hit_num, total_pnl) in long_results):
-        pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
-        color = 'orange'
-        return pnl_tag, color
-
-    # eval short
-    short_results = eval_short(stock_df, indices)
-
-    if all(hit_num >= 2 and total_pnl / hit_num >= short_profit for (_, hit_num, total_pnl) in short_results):
-        pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
-        color = 'black'
-        return pnl_tag, color
-
-    return None, None

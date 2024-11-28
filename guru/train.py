@@ -1,6 +1,9 @@
 import pandas as pd
 
-from guru import get_index, eval_ops
+from d2_margins import MARGINS
+from guru import get_index, total_ops
+from .holding_long import eval_long
+from .holding_short import eval_short
 
 from guru import (
     guru_1,  # primary
@@ -17,16 +20,6 @@ from guru import (
 
 def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
     train_ctx = {}
-
-    total_ops = guru_1.operators \
-                + guru_2.operators \
-                + guru_3.operators \
-                + guru_4.operators \
-                + guru_5.operators \
-                + guru_6.operators \
-                + guru_7.operators \
-                + guru_8.operators \
-                + guru_9.operators
 
     for op in total_ops:
         hits = set()
@@ -45,6 +38,30 @@ def filter_ops(train_ctx: dict, ops: list) -> list:
         if len(hits) <= 1:
             return []
     return sorted(list(hits))
+
+
+# return (pnl_tag, color)
+def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
+    long_profit = min(MARGINS[stock_name]['15']['incr'], 0.15)
+    short_profit = min(MARGINS[stock_name]['15']['decr'], 0.15)
+
+    # eval long
+    long_results = eval_long(stock_df, indices)
+
+    if any(hit_num >= 2 and total_pnl / hit_num >= long_profit for (_, hit_num, total_pnl) in long_results):
+        pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
+        color = 'orange'
+        return pnl_tag, color
+
+    # eval short
+    short_results = eval_short(stock_df, indices)
+
+    if any(hit_num >= 2 and total_pnl / hit_num >= short_profit for (_, hit_num, total_pnl) in short_results):
+        pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
+        color = 'black'
+        return pnl_tag, color
+
+    return None, None
 
 
 def train_ops(stock_df: pd.DataFrame, stock_name, fd, train_ctx: dict, ops) -> bool:
