@@ -37,11 +37,11 @@ def two_day_after_down(stock_df: pd.DataFrame, idx: int) -> bool:
 
 
 operators = [
-    post_noop,
+    # post_noop,
 
     # one_day_after_up,
-    # two_day_after_up,
-    #
+    two_day_after_up,
+
     # one_day_after_down,
-    # two_day_after_down
+    two_day_after_down
 ]
