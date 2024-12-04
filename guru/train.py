@@ -7,7 +7,7 @@ from .holding_long import eval_long
 from .holding_short import eval_short
 
 from guru import (
-    guru_1,  # primary
+    guru_1,  # structure
     guru_2,  # ma
     guru_3,  # shape
     guru_4,  # vol

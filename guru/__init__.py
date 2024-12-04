@@ -1,7 +1,7 @@
 import pandas as pd
 
 from guru import (
-    guru_1,  # primary
+    guru_1,  # structure
     guru_2,  # ma
     guru_3,  # shape
     guru_4,  # vol

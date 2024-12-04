@@ -43,7 +43,8 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     # eval long
     long_results = eval_long(stock_df, indices)
 
-    if any(hit_num >= 3 and total_pnl / hit_num >= long_profit for (_, hit_num, total_pnl) in long_results):
+    # 2, 3, 4, 5, all/any
+    if all(hit_num >= 4 and total_pnl / hit_num >= long_profit for (_, hit_num, total_pnl) in long_results):
         pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
         color = 'orange'
         return pnl_tag, color
@@ -51,7 +52,8 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     # eval short
     short_results = eval_short(stock_df, indices)
 
-    if any(hit_num >= 3 and total_pnl / hit_num >= short_profit for (_, hit_num, total_pnl) in short_results):
+    # 2, 3, 4, 5, all/any
+    if all(hit_num >= 4 and total_pnl / hit_num >= short_profit for (_, hit_num, total_pnl) in short_results):
         pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
         color = 'black'
         return pnl_tag, color
@@ -69,7 +71,11 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to
     if not indices:
         return False
 
-    if not any(stock_df.index[-10] <= idx <= stock_df.index[-6] for idx in indices):
+    #  (-2, -1)
+    #  (-5, -1)
+    # (-10, -1)
+    # (-15, -1)
+    if not any(stock_df.index[-3] <= idx <= stock_df.index[-3] for idx in indices):
         return False
 
     pnl_tag, color = eval_ops(stock_df, stock_name, indices)

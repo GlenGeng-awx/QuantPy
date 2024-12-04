@@ -79,14 +79,14 @@ operators = [
     high_vol,
     low_vol,
 
-    # vol_min_of_last_5d,
-    # vol_max_of_last_5d,
+    vol_min_of_last_5d,
+    vol_max_of_last_5d,
 
     vol_min_of_last_10d,
     vol_max_of_last_10d,
 
-    # vol_incr_3d,
-    # vol_decr_3d,
+    vol_incr_3d,
+    vol_decr_3d,
 
     vol_incr_5d,
     vol_decr_5d,

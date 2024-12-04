@@ -5,6 +5,8 @@ from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 """
     primary features: sr level min/max OR local min/max 3rd
     -------------------------------------------------------
+    structure_noop
+
      ascend sr level min or local min 3rd, in last 20 ~ 30
        flat sr level min or local min 3rd, in last 20 ~ 30
     descend sr level min or local min 3rd, in last 20 ~ 30
@@ -13,6 +15,10 @@ from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
        flat sr level max or local max 3rd, in last 20 ~ 30
     descend sr level max or local max 3rd, in last 20 ~ 30
 """
+
+
+def structure_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+    return True
 
 
 # def sr_level_min_or_min_3rd(stock_df: pd.DataFrame, idx: int) -> bool:
@@ -86,6 +92,8 @@ def descend_sr_max_or_max_3rd(stock_df: pd.DataFrame, idx: int) -> bool:
 
 
 operators = [
+    structure_noop,
+
     ascend_sr_min_or_min_3rd,
     flat_sr_min_or_min_3rd,
     descend_sr_min_or_min_3rd,
