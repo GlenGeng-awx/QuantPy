@@ -1,75 +1,63 @@
 import pandas as pd
 
 """
-    yesterday_min_max_noop
+    statistic_noop
 
-    yesterday min of last 5d   / yesterday max of last 5d
-    yesterday min of last 10d  / yesterday max of last 10d
-    yesterday min of last 20d  / yesterday max of last 20d
-    yesterday min of last 60d  / yesterday max of last 60d
-    yesterday min of last 120d / yesterday max of last 120d
+    trend switch up   / trend switch down
+    bband pst gt 0.85 / bband pst lt 0.15
+    rsi above 70      / rsi below 30
+    macd golden cross / macd death cross
 """
 
 
-def yesterday_min_max_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def statistic_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def yesterday_min_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday min of last 5d'][idx]
+def trend_switch_up(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['trend switch up'][idx]
 
 
-def yesterday_max_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday max of last 5d'][idx]
+def trend_switch_down(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['trend switch down'][idx]
 
 
-def yesterday_min_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday min of last 10d'][idx]
+def bband_pst_gt_0_85(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['bband pst gt 0.85'][idx]
 
 
-def yesterday_max_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday max of last 10d'][idx]
+def bband_pst_lt_0_15(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['bband pst lt 0.15'][idx]
 
 
-def yesterday_min_of_last_20d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday min of last 20d'][idx]
+def rsi_above_70(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['rsi above 70'][idx]
 
 
-def yesterday_max_of_last_20d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday max of last 20d'][idx]
+def rsi_below_30(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['rsi below 30'][idx]
 
 
-def yesterday_min_of_last_60d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday min of last 60d'][idx]
+def macd_golden_cross(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['macd golden cross'][idx]
 
 
-def yesterday_max_of_last_60d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday max of last 60d'][idx]
-
-
-def yesterday_min_of_last_120d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday min of last 120d'][idx]
-
-
-def yesterday_max_of_last_120d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['yesterday max of last 120d'][idx]
+def macd_death_cross(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['macd death cross'][idx]
 
 
 operators = [
-    yesterday_min_max_noop,
+    statistic_noop,
 
-    yesterday_min_of_last_5d,
-    yesterday_max_of_last_5d,
+    trend_switch_up,
+    trend_switch_down,
 
-    yesterday_min_of_last_10d,
-    yesterday_max_of_last_10d,
+    bband_pst_gt_0_85,
+    bband_pst_lt_0_15,
 
-    yesterday_min_of_last_20d,
-    yesterday_max_of_last_20d,
+    rsi_above_70,
+    rsi_below_30,
 
-    yesterday_min_of_last_60d,
-    yesterday_max_of_last_60d,
-
-    yesterday_min_of_last_120d,
-    yesterday_max_of_last_120d,
+    macd_golden_cross,
+    macd_death_cross
 ]

@@ -7,15 +7,15 @@ from .holding_long import eval_long
 from .holding_short import eval_short
 
 from guru import (
-    guru_1,  # structure
-    guru_2,  # ma
-    guru_3,  # shape
-    guru_4,  # vol
-    guru_5,  # statistic
-    guru_6,  # yesterday min max
-    guru_7,  # price
-    guru_8,  # sr level min/max
-    guru_9,  # post
+    guru_1,
+    guru_2,
+    guru_3,
+    guru_4,
+    guru_5,
+    guru_6,
+    guru_7,
+    guru_8,
+    guru_9,
 )
 
 

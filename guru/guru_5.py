@@ -1,63 +1,93 @@
 import pandas as pd
 
 """
-    statistic_noop
+    vol_noop
 
-    trend switch up   / trend switch down
-    bband pst gt 0.85 / bband pst lt 0.15
-    rsi above 70      / rsi below 30
-    macd golden cross / macd death cross
+    extreme high vol      / extreme low vol
+    high vol              / low vol
+
+    vol min of last 5d    / vol max of last 5d
+    vol min of last 10d   / vol max of last 10d
+
+    vol incr 3d           / vol decr 3d
+    vol incr 5d           / vol decr 5d
 """
 
 
-def statistic_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def vol_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def trend_switch_up(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['trend switch up'][idx]
+def extreme_high_vol(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['extreme high vol'][idx]
 
 
-def trend_switch_down(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['trend switch down'][idx]
+def extreme_low_vol(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['extreme low vol'][idx]
 
 
-def bband_pst_gt_0_85(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['bband pst gt 0.85'][idx]
+def high_vol(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['high vol'][idx]
 
 
-def bband_pst_lt_0_15(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['bband pst lt 0.15'][idx]
+def normal_vol(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['normal vol'][idx]
 
 
-def rsi_above_70(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['rsi above 70'][idx]
+def low_vol(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['low vol'][idx]
 
 
-def rsi_below_30(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['rsi below 30'][idx]
+def vol_min_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol min of last 5d'][idx]
 
 
-def macd_golden_cross(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['macd golden cross'][idx]
+def vol_max_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol max of last 5d'][idx]
 
 
-def macd_death_cross(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['macd death cross'][idx]
+def vol_min_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol min of last 10d'][idx]
+
+
+def vol_max_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol max of last 10d'][idx]
+
+
+def vol_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol incr 3d'][idx]
+
+
+def vol_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol decr 3d'][idx]
+
+
+def vol_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol incr 5d'][idx]
+
+
+def vol_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['vol decr 5d'][idx]
 
 
 operators = [
-    statistic_noop,
+    vol_noop,
 
-    trend_switch_up,
-    trend_switch_down,
+    extreme_high_vol,
+    extreme_low_vol,
 
-    bband_pst_gt_0_85,
-    bband_pst_lt_0_15,
+    high_vol,
+    low_vol,
 
-    rsi_above_70,
-    rsi_below_30,
+    vol_min_of_last_5d,
+    vol_max_of_last_5d,
 
-    macd_golden_cross,
-    macd_death_cross
+    vol_min_of_last_10d,
+    vol_max_of_last_10d,
+
+    vol_incr_3d,
+    vol_decr_3d,
+
+    vol_incr_5d,
+    vol_decr_5d,
 ]

@@ -10,15 +10,15 @@ def probe(stock_name):
     base_engine = preload(stock_name)
     stock_df, fig = base_engine.stock_df, base_engine.fig
 
-    train(stock_df, stock_name, 50, -2)
-    # predict(stock_df, fig, stock_name, 50, -2)
+    train(stock_df, stock_name, 50, None)
+    # predict(stock_df, fig, stock_name, 50, None)
 
 
 if __name__ == '__main__':
     procs = []
 
     # for _stock_name in INDEX + list(POSITION.keys()):
-    for _stock_name in ALL:
+    for _stock_name in [SNAP]:
         proc = Process(target=probe, args=(_stock_name,))
         procs.append(proc)
         proc.start()

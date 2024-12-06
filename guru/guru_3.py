@@ -1,101 +1,86 @@
 import pandas as pd
 
 """
-    shape_noop
+    ma_noop
 
-    long red bar       / long green bar
-    short red bar      / short green bar
+    up thru ma5     / down thru ma5
+    up thru ma20    / down thru ma20
+    up thru ma60    / down thru ma60
 
-    long lower shadow  / long upper shadow
-    short lower shadow / short upper shadow
-
-    up engulfing       / down engulfing
-    up harami          / down harami
-    up gap             / down gap
+    down touch ma5  / up touch ma5
+    down touch ma20 / up touch ma20
+    down touch ma60 / up touch ma60
 """
 
 
-def shape_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def ma_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def long_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['long red bar'][idx]
+def up_thru_ma5(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up thru ma5'][idx]
 
 
-def long_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['long green bar'][idx]
+def up_thru_ma20(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up thru ma20'][idx]
 
 
-def short_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['short red bar'][idx]
+def up_thru_ma60(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up thru ma60'][idx]
 
 
-def short_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['short green bar'][idx]
+def down_thru_ma5(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down thru ma5'][idx]
 
 
-def long_lower_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['long lower shadow'][idx]
+def down_thru_ma20(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down thru ma20'][idx]
 
 
-def long_upper_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['long upper shadow'][idx]
+def down_thru_ma60(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down thru ma60'][idx]
 
 
-def short_lower_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['short lower shadow'][idx]
+def up_touch_ma5(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up touch ma5'][idx]
 
 
-def short_upper_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['short upper shadow'][idx]
+def up_touch_ma20(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up touch ma20'][idx]
 
 
-def up_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up engulfing'][idx]
+def up_touch_ma60(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up touch ma60'][idx]
 
 
-def down_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down engulfing'][idx]
+def down_touch_ma5(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down touch ma5'][idx]
 
 
-def up_harami(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up harami'][idx]
+def down_touch_ma20(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down touch ma20'][idx]
 
 
-def down_harami(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down harami'][idx]
-
-
-def up_gap(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up gap'][idx]
-
-
-def down_gap(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down gap'][idx]
+def down_touch_ma60(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down touch ma60'][idx]
 
 
 operators = [
-    shape_noop,
+    ma_noop,
 
-    long_red_bar,
-    long_green_bar,
+    up_thru_ma5,
+    up_thru_ma20,
+    up_thru_ma60,
 
-    short_red_bar,
-    short_green_bar,
+    down_thru_ma5,
+    down_thru_ma20,
+    down_thru_ma60,
 
-    long_lower_shadow,
-    long_upper_shadow,
+    up_touch_ma5,
+    up_touch_ma20,
+    up_touch_ma60,
 
-    short_lower_shadow,
-    short_upper_shadow,
-
-    up_engulfing,
-    down_engulfing,
-
-    up_harami,
-    down_harami,
-
-    up_gap,
-    down_gap,
+    down_touch_ma5,
+    down_touch_ma20,
+    down_touch_ma60
 ]

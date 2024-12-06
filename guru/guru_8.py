@@ -1,100 +1,138 @@
 import pandas as pd
 
 """
-    sr_level_noop
+    price_noop
 
-    ----------------------
-    up to sr level min
-    down to sr level min
+    incr top 10% today    / decr top 10% today
+    incr top 10% last 3d  / decr top 10% last 3d
+    incr top 10% last 5d  / decr top 10% last 5d
+    incr top 10% last 10d / decr top 10% last 10d
 
-    up away sr level min
-    down away sr level min
+    close incr 3d         / close decr 3d
+    close incr 5d         / close decr 5d
 
-    up thru sr level min
-    down thru sr level min
+    low incr 3d           / low decr 3d
+    low incr 5d           / low decr 5d
 
-    ----------------------
-    up to sr level max
-    down to sr level max
-
-    up away sr level max
-    down away sr level max
-
-    up thru sr level max
-    down thru sr level max
+    high incr 3d          / high decr 2d
+    high incr 5d          / high decr 3d
 """
 
 
-def sr_level_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def price_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def up_to_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up to sr level min'].loc[idx]
+def incr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['incr top 10% today'][idx]
 
 
-def down_to_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down to sr level min'].loc[idx]
+def decr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['decr top 10% today'][idx]
 
 
-def up_away_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up away sr level min'].loc[idx]
+def incr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['incr top 10% last 3d'][idx]
 
 
-def down_away_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down away sr level min'].loc[idx]
+def decr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['decr top 10% last 3d'][idx]
 
 
-def up_thru_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up thru sr level min'].loc[idx]
+def incr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['incr top 10% last 5d'][idx]
 
 
-def down_thru_sr_level_min(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down thru sr level min'].loc[idx]
+def decr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['decr top 10% last 5d'][idx]
 
 
-def up_to_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up to sr level max'].loc[idx]
+def incr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['incr top 10% last 10d'][idx]
 
 
-def down_to_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down to sr level max'].loc[idx]
+def decr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['decr top 10% last 10d'][idx]
 
 
-def up_away_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up away sr level max'].loc[idx]
+def close_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['close incr 3d'][idx]
 
 
-def down_away_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down away sr level max'].loc[idx]
+def close_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['close decr 3d'][idx]
 
 
-def up_thru_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up thru sr level max'].loc[idx]
+def close_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['close incr 5d'][idx]
 
 
-def down_thru_sr_level_max(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down thru sr level max'].loc[idx]
+def close_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['close decr 5d'][idx]
+
+
+def low_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['low incr 3d'][idx]
+
+
+def low_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['low decr 3d'][idx]
+
+
+def low_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['low incr 5d'][idx]
+
+
+def low_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['low decr 5d'][idx]
+
+
+def high_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['high incr 3d'][idx]
+
+
+def high_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['high decr 3d'][idx]
+
+
+def high_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['high decr 5d'][idx]
+
+
+def high_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['high incr 5d'][idx]
 
 
 operators = [
-    sr_level_noop,
+    price_noop,
 
-    up_to_sr_level_min,
-    down_to_sr_level_min,
+    incr_top_10pst_today,
+    decr_top_10pst_today,
 
-    up_away_sr_level_min,
-    down_away_sr_level_min,
+    incr_top_10pst_last_3d,
+    decr_top_10pst_last_3d,
 
-    up_thru_sr_level_min,
-    down_thru_sr_level_min,
+    incr_top_10pst_last_5d,
+    decr_top_10pst_last_5d,
 
-    up_to_sr_level_max,
-    down_to_sr_level_max,
+    incr_top_10pst_last_10d,
+    decr_top_10pst_last_10d,
 
-    up_away_sr_level_max,
-    down_away_sr_level_max,
+    close_incr_3d,
+    close_decr_3d,
 
-    up_thru_sr_level_max,
-    down_thru_sr_level_max,
+    close_incr_5d,
+    close_decr_5d,
+
+    low_incr_3d,
+    low_decr_3d,
+
+    low_incr_5d,
+    low_decr_5d,
+
+    high_incr_3d,
+    high_decr_3d,
+
+    high_incr_5d,
+    high_decr_5d,
 ]

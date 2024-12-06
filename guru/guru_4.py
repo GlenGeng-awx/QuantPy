@@ -1,93 +1,101 @@
 import pandas as pd
 
 """
-    vol_noop
+    shape_noop
 
-    extreme high vol      / extreme low vol
-    high vol              / low vol
+    long red bar       / long green bar
+    short red bar      / short green bar
 
-    vol min of last 5d    / vol max of last 5d
-    vol min of last 10d   / vol max of last 10d
+    long lower shadow  / long upper shadow
+    short lower shadow / short upper shadow
 
-    vol incr 3d           / vol decr 3d
-    vol incr 5d           / vol decr 5d
+    up engulfing       / down engulfing
+    up harami          / down harami
+    up gap             / down gap
 """
 
 
-def vol_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def shape_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def extreme_high_vol(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['extreme high vol'][idx]
+def long_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['long red bar'][idx]
 
 
-def extreme_low_vol(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['extreme low vol'][idx]
+def long_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['long green bar'][idx]
 
 
-def high_vol(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['high vol'][idx]
+def short_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['short red bar'][idx]
 
 
-def normal_vol(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['normal vol'][idx]
+def short_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['short green bar'][idx]
 
 
-def low_vol(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['low vol'][idx]
+def long_lower_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['long lower shadow'][idx]
 
 
-def vol_min_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol min of last 5d'][idx]
+def long_upper_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['long upper shadow'][idx]
 
 
-def vol_max_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol max of last 5d'][idx]
+def short_lower_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['short lower shadow'][idx]
 
 
-def vol_min_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol min of last 10d'][idx]
+def short_upper_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['short upper shadow'][idx]
 
 
-def vol_max_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol max of last 10d'][idx]
+def up_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up engulfing'][idx]
 
 
-def vol_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol incr 3d'][idx]
+def down_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down engulfing'][idx]
 
 
-def vol_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol decr 3d'][idx]
+def up_harami(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up harami'][idx]
 
 
-def vol_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol incr 5d'][idx]
+def down_harami(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down harami'][idx]
 
 
-def vol_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['vol decr 5d'][idx]
+def up_gap(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['up gap'][idx]
+
+
+def down_gap(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['down gap'][idx]
 
 
 operators = [
-    vol_noop,
+    shape_noop,
 
-    extreme_high_vol,
-    extreme_low_vol,
+    long_red_bar,
+    long_green_bar,
 
-    high_vol,
-    low_vol,
+    short_red_bar,
+    short_green_bar,
 
-    vol_min_of_last_5d,
-    vol_max_of_last_5d,
+    long_lower_shadow,
+    long_upper_shadow,
 
-    vol_min_of_last_10d,
-    vol_max_of_last_10d,
+    short_lower_shadow,
+    short_upper_shadow,
 
-    vol_incr_3d,
-    vol_decr_3d,
+    up_engulfing,
+    down_engulfing,
 
-    vol_incr_5d,
-    vol_decr_5d,
+    up_harami,
+    down_harami,
+
+    up_gap,
+    down_gap,
 ]
