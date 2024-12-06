@@ -10,17 +10,23 @@ from guru import (
     guru_7,  # yesterday min max
     guru_8,  # price
     guru_9,  # post
+    guru_a,  # weekday
 )
 
-total_ops = guru_1.operators \
-            + guru_2.operators \
-            + guru_3.operators \
-            + guru_4.operators \
-            + guru_5.operators \
-            + guru_6.operators \
-            + guru_7.operators \
-            + guru_8.operators \
-            + guru_9.operators
+total_ops = [
+    guru_1.operators,
+    guru_2.operators,
+    guru_3.operators,
+    guru_4.operators,
+    guru_5.operators,
+    guru_6.operators,
+    guru_7.operators,
+    guru_8.operators,
+    guru_9.operators,
+    guru_a.operators,
+]
+
+flatten_ops = [op for ops in total_ops for op in ops]
 
 
 def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:

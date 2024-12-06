@@ -2,13 +2,13 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from d2_margins import MARGINS
-from guru import get_index, total_ops
+from guru import get_index, flatten_ops
 from .holding_long import eval_long
 from .holding_short import eval_short
 
 
 def get_op(op_name):
-    for op in total_ops:
+    for op in flatten_ops:
         if op.__name__ == op_name:
             return op
     raise ValueError(f'op_name: {op_name} not found')

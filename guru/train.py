@@ -2,27 +2,15 @@ import pandas as pd
 from datetime import datetime
 
 from d2_margins import MARGINS
-from guru import get_index, total_ops
+from guru import get_index, flatten_ops, total_ops
 from .holding_long import eval_long
 from .holding_short import eval_short
-
-from guru import (
-    guru_1,
-    guru_2,
-    guru_3,
-    guru_4,
-    guru_5,
-    guru_6,
-    guru_7,
-    guru_8,
-    guru_9,
-)
 
 
 def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
     train_ctx = {}
 
-    for op in total_ops:
+    for op in flatten_ops:
         hits = set()
         for idx in get_index(stock_df, from_idx, to_idx):
             if op(stock_df, idx):
@@ -83,27 +71,50 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, train_ctx: dict, ops) -> b
     return True
 
 
+def train_impl(stock_df: pd.DataFrame,
+               stock_name: str,
+               train_ctx: dict,
+               ops: list,
+               remaining_operators: list[list],
+               fd):
+    if remaining_operators:
+        assert len(ops) + len(remaining_operators) == len(total_ops)
+
+        if ops:
+            indices = filter_ops(train_ctx, ops)
+            if not indices:
+                return
+
+        operators = remaining_operators[0]
+        for op in operators:
+            train_impl(stock_df,
+                       stock_name,
+                       train_ctx,
+                       ops + [op],
+                       remaining_operators[1:],
+                       fd)
+    else:
+        assert len(ops) == len(total_ops)
+
+        train_ops(stock_df,
+                  stock_name,
+                  fd,
+                  train_ctx,
+                  ops)
+
+
 def train(stock_df: pd.DataFrame, stock_name, from_idx, to_idx):
     train_ctx = build_train_ctx(stock_df, from_idx, to_idx)
     print(f'finish build train ctx for {stock_name}')
 
     start_time = datetime.now()
-
     with open(f'./tmp/{stock_name}.res', 'w') as fd:
-        for op1 in guru_1.operators:
-            for op2 in guru_2.operators:
-                for op3 in guru_3.operators:
-                    for op4 in guru_4.operators:
-                        for op5 in guru_5.operators:
-                            for op6 in guru_6.operators:
-                                for op7 in guru_7.operators:
-                                    for op8 in guru_8.operators:
-                                        for op9 in guru_9.operators:
-                                            train_ops(stock_df,
-                                                      stock_name,
-                                                      fd,
-                                                      train_ctx,
-                                                      [op1, op2, op3, op4, op5, op6, op7, op8, op9])
+        train_impl(stock_df,
+                   stock_name,
+                   train_ctx,
+                   [],
+                   total_ops,
+                   fd)
 
     end_time = datetime.now()
     time_cost = (end_time - start_time).total_seconds()
