@@ -9,17 +9,20 @@ from .eval_short import eval_short
 
 # return (pnl_tag, color)
 def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    long_profit = min(MARGINS[stock_name]['15']['incr'] * 0.8, 0.20)
-    short_profit = min(MARGINS[stock_name]['15']['decr'] * 0.8, 0.15)
+    sz = 10
+    hard_loss = 0.03
+
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.8, 0.20)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.8, 0.15)
 
     # eval long
-    pnl_tag, total_num, _, successful_rate = eval_long(stock_df, indices, 15, long_profit, 0.03)
+    pnl_tag, total_num, _, successful_rate = eval_long(stock_df, indices, sz, long_profit, hard_loss)
     if total_num >= 2 and successful_rate >= 0.7:
         color = 'orange'
         return pnl_tag, color
 
     # eval short
-    pnl_tag, total_num, _, successful_rate = eval_short(stock_df, indices, 15, short_profit, 0.03)
+    pnl_tag, total_num, _, successful_rate = eval_short(stock_df, indices, sz, short_profit, hard_loss)
     if total_num >= 2 and successful_rate >= 0.7:
         color = 'black'
         return pnl_tag, color
