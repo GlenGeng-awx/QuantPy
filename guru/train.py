@@ -2,39 +2,15 @@ import pandas as pd
 from datetime import datetime
 
 from d2_margins import MARGINS
-from guru import get_index, flatten_ops, total_ops
-from .holding_long import eval_long
-from .holding_short import eval_short
-
-
-def build_train_ctx(stock_df: pd.DataFrame, from_idx, to_idx) -> dict:
-    train_ctx = {}
-
-    for op in flatten_ops:
-        hits = set()
-        for idx in get_index(stock_df, from_idx, to_idx):
-            if op(stock_df, idx):
-                hits.add(idx)
-        train_ctx[op.__name__] = hits
-
-    return train_ctx
-
-
-def filter_ops(train_ctx: dict, ops: list) -> list:
-    hits = train_ctx[ops[0].__name__]
-    for op in ops[1:]:
-        if 'noop' in op.__name__:
-            continue
-        hits = hits.intersection(train_ctx[op.__name__])
-        if len(hits) <= 1:
-            return []
-    return sorted(list(hits))
+from guru import total_ops, build_op_ctx, filter_indices_by_ops
+from .eval_long import eval_long
+from .eval_short import eval_short
 
 
 # return (pnl_tag, color)
 def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    long_profit = min(MARGINS[stock_name]['15']['incr'], 0.15)
-    short_profit = min(MARGINS[stock_name]['15']['decr'], 0.15)
+    long_profit = min(MARGINS[stock_name]['15']['incr'] * 0.8, 0.25)
+    short_profit = min(MARGINS[stock_name]['15']['decr'] * 0.8, 0.20)
 
     # eval long
     long_results = eval_long(stock_df, indices)
@@ -55,8 +31,8 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     return None, None
 
 
-def train_ops(stock_df: pd.DataFrame, stock_name, fd, train_ctx: dict, ops) -> bool:
-    indices = filter_ops(train_ctx, ops)
+def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops) -> bool:
+    indices = filter_indices_by_ops(op_ctx, ops)
     if not indices:
         return False
 
@@ -73,7 +49,7 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, train_ctx: dict, ops) -> b
 
 def train_impl(stock_df: pd.DataFrame,
                stock_name: str,
-               train_ctx: dict,
+               op_ctx: dict,
                ops: list,
                remaining_operators: list[list],
                fd):
@@ -81,7 +57,7 @@ def train_impl(stock_df: pd.DataFrame,
         assert len(ops) + len(remaining_operators) == len(total_ops)
 
         if ops:
-            indices = filter_ops(train_ctx, ops)
+            indices = filter_indices_by_ops(op_ctx, ops)
             if not indices:
                 return
 
@@ -89,7 +65,7 @@ def train_impl(stock_df: pd.DataFrame,
         for op in operators:
             train_impl(stock_df,
                        stock_name,
-                       train_ctx,
+                       op_ctx,
                        ops + [op],
                        remaining_operators[1:],
                        fd)
@@ -99,19 +75,19 @@ def train_impl(stock_df: pd.DataFrame,
         train_ops(stock_df,
                   stock_name,
                   fd,
-                  train_ctx,
+                  op_ctx,
                   ops)
 
 
-def train(stock_df: pd.DataFrame, stock_name, from_idx, to_idx):
-    train_ctx = build_train_ctx(stock_df, from_idx, to_idx)
-    print(f'finish build train ctx for {stock_name}')
+def train(stock_df: pd.DataFrame, stock_name):
+    op_ctx = build_op_ctx(stock_df)
+    print(f'finish build op ctx for {stock_name}')
 
     start_time = datetime.now()
     with open(f'./tmp/{stock_name}.res', 'w') as fd:
         train_impl(stock_df,
                    stock_name,
-                   train_ctx,
+                   op_ctx,
                    [],
                    total_ops,
                    fd)

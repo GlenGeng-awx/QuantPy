@@ -1,6 +1,7 @@
 from datetime import datetime
 from base_engine import BaseEngine
 import features
+from trading.position import POSITION
 
 
 def _default_period() -> tuple:
@@ -42,6 +43,7 @@ def preload(stock_name: str) -> BaseEngine:
 if __name__ == '__main__':
     from conf import *
 
+    # for _stock_name in POSITION.keys():
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _fig = _base_engine.fig

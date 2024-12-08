@@ -29,18 +29,32 @@ total_ops = [
 flatten_ops = [op for ops in total_ops for op in ops]
 
 
-def get_index(stock_df: pd.DataFrame, from_idx, to_idx) -> pd.Series:
-    if from_idx is not None and to_idx is not None:
-        return stock_df.index[from_idx:to_idx]
+def build_op_ctx(stock_df: pd.DataFrame) -> dict:
+    op_ctx = {}
 
-    if from_idx is not None and to_idx is None:
-        return stock_df.index[from_idx:]
+    for op in flatten_ops:
+        hits = set()
+        for idx in stock_df.index:
+            if op(stock_df, idx):
+                hits.add(idx)
+        op_ctx[op.__name__] = hits
 
-    if from_idx is None and to_idx is not None:
-        return stock_df.index[:to_idx]
-
-    if from_idx is None and to_idx is None:
-        return stock_df.index
-
+    return op_ctx
 
 
+def filter_indices_by_ops(op_ctx: dict, ops: list) -> list:
+    hits = op_ctx[ops[0].__name__]
+    for op in ops[1:]:
+        if 'noop' in op.__name__:
+            continue
+        hits = hits.intersection(op_ctx[op.__name__])
+        if len(hits) <= 1:
+            return []
+    return sorted(list(hits))
+
+
+def get_op_by_name(op_name):
+    for op in flatten_ops:
+        if op.__name__ == op_name:
+            return op
+    raise ValueError(f'op_name: {op_name} not found')

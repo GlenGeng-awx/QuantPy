@@ -2,16 +2,9 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from d2_margins import MARGINS
-from guru import get_index, flatten_ops
-from .holding_long import eval_long
-from .holding_short import eval_short
-
-
-def get_op(op_name):
-    for op in flatten_ops:
-        if op.__name__ == op_name:
-            return op
-    raise ValueError(f'op_name: {op_name} not found')
+from guru import get_op_by_name, build_op_ctx, filter_indices_by_ops
+from .eval_long import eval_long
+from .eval_short import eval_short
 
 
 # return list of ops
@@ -20,22 +13,15 @@ def parse_all_ops(stock_name: str):
     with open(f'./tmp/{stock_name}.res', 'r') as fd:
         for line in fd:
             op_names = line.split('\t')[0].split(',')
-            ops = [get_op(op_name) for op_name in op_names]
+            ops = [get_op_by_name(op_name) for op_name in op_names]
             all_ops.append(ops)
     return all_ops
 
 
-def filter_idx(stock_df: pd.DataFrame, idx: int, ops: list) -> bool:
-    for op in ops:
-        if not op(stock_df, idx):
-            return False
-    return True
-
-
 # return (pnl_tag, color)
 def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    long_profit = min(MARGINS[stock_name]['15']['incr'], 0.15)
-    short_profit = min(MARGINS[stock_name]['15']['decr'], 0.15)
+    long_profit = min(MARGINS[stock_name]['15']['incr'] * 0.8, 0.25)
+    short_profit = min(MARGINS[stock_name]['15']['decr'] * 0.8, 0.20)
 
     if indices[-1] - indices[0] < 10:
         return None, None
@@ -61,21 +47,14 @@ def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     return None, None
 
 
-def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to_idx, ops) -> bool:
-    indices = []
-
-    for idx in get_index(stock_df, from_idx, to_idx):
-        if filter_idx(stock_df, idx, ops):
-            indices.append(idx)
-
+def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops) -> bool:
+    indices = filter_indices_by_ops(op_ctx, ops)
     if not indices:
         return False
 
-    #  (-2, -1)
     #  (-5, -1)
-    # (-10, -1)
-    # (-15, -1)
-    if not any(stock_df.index[-3] <= idx <= stock_df.index[-3] for idx in indices):
+    #  (-3, -3)
+    if not any(stock_df.index[-5] <= idx <= stock_df.index[-1] for idx in indices):
         return False
 
     pnl_tag, color = eval_ops(stock_df, stock_name, indices)
@@ -101,12 +80,21 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to
     return True
 
 
-def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, from_idx, to_idx):
+def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
+    op_ctx = build_op_ctx(stock_df)
+    print(f'finish build op ctx for {stock_name}')
+
     all_ops = parse_all_ops(stock_name)
 
     hit = False
     for ops in all_ops:
-        hit |= predict_ops(stock_df, fig, stock_name, from_idx, to_idx, ops)
+        hit |= predict_ops(stock_df, fig, stock_name, op_ctx, ops)
 
-    if hit:
-        fig.show()
+    if not hit:
+        return
+
+    # mark the first and last date
+    fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
+    fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
+
+    fig.show()
