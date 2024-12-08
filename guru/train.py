@@ -8,23 +8,19 @@ from .eval_short import eval_short
 
 
 # return (pnl_tag, color)
-def eval_ops(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    long_profit = min(MARGINS[stock_name]['15']['incr'] * 0.8, 0.25)
-    short_profit = min(MARGINS[stock_name]['15']['decr'] * 0.8, 0.20)
+def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
+    long_profit = min(MARGINS[stock_name]['15']['incr'] * 0.8, 0.20)
+    short_profit = min(MARGINS[stock_name]['15']['decr'] * 0.8, 0.15)
 
     # eval long
-    long_results = eval_long(stock_df, indices)
-
-    if any(hit_num >= 2 and total_pnl >= long_profit * hit_num for (_, hit_num, total_pnl) in long_results):
-        pnl_tag = '<br>'.join(tag for (tag, _, _) in long_results)
+    pnl_tag, total_num, _, successful_rate = eval_long(stock_df, indices, 15, long_profit, 0.03)
+    if total_num >= 2 and successful_rate >= 0.7:
         color = 'orange'
         return pnl_tag, color
 
     # eval short
-    short_results = eval_short(stock_df, indices)
-
-    if any(hit_num >= 2 and total_pnl >= short_profit * hit_num for (_, hit_num, total_pnl) in short_results):
-        pnl_tag = '<br>'.join(tag for (tag, _, _) in short_results)
+    pnl_tag, total_num, _, successful_rate = eval_short(stock_df, indices, 15, short_profit, 0.03)
+    if total_num >= 2 and successful_rate >= 0.7:
         color = 'black'
         return pnl_tag, color
 
@@ -36,7 +32,7 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops) -> bool
     if not indices:
         return False
 
-    pnl_tag, color = eval_ops(stock_df, stock_name, indices)
+    pnl_tag, color = eval_indices(stock_df, stock_name, indices)
     if pnl_tag is None:
         return False
 
