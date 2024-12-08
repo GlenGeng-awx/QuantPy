@@ -9,7 +9,7 @@ from .eval_short import eval_short
 
 # return (pnl_tag, color)
 def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    sz = 10
+    sz = 15
     hard_loss = 0.03
 
     long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.8, 0.20)

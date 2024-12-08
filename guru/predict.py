@@ -20,8 +20,9 @@ def parse_all_ops(stock_name: str):
 
 # return (pnl_tag, color)
 def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    sz = 10
+    sz = 15
     hard_loss = 0.03
+
     long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.8, 0.20)
     short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.8, 0.15)
 
@@ -50,7 +51,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
 
     #  (-5, -1)
     #  (-3, -3)
-    if not any(stock_df.index[-3] <= idx <= stock_df.index[-3] for idx in indices):
+    if not any(stock_df.index[-5] <= idx <= stock_df.index[-1] for idx in indices):
         return False
 
     pnl_tag, color = eval_indices(stock_df, stock_name, indices)
@@ -91,6 +92,6 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
 
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
-    fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
+    # fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
 
     fig.show()
