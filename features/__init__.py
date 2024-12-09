@@ -3,14 +3,16 @@ import plotly.graph_objects as go
 
 from features import (
     # up/down thru ma 5/20/60
-    g_01, g_02,             # up thru ma5  / down thru ma5
-    g_03, g_04,             # up thru ma20 / down thru ma20
-    g_05, g_06,             # up thru ma60 / down thru ma60
+    g_01, g_02,             # up thru ma5   / down thru ma5
+    g_03, g_04,             # up thru ma20  / down thru ma20
+    g_05, g_06,             # up thru ma60  / down thru ma60
+    g_07, g_08,             # up thru ma120 / down thru ma120
 
     # up/down touch ma 5/20/60
-    g_11, g_12,             # down touch ma5  / up touch ma5
-    g_13, g_14,             # down touch ma20 / up touch ma20
-    g_15, g_16,             # down touch ma60 / up touch ma60
+    g_11, g_12,             # down touch ma5   / up touch ma5
+    g_13, g_14,             # down touch ma20  / up touch ma20
+    g_15, g_16,             # down touch ma60  / up touch ma60
+    g_17, g_18,             # down touch ma120 / up touch ma120
 
     # yesterday is local min/max
     h_01, h_02,             # yesterday is local min / yesterday is local max
@@ -103,8 +105,8 @@ FEATURE_BUF = [
     m_11, m_12, m_13, m_14, m_01, m_02, m_03, m_04,
     m_21, m_22, m_23, m_24,
     m_31, m_32, m_33, m_34, m_35, m_36,
-    g_01, g_02, g_03, g_04, g_05, g_06,
-    g_11, g_12, g_13, g_14, g_15, g_16,
+    g_01, g_02, g_03, g_04, g_05, g_06, g_07, g_08,
+    g_11, g_12, g_13, g_14, g_15, g_16, g_17, g_18,
     i_01, i_02, i_03, i_04, i_05, i_06, i_07, i_08, i_09,
     h_01, h_02, h_11, h_12, h_13, h_14, h_15, h_16, h_17, h_18, h_19, h_20,
     j_01, j_02, j_03, j_04,j_05, j_06, j_07, j_08,
