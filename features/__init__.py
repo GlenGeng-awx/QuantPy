@@ -14,6 +14,20 @@ from features import (
     g_15, g_16,             # down touch ma60  / up touch ma60
     g_17, g_18,             # down touch ma120 / up touch ma120
 
+    # up/down thru ema 5/10/12/20/26
+    g_31, g_32,             # up thru ema5   / down thru ema5
+    g_33, g_34,             # up thru ema10  / down thru ema10
+    g_35, g_36,             # up thru ema12  / down thru ema12
+    g_37, g_38,             # up thru ema20  / down thru ema20
+    g_39, g_40,             # up thru ema26  / down thru ema26
+
+    # up/down touch ema 5/10/12/20/26
+    g_41, g_42,             # down touch ema5   / up touch ema5
+    g_43, g_44,             # down touch ema10  / up touch ema10
+    g_45, g_46,             # down touch ema12  / up touch ema12
+    g_47, g_48,             # down touch ema20  / up touch ema20
+    g_49, g_50,             # down touch ema26  / up touch ema26
+
     # yesterday is local min/max
     h_01, h_02,             # yesterday is local min / yesterday is local max
 
@@ -107,6 +121,8 @@ FEATURE_BUF = [
     m_31, m_32, m_33, m_34, m_35, m_36,
     g_01, g_02, g_03, g_04, g_05, g_06, g_07, g_08,
     g_11, g_12, g_13, g_14, g_15, g_16, g_17, g_18,
+    g_31, g_32, g_33, g_34, g_35, g_36, g_37, g_38, g_39, g_40,
+    g_41, g_42, g_43, g_44, g_45, g_46, g_47, g_48, g_49, g_50,
     i_01, i_02, i_03, i_04, i_05, i_06, i_07, i_08, i_09,
     h_01, h_02, h_11, h_12, h_13, h_14, h_15, h_16, h_17, h_18, h_19, h_20,
     j_01, j_02, j_03, j_04,j_05, j_06, j_07, j_08,

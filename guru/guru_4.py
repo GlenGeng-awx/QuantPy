@@ -3,6 +3,9 @@ import pandas as pd
 """
     shape_noop
 
+    real red bar       / real green bar
+    fake red bar       / fake green bar
+
     long red bar       / long green bar
     short red bar      / short green bar
 
@@ -17,6 +20,22 @@ import pandas as pd
 
 def shape_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
+
+
+def real_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['real red bar'][idx]
+
+
+def real_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['real green bar'][idx]
+
+
+def fake_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['fake red bar'][idx]
+
+
+def fake_green_bar(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['fake green bar'][idx]
 
 
 def long_red_bar(stock_df: pd.DataFrame, idx: int) -> bool:
@@ -77,6 +96,12 @@ def down_gap(stock_df: pd.DataFrame, idx: int) -> bool:
 
 operators = [
     shape_noop,
+
+    # real_red_bar,
+    # real_green_bar,
+
+    fake_red_bar,
+    fake_green_bar,
 
     long_red_bar,
     long_green_bar,
