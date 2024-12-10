@@ -44,20 +44,20 @@ def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     return None, None
 
 
-def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops) -> bool:
+# return '', 'long', 'short'
+def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops) -> str:
     indices = filter_indices_by_ops(op_ctx, ops)
     if not indices:
-        return False
+        return ''
 
     #  (-5, -1)
     #  (-3, -3)
     if not any(stock_df.index[-5] <= idx <= stock_df.index[-1] for idx in indices):
-        return False
+        return ''
 
     pnl_tag, color = eval_indices(stock_df, stock_name, indices)
-
     if pnl_tag is None:
-        return False
+        return ''
 
     name = ','.join(op.__name__ for op in ops)
     print(f'{stock_name} {name} ---> {pnl_tag}')
@@ -74,7 +74,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
             # visible='legendonly',
         )
     )
-    return True
+    return 'long' if 'long' in pnl_tag else 'short'
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
@@ -82,16 +82,27 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     print(f'finish build op ctx for {stock_name}')
 
     all_ops = parse_all_ops(stock_name)
+    long_num, short_num, ignore_num = 0, 0, 0
 
-    hit = False
     for ops in all_ops:
-        hit |= predict_ops(stock_df, fig, stock_name, op_ctx, ops)
+        result = predict_ops(stock_df, fig, stock_name, op_ctx, ops)
 
-    if not hit:
+        if result == 'long':
+            long_num += 1
+        elif result == 'short':
+            short_num += 1
+        else:
+            ignore_num += 1
+
+    tag = f'long {long_num}, short {short_num}, ignore {ignore_num}'
+    print(f'{stock_name} {tag}')
+
+    if long_num <= 10 * short_num and short_num <= 10 * long_num:
         return
 
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
     # fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
 
+    fig.update_layout(title=fig.layout.title.text + f'<br>    {tag}')
     fig.show()
