@@ -5,13 +5,13 @@ from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 """
     structure_noop
 
-     ascend sr level min or local min 3rd, in last 20 ~ 30
-       flat sr level min or local min 3rd, in last 20 ~ 30
-    descend sr level min or local min 3rd, in last 20 ~ 30
+     ascend sr_level_min or local_min_3rd, in last 20 ~ 30
+       flat sr_level_min or local_min_3rd, in last 20 ~ 30
+    descend sr_level_min or local_min_3rd, in last 20 ~ 30
 
-     ascend sr level max or local max 3rd, in last 20 ~ 30
-       flat sr level max or local max 3rd, in last 20 ~ 30
-    descend sr level max or local max 3rd, in last 20 ~ 30
+     ascend sr_level_max or local_max_3rd, in last 20 ~ 30
+       flat sr_level_max or local_max_3rd, in last 20 ~ 30
+    descend sr_level_max or local_max_3rd, in last 20 ~ 30
 """
 
 

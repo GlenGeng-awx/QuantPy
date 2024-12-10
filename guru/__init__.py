@@ -3,7 +3,7 @@ import pandas as pd
 from guru import (
     guru_1,  # structure
     guru_2,  # sr level min/max
-    guru_3,  # ma
+    guru_3,  # ma/ema
     guru_4,  # shape
     guru_5,  # vol
     guru_6,  # statistic
