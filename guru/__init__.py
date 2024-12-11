@@ -4,13 +4,15 @@ from guru import (
     guru_1,  # structure
     guru_2,  # sr level min/max
     guru_3,  # ma/ema
-    guru_4,  # shape
-    guru_5,  # vol
-    guru_6,  # statistic
-    guru_7,  # yesterday min max
-    guru_8,  # price
-    guru_9,  # post
+    guru_4,  # simple shape
+    guru_5,  # complex shape
+    guru_6,  # vol
+    guru_7,  # statistic
+    guru_8,  # yesterday min max
+    guru_9,  # price
     guru_a,  # weekday
+    guru_b,  # post
+    guru_c,  # baseline
 )
 
 total_ops = [
@@ -24,6 +26,8 @@ total_ops = [
     guru_8.operators,
     guru_9.operators,
     guru_a.operators,
+    guru_b.operators,
+    guru_c.operators,
 ]
 
 flatten_ops = [op for ops in total_ops for op in ops]

@@ -1,7 +1,7 @@
 import pandas as pd
 
 """
-    shape_noop
+    simple_shape_noop
 
     real red bar       / real green bar
     fake red bar       / fake green bar
@@ -11,14 +11,10 @@ import pandas as pd
 
     long lower shadow  / long upper shadow
     short lower shadow / short upper shadow
-
-    up engulfing       / down engulfing
-    up harami          / down harami
-    up gap             / down gap
 """
 
 
-def shape_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def simple_shape_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
@@ -70,32 +66,8 @@ def short_upper_shadow(stock_df: pd.DataFrame, idx: int) -> bool:
     return stock_df['short upper shadow'][idx]
 
 
-def up_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up engulfing'][idx]
-
-
-def down_engulfing(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down engulfing'][idx]
-
-
-def up_harami(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up harami'][idx]
-
-
-def down_harami(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down harami'][idx]
-
-
-def up_gap(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['up gap'][idx]
-
-
-def down_gap(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['down gap'][idx]
-
-
 operators = [
-    shape_noop,
+    simple_shape_noop,
 
     # real_red_bar,
     # real_green_bar,
@@ -114,13 +86,4 @@ operators = [
 
     short_lower_shadow,
     short_upper_shadow,
-
-    up_engulfing,
-    down_engulfing,
-
-    up_harami,
-    down_harami,
-
-    up_gap,
-    down_gap,
 ]

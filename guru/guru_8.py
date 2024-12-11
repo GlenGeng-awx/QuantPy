@@ -1,138 +1,87 @@
 import pandas as pd
 
 """
-    price_noop
+    yesterday_min_max_noop
 
-    incr top 10% today    / decr top 10% today
-    incr top 10% last 3d  / decr top 10% last 3d
-    incr top 10% last 5d  / decr top 10% last 5d
-    incr top 10% last 10d / decr top 10% last 10d
-
-    close incr 3d         / close decr 3d
-    close incr 5d         / close decr 5d
-
-    low incr 3d           / low decr 3d
-    low incr 5d           / low decr 5d
-
-    high incr 3d          / high decr 2d
-    high incr 5d          / high decr 3d
+    yesterday is local min     / yesterday is local max
+    yesterday min of last 5d   / yesterday max of last 5d
+    yesterday min of last 10d  / yesterday max of last 10d
+    yesterday min of last 20d  / yesterday max of last 20d
+    yesterday min of last 60d  / yesterday max of last 60d
+    yesterday min of last 120d / yesterday max of last 120d
 """
 
 
-def price_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
+def yesterday_min_max_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
 
 
-def incr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% today'][idx]
+def yesterday_is_local_min(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday is local min'][idx]
 
 
-def decr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% today'][idx]
+def yesterday_is_local_max(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday is local max'][idx]
 
 
-def incr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 3d'][idx]
+def yesterday_min_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday min of last 5d'][idx]
 
 
-def decr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 3d'][idx]
+def yesterday_max_of_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday max of last 5d'][idx]
 
 
-def incr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 5d'][idx]
+def yesterday_min_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday min of last 10d'][idx]
 
 
-def decr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 5d'][idx]
+def yesterday_max_of_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday max of last 10d'][idx]
 
 
-def incr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 10d'][idx]
+def yesterday_min_of_last_20d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday min of last 20d'][idx]
 
 
-def decr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 10d'][idx]
+def yesterday_max_of_last_20d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday max of last 20d'][idx]
 
 
-def close_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['close incr 3d'][idx]
+def yesterday_min_of_last_60d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday min of last 60d'][idx]
 
 
-def close_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['close decr 3d'][idx]
+def yesterday_max_of_last_60d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday max of last 60d'][idx]
 
 
-def close_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['close incr 5d'][idx]
+def yesterday_min_of_last_120d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday min of last 120d'][idx]
 
 
-def close_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['close decr 5d'][idx]
-
-
-def low_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['low incr 3d'][idx]
-
-
-def low_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['low decr 3d'][idx]
-
-
-def low_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['low incr 5d'][idx]
-
-
-def low_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['low decr 5d'][idx]
-
-
-def high_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['high incr 3d'][idx]
-
-
-def high_decr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['high decr 3d'][idx]
-
-
-def high_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['high decr 5d'][idx]
-
-
-def high_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['high incr 5d'][idx]
+def yesterday_max_of_last_120d(stock_df: pd.DataFrame, idx: int) -> bool:
+    return stock_df['yesterday max of last 120d'][idx]
 
 
 operators = [
-    price_noop,
+    yesterday_min_max_noop,
 
-    incr_top_10pst_today,
-    decr_top_10pst_today,
+    yesterday_is_local_min,
+    yesterday_is_local_max,
 
-    incr_top_10pst_last_3d,
-    decr_top_10pst_last_3d,
+    yesterday_min_of_last_5d,
+    yesterday_max_of_last_5d,
 
-    incr_top_10pst_last_5d,
-    decr_top_10pst_last_5d,
+    yesterday_min_of_last_10d,
+    yesterday_max_of_last_10d,
 
-    incr_top_10pst_last_10d,
-    decr_top_10pst_last_10d,
+    yesterday_min_of_last_20d,
+    yesterday_max_of_last_20d,
 
-    close_incr_3d,
-    close_decr_3d,
+    yesterday_min_of_last_60d,
+    yesterday_max_of_last_60d,
 
-    close_incr_5d,
-    close_decr_5d,
-
-    low_incr_3d,
-    low_decr_3d,
-
-    low_incr_5d,
-    low_decr_5d,
-
-    high_incr_3d,
-    high_decr_3d,
-
-    high_incr_5d,
-    high_decr_5d,
+    yesterday_min_of_last_120d,
+    yesterday_max_of_last_120d,
 ]
