@@ -50,9 +50,8 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
     if not indices:
         return ''
 
-    #  (-5, -1)
-    #  (-3, -3)
-    if not any(stock_df.index[-5] <= idx <= stock_df.index[-1] for idx in indices):
+    #  (-9, -7) and (-3, -1)
+    if not any(stock_df.index[-9] <= idx <= stock_df.index[-7] for idx in indices):
         return ''
 
     pnl_tag, color = eval_indices(stock_df, stock_name, indices)

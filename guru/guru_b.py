@@ -42,6 +42,6 @@ operators = [
     # one_day_after_up,
     # one_day_after_down,
 
-    two_day_after_up,
-    two_day_after_down
+    # two_day_after_up,
+    # two_day_after_down
 ]

@@ -2,11 +2,15 @@ from conf import *
 
 # date, long/short, price, volume
 POSITION = {
-    BILI: [
-        ('2024-12-03', 'long', 18.76, 107),
+    AAPL: [
+        ('2024-12-09', 'short', 246.89, 9),
     ],
 
-    SNAP: [
-        ('2024-12-05', 'long', 11.78, 170),
+    INTC: [
+        ('2024-12-10', 'long', 20.17, 100),
+    ],
+
+    NFLX: [
+        ('2024-12-10', 'short', 922.77, 2),
     ],
 }

@@ -3,7 +3,6 @@ import pandas as pd
 """
     baseline_noop
 
-    baseline incr 1d / baseline decr 1d
     baseline incr 3d / baseline decr 3d
     baseline incr 5d / baseline decr 5d
 """
@@ -40,8 +39,8 @@ def baseline_decr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
 operators = [
     baseline_noop,
 
-    baseline_incr_1d,
-    baseline_decr_1d,
+    # baseline_incr_1d,
+    # baseline_decr_1d,
 
     baseline_incr_3d,
     baseline_decr_3d,
