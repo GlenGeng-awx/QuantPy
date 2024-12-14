@@ -3,31 +3,24 @@ from datetime import datetime
 
 from d2_margins import MARGINS
 from guru import total_ops, build_op_ctx, filter_indices_by_ops
-from .eval_long import eval_long
-from .eval_short import eval_short
+from .eval_vix import eval_vix
 
 
 # return (pnl_tag, color)
-def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
+def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list):
     sz = 15
-    hard_loss = 0.03
+    hard_loss = 0.015
 
-    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.8, 0.20)
-    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.8, 0.15)
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.20)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.15)
 
-    # eval long
-    pnl_tag, total_num, _, successful_rate = eval_long(stock_df, indices, sz, long_profit, hard_loss)
-    if total_num >= 2 and successful_rate >= 0.7:
-        color = 'orange'
-        return pnl_tag, color
+    # eval vix
+    vix_tag, total_num, successful_rate, _, _ = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
 
-    # eval short
-    pnl_tag, total_num, _, successful_rate = eval_short(stock_df, indices, sz, short_profit, hard_loss)
-    if total_num >= 2 and successful_rate >= 0.7:
-        color = 'black'
-        return pnl_tag, color
-
-    return None, None
+    if total_num >= 2 and successful_rate >= 0.8:
+        return vix_tag
+    else:
+        return None
 
 
 def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops) -> bool:
@@ -35,13 +28,13 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops) -> bool
     if not indices:
         return False
 
-    pnl_tag, color = eval_indices(stock_df, stock_name, indices)
-    if pnl_tag is None:
+    vix_tag = eval_indices(stock_df, stock_name, indices)
+    if vix_tag is None:
         return False
 
     name = ','.join(op.__name__ for op in ops)
-    print(f'{stock_name} {name} ---> {pnl_tag}')
-    fd.write(f'{name}\t{pnl_tag}\n')
+    print(f'{stock_name} {name} ---> {vix_tag}')
+    fd.write(f'{name}\t{vix_tag}\n')
     fd.flush()
     return True
 
@@ -56,6 +49,14 @@ def train_impl(stock_df: pd.DataFrame,
         assert len(ops) + len(remaining_operators) == len(total_ops)
 
         if ops:
+            # required feature
+            if len(ops) >= 3 \
+                    and ops[0].__name__ == 'structure_noop' \
+                    and ops[1].__name__ == 'sr_level_noop' \
+                    and ops[2].__name__ == 'ma_noop':
+                return
+
+            # fail fast
             indices = filter_indices_by_ops(op_ctx, ops)
             if not indices:
                 return
