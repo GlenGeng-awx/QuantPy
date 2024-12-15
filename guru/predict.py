@@ -45,7 +45,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
         return False
 
     # #  (-9, -7) or (-3, -1) or (-1, -1)
-    if not any(stock_df.index[-3] <= idx <= stock_df.index[-3] for idx in indices):
+    if not any(stock_df.index[-3] <= idx <= stock_df.index[-1] for idx in indices):
         return False
 
     vix_tag, color = eval_indices(stock_df, stock_name, indices)
@@ -88,5 +88,9 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
     fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
 
-    fig.update_layout(title=fig.layout.title.text + f'<br>    HIT {hit_num}')
+    long_profit = min(MARGINS[stock_name][str(15)]['incr'] * 0.9, 0.20)
+    short_profit = min(MARGINS[stock_name][str(15)]['decr'] * 0.9, 0.15)
+    fig.update_layout(
+        title=fig.layout.title.text + f'<br>HIT {hit_num} --> L {long_profit:.1%}, S {short_profit:.1%}'
+    )
     fig.show()

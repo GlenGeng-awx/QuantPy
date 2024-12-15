@@ -49,13 +49,6 @@ def train_impl(stock_df: pd.DataFrame,
         assert len(ops) + len(remaining_operators) == len(total_ops)
 
         if ops:
-            # required feature
-            if len(ops) >= 3 \
-                    and ops[0].__name__ == 'structure_noop' \
-                    and ops[1].__name__ == 'sr_level_noop' \
-                    and ops[2].__name__ == 'ma_noop':
-                return
-
             # fail fast
             indices = filter_indices_by_ops(op_ctx, ops)
             if not indices:
@@ -71,6 +64,17 @@ def train_impl(stock_df: pd.DataFrame,
                        fd)
     else:
         assert len(ops) == len(total_ops)
+
+        # required feature 1
+        if ops[0].__name__ == 'structure_noop' \
+                and ops[1].__name__ == 'sr_level_noop' \
+                and ops[2].__name__ == 'ma_noop':
+            return
+
+        # required feature 2
+        if ops[3].__name__ == 'simple_shape_noop' \
+                and ops[4].__name__ == 'complex_shape_noop':
+            return
 
         train_ops(stock_df,
                   stock_name,
