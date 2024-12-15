@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -44,8 +45,8 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
     if not indices:
         return False
 
-    # #  (-9, -7) or (-3, -1) or (-1, -1)
-    if not any(stock_df.index[-3] <= idx <= stock_df.index[-1] for idx in indices):
+    # (-3, -1) or (-1, -1)
+    if not any(stock_df.index[-1] <= idx <= stock_df.index[-1] for idx in indices):
         return False
 
     vix_tag, color = eval_indices(stock_df, stock_name, indices)
@@ -71,6 +72,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
+    start_time = datetime.now()
     op_ctx = build_op_ctx(stock_df)
     print(f'finish build op ctx for {stock_name}')
 
@@ -80,6 +82,8 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     for ops in all_ops:
         if predict_ops(stock_df, fig, stock_name, op_ctx, ops):
             hit_num += 1
+
+    print(f'{stock_name} predict finished, cost: {(datetime.now() - start_time).total_seconds()}s')
 
     if hit_num == 0:
         return

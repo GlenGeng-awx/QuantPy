@@ -1,7 +1,7 @@
+import plotly.graph_objects as go
 from multiprocessing import Process
 from conf import *
 from d1_preload import preload
-from trading.position import POSITION
 from guru.train import train
 from guru.predict import predict
 
@@ -12,10 +12,14 @@ def probe(stock_name):
 
     # (-440, None)
     # (-440, -15)
-    stock_df = stock_df.iloc[-440:-15]
+    for i in range(-3, 0):
+        _stock_df = stock_df.iloc[i - 400:i]
+        train(_stock_df, stock_name)
+        predict(_stock_df, go.Figure(fig), stock_name)
 
+    stock_df = stock_df.iloc[-400:]
     train(stock_df, stock_name)
-    # predict(stock_df, fig, stock_name)
+    predict(stock_df, go.Figure(fig), stock_name)
 
 
 if __name__ == '__main__':

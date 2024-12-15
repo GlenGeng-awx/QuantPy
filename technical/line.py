@@ -35,7 +35,7 @@ def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_
 
     k = _calculate_k(stock_df, date1, date2)
 
-    for delta in range(-prev_len, 0):
+    for delta in range(-prev_len, 1):
         point = _calculate_point(stock_df, date1, delta, k)
         if point:
             dates.append(point[0])

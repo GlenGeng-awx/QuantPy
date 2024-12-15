@@ -85,6 +85,9 @@ GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
 SQ = "SQ"
 
+LLY = "LLY"             # Eli Lilly And Co
+AVGO = "AVGO"           # Broadcom Inc
+
 INDEX = [
     IXIC,
     SS_000300,
@@ -113,6 +116,7 @@ NASDAQ_SEMI_CONDUCT = [
     TSM,
     INTC,
     QCOM,
+    AVGO,
 ]
 
 NASDAQ_MEDICAL = [
@@ -122,6 +126,8 @@ NASDAQ_MEDICAL = [
     PFE,
     BNTX,
     GILD,
+    LLY,
+    MRK,
 ]
 
 NASDAQ_OTHER = [
@@ -147,7 +153,6 @@ NASDAQ_OTHER = [
     SNAP,
     TTD,
     MCD,
-    MRK,
     DIS,
     SEA,
     ERIC,
