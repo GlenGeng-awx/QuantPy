@@ -127,7 +127,7 @@ class BoxImpl:
                 textfont=dict(
                     color="red",
                 ),
-                visible=None if enable else 'legendonly',
+                visible='legendonly',
             )
         )
 
@@ -152,7 +152,7 @@ class BoxImpl:
                 textfont=dict(
                     color="green",
                 ),
-                visible=None if enable else 'legendonly',
+                visible='legendonly',
             )
         )
 
@@ -164,5 +164,5 @@ class Box:
 
     def build_graph(self, fig: go.Figure, interval: str, enable=False):
         BoxImpl(self.stock_df, self.wave.wave_2nd[0], interval, 'wave_2nd').build_graph(fig)
-        BoxImpl(self.stock_df, self.wave.wave_3rd[0], interval, 'wave_3rd').build_graph(fig, enable)
-        BoxImpl(self.stock_df, self.wave.wave_4th[0], interval, 'wave_4th').build_graph(fig)
+        BoxImpl(self.stock_df, self.wave.wave_3rd[0], interval, 'wave_3rd').build_graph(fig)
+        BoxImpl(self.stock_df, self.wave.wave_4th[0], interval, 'wave_4th').build_graph(fig, enable)
