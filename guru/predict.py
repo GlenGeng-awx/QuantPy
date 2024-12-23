@@ -21,10 +21,10 @@ def parse_all_ops(stock_name: str):
 # return (pnl_tag, color)
 def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
     sz = 15
-    hard_loss = 0.015
+    hard_loss = 1.0  # 0.015
 
-    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.20)
-    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.15)
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.30)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.20)
 
     # valid range
     valid_indices = [idx for idx in indices if idx + sz in stock_df.index]
@@ -92,8 +92,8 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
     fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=1, line_color="black")
 
-    long_profit = min(MARGINS[stock_name][str(15)]['incr'] * 0.9, 0.20)
-    short_profit = min(MARGINS[stock_name][str(15)]['decr'] * 0.9, 0.15)
+    long_profit = min(MARGINS[stock_name][str(15)]['incr'] * 0.9, 0.30)
+    short_profit = min(MARGINS[stock_name][str(15)]['decr'] * 0.9, 0.20)
     fig.update_layout(
         title=fig.layout.title.text + f'<br>HIT {hit_num} --> L {long_profit:.1%}, S {short_profit:.1%}'
     )

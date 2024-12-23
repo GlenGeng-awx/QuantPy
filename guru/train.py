@@ -9,10 +9,10 @@ from .eval_vix import eval_vix
 # return (pnl_tag, color)
 def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list):
     sz = 15
-    hard_loss = 0.015
+    hard_loss = 1.0  # 0.015
 
-    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.20)
-    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.15)
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.30)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.20)
 
     # eval vix
     vix_tag, total_num, successful_rate, _, _ = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
