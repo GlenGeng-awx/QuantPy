@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 from multiprocessing import Process
 from conf import *
-from d1_preload import preload
+from preload import preload
 from guru.train import train
 from guru.predict import predict
 

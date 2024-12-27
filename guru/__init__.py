@@ -1,4 +1,5 @@
 import pandas as pd
+from margins import MARGINS
 
 from guru import (
     guru_1,  # structure
@@ -62,3 +63,19 @@ def get_op_by_name(op_name):
         if op.__name__ == op_name:
             return op
     raise ValueError(f'op_name: {op_name} not found')
+
+
+# conf
+def get_sz() -> int:
+    return 20
+
+
+def get_hard_loss() -> float:
+    return 1.0  # 0.015
+
+
+def get_profits(stock_name: str) -> (float, float):
+    sz = get_sz()
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.35)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.25)
+    return long_profit, short_profit
