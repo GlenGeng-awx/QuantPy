@@ -8,7 +8,7 @@ def eval_vix(stock_df: pd.DataFrame,
              long_profit: float,
              short_profit: float,
              hard_loss: float
-             ) -> (str, int, float, int, int):
+             ) -> dict:
     total_num, pass_num, long_num, short_num = 0, 0, 0, 0
 
     for idx in indices:
@@ -34,8 +34,19 @@ def eval_vix(stock_df: pd.DataFrame,
             short_num += 1
 
     if total_num == 0:
-        return '0, 0.0%, 0, 0', 0, 0.0, 0, 0
-
-    successful_rate = pass_num / total_num
-    return (f'{total_num}, {successful_rate:.0%}, L{long_num}, S{short_num}',
-            total_num, successful_rate, long_num, short_num)
+        return {
+            'vix_tag': '0, 0.0%, L0, S0',
+            'total_num': 0,
+            'successful_rate': 0.0,
+            'long_num': 0,
+            'short_num': 0,
+        }
+    else:
+        successful_rate = pass_num / total_num
+        return {
+            'vix_tag': f'{total_num}, {successful_rate:.0%}, L{long_num}, S{short_num}',
+            'total_num': total_num,
+            'successful_rate': successful_rate,
+            'long_num': long_num,
+            'short_num': short_num,
+        }

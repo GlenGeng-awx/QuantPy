@@ -1,42 +1,24 @@
+import json
 from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
-import util
+from util import get_next_n_workday, shrink_date_str
 from guru import (get_op_by_name, build_op_ctx, filter_indices_by_ops,
                   get_sz, get_hard_loss, get_profits)
 from .eval_vix import eval_vix
 
 
 # return list of ops
-def parse_all_ops(stock_name: str):
+def parse_all_ops(stock_name: str, to_date: str):
     all_ops = []
-    with open(f'./tmp/{stock_name}.res', 'r') as fd:
+    with open(f'./tmp/{stock_name}.{to_date}.res', 'r') as fd:
         for line in fd:
-            op_names = line.split('\t')[0].split(',')
+            record = json.loads(line)
+            op_names = record['op_names']
             ops = [get_op_by_name(op_name) for op_name in op_names]
             all_ops.append(ops)
     return all_ops
-
-
-# return (pnl_tag, color)
-def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list) -> tuple:
-    sz = get_sz()
-    hard_loss = get_hard_loss()
-    long_profit, short_profit = get_profits(stock_name)
-
-    # valid range
-    valid_indices = [idx for idx in indices if idx + sz in stock_df.index]
-    if valid_indices[-1] - valid_indices[0] < 60:
-        return None, None
-
-    # eval vix
-    vix_tag, total_num, successful_rate, _, _ = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
-
-    if total_num >= 3 and successful_rate >= 0.8:
-        return vix_tag, 'orange'
-    else:
-        return None, None
 
 
 def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops) -> bool:
@@ -44,12 +26,24 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
     if not indices:
         return False
 
-    # (-3, -1) or (-1, -1)
+    # rule 1: (-3, -1) or (-1, -1)
     if not any(stock_df.index[-1] <= idx <= stock_df.index[-1] for idx in indices):
         return False
 
-    vix_tag, color = eval_indices(stock_df, stock_name, indices)
-    if vix_tag is None:
+    # rule 2: eval vix
+    sz = get_sz()
+    hard_loss = get_hard_loss()
+    long_profit, short_profit = get_profits(stock_name)
+
+    result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
+    vix_tag, total_num, successful_rate = result['vix_tag'], result['total_num'], result['successful_rate']
+
+    if not (total_num >= 3 and successful_rate >= 0.8):
+        return False
+
+    # rule 3: valid range
+    valid_indices = [idx for idx in indices if idx + sz in stock_df.index]
+    if valid_indices[-1] - valid_indices[0] < 60:
         return False
 
     name = ','.join(op.__name__ for op in ops)
@@ -63,8 +57,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops)
         go.Scatter(
             name=f'{name}<br>{vix_tag}',
             x=dates, y=close,
-            mode='markers', marker=dict(size=10, color=color),
-            # visible='legendonly',
+            mode='markers', marker=dict(size=10, color='orange'),
         )
     )
     return True
@@ -80,7 +73,7 @@ def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
     long_profit, short_profit = get_profits(stock_name)
 
     from_date = stock_df.iloc[-1]['Date']
-    to_date = util.get_next_n_workday(from_date, sz)
+    to_date = get_next_n_workday(from_date, sz)
 
     close = stock_df.iloc[-1]['close']
     long_target = close * (1 + long_profit)
@@ -108,11 +101,12 @@ def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
-    start_time = datetime.now()
+    to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
     op_ctx = build_op_ctx(stock_df)
-    print(f'finish build op ctx for {stock_name}')
+    print(f'finish build op ctx for {stock_name} at {to_date}')
 
-    all_ops = parse_all_ops(stock_name)
+    start_time = datetime.now()
+    all_ops = parse_all_ops(stock_name, to_date)
 
     hit_num = 0
     for ops in all_ops:

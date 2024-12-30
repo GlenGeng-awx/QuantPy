@@ -1,40 +1,37 @@
+import json
 import pandas as pd
 from datetime import datetime
 
+from util import shrink_date_str
 from guru import (total_ops, build_op_ctx, filter_indices_by_ops,
                   get_sz, get_hard_loss, get_profits)
 from .eval_vix import eval_vix
 
 
-# return (pnl_tag, color)
-def eval_indices(stock_df: pd.DataFrame, stock_name, indices: list):
+def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops: list):
+    indices = filter_indices_by_ops(op_ctx, ops)
+    if not indices:
+        return
+
     sz = get_sz()
     hard_loss = get_hard_loss()
     long_profit, short_profit = get_profits(stock_name)
 
     # eval vix
-    vix_tag, total_num, successful_rate, _, _ = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
+    result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
+    total_num, successful_rate = result['total_num'], result['successful_rate']
 
-    if total_num >= 2 and successful_rate >= 0.8:
-        return vix_tag
-    else:
-        return None
+    if not (total_num >= 2 and successful_rate >= 0.8):
+        return
 
+    record = json.dumps({
+        'stock_name': stock_name,
+        'op_names': [op.__name__ for op in ops],
+        'result': result,
+    })
 
-def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops) -> bool:
-    indices = filter_indices_by_ops(op_ctx, ops)
-    if not indices:
-        return False
-
-    vix_tag = eval_indices(stock_df, stock_name, indices)
-    if vix_tag is None:
-        return False
-
-    name = ','.join(op.__name__ for op in ops)
-    print(f'{stock_name} {name} ---> {vix_tag}')
-    fd.write(f'{name}\t{vix_tag}\n')
-    fd.flush()
-    return True
+    print(record)
+    fd.write(record + '\n')
 
 
 def train_impl(stock_df: pd.DataFrame,
@@ -82,11 +79,12 @@ def train_impl(stock_df: pd.DataFrame,
 
 
 def train(stock_df: pd.DataFrame, stock_name):
+    to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
     op_ctx = build_op_ctx(stock_df)
-    print(f'finish build op ctx for {stock_name}')
+    print(f'finish build op ctx for {stock_name} at {to_date}')
 
     start_time = datetime.now()
-    with open(f'./tmp/{stock_name}.res', 'w') as fd:
+    with open(f'./tmp/{stock_name}.{to_date}.res', 'w') as fd:
         train_impl(stock_df,
                    stock_name,
                    op_ctx,
