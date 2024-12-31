@@ -1,16 +1,15 @@
 from datetime import datetime
 from base_engine import BaseEngine
 import features
-from trading.position import POSITION
 
 
 def _default_period() -> tuple:
     current_date = datetime.now()
 
-    date_1y_ago = datetime(current_date.year - 1, 1, 1).strftime('%Y-%m-%d')
+    date_2y_ago = datetime(current_date.year - 2, 1, 1).strftime('%Y-%m-%d')
     current_date = current_date.strftime('%Y-%m-%d')
 
-    return date_1y_ago, current_date, '1d'
+    return date_2y_ago, current_date, '1d'
 
 
 def preload(stock_name: str) -> BaseEngine:
@@ -44,7 +43,6 @@ def preload(stock_name: str) -> BaseEngine:
 if __name__ == '__main__':
     from conf import *
 
-    # for _stock_name in POSITION.keys():
     for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _fig = _base_engine.fig

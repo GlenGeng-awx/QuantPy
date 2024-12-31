@@ -76,6 +76,6 @@ def get_hard_loss() -> float:
 
 def get_profits(stock_name: str) -> (float, float):
     sz = get_sz()
-    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.35)
-    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.25)
+    long_profit = min(MARGINS[stock_name][str(sz)]['incr'] * 0.9, 0.30)
+    short_profit = min(MARGINS[stock_name][str(sz)]['decr'] * 0.9, 0.20)
     return long_profit, short_profit

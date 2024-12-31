@@ -30,7 +30,7 @@ def train_ops(stock_df: pd.DataFrame, stock_name, fd, op_ctx: dict, ops: list):
         'result': result,
     })
 
-    print(record)
+    # print(record)
     fd.write(record + '\n')
 
 

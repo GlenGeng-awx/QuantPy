@@ -100,6 +100,7 @@ def interval_to_label(interval: str, abbr=False):
 
 # date is in the format of '2022-01-03'
 def get_idx_by_date(stock_df: pd.DataFrame, date: str) -> int:
+    # print(f'get_idx_by_date(date={date})')
     dates = stock_df['Date'].apply(shrink_date_str)
     return dates[dates == date].index[0]
 

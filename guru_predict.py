@@ -2,24 +2,19 @@ import plotly.graph_objects as go
 from multiprocessing import Process
 from conf import *
 from preload import preload
-from guru.train import train
 from guru.predict import predict
+
+FROM = 3  # 3, 2, 1
+SZ = 1
 
 
 def probe(stock_name):
     base_engine = preload(stock_name)
     stock_df, fig = base_engine.stock_df, base_engine.fig
 
-    # (-440, None)
-    # (-440, -15)
-    for i in range(-3, 0):
-        _stock_df = stock_df.iloc[i - 400:i]
-        train(_stock_df, stock_name)
+    for i in range(SZ):
+        _stock_df = stock_df.tail(FROM - (i + 1) + 400).head(400)
         predict(_stock_df, go.Figure(fig), stock_name)
-
-    stock_df = stock_df.iloc[-400:]
-    train(stock_df, stock_name)
-    predict(stock_df, go.Figure(fig), stock_name)
 
 
 if __name__ == '__main__':
