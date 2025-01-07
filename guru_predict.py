@@ -4,7 +4,7 @@ from conf import *
 from preload import preload
 from guru.predict import predict
 
-FROM = 3  # 3, 2, 1
+FROM = 1  # 3, 2, 1
 SZ = 1
 
 

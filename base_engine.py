@@ -52,7 +52,7 @@ class BaseEngine:
         self.box = Box(self.stock_df, self.wave)
 
         self.volume = Volume(self.stock_df)
-        self.position = PositionDisplay(self.stock_name)
+        self.position = PositionDisplay(self.stock_df, self.stock_name)
 
     def setup_graph(self, rows=2):
         self.fig = make_subplots(rows=rows, cols=1,

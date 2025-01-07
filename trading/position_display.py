@@ -1,16 +1,34 @@
+import pandas as pd
 import plotly.graph_objects as go
+from util import get_idx_by_date
 from .position import POSITION
 
 
 class PositionDisplay:
-    def __init__(self, stock_name: str):
+    def __init__(self, stock_df: pd.DataFrame, stock_name: str):
+        self.stock_df = stock_df
         self.stock_name = stock_name
 
     def build_graph_impl(self, fig: go.Figure, enable: bool, category: str, color: str, size: int):
-        records = POSITION.get(self.stock_name, [])
+        x = []
+        y = []
 
-        x = [record[0] for record in records if record[1] == category]  # date
-        y = [record[2] for record in records if record[1] == category]  # price
+        records = POSITION.get(self.stock_name, [])
+        for (date, _category) in records:
+            if _category == category:
+                x.append(date)
+
+                idx = get_idx_by_date(self.stock_df, date)
+                close = self.stock_df.loc[idx]['close']
+
+                if category == 'CALL':
+                    y.append(close * 1.1)
+                elif category == 'PUT':
+                    y.append(close * 0.9)
+                elif category == 'CLOSE':
+                    y.append(close)
+                else:
+                    raise ValueError(f'Unknown category: {category}')
 
         if len(x) == 0:
             return
@@ -26,5 +44,6 @@ class PositionDisplay:
         )
 
     def build_graph(self, fig: go.Figure, enable: bool):
-        self.build_graph_impl(fig, enable, 'long', 'red', 10)
-        self.build_graph_impl(fig, enable, 'short', 'green', 10)
+        self.build_graph_impl(fig, enable, 'CALL', 'red', 10)
+        self.build_graph_impl(fig, enable, 'PUT', 'green', 10)
+        self.build_graph_impl(fig, enable, 'CLOSE', 'black', 8)
