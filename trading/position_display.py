@@ -22,9 +22,9 @@ class PositionDisplay:
                 close = self.stock_df.loc[idx]['close']
 
                 if category == 'CALL':
-                    y.append(close * 1.1)
+                    y.append(close * 1.05)
                 elif category == 'PUT':
-                    y.append(close * 0.9)
+                    y.append(close * 0.95)
                 elif category == 'CLOSE':
                     y.append(close)
                 else:
