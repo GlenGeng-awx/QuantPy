@@ -18,7 +18,7 @@ def preload(stock_name: str) -> BaseEngine:
     base_engine.build_graph(
         # enable_candlestick=True,
         enable_wave=True,
-        enable_box=True,
+        enable_box=False,
         enable_min_max=True,
         enable_sr=True,
         enable_line=True,

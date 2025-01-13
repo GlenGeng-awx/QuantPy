@@ -163,6 +163,6 @@ class Box:
         self.wave = wave
 
     def build_graph(self, fig: go.Figure, interval: str, enable=False):
-        BoxImpl(self.stock_df, self.wave.wave_2nd[0], interval, 'wave_2nd').build_graph(fig)
+        # BoxImpl(self.stock_df, self.wave.wave_2nd[0], interval, 'wave_2nd').build_graph(fig)
         BoxImpl(self.stock_df, self.wave.wave_3rd[0], interval, 'wave_3rd').build_graph(fig)
         BoxImpl(self.stock_df, self.wave.wave_4th[0], interval, 'wave_4th').build_graph(fig, enable)

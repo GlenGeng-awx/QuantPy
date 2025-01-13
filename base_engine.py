@@ -7,6 +7,7 @@ from technical.wave import Wave
 from technical.sr_level import SupportResistanceLevel
 from technical.line import Line
 from technical.box import Box
+from technical.elliott import Elliott
 
 from statistical.ema import EMA
 from statistical.ma import MA
@@ -50,6 +51,7 @@ class BaseEngine:
         self.sr_level = SupportResistanceLevel(self.stock_df)
         self.line = Line(self.stock_df, self.stock_name)
         self.box = Box(self.stock_df, self.wave)
+        self.elliott = Elliott(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df)
         self.position = PositionDisplay(self.stock_df, self.stock_name)
@@ -113,6 +115,7 @@ class BaseEngine:
                     enable_line=False,
                     enable_box=False,
                     enable_position=True,
+                    enable_elliott=True,
                     # volume
                     enable_volume_raw=(False, 2),
                     enable_volume_reg=(False, 2),
@@ -135,6 +138,7 @@ class BaseEngine:
         self.line.build_graph(self.fig, enable_line)
         self.box.build_graph(self.fig, self.interval, enable_box)
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
+        self.elliott.build_graph(self.fig, enable_elliott)
 
         self.volume.build_graph(self.fig, enable_volume_raw, enable_volume_reg)
         self.position.build_graph(self.fig, enable_position)
