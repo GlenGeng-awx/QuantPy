@@ -1,5 +1,6 @@
 IXIC = "^IXIC"
 QQQ = "QQQ"
+KWEB = "KWEB"
 SS_000300 = "000300.SS"
 SS_000001 = "000001.SS"
 GC_F = "GC=F"
@@ -92,6 +93,7 @@ AVGO = "AVGO"           # Broadcom Inc
 INDEX = [
     IXIC,
     QQQ,
+    KWEB,
     SS_000300,
     SS_000001,
 ]
