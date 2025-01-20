@@ -43,8 +43,11 @@ def preload(stock_name: str) -> BaseEngine:
 if __name__ == '__main__':
     from conf import *
     from trading.position import POSITION
+    from technical.core_banking import CORE_BANKING
 
-    for _stock_name in POSITION.keys():
+    # for _stock_name in POSITION.keys():
+    # for _stock_name in [k for k, v in CORE_BANKING.items() if 'elliott' in v]:
+    for _stock_name in ALL:
         _base_engine = preload(_stock_name)
         _fig = _base_engine.fig
         _fig.show()
