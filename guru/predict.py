@@ -11,7 +11,7 @@ from .eval_vix import eval_vix
 
 
 def parse_cross_ops(to_date: str) -> dict:
-    file_name = f'tmp/cross_vix.{to_date}.res'
+    file_name = f'bak/cross_vix.{to_date}.res'
     if not os.path.exists(file_name):
         print(f'{file_name} not exists')
         return {}
