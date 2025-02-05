@@ -4,6 +4,7 @@ from conf import *
 POSITION = {
     CVX: [
         ('2025-01-15', 'PUT'),
+        ('2025-02-04', 'PUT'),
     ],
 
     KWEB: [
