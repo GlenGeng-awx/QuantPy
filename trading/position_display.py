@@ -15,6 +15,10 @@ class PositionDisplay:
 
         records = POSITION.get(self.stock_name, [])
         for (date, _category) in records:
+            if date > self.stock_df.iloc[-1]['Date']:
+                print(f'position {self.stock_name} {date} is out of range')
+                continue
+
             if _category == category:
                 x.append(date)
 

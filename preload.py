@@ -13,16 +13,20 @@ def _default_period() -> tuple:
 
 
 def preload(stock_name: str) -> BaseEngine:
-    base_engine = BaseEngine(stock_name, *_default_period())
+    return preload_impl(stock_name, *_default_period())
+
+
+def preload_impl(stock_name: str, from_date, to_date, interval) -> BaseEngine:
+    base_engine = BaseEngine(stock_name, from_date, to_date, interval)
 
     base_engine.build_graph(
         # enable_candlestick=True,
-        enable_wave=True,
+        enable_close_price=True,
+        enable_wave=False,
         enable_box=False,
         enable_min_max=True,
         enable_sr=True,
         enable_line=True,
-        enable_close_price=False,
         # enable_position=False,
         enable_volume_reg=(True, 3),
         enable_bband_pst=(True, 4),

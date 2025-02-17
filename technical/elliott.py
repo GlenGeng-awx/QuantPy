@@ -21,6 +21,10 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
     x, y, text = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
+        if date > stock_df.iloc[-1]['Date']:
+            print(f'elliott {stock_name} {date} is out of range')
+            continue
+
         x.append(date)
 
         idx = get_idx_by_date(stock_df, date)

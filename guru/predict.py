@@ -9,6 +9,8 @@ from guru import (get_op_by_name, build_op_ctx, filter_indices_by_ops,
                   get_sz, get_hard_loss, get_profits)
 from .eval_vix import eval_vix
 
+AS_OF = -5
+
 
 def parse_cross_ops(to_date: str) -> dict:
     file_name = f'bak/cross_vix.{to_date}.res'
@@ -49,8 +51,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
     if not indices:
         return False
 
-    # (-3, -1) or (-1, -1)
-    if not any(stock_df.index[-1] <= idx <= stock_df.index[-1] for idx in indices):
+    if not any(stock_df.index[AS_OF] == idx for idx in indices):
         return False
 
     # eval vix
@@ -103,18 +104,18 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
 def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
-    fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=0.5, line_color="black")
+    fig.add_vline(x=stock_df.iloc[AS_OF]['Date'], line_dash="dash", line_width=0.25, line_color="black")
 
     # mark long/short hint
     sz = get_sz()
     long_profit, short_profit = get_profits(stock_name)
 
-    from_date = stock_df.iloc[-1]['Date']
+    from_date = stock_df.iloc[AS_OF]['Date']
     to_date = get_next_n_workday(from_date, sz)
 
-    close = stock_df.iloc[-1]['close']
-    long_target = close * (1 + long_profit)
-    short_target = close * (1 - short_profit)
+    from_close = stock_df.iloc[AS_OF]['close']
+    long_target = from_close * (1 + long_profit)
+    short_target = from_close * (1 - short_profit)
 
     fig.add_trace(
         go.Scatter(
@@ -137,7 +138,7 @@ def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
     )
 
 
-def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
+def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, show: bool = False) -> bool:
     to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
     op_ctx = build_op_ctx(stock_df)
     print(f'finish build op ctx for {stock_name} at {to_date}')
@@ -154,7 +155,9 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     print(f'{stock_name} predict finished, cost: {(datetime.now() - start_time).total_seconds()}s')
 
     if hit_num == 0:
-        return
+        return False
 
-    build_graph(stock_df, fig, stock_name, hit_num)
-    fig.show()
+    if show:
+        build_graph(stock_df, fig, stock_name, hit_num)
+        fig.show()
+    return True
