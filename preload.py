@@ -49,8 +49,6 @@ if __name__ == '__main__':
     from trading.position import POSITION
     from technical.core_banking import CORE_BANKING
 
-    candidates = [INTC, LI]
-
     # for _stock_name in POSITION.keys():
     # for _stock_name in [k for k, v in CORE_BANKING.items() if 'elliott' in v]:
     for _stock_name in ALL:

@@ -194,49 +194,72 @@ HK = [
 
 ALL = INDEX + HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS + NASDAQ_MEDICAL
 
-CANDIDATES = [
+V_INDEX = [
     QQQ,
     KWEB,
     SS_000300,
+]
+
+V_3000B = [
+    MSFT,
+    AAPL,
+    NVDA,
+]
+
+V_2000B = [
     GOOG,
     AMZN,
-    AAPL,
+]
+
+V_1000B = [
     META,
-    MSFT,
-    NVDA,
-    NFLX,
-    ORCL,
     TSLA,
-    GS,
-    MS,
+    TSM,
+    AVGO,
+]
+
+v_500B = [
+    NFLX,
     JPM,
     ASML,
-    AMD,
-    TSM,
-    INTC,
-    QCOM,
-    AVGO,
+    LLY,
+    WMT,
+    MA,
+    HK_0700,
+]
+
+V_300B = [
+    ORCL,
     NVO,
     JNJ,
-    PFE,
-    GILD,
-    LLY,
-    MRK,
-    BA,
-    ADBE,
-    WMT,
     XOM,
-    MA,
     PG,
     KO,
     BAC,
+    BABA,
+]
+
+V_200B = [
+    GS,
+    MS,
+    MRK,
+    ADBE,
     CVX,
     PLTR,
     MCD,
     DIS,
+]
+
+V_100B = [
+    AMD,
+    INTC,
+    QCOM,
+    PFE,
+    GILD,
+    BA,
     UBER,
     SHOP,
     PDD,
-    BABA,
-    HK_0700,
 ]
+
+CANDIDATES = V_INDEX + V_3000B + V_2000B + V_1000B + v_500B + V_300B + V_200B + V_100B
