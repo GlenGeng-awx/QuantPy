@@ -27,7 +27,7 @@ class Price:
                 name="close_price",
                 x=self.stock_df['Date'],
                 y=self.stock_df['close'],
-                line=dict(width=0.5, color='blue'),
+                line=dict(width=0.75, color='blue'),
                 visible=None if enable_close_price else 'legendonly',
             )
         )

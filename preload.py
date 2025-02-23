@@ -6,7 +6,7 @@ import features
 def _default_period() -> tuple:
     current_date = datetime.now()
 
-    date_2y_ago = datetime(current_date.year - 2, 1, 1).strftime('%Y-%m-%d')
+    date_2y_ago = datetime(current_date.year - 3, 10, 1).strftime('%Y-%m-%d')
     current_date = current_date.strftime('%Y-%m-%d')
 
     return date_2y_ago, current_date, '1d'
@@ -27,7 +27,7 @@ def preload_impl(stock_name: str, from_date, to_date, interval) -> BaseEngine:
         enable_min_max=True,
         enable_sr=True,
         enable_line=True,
-        # enable_position=False,
+        enable_position=False,
         enable_volume_reg=(True, 3),
         enable_bband_pst=(True, 4),
         enable_rsi=(True, 5),
