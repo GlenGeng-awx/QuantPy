@@ -218,7 +218,7 @@ V_1000B = [
     AVGO,
 ]
 
-v_500B = [
+V_500B = [
     NFLX,
     JPM,
     ASML,
@@ -262,4 +262,4 @@ V_100B = [
     PDD,
 ]
 
-CANDIDATES = V_INDEX + V_3000B + V_2000B + V_1000B + v_500B + V_300B + V_200B + V_100B
+CANDIDATES = V_INDEX + V_3000B + V_2000B + V_1000B + V_500B + V_300B + V_200B + V_100B
