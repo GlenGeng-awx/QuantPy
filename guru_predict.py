@@ -29,8 +29,8 @@ def probe(stock_name):
             continue
 
         load_from_date = stock_df.iloc[0]['Date']
-        # load_to_date = stock_df.iloc[-1]['Date']
-        load_to_date = _stock_df.iloc[-1]['Date']
+        load_to_date = stock_df.iloc[-1]['Date']
+        # load_to_date = _stock_df.iloc[-1]['Date']
 
         predict_from_date = _stock_df.iloc[0]['Date']
         predict_to_date = _stock_df.iloc[-1]['Date']
@@ -41,7 +41,7 @@ def probe(stock_name):
 if __name__ == '__main__':
     procs = []
 
-    for _stock_name in CANDIDATES:
+    for _stock_name in ALL:
         proc = Process(target=probe, args=(_stock_name,))
         procs.append(proc)
         proc.start()

@@ -26,7 +26,7 @@ def _ascend_impl(stock_df: pd.DataFrame, idx: int, key: str) -> bool:
 
     df1 = stock_df.loc[:idx - 20]
     df2 = df1[df1[key]]['close']
-    return len(df2) >= 2 and df2.iloc[-2] * 1.03 < df2.iloc[-1]
+    return len(df2) >= 2 and df2.iloc[-2] * 1.05 < df2.iloc[-1]
 
 
 def _flat_impl(stock_df: pd.DataFrame, idx: int, key: str) -> bool:
@@ -46,7 +46,7 @@ def _descend_impl(stock_df: pd.DataFrame, idx: int, key: str) -> bool:
 
     df1 = stock_df.loc[:idx - 20]
     df2 = df1[df1[key]]['close']
-    return len(df2) >= 2 and df2.iloc[-2] > df2.iloc[-1] * 1.03
+    return len(df2) >= 2 and df2.iloc[-2] > df2.iloc[-1] * 1.05
 
 
 def ascend_sr_min_or_min_3rd(stock_df: pd.DataFrame, idx: int) -> bool:

@@ -2,11 +2,9 @@ from multiprocessing import Process
 from conf import *
 from preload import preload
 from guru.train import train
-from guru.train_cross import train_cross
-from util import shrink_date_str
 
-FROM = 3    # 3    or 30
-SZ = FROM   # FROM or 20
+FROM = 1   # 3    or 30
+SZ = 1     # FROM or 20
 
 
 def probe(stock_name):
@@ -28,7 +26,3 @@ if __name__ == '__main__':
 
     for proc in procs:
         proc.join()
-
-    for _date in preload(IXIC).stock_df.tail(FROM).head(SZ)['Date']:
-        _date = shrink_date_str(_date)
-        train_cross(_date)

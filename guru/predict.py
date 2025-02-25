@@ -1,5 +1,4 @@
 import json
-import os
 from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,30 +7,6 @@ from util import get_next_n_workday, shrink_date_str
 from guru import (get_op_by_name, build_op_ctx, filter_indices_by_ops,
                   get_sz, get_hard_loss, get_profits)
 from .eval_vix import eval_vix
-
-AS_OF = -5
-
-
-def parse_cross_ops(to_date: str) -> dict:
-    file_name = f'bak/cross_vix.{to_date}.res'
-    if not os.path.exists(file_name):
-        print(f'{file_name} not exists')
-        return {}
-
-    cross_ops = {}
-    with open(file_name, 'r') as fd:
-        for line in fd:
-            record = json.loads(line)
-
-            op_names = record['op_names']
-            ops = tuple([get_op_by_name(op_name) for op_name in op_names])
-
-            total_num, hit_num = record['total_num'], len(record['hits'])
-            long_num, short_num = record['long_num'], record['short_num']
-            cross_tag = f'X{hit_num}, T{total_num}, {(long_num + short_num) / total_num:.0%}, L{long_num}, S{short_num}'
-
-            cross_ops[ops] = cross_tag
-    return cross_ops
 
 
 # return list of ops
@@ -46,12 +21,12 @@ def parse_all_ops(stock_name: str, to_date: str) -> list[list]:
     return all_ops
 
 
-def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops: list, cross_ops: dict) -> bool:
+def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops: list) -> bool:
     indices = filter_indices_by_ops(op_ctx, ops)
     if not indices:
         return False
 
-    if not any(stock_df.index[AS_OF] == idx for idx in indices):
+    if stock_df.index[-1] not in indices:
         return False
 
     # eval vix
@@ -62,26 +37,11 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
     result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
     vix_tag, total_num, successful_rate = result['vix_tag'], result['total_num'], result['successful_rate']
 
-    def rule_1() -> bool:
-        if not (total_num >= 3 and successful_rate >= 0.8):
-            return False
-
+    def rule() -> bool:
         valid_indices = [idx for idx in indices if idx + sz in stock_df.index]
-        if valid_indices[-1] - valid_indices[0] < 60:
-            return False
+        return total_num >= 3 and successful_rate >= 0.8 and valid_indices[-1] - valid_indices[0] >= 60
 
-        return True
-
-    def rule_2() -> bool:
-        if not (total_num >= 2 and successful_rate >= 0.8):
-            return False
-
-        if tuple(ops) not in cross_ops:
-            return False
-
-        return True
-
-    if not (rule_1() or rule_2()):
+    if not rule():
         return False
 
     name = ','.join(op.__name__ for op in ops)
@@ -90,7 +50,7 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
     dates = stock_df.loc[indices]['Date'].tolist()
     close = stock_df.loc[indices]['close'].tolist()
 
-    tags = [op.__name__ for op in ops] + [vix_tag] + [cross_ops.get(tuple(ops), 'cross_noop')]
+    tags = [op.__name__ for op in ops] + [vix_tag]
     fig.add_trace(
         go.Scatter(
             name='<br>'.join(tag for tag in tags if 'noop' not in tag),
@@ -104,16 +64,16 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
 def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
-    fig.add_vline(x=stock_df.iloc[AS_OF]['Date'], line_dash="dash", line_width=0.25, line_color="black")
+    fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=0.25, line_color="black")
 
     # mark long/short hint
     sz = get_sz()
     long_profit, short_profit = get_profits(stock_name)
 
-    from_date = stock_df.iloc[AS_OF]['Date']
+    from_date = stock_df.iloc[-1]['Date']
     to_date = get_next_n_workday(from_date, sz)
 
-    from_close = stock_df.iloc[AS_OF]['close']
+    from_close = stock_df.iloc[-1]['close']
     long_target = from_close * (1 + long_profit)
     short_target = from_close * (1 - short_profit)
 
@@ -145,11 +105,10 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, show: bool = Fal
 
     start_time = datetime.now()
     all_ops = parse_all_ops(stock_name, to_date)
-    cross_ops = parse_cross_ops(to_date)
 
     hit_num = 0
     for ops in all_ops:
-        if predict_ops(stock_df, fig, stock_name, op_ctx, ops, cross_ops):
+        if predict_ops(stock_df, fig, stock_name, op_ctx, ops):
             hit_num += 1
 
     print(f'{stock_name} predict finished, cost: {(datetime.now() - start_time).total_seconds()}s')
