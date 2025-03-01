@@ -85,7 +85,7 @@ ETSY = "ETSY"
 SHOP = "SHOP"
 GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
-SQ = "SQ"
+SQ = "SQ"               # XYZ
 
 LLY = "LLY"             # Eli Lilly And Co
 AVGO = "AVGO"           # Broadcom Inc
@@ -262,4 +262,32 @@ V_100B = [
     PDD,
 ]
 
-CANDIDATES = V_INDEX + V_3000B + V_2000B + V_1000B + V_500B + V_300B + V_200B + V_100B
+V_50B = [
+    PYPL,
+    COIN,
+    SNOW,
+    JD,
+]
+
+V_30B = [
+    EBAY,
+    CPNG,
+    TTD,
+    TCOM,
+    SEA,
+    SQ,
+]
+
+V_10B = [
+    RIVN,
+    LI,
+    XPEV,
+    MRNA,
+    BNTX,
+    ZM,
+    SNAP,
+    BEKE,
+    ERIC,
+    OKTA,
+    PINS,
+]

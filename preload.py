@@ -12,28 +12,30 @@ def _default_period() -> tuple:
     return date_2y_ago, current_date, '1d'
 
 
-def preload(stock_name: str) -> BaseEngine:
-    return preload_impl(stock_name, *_default_period())
+def preload(stock_name: str, **kwargs) -> BaseEngine:
+    return preload_impl(stock_name, *_default_period(), **kwargs)
 
 
-def preload_impl(stock_name: str, from_date, to_date, interval) -> BaseEngine:
+def preload_impl(stock_name: str, from_date, to_date, interval, **kwargs) -> BaseEngine:
     base_engine = BaseEngine(stock_name, from_date, to_date, interval)
 
-    base_engine.build_graph(
-        # enable_candlestick=True,
-        enable_close_price=True,
-        enable_wave=False,
-        enable_box=False,
-        enable_min_max=True,
-        enable_sr=True,
-        enable_line=True,
-        enable_position=False,
-        enable_volume_reg=(True, 3),
-        enable_bband_pst=(True, 4),
-        enable_rsi=(True, 5),
-        enable_macd=(True, 6),
-        rows=6,
-    )
+    default_args = {
+        'enable_candlestick': False,
+        'enable_close_price': True,
+        'enable_wave': False,
+        'enable_box': False,
+        'enable_min_max': True,
+        'enable_sr': True,
+        'enable_line': True,
+        'enable_position': False,
+        'enable_volume_reg': (True, 3),
+        'enable_bband_pst': (True, 4),
+        'enable_rsi': (True, 5),
+        'enable_macd': (True, 6),
+        'rows': 6,
+    }
+    default_args.update(kwargs)
+    base_engine.build_graph(**default_args)
 
     stock_df, fig = base_engine.stock_df, base_engine.fig
 
@@ -52,6 +54,6 @@ if __name__ == '__main__':
     # for _stock_name in POSITION.keys():
     # for _stock_name in [k for k, v in CORE_BANKING.items() if 'elliott' in v]:
     for _stock_name in ALL:
-        _base_engine = preload(_stock_name)
+        _base_engine = preload(_stock_name, enable_position=True)
         _fig = _base_engine.fig
         _fig.show()
