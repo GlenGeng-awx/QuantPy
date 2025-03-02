@@ -4,7 +4,7 @@ KEY = 'incr top 10% last 3d'
 COLOR = 'red'
 
 
-def get_incr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:
+def get_incr_benchmark(stock_df: pd.DataFrame, sz: int) -> (float, float):
     close = stock_df['close']
 
     delta = []
@@ -13,19 +13,20 @@ def get_incr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:
             delta.append(close[idx] / close[idx - sz] - 1)
 
     delta.sort()
-    benchmark = delta[-len(delta) // 10]
-    print(f'incr top 10% in last {sz}d - benchmark: {benchmark * 100:.2f}%')
-    return benchmark
+    top = delta[-len(delta) // 10]
+    bottom = delta[len(delta) // 10]
+    print(f'incr (top, bottom) 10% in last {sz}d - top: {top * 100:.2f}%, bottom: {bottom * 100:.2f}%')
+    return top, bottom
 
 
 def incr_top_10pst_in_last_n_days(stock_df: pd.DataFrame, n: int, output_key: str):
-    benchmark = get_incr_benchmark(stock_df, n)
+    top, _ = get_incr_benchmark(stock_df, n)
     close = stock_df['close']
 
     indices = []
 
     for idx in close.index[n:]:
-        if close[idx] > close[idx - n] * (1 + benchmark):
+        if close[idx] > close[idx - n] * (1 + top):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

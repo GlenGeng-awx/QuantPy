@@ -4,9 +4,9 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from util import get_next_n_workday, shrink_date_str
-from guru import (get_op_by_name, build_op_ctx, filter_indices_by_ops,
-                  get_sz, get_hard_loss, get_profits)
+from guru import get_op_by_name, build_op_ctx, build_params, filter_indices_by_ops
 from .eval_vix import eval_vix
+import features
 
 
 # return list of ops
@@ -21,7 +21,7 @@ def parse_all_ops(stock_name: str, to_date: str) -> list[list]:
     return all_ops
 
 
-def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops: list) -> bool:
+def predict_ops(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name, op_ctx, ops: list) -> bool:
     indices = filter_indices_by_ops(op_ctx, ops)
     if not indices:
         return False
@@ -30,9 +30,9 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
         return False
 
     # eval vix
-    sz = get_sz()
-    hard_loss = get_hard_loss()
-    long_profit, short_profit = get_profits(stock_name)
+    sz = params['sz']
+    hard_loss = params['hard_loss']
+    long_profit, short_profit = params['long_profit'], params['short_profit']
 
     result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
     vix_tag, total_num, successful_rate = result['vix_tag'], result['total_num'], result['successful_rate']
@@ -61,14 +61,14 @@ def predict_ops(stock_df: pd.DataFrame, fig: go.Figure, stock_name, op_ctx, ops:
     return True
 
 
-def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
+def build_graph(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name, hit_num):
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
     fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=0.25, line_color="black")
 
     # mark long/short hint
-    sz = get_sz()
-    long_profit, short_profit = get_profits(stock_name)
+    sz = params['sz']
+    long_profit, short_profit = params['long_profit'], params['short_profit']
 
     from_date = stock_df.iloc[-1]['Date']
     to_date = get_next_n_workday(from_date, sz)
@@ -98,8 +98,11 @@ def build_graph(stock_df: pd.DataFrame, fig: go.Figure, stock_name, hit_num):
     )
 
 
-def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, show: bool = False) -> bool:
+def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
+
+    stock_df = features.calculate_feature(stock_df, stock_name)
+    params = build_params(stock_df)
     op_ctx = build_op_ctx(stock_df)
     print(f'finish build op ctx for {stock_name} at {to_date}')
 
@@ -108,15 +111,15 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name, show: bool = Fal
 
     hit_num = 0
     for ops in all_ops:
-        if predict_ops(stock_df, fig, stock_name, op_ctx, ops):
+        if predict_ops(stock_df, params, fig, stock_name, op_ctx, ops):
             hit_num += 1
 
-    print(f'{stock_name} predict finished, cost: {(datetime.now() - start_time).total_seconds()}s')
+    time_cost = (datetime.now() - start_time).total_seconds()
+    print(f'----> {stock_name} predict finished, cost: {time_cost}s')
 
     if hit_num == 0:
-        return False
+        return
 
-    if show:
-        build_graph(stock_df, fig, stock_name, hit_num)
-        fig.show()
-    return True
+    build_graph(stock_df, params, fig, stock_name, hit_num)
+    features.plot_feature(stock_df, fig)
+    fig.show()

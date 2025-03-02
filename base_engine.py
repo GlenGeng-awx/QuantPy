@@ -142,6 +142,3 @@ class BaseEngine:
 
         self.volume.build_graph(self.fig, enable_volume_raw, enable_volume_reg)
         self.position.build_graph(self.fig, enable_position)
-
-    def display(self):
-        self.fig.show()

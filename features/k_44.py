@@ -4,7 +4,7 @@ KEY = 'decr top 10% last 3d'
 COLOR = 'green'
 
 
-def get_decr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:
+def get_decr_benchmark(stock_df: pd.DataFrame, sz: int) -> (float, float):
     close = stock_df['close']
 
     delta = []
@@ -13,19 +13,20 @@ def get_decr_benchmark(stock_df: pd.DataFrame, sz: int) -> float:
             delta.append(1 - close[idx] / close[idx - sz])
 
     delta.sort()
-    benchmark = delta[-len(delta) // 10]
-    print(f'decr top 10% in last {sz}d - benchmark: {benchmark * 100:.2f}%')
-    return benchmark
+    top = delta[-len(delta) // 10]
+    bottom = delta[len(delta) // 10]
+    print(f'decr (top, bottom) 10% in last {sz}d - top: {top * 100:.2f}%, bottom: {bottom * 100:.2f}%')
+    return top, bottom
 
 
 def decr_top_10pst_in_last_n_days(stock_df: pd.DataFrame, n: int, output_key: str):
-    benchmark = get_decr_benchmark(stock_df, n)
+    top, _ = get_decr_benchmark(stock_df, n)
     close = stock_df['close']
 
     indices = []
 
     for idx in close.index[n:]:
-        if close[idx] < close[idx - n] * (1 - benchmark):
+        if close[idx] < close[idx - n] * (1 - top):
             indices.append(idx)
 
     s = pd.Series([True] * len(indices), index=indices)

@@ -1,14 +1,15 @@
+from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
 from features import (
-    # up/down thru ma 5/20/60
+    # up/down thru ma 5/20/60/120
     g_01, g_02,             # up thru ma5   / down thru ma5
     g_03, g_04,             # up thru ma20  / down thru ma20
     g_05, g_06,             # up thru ma60  / down thru ma60
     g_07, g_08,             # up thru ma120 / down thru ma120
 
-    # up/down touch ma 5/20/60
+    # up/down touch ma 5/20/60/120
     g_11, g_12,             # down touch ma5   / up touch ma5
     g_13, g_14,             # down touch ma20  / up touch ma20
     g_15, g_16,             # down touch ma60  / up touch ma60
@@ -63,11 +64,20 @@ from features import (
     k_33, k_34,             # up thru sr level max / down thru sr level max
     k_35, k_36,             # up away sr level max / down to sr level max
 
-    # incr/decr top 10pst last 1d/3d/5d/10d
-    k_21, k_22,             # incr top 10% today    / decr top 10% today
-    k_23, k_24,             # incr top 10% last 3d  / decr top 10% last 3d
-    k_25, k_26,             # incr top 10% last 5d  / decr top 10% last 5d
-    k_27, k_28,             # incr top 10% last 10d / decr top 10% last 10d
+    # incr/decr top 10pst last 1d/3d/5d/10d/15d/20d
+    k_41, k_42,             # incr top 10% today    / decr top 10% today
+    k_43, k_44,             # incr top 10% last 3d  / decr top 10% last 3d
+    k_45, k_46,             # incr top 10% last 5d  / decr top 10% last 5d
+    k_47, k_48,             # incr top 10% last 10d / decr top 10% last 10d
+    k_49, k_50,             # incr top 10% last 15d / decr top 10% last 15d
+    k_51, k_52,             # incr top 10% last 20d / decr top 10% last 20d
+
+    # incr/decr bottom 10pst last 3d/5d/10d/15d/20d
+    k_61, k_62,             # incr bottom 10% last 3d  / decr bottom 10% last 3d
+    k_63, k_64,             # incr bottom 10% last 5d  / decr bottom 10% last 5d
+    k_65, k_66,             # incr bottom 10% last 10d / decr bottom 10% last 10d
+    k_67, k_68,             # incr bottom 10% last 15d / decr bottom 10% last 15d
+    k_69, k_70,             # incr bottom 10% last 20d / decr bottom 10% last 20d
 
     # vol incr/decr 1d/3d/5d
     l_01, l_02,             # vol incr 1d / vol decr 1d
@@ -129,7 +139,8 @@ FEATURE_BUF = [
     k_01, k_02, k_03,
     k_11, k_12, k_13, k_14, k_15, k_16,
     k_31, k_32, k_33, k_34, k_35, k_36,
-    k_21, k_22, k_23, k_24, k_25, k_26, k_27, k_28,
+    k_41, k_42, k_43, k_44, k_45, k_46, k_47, k_48, k_49, k_50, k_51, k_52,
+    k_61, k_62, k_63, k_64, k_65, k_66, k_67, k_68, k_69, k_70,
     l_01, l_02, l_03, l_04, l_05, l_06,
     l_11, l_12, l_13, l_14, l_15, l_16,
     l_21, l_22, l_23, l_24, l_25, l_26,
@@ -139,10 +150,15 @@ FEATURE_BUF = [
 ]
 
 
-def calculate_feature(stock_df: pd.DataFrame) -> pd.DataFrame:
+def calculate_feature(stock_df: pd.DataFrame, stock_name: str) -> pd.DataFrame:
+    start_time = datetime.now()
+
     for f in FEATURE_BUF:
         f.execute(stock_df)
         stock_df = stock_df.copy()
+
+    time_cost = (datetime.now() - start_time).total_seconds()
+    print(f'----> {stock_name} calculate_feature finished, cost: {time_cost}s')
     return stock_df
 
 

@@ -3,11 +3,6 @@ import pandas as pd
 """
     price_noop
 
-    incr top 10% today    / decr top 10% today
-    incr top 10% last 3d  / decr top 10% last 3d
-    incr top 10% last 5d  / decr top 10% last 5d
-    incr top 10% last 10d / decr top 10% last 10d
-
     close incr 3d         / close decr 3d
     close incr 5d         / close decr 5d
 
@@ -21,38 +16,6 @@ import pandas as pd
 
 def price_noop(_stock_df: pd.DataFrame, _idx: int) -> bool:
     return True
-
-
-def incr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% today'][idx]
-
-
-def decr_top_10pst_today(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% today'][idx]
-
-
-def incr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 3d'][idx]
-
-
-def decr_top_10pst_last_3d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 3d'][idx]
-
-
-def incr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 5d'][idx]
-
-
-def decr_top_10pst_last_5d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 5d'][idx]
-
-
-def incr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['incr top 10% last 10d'][idx]
-
-
-def decr_top_10pst_last_10d(stock_df: pd.DataFrame, idx: int) -> bool:
-    return stock_df['decr top 10% last 10d'][idx]
 
 
 def close_incr_3d(stock_df: pd.DataFrame, idx: int) -> bool:
@@ -105,18 +68,6 @@ def high_incr_5d(stock_df: pd.DataFrame, idx: int) -> bool:
 
 operators = [
     price_noop,
-
-    incr_top_10pst_today,
-    decr_top_10pst_today,
-
-    incr_top_10pst_last_3d,
-    decr_top_10pst_last_3d,
-
-    incr_top_10pst_last_5d,
-    decr_top_10pst_last_5d,
-
-    incr_top_10pst_last_10d,
-    decr_top_10pst_last_10d,
 
     close_incr_3d,
     close_decr_3d,

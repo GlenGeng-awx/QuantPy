@@ -13,11 +13,7 @@ def _default_period() -> tuple:
 
 
 def preload(stock_name: str, **kwargs) -> BaseEngine:
-    return preload_impl(stock_name, *_default_period(), **kwargs)
-
-
-def preload_impl(stock_name: str, from_date, to_date, interval, **kwargs) -> BaseEngine:
-    base_engine = BaseEngine(stock_name, from_date, to_date, interval)
+    base_engine = BaseEngine(stock_name, *_default_period())
 
     default_args = {
         'enable_candlestick': False,
@@ -37,12 +33,6 @@ def preload_impl(stock_name: str, from_date, to_date, interval, **kwargs) -> Bas
     default_args.update(kwargs)
     base_engine.build_graph(**default_args)
 
-    stock_df, fig = base_engine.stock_df, base_engine.fig
-
-    stock_df = features.calculate_feature(stock_df)
-    features.plot_feature(stock_df, fig)
-
-    base_engine.stock_df = stock_df
     return base_engine
 
 
@@ -55,5 +45,9 @@ if __name__ == '__main__':
     # for _stock_name in [k for k, v in CORE_BANKING.items() if 'elliott' in v]:
     for _stock_name in ALL:
         _base_engine = preload(_stock_name, enable_position=True)
-        _fig = _base_engine.fig
+        _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
+
+        _stock_df = features.calculate_feature(_stock_df, _stock_name)
+        features.plot_feature(_stock_df, _fig)
+
         _fig.show()
