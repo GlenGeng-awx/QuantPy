@@ -113,6 +113,11 @@ def get_indices_of_period(stock_df: pd.DataFrame, from_date, to_date) -> tuple[i
     return start_idx, end_idx
 
 
+def touch(file_name: str):
+    with open(file_name, 'a'):
+        pass
+
+
 if __name__ == '__main__':
     today = datetime.now().strftime('%Y-%m-%d')
     print(get_next_n_workday(today, 5))

@@ -89,6 +89,8 @@ SQ = "SQ"               # XYZ
 
 LLY = "LLY"             # Eli Lilly And Co
 AVGO = "AVGO"           # Broadcom Inc
+HPQ = "HPQ"             # HP Inc
+VISA = "V"              # Visa Inc
 
 INDEX = [
     IXIC,
@@ -110,8 +112,9 @@ NASDAQ_GIANTS = [
     TSLA,
     PYPL,
     GS,
-    MS,
     JPM,
+    MS,
+    VISA,
 ]
 
 NASDAQ_SEMI_CONDUCT = [
@@ -150,6 +153,7 @@ NASDAQ_OTHER = [
     BAC,
     CVX,
     DELL,
+    HPQ,
     PLTR,
     COIN,
     EBAY,
@@ -196,8 +200,10 @@ ALL = INDEX + HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANT
 
 V_INDEX = [
     QQQ,
+    IXIC,
     KWEB,
     SS_000300,
+    SS_000001,
 ]
 
 V_3000B = [
@@ -225,6 +231,7 @@ V_500B = [
     LLY,
     WMT,
     MA,
+    VISA,
     HK_0700,
 ]
 
@@ -276,6 +283,8 @@ V_30B = [
     TCOM,
     SEA,
     SQ,
+    DELL,
+    HPQ,
 ]
 
 V_10B = [
@@ -291,3 +300,13 @@ V_10B = [
     OKTA,
     PINS,
 ]
+
+V_OTHER = list(
+    set(ALL)
+    - set(V_INDEX + V_3000B + V_2000B + V_1000B)
+    - set(V_500B + V_300B + V_200B + V_100B)
+    - set(V_50B + V_30B + V_10B)
+)
+
+V_ALL = V_INDEX + V_3000B + V_2000B + V_1000B + V_500B + V_300B + V_200B + V_100B \
+        + V_50B + V_30B + V_10B + V_OTHER

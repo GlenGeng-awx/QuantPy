@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
-from util import get_next_n_workday, shrink_date_str
+from util import get_next_n_workday, shrink_date_str, touch
 from guru import get_op_by_name, build_op_ctx, build_params, filter_indices_by_ops
 from .eval_vix import eval_vix
 import features
@@ -119,6 +119,8 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
 
     if hit_num == 0:
         return
+
+    touch(f'./bak/{stock_name}${to_date}${hit_num}')
 
     build_graph(stock_df, params, fig, stock_name, hit_num)
     features.plot_feature(stock_df, fig)

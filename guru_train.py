@@ -3,8 +3,8 @@ from conf import *
 from preload import preload
 from guru.train import train
 
-FROM = 1   # 3    or 30
-SZ = 1     # FROM or 20
+FROM = 5   # 3    or 30
+SZ = 5     # FROM or 20
 
 
 def probe(stock_name):

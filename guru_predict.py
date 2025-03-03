@@ -4,8 +4,8 @@ from conf import *
 from preload import preload
 from guru.predict import predict
 
-FROM = 1  # 3, 2, 1
-SZ = 1
+FROM = 5  # 3, 2, 1
+SZ = 5
 
 
 def probe(stock_name):
