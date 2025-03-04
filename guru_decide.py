@@ -1,6 +1,6 @@
 import pandas as pd
 from glob import glob
-from conf import V_ALL
+from conf import ALL
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -24,6 +24,6 @@ for filename in glob('./bak/*'):
 df = df.reindex(sorted(df.columns), axis=1)
 
 # sort rows by stock name
-df = df.reindex(V_ALL, axis=0)
+df = df.reindex(ALL, axis=0)
 
 print(df)

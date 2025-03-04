@@ -1,202 +1,110 @@
+# INDEX
 IXIC = "^IXIC"
 QQQ = "QQQ"
 KWEB = "KWEB"
 SS_000300 = "000300.SS"
 SS_000001 = "000001.SS"
-GC_F = "GC=F"
 
+# SEVEN GIANTS
+AAPL = "AAPL"
+MSFT = "MSFT"           # Microsoft
+NVDA = "NVDA"
 GOOG = "GOOG"
 AMZN = "AMZN"
-PYPL = "PYPL"           # PayPal
-AAPL = "AAPL"
-NFLX = "NFLX"
-MSFT= "MSFT"            # Microsoft
-ASML = "ASML"
-WMT = "WMT"             # Walmart
-JPM = "JPM"             # JPMorgan
-XOM = "XOM"             # Exxon Mobil
-NVO = "NVO"             # Novo Nordisk
-ORCL = "ORCL"           # Oracle
-MA = "MA"               # Mastercard
-PG = "PG"               # Procter & Gamble
-JNJ = "JNJ"             # Johnson & Johnson
-LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
-KO = "KO"               # Coca-Cola
-BAC = "BAC"             # Bank of America
-CVX = "CVX"             # Chevron
-DELL = "DELL"           # Dell Technologies
-
 TSLA = "TSLA"
-RIVN = "RIVN"
-LI = "LI"
-XPEV = "XPEV"
-
-MRNA = "MRNA"
-BNTX = "BNTX"
-
-PDD = "PDD"
-COIN = "COIN"
 META = "META"
+
+# TECHNOLOGY
+NFLX = "NFLX"
 PLTR = "PLTR"
 SNOW = "SNOW"
-
-NVDA = "NVDA"
-AMD = "AMD"
-TSM = "TSM"             # Taiwan Semiconductor Manufacturing Company
-BA = "BA"
-
 ZM = "ZM"
 SNAP = "SNAP"
-EBAY = "EBAY"
-IQ = "IQ"
-
-HK_0700 = "0700.HK"     # Tencent
-HK_1211 = "1211.HK"     # BYD
-BABA = "BABA"
-JD = "JD"
-BEKE = "BEKE"
-MNSO = "MNSO"
-BILI = "BILI"
-EDU = "EDU"
-CPNG = "CPNG"
-FUTU = "FUTU"
-
 TTD = "TTD"             # The Trade Desk
-NIO = "NIO"
-YY = "YY"
-MCD = "MCD"             # McDonald's
-PFE = "PFE"             # Pfizer
-GILD = "GILD"
-TCOM = "TCOM"           # Trip.com
-MRK = "MRK"             # Merck & Co.
-ADBE = "ADBE"
-DIS = "DIS"
-TME = "TME"             # Tencent Music Entertainment Group
-GS = "GS"               # Goldman Sachs
-SEA = "SE"
-ERIC = "ERIC"
 UBER = "UBER"
-INTC = "INTC"
-MS = "MS"               # Morgan Stanley
 OKTA = "OKTA"
 CFLT = "CFLT"
-QCOM = "QCOM"           # Qualcomm
 ETSY = "ETSY"
 SHOP = "SHOP"
 GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
 SQ = "SQ"               # XYZ
-
-LLY = "LLY"             # Eli Lilly And Co
-AVGO = "AVGO"           # Broadcom Inc
+COIN = "COIN"
+LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
+SEA = "SE"
+CPNG = "CPNG"
+ORCL = "ORCL"           # Oracle
+ADBE = "ADBE"
+BA = "BA"
 HPQ = "HPQ"             # HP Inc
+DELL = "DELL"           # Dell Technologies
+ERIC = "ERIC"
+
+# FINANCIAL
+JPM = "JPM"             # JPMorgan
+BAC = "BAC"             # Bank of America
+GS = "GS"               # Goldman Sachs
+MS = "MS"               # Morgan Stanley
+
+# PAYMENT
+MA = "MA"               # Mastercard
 VISA = "V"              # Visa Inc
+PYPL = "PYPL"           # PayPal
+EBAY = "EBAY"
 
-INDEX = [
-    IXIC,
-    QQQ,
-    KWEB,
-    SS_000300,
-    SS_000001,
-]
+# ENERGY
+XOM = "XOM"             # Exxon Mobil
+CVX = "CVX"             # Chevron
 
-NASDAQ_GIANTS = [
-    GOOG,
-    AMZN,
-    AAPL,
-    META,
-    MSFT,
-    NVDA,
-    NFLX,
-    ORCL,
-    TSLA,
-    PYPL,
-    GS,
-    JPM,
-    MS,
-    VISA,
-]
+# CONSUMER GOODS
+WMT = "WMT"             # Walmart
+PG = "PG"               # Procter & Gamble
+KO = "KO"               # Coca-Cola
+MCD = "MCD"             # McDonald's
+DIS = "DIS"             # Disney
 
-NASDAQ_SEMI_CONDUCT = [
-    ASML,
-    AMD,
-    TSM,
-    INTC,
-    QCOM,
-    AVGO,
-]
+# SEMI CONDUCTOR
+TSM = "TSM"             # Taiwan Semiconductor Manufacturing Company
+AVGO = "AVGO"           # Broadcom Inc
+ASML = "ASML"
+AMD = "AMD"
+QCOM = "QCOM"           # Qualcomm
+INTC = "INTC"
 
-NASDAQ_MEDICAL = [
-    NVO,
-    JNJ,
-    MRNA,
-    PFE,
-    BNTX,
-    GILD,
-    LLY,
-    MRK,
-]
+# MEDICAL
+LLY = "LLY"             # Eli Lilly And Co
+NVO = "NVO"             # Novo Nordisk
+JNJ = "JNJ"             # Johnson & Johnson
+MRK = "MRK"             # Merck & Co.
+PFE = "PFE"             # Pfizer
+GILD = "GILD"
+MRNA = "MRNA"
+BNTX = "BNTX"
 
-NASDAQ_OTHER = [
-    ZM,
-    BA,
-    SQ,
-    PINS,
-    RIVN,
-    ADBE,
-    WMT,
-    XOM,
-    MA,
-    PG,
-    LVMUY,
-    KO,
-    BAC,
-    CVX,
-    DELL,
-    HPQ,
-    PLTR,
-    COIN,
-    EBAY,
-    SNOW,
-    SNAP,
-    TTD,
-    MCD,
-    DIS,
-    SEA,
-    ERIC,
-    UBER,
-    OKTA,
-    CFLT,
-    ETSY,
-    SHOP,
-    GTLB,
-]
+# AUTOMOTIVE
+RIVN = "RIVN"
+NIO = "NIO"
+LI = "LI"
+XPEV = "XPEV"
 
-NASDAQ_CN = [
-    IQ,
-    BILI,
-    CPNG,
-    NIO,
-    XPEV,
-    LI,
-    PDD,
-    BABA,
-    JD,
-    FUTU,
-    MNSO,
-    BEKE,
-    EDU,
-    YY,
-    TME,
-    TCOM,
-]
+# CHINESE COMPANIES
+BABA = "BABA"
+PDD = "PDD"
+JD = "JD"
+TCOM = "TCOM"           # Trip.com
+BIDU = "BIDU"           # Baidu
+BEKE = "BEKE"
+MNSO = "MNSO"
+BILI = "BILI"
+EDU = "EDU"
+FUTU = "FUTU"
+YY = "YY"
+TME = "TME"             # Tencent Music Entertainment Group
+IQ = "IQ"
 
-HK = [
-    HK_0700,
-    # HK_1211,
-]
-
-ALL = INDEX + HK + NASDAQ_CN + NASDAQ_OTHER + NASDAQ_SEMI_CONDUCT + NASDAQ_GIANTS + NASDAQ_MEDICAL
+# HONG KONG COMPANIES
+HK_0700 = "0700.HK"     # Tencent
+HK_1211 = "1211.HK"     # BYD
 
 V_INDEX = [
     QQQ,
@@ -255,6 +163,7 @@ V_200B = [
     PLTR,
     MCD,
     DIS,
+    LVMUY,
 ]
 
 V_100B = [
@@ -299,14 +208,26 @@ V_10B = [
     ERIC,
     OKTA,
     PINS,
+    BIDU,
+    PINS,
 ]
 
-V_OTHER = list(
-    set(ALL)
-    - set(V_INDEX + V_3000B + V_2000B + V_1000B)
-    - set(V_500B + V_300B + V_200B + V_100B)
-    - set(V_50B + V_30B + V_10B)
-)
+V_SMALL = [
+    CFLT,
+    ETSY,
+    GTLB,
+    NIO,
+    MNSO,
+    EDU,
+    FUTU,
+    BILI,
+    TME,
+    YY,
+    IQ,
+]
 
-V_ALL = V_INDEX + V_3000B + V_2000B + V_1000B + V_500B + V_300B + V_200B + V_100B \
-        + V_50B + V_30B + V_10B + V_OTHER
+ALL = V_INDEX \
+      + V_3000B + V_2000B + V_1000B \
+      + V_500B + V_300B + V_200B + V_100B \
+      + V_50B + V_30B + V_10B \
+      + V_SMALL
