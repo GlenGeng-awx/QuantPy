@@ -21,9 +21,12 @@ for filename in glob('./bak/*'):
     df.at[stock_name, to_date] = int(hit_num)
 
 # sort columns by date
-df = df.reindex(sorted(df.columns), axis=1)
+df = df.reindex(sorted(df.columns, reverse=True)[:5], axis=1)
 
 # sort rows by stock name
 df = df.reindex(ALL, axis=0)
 
 print(df)
+
+candidates = [stock_name for stock_name in df.index if not df.loc[stock_name].dropna().empty]
+print(candidates)

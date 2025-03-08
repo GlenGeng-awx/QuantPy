@@ -1,8 +1,8 @@
+import glob
 import pandas as pd
 import plotly.graph_objects as go
 from guru import build_params
 from util import get_idx_by_date, get_next_n_workday
-from .position import POSITION
 
 
 class PositionDisplay:
@@ -58,5 +58,12 @@ class PositionDisplay:
         if not enable:
             return
 
-        for (num, date) in enumerate(POSITION.get(self.stock_name, [])):
+        dates = []
+        for filename in glob.glob(f'./bak/{self.stock_name}$*'):
+            # from ./bak/JNJ$2025-02-06$4 to (JNJ, 2025-02-06, 4)
+            record = filename.split('/')[-1]
+            _, to_date, _ = record.split('$')
+            dates.append(to_date)
+
+        for (num, date) in enumerate(sorted(dates)):
             self.build_graph_impl(fig, num + 1, date)

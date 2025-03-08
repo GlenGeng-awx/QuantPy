@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from technical.core_banking import CORE_BANKING
+from trading.core_banking import CORE_BANKING
 from util import get_idx_by_date
 
 
