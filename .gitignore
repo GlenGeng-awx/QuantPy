@@ -46,3 +46,4 @@ __pycache__/
 awx/
 tmp/
 stock_data/
+bak/

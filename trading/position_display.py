@@ -25,10 +25,15 @@ class PositionDisplay:
         long_target = close * (1 + long_profit)
         short_target = close * (1 - short_profit)
 
+        color = 'orange'
+        if self.stock_df.loc[idx:idx + sz]['high'].max() > long_target \
+                or self.stock_df.loc[idx:idx + sz]['low'].min() < short_target:
+            color = 'black'
+
         fig.add_trace(
             go.Scatter(
                 name=f'position-{num}', x=[date], y=[close],
-                mode='markers', marker=dict(color='orange', size=8),
+                mode='markers', marker=dict(color=color, size=8),
                 visible=None,
             ),
             row=1, col=1,

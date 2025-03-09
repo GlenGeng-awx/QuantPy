@@ -17,13 +17,19 @@ def probe(stock_name):
         predict(_stock_df, go.Figure(fig), stock_name)
 
 
-if __name__ == '__main__':
+def parallel_probe(stock_names):
     procs = []
 
-    for _stock_name in ALL:
-        proc = Process(target=probe, args=(_stock_name,))
+    for stock_name in stock_names:
+        proc = Process(target=probe, args=(stock_name,))
         procs.append(proc)
         proc.start()
 
     for proc in procs:
         proc.join()
+
+
+if __name__ == '__main__':
+    parallel_num = 12
+    for i in range(0, len(ALL), parallel_num):
+        parallel_probe(ALL[i: i + parallel_num])
