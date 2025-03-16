@@ -3,35 +3,34 @@ import pandas as pd
 from datetime import datetime
 
 from util import shrink_date_str
-from guru import total_ops, build_op_ctx, build_params, filter_indices_by_ops
-from .eval_vix import eval_vix
+from guru import total_ops, build_op_ctx, build_params, filter_indices
+from .eval_vix import filter_long, filter_short
 import features
 
 
-def train_ops(stock_df: pd.DataFrame, stock_name, params: dict, fd, op_ctx: dict, ops: list):
-    indices = filter_indices_by_ops(op_ctx, ops)
-    if not indices:
-        return
-
-    sz = params['sz']
-    hard_loss = params['hard_loss']
-    long_profit, short_profit = params['long_profit'], params['short_profit']
-
-    # eval vix
-    result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
-    total_num, successful_rate = result['total_num'], result['successful_rate']
-
-    if not (total_num >= 2 and successful_rate >= 0.8):
-        return
-
+def print_result(stock_name, ops, result, fd):
     record = json.dumps({
         'stock_name': stock_name,
         'op_names': [op.__name__ for op in ops],
         'result': result,
     })
 
-    # print(record)
+    print(record)
     fd.write(record + '\n')
+
+
+def train_ops(stock_df: pd.DataFrame, stock_name, params: dict, fd, op_ctx: dict, ops: list):
+    indices = filter_indices(stock_df, op_ctx, ops)
+    if not indices:
+        return
+
+    long_result = filter_long(stock_df, indices, params)
+    if long_result is not None:
+        print_result(stock_name, ops, long_result, fd)
+
+    short_result = filter_short(stock_df, indices, params)
+    if short_result is not None:
+        print_result(stock_name, ops, short_result, fd)
 
 
 def train_impl(stock_df: pd.DataFrame,
@@ -46,7 +45,7 @@ def train_impl(stock_df: pd.DataFrame,
 
         # fail fast
         if ops:
-            indices = filter_indices_by_ops(op_ctx, ops)
+            indices = filter_indices(stock_df, op_ctx, ops)
             if not indices:
                 return
 

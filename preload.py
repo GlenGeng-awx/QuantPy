@@ -39,6 +39,8 @@ def preload(stock_name: str, **kwargs) -> BaseEngine:
 if __name__ == '__main__':
     from conf import *
 
+    targets = [META, COIN, MRK, TCOM, MSFT, JPM, GS, VISA]
+
     for _stock_name in ALL:
         _base_engine = preload(_stock_name, enable_position=True)
         _stock_df, _fig = _base_engine.stock_df, _base_engine.fig

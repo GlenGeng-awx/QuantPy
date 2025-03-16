@@ -3,6 +3,7 @@ from multiprocessing import Process
 from conf import *
 from preload import preload
 from guru.predict import predict
+from guru import PERIOD
 
 FROM = 5  # 3, 2, 1
 SZ = 5
@@ -13,7 +14,7 @@ def probe(stock_name):
     stock_df, fig = base_engine.stock_df, base_engine.fig
 
     for i in range(SZ):
-        _stock_df = stock_df.tail(FROM - (i + 1) + 400).head(400)
+        _stock_df = stock_df.tail(FROM - (i + 1) + PERIOD).head(PERIOD)
         predict(_stock_df, go.Figure(fig), stock_name)
 
 

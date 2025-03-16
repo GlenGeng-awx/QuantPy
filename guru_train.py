@@ -2,6 +2,7 @@ from multiprocessing import Process
 from conf import *
 from preload import preload
 from guru.train import train
+from guru import PERIOD
 
 FROM = 5   # 3    or 30
 SZ = 5     # FROM or 20
@@ -12,7 +13,7 @@ def probe(stock_name):
     stock_df = base_engine.stock_df
 
     for i in range(SZ):
-        _stock_df = stock_df.tail(FROM - (i + 1) + 400).head(400)
+        _stock_df = stock_df.tail(FROM - (i + 1) + PERIOD).head(PERIOD)
         train(_stock_df, stock_name)
 
 

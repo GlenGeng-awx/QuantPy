@@ -4,8 +4,8 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from util import get_next_n_workday, shrink_date_str, touch
-from guru import get_op_by_name, build_op_ctx, build_params, filter_indices_by_ops
-from .eval_vix import eval_vix
+from guru import get_op_by_name, build_op_ctx, build_params, filter_indices
+from .eval_vix import filter_short, filter_long
 import features
 
 
@@ -21,47 +21,38 @@ def parse_all_ops(stock_name: str, to_date: str) -> list[list]:
     return all_ops
 
 
-def predict_ops(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name, op_ctx, ops: list) -> bool:
-    indices = filter_indices_by_ops(op_ctx, ops)
+def predict_ops(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name, op_ctx, ops: list) -> int:
+    indices = filter_indices(stock_df, op_ctx, ops)
     if not indices:
-        return False
+        return 0
 
-    if stock_df.index[-1] not in indices:
-        return False
-
-    # eval vix
-    sz = params['sz']
-    hard_loss = params['hard_loss']
-    long_profit, short_profit = params['long_profit'], params['short_profit']
-
-    result = eval_vix(stock_df, indices, sz, long_profit, short_profit, hard_loss)
-    vix_tag, total_num, successful_rate = result['vix_tag'], result['total_num'], result['successful_rate']
-
-    def rule() -> bool:
-        valid_indices = [idx for idx in indices if idx + sz in stock_df.index]
-        return total_num >= 3 and successful_rate >= 0.8 and valid_indices[-1] - valid_indices[0] >= 60
-
-    if not rule():
-        return False
+    long_result = filter_long(stock_df, indices, params)
+    short_result = filter_short(stock_df, indices, params)
+    if long_result:
+        tag = long_result['long_tag']
+        ret = 1
+    elif short_result:
+        tag = short_result['short_tag']
+        ret = -1
+    else:
+        return 0
 
     name = ','.join(op.__name__ for op in ops)
-    print(f'{stock_name} {name} ---> {vix_tag}')
+    print(f'{stock_name} {name} ---> {tag}')
 
-    dates = stock_df.loc[indices]['Date'].tolist()
-    close = stock_df.loc[indices]['close'].tolist()
-
-    tags = [op.__name__ for op in ops] + [vix_tag]
+    tags = [op.__name__ for op in ops] + [tag]
     fig.add_trace(
         go.Scatter(
             name='<br>'.join(tag for tag in tags if 'noop' not in tag),
-            x=dates, y=close,
+            x=stock_df.loc[indices]['Date'],
+            y=stock_df.loc[indices]['close'],
             mode='markers', marker=dict(size=10, color='orange'),
         )
     )
-    return True
+    return ret
 
 
-def build_graph(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name, hit_num):
+def build_graph(stock_df: pd.DataFrame, params: dict, fig: go.Figure, long_num, short_num):
     # mark the first and last date
     fig.add_vline(x=stock_df.iloc[0]['Date'], line_dash="dash", line_width=1, line_color="black")
     fig.add_vline(x=stock_df.iloc[-1]['Date'], line_dash="dash", line_width=0.25, line_color="black")
@@ -80,26 +71,30 @@ def build_graph(stock_df: pd.DataFrame, params: dict, fig: go.Figure, stock_name
     fig.add_trace(
         go.Scatter(
             name='long hint', x=[from_date, to_date], y=[long_target, long_target],
-            mode='lines', line=dict(width=4, color='red', dash='dot'),
+            mode='lines', line=dict(width=2, color='red', dash='solid'),
         ),
         row=1, col=1,
     )
     fig.add_trace(
         go.Scatter(
             name='short hint', x=[from_date, to_date], y=[short_target, short_target],
-            mode='lines', line=dict(width=4, color='green', dash='dot'),
+            mode='lines', line=dict(width=2, color='green', dash='solid'),
         ),
         row=1, col=1,
     )
 
     # update title
     fig.update_layout(
-        title=fig.layout.title.text + f'<br>HIT {hit_num} --> L {long_profit:.1%}, S {short_profit:.1%}'
+        title=fig.layout.title.text + f'<br>Long {long_num} Short {short_num} --> L {long_profit:.1%}, S {short_profit:.1%}'
     )
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
+
+    all_ops = parse_all_ops(stock_name, to_date)
+    if not all_ops:
+        return
 
     stock_df = features.calculate_feature(stock_df, stock_name)
     params = build_params(stock_df)
@@ -107,21 +102,22 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     print(f'finish build op ctx for {stock_name} at {to_date}')
 
     start_time = datetime.now()
-    all_ops = parse_all_ops(stock_name, to_date)
-
-    hit_num = 0
+    long_num, short_num = 0, 0
     for ops in all_ops:
-        if predict_ops(stock_df, params, fig, stock_name, op_ctx, ops):
-            hit_num += 1
+        ret = predict_ops(stock_df, params, fig, stock_name, op_ctx, ops)
+        if ret == 1:
+            long_num += 1
+        if ret == -1:
+            short_num += 1
 
     time_cost = (datetime.now() - start_time).total_seconds()
     print(f'----> {stock_name} predict finished, cost: {time_cost}s')
 
-    if hit_num == 0:
+    if long_num + short_num == 0:
         return
 
-    touch(f'./bak/{stock_name}${to_date}${hit_num}')
+    touch(f'./bak/{stock_name}${to_date}${long_num}${short_num}')
 
-    build_graph(stock_df, params, fig, stock_name, hit_num)
+    build_graph(stock_df, params, fig, long_num, short_num)
     features.plot_feature(stock_df, fig)
     fig.show()

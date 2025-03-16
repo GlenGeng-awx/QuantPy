@@ -38,6 +38,9 @@ total_ops = [
 
 flatten_ops = [op for ops in total_ops for op in ops]
 
+HIT_NUM = 2
+PERIOD = 200    # 400
+
 
 def build_op_ctx(stock_df: pd.DataFrame) -> dict:
     op_ctx = {}
@@ -58,9 +61,18 @@ def filter_indices_by_ops(op_ctx: dict, ops: list) -> list:
         if 'noop' in op.__name__:
             continue
         hits = hits.intersection(op_ctx[op.__name__])
-        if len(hits) <= 1:
-            return []
     return sorted(list(hits))
+
+
+def filter_indices(stock_df: pd.DataFrame, op_ctx: dict, ops: list) -> list:
+    indices = filter_indices_by_ops(op_ctx, ops)
+    if stock_df.index[-1] not in indices:
+        return []
+    if len(indices) < 1 + HIT_NUM:
+        return []
+    if indices[-2] - indices[0] < 20:
+        return []
+    return indices
 
 
 def get_op_by_name(op_name):
@@ -71,15 +83,13 @@ def get_op_by_name(op_name):
 
 
 def build_params(stock_df: pd.DataFrame) -> dict:
-    sz = 20
-    hard_loss = 0.05
+    sz = 21
 
-    long_profit, _ = get_incr_benchmark(stock_df, 10)
-    short_profit, _ = get_decr_benchmark(stock_df, 10)
+    long_profit, _ = get_incr_benchmark(stock_df, 20)
+    short_profit, _ = get_decr_benchmark(stock_df, 20)
 
     return {
         'sz': sz,
-        'hard_loss': hard_loss,
         'long_profit': long_profit,
         'short_profit': short_profit
     }
