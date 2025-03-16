@@ -76,7 +76,7 @@ def train_impl(stock_df: pd.DataFrame,
 def train(stock_df: pd.DataFrame, stock_name):
     to_date = shrink_date_str(stock_df.iloc[-1]['Date'])
 
-    stock_df = features.calculate_feature(stock_df, stock_name)
+    stock_df = features.calculate_feature(stock_df, stock_name, False)
     params = build_params(stock_df)
     op_ctx = build_op_ctx(stock_df)
     print(f'finish build op ctx for {stock_name} at {to_date}')

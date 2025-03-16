@@ -117,8 +117,7 @@ class BaseEngine:
                     enable_position=True,
                     enable_elliott=True,
                     # volume
-                    enable_volume_raw=(False, 2),
-                    enable_volume_reg=(False, 2),
+                    enable_volume=(False, 2),
                     # misc
                     rows=2,
                     ):
@@ -140,5 +139,5 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.elliott.build_graph(self.fig, enable_elliott)
 
-        self.volume.build_graph(self.fig, enable_volume_raw, enable_volume_reg)
+        self.volume.build_graph(self.fig, enable_volume)
         self.position.build_graph(self.fig, enable_position)

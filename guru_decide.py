@@ -11,14 +11,14 @@ pd.set_option('display.float_format', '{:.3f}'.format)
 df = pd.DataFrame()
 
 for filename in glob('./bak/*'):
-    # from ./bak/JNJ$2025-02-06$4 to JNJ$2025-02-06$4
+    # from ./bak/JNJ$2025-02-06$4$0 to JNJ$2025-02-06$4$0
     record = filename.split('/')[-1]
-    stock_name, to_date, hit_num = record.split('$')
+    stock_name, to_date, long_num, short_num = record.split('$')
 
     if to_date not in df.columns:
         df[to_date] = pd.Series(dtype=str)
 
-    df.at[stock_name, to_date] = int(hit_num)
+    df.at[stock_name, to_date] = int(long_num) + int(short_num)
 
 # sort columns by date
 df = df.reindex(sorted(df.columns, reverse=True)[:5], axis=1)

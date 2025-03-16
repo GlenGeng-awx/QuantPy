@@ -13,10 +13,9 @@ from guru import (
     guru_08,  # yesterday min max
     guru_09,  # incr decr top 10pst
     guru_10,  # incr decr bottom 10pst
-    guru_11,  # price
-    guru_a,  # weekday
-    guru_b,  # post
-    guru_c,  # baseline
+    guru_11,  # high/low/close price
+    guru_12,  # weekday
+    guru_13,  # baseline
 )
 
 total_ops = [
@@ -31,9 +30,8 @@ total_ops = [
     guru_09.operators,
     guru_10.operators,
     guru_11.operators,
-    guru_a.operators,
-    guru_b.operators,
-    guru_c.operators,
+    guru_12.operators,
+    guru_13.operators,
 ]
 
 flatten_ops = [op for ops in total_ops for op in ops]

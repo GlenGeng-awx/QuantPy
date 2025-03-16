@@ -96,7 +96,7 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
     if not all_ops:
         return
 
-    stock_df = features.calculate_feature(stock_df, stock_name)
+    stock_df = features.calculate_feature(stock_df, stock_name, False)
     params = build_params(stock_df)
     op_ctx = build_op_ctx(stock_df)
     print(f'finish build op ctx for {stock_name} at {to_date}')

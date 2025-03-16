@@ -3,14 +3,16 @@ from conf import *
 from preload import preload
 from guru.train import train
 from guru import PERIOD
+import features
 
-FROM = 5   # 3    or 30
-SZ = 5     # FROM or 20
+FROM = 200   # 3    or 30
+SZ = 200     # FROM or 20
 
 
 def probe(stock_name):
     base_engine = preload(stock_name)
     stock_df = base_engine.stock_df
+    stock_df = features.calculate_feature(stock_df, stock_name, True)
 
     for i in range(SZ):
         _stock_df = stock_df.tail(FROM - (i + 1) + PERIOD).head(PERIOD)
