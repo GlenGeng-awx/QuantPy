@@ -120,4 +120,4 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name):
 
     build_graph(stock_df, params, fig, long_num, short_num)
     features.plot_feature(stock_df, fig)
-    fig.show()
+    # fig.show()

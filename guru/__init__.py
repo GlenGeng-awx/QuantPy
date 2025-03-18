@@ -88,6 +88,6 @@ def build_params(stock_df: pd.DataFrame) -> dict:
 
     return {
         'sz': sz,
-        'long_profit': long_profit,
-        'short_profit': short_profit
+        'long_profit': min(long_profit, 0.3),
+        'short_profit': min(short_profit, 0.25)
     }
