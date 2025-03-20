@@ -30,7 +30,7 @@ class PositionDisplay:
         else:
             color = 'black'
 
-        marker_sz = 5
+        marker_sz = 8
         if max(long_num, short_num) >= 5:
             marker_sz = 10
 
