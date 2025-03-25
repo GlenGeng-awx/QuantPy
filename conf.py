@@ -51,6 +51,8 @@ MA = "MA"               # Mastercard
 VISA = "V"              # Visa Inc
 PYPL = "PYPL"           # PayPal
 EBAY = "EBAY"
+NU = "NU"               # Nu Holdings
+HOOD = "HOOD"           # Robinhood
 
 # ENERGY
 XOM = "XOM"             # Exxon Mobil
@@ -183,6 +185,7 @@ V_50B = [
     COIN,
     SNOW,
     JD,
+    NU,
 ]
 
 V_30B = [
@@ -194,6 +197,7 @@ V_30B = [
     SQ,
     DELL,
     HPQ,
+    HOOD,
 ]
 
 V_10B = [
@@ -231,3 +235,7 @@ ALL = V_INDEX \
       + V_500B + V_300B + V_200B + V_100B \
       + V_50B + V_30B + V_10B \
       + V_SMALL
+
+BIG_BOY = V_3000B + V_2000B + V_1000B
+MID_BOY = V_500B + V_300B + V_200B + V_100B
+TINY_BOY = V_50B + V_30B + V_10B

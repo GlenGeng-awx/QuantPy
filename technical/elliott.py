@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 
 from technical.min_max import LOCAL_MAX_PRICE_1ST, LOCAL_MIN_PRICE_1ST
 from trading.core_banking import CORE_BANKING
-from util import get_idx_by_date
+from util import get_idx_by_date, shrink_date_str
 
 
 def get_diff(stock_df: pd.DataFrame):
@@ -21,7 +21,7 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
     x, y, text = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
-        if date > stock_df.iloc[-1]['Date']:
+        if date not in stock_df['Date'].apply(shrink_date_str).values:
             print(f'elliott {stock_name} {date} is out of range')
             continue
 

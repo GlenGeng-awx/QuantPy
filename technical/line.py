@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from trading.core_banking import CORE_BANKING
-from util import get_idx_by_date
+from util import get_idx_by_date, shrink_date_str
 
 
 def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
@@ -34,8 +34,10 @@ def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_
     dates, prices = [], []
 
     k = _calculate_k(stock_df, date1, date2)
+    idx1 = get_idx_by_date(stock_df, date1)
+    idx2 = get_idx_by_date(stock_df, date2)
 
-    for delta in range(-prev_len, 1):
+    for delta in range(-prev_len, idx2 - idx1):
         point = _calculate_point(stock_df, date1, delta, k)
         if point:
             dates.append(point[0])
@@ -64,6 +66,21 @@ def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, d
     return dates, prices
 
 
+def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
+    idx = get_idx_by_date(stock_df, date)
+    price = stock_df.loc[idx]['close']
+
+    dates, prices = [], []
+
+    for delta in range(-prev_len, post_len):
+        if idx + delta not in stock_df.index:
+            continue
+        dates.append(stock_df.loc[idx + delta]['Date'])
+        prices.append(price)
+
+    return dates, prices
+
+
 class Line:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
@@ -71,16 +88,38 @@ class Line:
 
         self.primary_lines = []
         self.secondary_lines = []
+        self.neck_lines = []
 
         self.anchor_dates = []
 
+        dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
             if len(line) == 4:
+                date1, date2, _, _ = line
+                if date1 not in dates or date2 not in dates:
+                    continue
+
                 self.primary_lines.append(calculate_primary_line(stock_df, *line))
                 self.anchor_dates.extend((line[0], line[1]))
-            else:
+
+            elif len(line) == 5:
+                date, _, _, date1, date2 = line
+                if date not in dates or date1 not in dates or date2 not in dates:
+                    continue
+
                 self.secondary_lines.append(calculate_secondary_line(stock_df, *line))
                 self.anchor_dates.append(line[0])
+
+            elif len(line) == 3:
+                date, _, _ = line
+                if date not in dates:
+                    continue
+
+                self.neck_lines.append(calculate_neck_line(stock_df, *line))
+                self.anchor_dates.append(line[0])
+
+            else:
+                raise Exception(f'invalid line {line}')
 
     def build_graph(self, fig: go.Figure, enable=False):
         for i, (dates, prices) in enumerate(self.primary_lines):
@@ -103,6 +142,18 @@ class Line:
                     y=prices,
                     mode='lines',
                     line=dict(width=1, color='green', dash='dash'),
+                    visible=None if enable else 'legendonly',
+                )
+            )
+
+        for i, (dates, prices) in enumerate(self.neck_lines):
+            fig.add_trace(
+                go.Scatter(
+                    name=f'neck line-{i}',
+                    x=dates,
+                    y=prices,
+                    mode='lines',
+                    line=dict(width=2, color='black', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )

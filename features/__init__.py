@@ -195,7 +195,7 @@ def _build_graph(stock_df: pd.DataFrame, fig: go.Figure,
             name=key, x=dates, y=values,
             mode='markers', marker=dict(color=color, size=size),
         ),
-        row=2, col=1,
+        row=3, col=1,
     )
 
 
