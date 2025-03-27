@@ -46,7 +46,7 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
             y.append(close - diff_)
             text.append('<br>'.join(tags))
         else:
-            raise Exception(f'invalid elliott {stock_name} {date} {tags}')
+            print(f'invalid elliott {stock_name} {date} {tags}')
 
     return x, y, text
 

@@ -28,7 +28,7 @@ ETSY = "ETSY"
 SHOP = "SHOP"
 GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
-SQ = "SQ"               # XYZ
+BLOCK = "XYZ"
 COIN = "COIN"
 LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
 SEA = "SE"
@@ -194,7 +194,7 @@ V_30B = [
     TTD,
     TCOM,
     SEA,
-    SQ,
+    BLOCK,
     DELL,
     HPQ,
     HOOD,
@@ -213,7 +213,6 @@ V_10B = [
     OKTA,
     PINS,
     BIDU,
-    PINS,
 ]
 
 V_SMALL = [
