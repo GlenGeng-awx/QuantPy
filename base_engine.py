@@ -53,7 +53,7 @@ class BaseEngine:
         self.box = Box(self.stock_df, self.wave)
         self.elliott = Elliott(self.stock_df, self.stock_name)
 
-        self.volume = Volume(self.stock_df)
+        self.volume = Volume(self.stock_df, self.stock_name)
         self.position = PositionDisplay(self.stock_df, self.stock_name)
 
     def setup_graph(self, rows=2):

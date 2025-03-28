@@ -49,7 +49,7 @@ def calculate_primary_line(stock_df: pd.DataFrame, date1, date2, prev_len, post_
             dates.append(point[0])
             prices.append(point[1])
 
-    return dates, prices
+    return dates, prices, k
 
 
 def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, date1, date2) -> tuple:
@@ -63,7 +63,7 @@ def calculate_secondary_line(stock_df: pd.DataFrame, date, prev_len, post_len, d
             dates.append(point[0])
             prices.append(point[1])
 
-    return dates, prices
+    return dates, prices, k
 
 
 def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
@@ -122,26 +122,26 @@ class Line:
                 raise Exception(f'invalid line {line}')
 
     def build_graph(self, fig: go.Figure, enable=False):
-        for i, (dates, prices) in enumerate(self.primary_lines):
+        for i, (dates, prices, k) in enumerate(self.primary_lines):
             fig.add_trace(
                 go.Scatter(
                     name=f'primary line-{i}',
                     x=dates,
                     y=prices,
                     mode='lines',
-                    line=dict(width=1, color='red', dash='dash'),
+                    line=dict(width=1 if abs(k) > 0.1 else 2, color='red', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
 
-        for i, (dates, prices) in enumerate(self.secondary_lines):
+        for i, (dates, prices, k) in enumerate(self.secondary_lines):
             fig.add_trace(
                 go.Scatter(
                     name=f'secondary line-{i}',
                     x=dates,
                     y=prices,
                     mode='lines',
-                    line=dict(width=1, color='green', dash='dash'),
+                    line=dict(width=1 if abs(k) > 0.1 else 2, color='green', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
