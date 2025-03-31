@@ -32,6 +32,7 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
 
         diff_ = diff
 
+        tags = [tag for tag in tags if tag not in ['Brk']]
         if len(tags) == 2:
             diff_ = diff * 1.5
         elif len(tags) == 3:

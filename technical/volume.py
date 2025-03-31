@@ -21,17 +21,18 @@ def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd
         if date not in stock_df['Date'].apply(shrink_date_str).values:
             print(f'volume {stock_name} {date} is out of range')
             continue
+
+        tags = [tag for tag in tags if tag in ['S', 'H', 'Brk']]
+        if not tags:
+            continue
+
         x.append(date)
 
         idx = get_idx_by_date(stock_df, date)
         vol = volume_reg.loc[idx]
         y.append(vol)
 
-        tags = [tag for tag in tags if tag in ['S', 'H']]
-        if not tags:
-            continue
         text.append('<br>'.join(reversed(tags)))
-
     return x, y, text
 
 

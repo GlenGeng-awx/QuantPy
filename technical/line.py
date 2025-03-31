@@ -123,25 +123,29 @@ class Line:
 
     def build_graph(self, fig: go.Figure, enable=False):
         for i, (dates, prices, k) in enumerate(self.primary_lines):
+            print(f'primary line-{i} k {k}')
+            color, width = ('red', 1) if abs(k) > 0.017 else ('black', 2)
             fig.add_trace(
                 go.Scatter(
                     name=f'primary line-{i}',
                     x=dates,
                     y=prices,
                     mode='lines',
-                    line=dict(width=1 if abs(k) > 0.1 else 2, color='red', dash='dash'),
+                    line=dict(width=width, color=color, dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
 
         for i, (dates, prices, k) in enumerate(self.secondary_lines):
+            print(f'secondary line-{i} k {k}')
+            color, width = ('green', 1) if abs(k) > 0.017 else ('black', 1.5)
             fig.add_trace(
                 go.Scatter(
                     name=f'secondary line-{i}',
                     x=dates,
                     y=prices,
                     mode='lines',
-                    line=dict(width=1 if abs(k) > 0.1 else 2, color='green', dash='dash'),
+                    line=dict(width=width, color=color, dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )

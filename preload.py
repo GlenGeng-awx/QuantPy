@@ -13,6 +13,7 @@ def default_periods() -> list[tuple]:
     current_date = current_date.strftime('%Y-%m-%d')
 
     return [
+        # (start_date_3y, start_date_1y, '1d'),
         (start_date_3y, current_date, '1d'),
         (start_date_2y, current_date, '1d'),
         (start_date_1y, current_date, '1d'),
@@ -46,7 +47,7 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
 if __name__ == '__main__':
     from conf import *
 
-    targets = [NU, AAPL, IQ, BIDU, ZM, DELL, AMD]
+    targets = [NU, AAPL, IQ, BIDU, ZM, DELL, AMD, JPM, META, WMT, MRK, ADBE, CVX, DIS]
 
     for _stock_name in targets:
         for _from_date, _to_date, _interval in default_periods():
