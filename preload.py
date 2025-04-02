@@ -13,11 +13,11 @@ def default_periods() -> list[tuple]:
     current_date = current_date.strftime('%Y-%m-%d')
 
     return [
-        # (start_date_3y, start_date_1y, '1d'),
         (start_date_3y, current_date, '1d'),
         (start_date_2y, current_date, '1d'),
         (start_date_1y, current_date, '1d'),
     ]
+
 
 
 def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwargs) -> BaseEngine:
@@ -31,6 +31,7 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
         'enable_min_max': True,
         'enable_sr': True,
         'enable_line': True,
+        'enable_ma': False,
         'enable_position': False,
         'enable_volume': (True, 2),
         'enable_bband_pst': (True, 4),
@@ -47,11 +48,12 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
 if __name__ == '__main__':
     from conf import *
 
-    targets = [NU, AAPL, IQ, BIDU, ZM, DELL, AMD, JPM, META, WMT, MRK, ADBE, CVX, DIS]
+    position = [ZM, DELL, BIDU, NU, WMT, IQ, BAC]
+    candidates = [AMD, JPM, META, MRK, ADBE, CVX, DIS]
 
-    for _stock_name in targets:
+    for _stock_name in ALL:
         for _from_date, _to_date, _interval in default_periods():
-            _base_engine = preload(_stock_name, _from_date, _to_date, _interval, enable_position=False)
+            _base_engine = preload(_stock_name, _from_date, _to_date, _interval, enable_ma=False)
             _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
 
             _stock_df = features.calculate_feature(_stock_df, _stock_name, True)

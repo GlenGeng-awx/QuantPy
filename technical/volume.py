@@ -12,6 +12,7 @@ VOLUME_MA_30 = 'volume_ma_30'
 VOLUME_MA_60 = 'volume_ma_60'
 
 
+# Only display S, H, Brk
 # return (x, y, text)
 def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd.Series) -> (list, list, list):
     # date, volume, tags

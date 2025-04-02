@@ -12,6 +12,7 @@ def get_diff(stock_df: pd.DataFrame):
     return (max_close - min_close) / 20
 
 
+# Not display Brk
 # return (x, y, text)
 def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list):
     diff = get_diff(stock_df)
@@ -21,6 +22,10 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
     x, y, text = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
+        tags = [tag for tag in tags if tag not in ['Brk']]
+        if not tags:
+            continue
+
         if date not in stock_df['Date'].apply(shrink_date_str).values:
             print(f'elliott {stock_name} {date} is out of range')
             continue
@@ -31,8 +36,6 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
         close = stock_df.loc[idx]['close']
 
         diff_ = diff
-
-        tags = [tag for tag in tags if tag not in ['Brk']]
         if len(tags) == 2:
             diff_ = diff * 1.5
         elif len(tags) == 3:
@@ -48,6 +51,7 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
             text.append('<br>'.join(tags))
         else:
             print(f'invalid elliott {stock_name} {date} {tags}')
+            raise ValueError
 
     return x, y, text
 
