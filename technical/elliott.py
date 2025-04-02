@@ -64,11 +64,13 @@ class Elliott:
         self.x, self.y, self.text = calculate_elliott(self.stock_df, self.stock_name)
 
     def build_graph(self, fig: go.Figure, enable=False):
+        size = 12 if self.stock_df.shape[0] <= 550 else 14
+
         fig.add_trace(
             go.Scatter(
                 name='elliott',
                 x=self.x, y=self.y, text=self.text,
-                mode='text', textfont=dict(color="black",),
+                mode='text', textfont=dict(color="black", size=size),
                 visible=None if enable else 'legendonly',
             )
         )

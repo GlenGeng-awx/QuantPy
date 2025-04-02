@@ -46,7 +46,15 @@ class MA:
         )
 
     def build_graph(self, fig: go.Figure, enable=False):
-        self._build_graph(fig, MA_5, 'red', enable)
-        self._build_graph(fig, MA_20, 'orange', enable)
-        self._build_graph(fig, MA_60, 'black')
-        self._build_graph(fig, MA_120, 'blue')
+        last_close = self.stock_df['close'].iloc[-1]
+
+        last_ma20 = self.stock_df[MA_20].iloc[-1]
+        last_ma60 = self.stock_df[MA_60].iloc[-1]
+        last_ma120 = self.stock_df[MA_120].iloc[-1]
+
+        min_diff = min(abs(last_close - last_ma20), abs(last_close - last_ma60), abs(last_close - last_ma120))
+
+        self._build_graph(fig, MA_5, 'red')
+        self._build_graph(fig, MA_20, 'orange', enable=enable and abs(last_close - last_ma20) == min_diff)
+        self._build_graph(fig, MA_60, 'black', enable=enable and abs(last_close - last_ma60) == min_diff)
+        self._build_graph(fig, MA_120, 'blue', enable=enable and abs(last_close - last_ma120) == min_diff)
