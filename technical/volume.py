@@ -14,7 +14,7 @@ VOLUME_MA_30 = 'volume_ma_30'
 VOLUME_MA_60 = 'volume_ma_60'
 
 
-# Only display S, H, Brk, Top, Bottom
+# Only display S, H, H 3%, Brk, Top, Bottom
 # return (x, y, text)
 def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd.Series) -> (list, list, list):
     # date, volume, tags
@@ -25,7 +25,7 @@ def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd
             print(f'volume {stock_name} {date} is out of range')
             continue
 
-        tags = [tag for tag in tags if tag in ['S', 'H', 'Brk', 'Top', 'Bottom']]
+        tags = [tag for tag in tags if tag in ['S', 'H', 'H 3%', 'Brk', 'Top', 'Bottom']]
         if not tags:
             continue
 

@@ -51,7 +51,7 @@ class Gap:
         date, close = self.stock_df['Date'], self.stock_df['close']
         high, low = self.stock_df['high'], self.stock_df['low']
 
-        up_x, up_y, up_text = [], [], []
+        up_x, up_y, up_text, hit_up = [], [], [], False
         for idx, pst in self.up_gaps:
             x = date[idx]
             y = low[idx] - (low[idx] - high[idx - 1]) * 0.5
@@ -61,7 +61,10 @@ class Gap:
             up_y.append(y)
             up_text.append(text)
 
-        down_x, down_y, down_text = [], [], []
+            if idx >= self.stock_df.index[-5]:
+                hit_up = True
+
+        down_x, down_y, down_text, hit_down = [], [], [], False
         for idx, pst in self.down_gaps:
             x = date[idx]
             y = high[idx] + (low[idx - 1] - high[idx]) * 0.5
@@ -71,12 +74,15 @@ class Gap:
             down_y.append(y)
             down_text.append(text)
 
+            if idx >= self.stock_df.index[-5]:
+                hit_down = True
+
         fig.add_trace(
             go.Scatter(
                 name='up gap',
                 x=up_x, y=up_y, text=up_text,
                 mode='text', textfont=dict(color="red", size=10),
-                visible=None if enable else 'legendonly',
+                visible=None if enable and hit_up else 'legendonly',
             )
         )
 
@@ -85,7 +91,6 @@ class Gap:
                 name='down gap',
                 x=down_x, y=down_y, text=down_text,
                 mode='text', textfont=dict(color="green", size=10),
-                visible=None if enable else 'legendonly',
+                visible=None if enable and hit_down else 'legendonly',
             )
         )
-
