@@ -35,7 +35,7 @@ def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd
         vol = volume_reg.loc[idx]
         y.append(vol)
 
-        text.append('<br>'.join(reversed(tags)))
+        text.append('<br>'.join(tags))
     return x, y, text
 
 

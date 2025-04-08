@@ -11,18 +11,22 @@ from conf import *
 #
 # elliott
 # -------
-#   (1), (A)
-#    1,   A
-#    i,   a
+#  (1), (A)
+#   1,   A
+#   i,   a
 #
 #   S:      Shoulder
 #   H:      Head
 #   H 3%:   Head 103%
-#   Brk:    Break
 #
 #   Top/Bottom: for Box
 #
-#   E Gap, C Gap
+#   Brk:    Break
+#
+#   BG:     Breakaway Gap
+#   RG:     Runaway Gap
+#   EG:     Exhaustion Gap
+#
 #   Warn/Call/Put
 #
 CORE_BANKING = {
@@ -399,7 +403,7 @@ CORE_BANKING = {
             '2025-01-28': ['H'],
             '2025-02-18': ['S'],
             '2025-03-10': ['Brk'],
-            '2025-04-01': ['E Gap']
+            '2025-03-31': ['EG']
         },
     },
     XPEV: {
@@ -921,6 +925,7 @@ CORE_BANKING = {
             '2024-12-06': ['iii'],
             '2025-01-02': ['iv'],
             '2025-02-13': ['v', '5'],
+            '2025-04-04': ['Brk'],
         },
     },
     MSFT: {
