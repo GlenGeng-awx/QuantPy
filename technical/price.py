@@ -38,7 +38,7 @@ class Price:
                 x=self.stock_df['Date'],
                 y=self.stock_df['close'],
                 mode="markers",
-                marker=dict(size=2, color='blue'),
+                marker=dict(size=3, color='blue'),
                 visible='legendonly',
             )
         )
@@ -49,7 +49,7 @@ class Price:
                 x=self.stock_df['Date'],
                 y=self.stock_df['high'],
                 mode="markers",
-                marker=dict(size=2, color='red'),
+                marker=dict(size=3, color='red'),
                 visible='legendonly',
             )
         )
@@ -60,7 +60,7 @@ class Price:
                 x=self.stock_df['Date'],
                 y=self.stock_df['low'],
                 mode="markers",
-                marker=dict(size=2, color='green'),
+                marker=dict(size=3, color='green'),
                 visible='legendonly',
             )
         )

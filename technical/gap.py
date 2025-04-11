@@ -61,7 +61,7 @@ class Gap:
             up_y.append(y)
             up_text.append(text)
 
-            if idx >= self.stock_df.index[-5]:
+            if idx >= self.stock_df.index[-3]:
                 hit_up = True
 
         down_x, down_y, down_text, hit_down = [], [], [], False
@@ -74,7 +74,7 @@ class Gap:
             down_y.append(y)
             down_text.append(text)
 
-            if idx >= self.stock_df.index[-5]:
+            if idx >= self.stock_df.index[-3]:
                 hit_down = True
 
         fig.add_trace(

@@ -14,31 +14,6 @@ VOLUME_MA_30 = 'volume_ma_30'
 VOLUME_MA_60 = 'volume_ma_60'
 
 
-# Only display S, H, H 3%, Brk, Top, Bottom
-# return (x, y, text)
-def calculate_tech_annot(stock_df: pd.DataFrame, stock_name: str, volume_reg: pd.Series) -> (list, list, list):
-    # date, volume, tags
-    x, y, text = [], [], []
-
-    for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
-        if date not in stock_df['Date'].apply(shrink_date_str).values:
-            print(f'volume {stock_name} {date} is out of range')
-            continue
-
-        tags = [tag for tag in tags if tag in ['S', 'H', 'H 3%', 'Brk', 'Top', 'Bottom']]
-        if not tags:
-            continue
-
-        x.append(date)
-
-        idx = get_idx_by_date(stock_df, date)
-        vol = volume_reg.loc[idx]
-        y.append(vol)
-
-        text.append('<br>'.join(tags))
-    return x, y, text
-
-
 class Volume:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
@@ -57,6 +32,7 @@ class Volume:
     def add_volume_ma(self, fig: go.Figure, ma_type: str,
                       color: str, size: float, enable_ma=(False, 2)):
         enable, row = enable_ma
+
         fig.add_trace(
             go.Scatter(
                 name=ma_type,
@@ -69,12 +45,25 @@ class Volume:
             row=row, col=1
         )
 
-    def add_elliott(self, fig: go.Figure, row):
-        x, y, text = calculate_tech_annot(self.stock_df, self.stock_name, self.volume_reg)
+    def add_tech(self, fig: go.Figure, row):
+        # date, volume, tags
+        x, y, text = [], [], []
+
+        for date, tags in CORE_BANKING.get(self.stock_name, {}).get('tech', {}).items():
+            if date not in self.stock_df['Date'].apply(shrink_date_str).values:
+                continue
+
+            x.append(date)
+
+            idx = get_idx_by_date(self.stock_df, date)
+            vol = self.volume_reg.loc[idx]
+            y.append(vol)
+
+            text.append('<br>'.join(tags))
 
         fig.add_trace(
             go.Scatter(
-                name='vol elliott',
+                name='vol tech',
                 x=x, y=y, text=text,
                 mode='text', textfont=dict(color="red", size=12),
                 visible=None,
@@ -133,7 +122,7 @@ class Volume:
             row=row, col=1
         )
 
-        self.add_elliott(fig, row)
+        self.add_tech(fig, row)
         self.add_gap(fig, gap, row)
 
         self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, (False, row))

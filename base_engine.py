@@ -8,6 +8,7 @@ from technical.sr_level import SupportResistanceLevel
 from technical.line import Line
 from technical.box import Box
 from technical.elliott import Elliott
+from technical.tech import Tech
 from technical.gap import Gap
 
 from statistical.ema import EMA
@@ -53,6 +54,7 @@ class BaseEngine:
         self.line = Line(self.stock_df, self.stock_name)
         self.box = Box(self.stock_df, self.wave)
         self.elliott = Elliott(self.stock_df, self.stock_name)
+        self.tech = Tech(self.stock_df, self.stock_name)
         self.gap = Gap(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
@@ -118,6 +120,7 @@ class BaseEngine:
                     enable_box=False,
                     enable_position=True,
                     enable_elliott=True,
+                    enable_tech=True,
                     enable_gap=False,
                     # volume
                     enable_volume=(False, 2),
@@ -128,15 +131,17 @@ class BaseEngine:
 
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 
-        self.wave.build_graph(self.fig, enable_wave)
+        self.elliott.build_graph(self.fig, enable_elliott)
+        self.tech.build_graph(self.fig, enable_tech)
+        self.gap.build_graph(self.fig, enable_gap)
+
+        self.volume.build_graph(self.fig, self.gap, enable_volume)
+
+        self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
         self.line.build_graph(self.fig, enable_line)
+        self.wave.build_graph(self.fig, enable_wave)
         self.box.build_graph(self.fig, self.interval, enable_box)
-        self.min_max.build_graph(self.fig, self.interval, enable_min_max)
-
-        self.elliott.build_graph(self.fig, enable_elliott)
-        self.gap.build_graph(self.fig, enable_gap)
-        self.volume.build_graph(self.fig, self.gap, enable_volume)
 
         self.ema.build_graph(self.fig, enable_ema)
         self.ma.build_graph(self.fig, enable_ma)

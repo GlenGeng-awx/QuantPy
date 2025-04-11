@@ -122,6 +122,22 @@ class Line:
                 raise Exception(f'invalid line {line}')
 
     def build_graph(self, fig: go.Figure, enable=False):
+        anchor_prices = []
+        for date in self.anchor_dates:
+            idx = get_idx_by_date(self.stock_df, date)
+            anchor_prices.append(self.stock_df.loc[idx]['close'])
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'anchor point',
+                x=self.anchor_dates,
+                y=anchor_prices,
+                mode='markers',
+                marker=dict(size=5, color='blue'),
+                visible='legendonly',
+            )
+        )
+
         for i, (dates, prices, k) in enumerate(self.primary_lines):
             print(f'primary line-{i} k {k}')
             color, width = ('red', 1) if abs(k) > 0.017 else ('black', 1.5)
@@ -161,19 +177,3 @@ class Line:
                     visible=None if enable else 'legendonly',
                 )
             )
-
-        anchor_prices = []
-        for date in self.anchor_dates:
-            idx = get_idx_by_date(self.stock_df, date)
-            anchor_prices.append(self.stock_df.loc[idx]['close'])
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'anchor point',
-                x=self.anchor_dates,
-                y=anchor_prices,
-                mode='markers',
-                marker=dict(size=5, color='blue'),
-                visible=None if enable else 'legendonly',
-            )
-        )
