@@ -8,42 +8,17 @@ from util import shrink_date_str, get_idx_by_date
 VOLUME = 'volume'
 VOLUME_REG = 'volume_reg'
 
-VOLUME_MA_5 = 'volume_ma_5'
-VOLUME_MA_15 = 'volume_ma_15'
-VOLUME_MA_30 = 'volume_ma_30'
-VOLUME_MA_60 = 'volume_ma_60'
-
 
 class Volume:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
         self.stock_name = stock_name
 
-        volume = stock_df[VOLUME]
+        self.volume_avg = self.stock_df[VOLUME].mean()
 
-        stock_df[VOLUME_MA_5] = volume.rolling(window=5).mean()
-        stock_df[VOLUME_MA_15] = volume.rolling(window=15).mean()
-        stock_df[VOLUME_MA_30] = volume.rolling(window=30).mean()
-        stock_df[VOLUME_MA_60] = volume.rolling(window=60).mean()
-
-        volume_peak = self.stock_df[VOLUME].mean() * 4
-        self.volume_reg = self.stock_df[VOLUME].apply(lambda x: x if x < volume_peak else volume_peak)
-
-    def add_volume_ma(self, fig: go.Figure, ma_type: str,
-                      color: str, size: float, enable_ma=(False, 2)):
-        enable, row = enable_ma
-
-        fig.add_trace(
-            go.Scatter(
-                name=ma_type,
-                x=self.stock_df['Date'],
-                y=self.stock_df[ma_type],
-                mode='lines',
-                line=dict(width=size, color=color),
-                visible=None if enable else 'legendonly',
-            ),
-            row=row, col=1
-        )
+        volume_peak = self.volume_avg * 4
+        self.volume_reg = self.stock_df[VOLUME].apply(
+            lambda vol: vol if vol < volume_peak else volume_peak + (vol - volume_peak) / 10)
 
     def add_tech(self, fig: go.Figure, row):
         # date, volume, tags
@@ -113,7 +88,7 @@ class Volume:
 
         fig.add_trace(
             go.Bar(
-                name=VOLUME,
+                name=VOLUME_REG,
                 x=self.stock_df['Date'],
                 y=self.volume_reg,
                 marker_color='blue',
@@ -122,10 +97,18 @@ class Volume:
             row=row, col=1
         )
 
+        fig.add_hline(
+            y=self.volume_avg,
+            line_dash='dot', line_color='black', line_width=0.5,
+            row=row, col=1
+        )
+
+        if self.volume_reg.max() >= self.volume_avg * 4:
+            fig.add_hline(
+                y=self.volume_avg * 4,
+                line_dash='dot', line_color='black', line_width=0.75,
+                row=row, col=1
+            )
+
         self.add_tech(fig, row)
         self.add_gap(fig, gap, row)
-
-        self.add_volume_ma(fig, VOLUME_MA_5, 'black', 1, (False, row))
-        self.add_volume_ma(fig, VOLUME_MA_15, 'black', 1, (False, row))
-        self.add_volume_ma(fig, VOLUME_MA_30, 'black', 1, (False, row))
-        self.add_volume_ma(fig, VOLUME_MA_60, 'black', 1, (False, row))

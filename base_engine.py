@@ -9,6 +9,7 @@ from technical.line import Line
 from technical.box import Box
 from technical.elliott import Elliott
 from technical.tech import Tech
+from technical.rd import RD
 from technical.gap import Gap
 
 from statistical.ema import EMA
@@ -55,6 +56,7 @@ class BaseEngine:
         self.box = Box(self.stock_df, self.wave)
         self.elliott = Elliott(self.stock_df, self.stock_name)
         self.tech = Tech(self.stock_df, self.stock_name)
+        self.rd = RD(self.stock_df, self.stock_name)
         self.gap = Gap(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
@@ -87,13 +89,12 @@ class BaseEngine:
         self.fig.update_layout(
             title=title,
             xaxis_rangeslider_visible=False,
-            # xaxis_gridcolor='gray',
+            # yaxis_type='log',
             hovermode="x unified",
             hoverdistance=1,  # Only show hoverlabel for the current day
             hoverlabel=dict(
                 namelength=200
             ),
-            # height=1000,
             height=500 + 250 * (rows - 1)
         )
 
@@ -121,6 +122,7 @@ class BaseEngine:
                     enable_position=True,
                     enable_elliott=True,
                     enable_tech=True,
+                    enable_rd=True,
                     enable_gap=False,
                     # volume
                     enable_volume=(False, 2),
@@ -133,6 +135,7 @@ class BaseEngine:
 
         self.elliott.build_graph(self.fig, enable_elliott)
         self.tech.build_graph(self.fig, enable_tech)
+        self.rd.build_graph(self.fig, enable_rd)
         self.gap.build_graph(self.fig, enable_gap)
 
         self.volume.build_graph(self.fig, self.gap, enable_volume)
