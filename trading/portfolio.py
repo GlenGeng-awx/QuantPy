@@ -11,6 +11,7 @@ portfolio = [
     TSLA,       # neutral, in 4 for A ?                 # neutral, at least 214
     TSM,        # A5 is done, call                      # in right shoulder, call at 146, target 189          call 146
     AVGO,       # A5 is done, call                      # up phase of right shoulder is done, wait to put
+
     NFLX,       # neutral                               # up phase of right shoulder is done, wait to put
     JPM,        # neutral                               # bounce back of SHS, good chance to put
     ASML,       # in C3, put                            # bounce back of Box, put at 683                       put 683
@@ -19,6 +20,7 @@ portfolio = [
     MA,         # neutral, 3 or 5 for A ?               # neutral
     VISA,       # A3 is done, in B, wait to call        # neutral
     HK_0700,    # neutral                               # neutral
+
     ORCL,       # ABC is done, call                     # in right shoulder, could call, but margin is tight
     BAC,        # A5 is done, call                      # in right shoulder, call at 34.5, target 43          call 34.5
     GS,         # neutral, 3 or 5 for C ?               # bounce back of SHS, put at 524
@@ -26,12 +28,20 @@ portfolio = [
     ADBE,       # ABC is done, call ?                   # neutral, at least 320
     CVX,        # neutral                               # bottom of box, call at 133                          call 133
     PLTR,       # neutral, <65 or >95                   # neutral
-    UBER,       # in C, keep put position               # neutral, in right shoulder, which is a triangle
-    NU,         # in C3, keep put position              # in right shoulder, keep put position
-    TCOM,       # in C3, keep put position              # bounce back of SHS, target is 57.7
+
     AMD,        # ABC is done, wait to call
     INTC,       # neutral, in bottom for a long time
     QCOM,       # ABC is done, wait to call
     BA,         # neutral, from (2) to (3)
+    UBER,       # in C, keep put position               # neutral, in right shoulder, which is a triangle
+    SHOP,       # in C5, put
+    PDD,        # in C, put
 
+    COIN,       # A5 is done, call
+    NU,         # in C3, keep put position              # in right shoulder, keep put position
+
+    TCOM,       # in C3, keep put position              # bounce back of SHS, target is 57.7
+    SEA,                                                # neutral, in right shoulder
+    DELL,       # ABC is done, call
+    HOOD,       # in C, put
 ]
