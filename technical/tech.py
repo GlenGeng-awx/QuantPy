@@ -7,7 +7,7 @@ from util import get_idx_by_date, shrink_date_str
 
 
 # return (x, y, text)
-# text: Brk, Ack
+# text: B, B3, A
 def plot_close(stock_df: pd.DataFrame, date, text) -> (str, float, str):
     idx = get_idx_by_date(stock_df, date)
     close = stock_df['close']
@@ -46,7 +46,7 @@ def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list
 
         tags = list(tags)
 
-        for tag in ['Ack', 'Brk']:
+        for tag in ['A', 'B', 'B3']:
             if tag in tags:
                 tags.remove(tag)
                 x_, y_, text_ = plot_close(stock_df, date, tag)

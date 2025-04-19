@@ -162,6 +162,7 @@ class Line:
                 )
             )
 
+        self.neck_lines.sort(key=lambda x: x[1][0], reverse=True)
         for i, (dates, prices) in enumerate(self.neck_lines):
             fig.add_trace(
                 go.Scatter(

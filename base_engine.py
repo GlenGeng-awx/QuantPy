@@ -3,10 +3,8 @@ from plotly.subplots import make_subplots
 from technical.price import Price
 from technical.volume import Volume
 from technical.min_max import MinMax
-from technical.wave import Wave
 from technical.sr_level import SupportResistanceLevel
 from technical.line import Line
-from technical.box import Box
 from technical.elliott import Elliott
 from technical.tech import Tech
 from technical.rd import RD
@@ -50,10 +48,8 @@ class BaseEngine:
         self.rsi = RSI(self.stock_df)
 
         self.min_max = MinMax(self.stock_df)
-        self.wave = Wave(self.stock_df)
         self.sr_level = SupportResistanceLevel(self.stock_df)
         self.line = Line(self.stock_df, self.stock_name)
-        self.box = Box(self.stock_df, self.wave)
         self.elliott = Elliott(self.stock_df, self.stock_name)
         self.tech = Tech(self.stock_df, self.stock_name)
         self.rd = RD(self.stock_df, self.stock_name)
@@ -143,11 +139,9 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
         self.line.build_graph(self.fig, enable_line)
-        self.wave.build_graph(self.fig, enable_wave)
-        self.box.build_graph(self.fig, self.interval, enable_box)
 
-        self.ema.build_graph(self.fig, enable_ema)
         self.ma.build_graph(self.fig, enable_ma)
+        self.ema.build_graph(self.fig, enable_ema)
         self.trend.build_graph(self.fig, enable_trend)
         self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
         self.macd.build_graph(self.fig, enable_macd)
