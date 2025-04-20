@@ -141,7 +141,7 @@ class Line:
         for i, (dates, prices, k) in enumerate(self.primary_lines):
             fig.add_trace(
                 go.Scatter(
-                    name=f'primary line-{i}',
+                    name=f'primary line-{i + 1}',
                     x=dates,
                     y=prices,
                     mode='lines',
@@ -153,7 +153,7 @@ class Line:
         for i, (dates, prices, k) in enumerate(self.secondary_lines):
             fig.add_trace(
                 go.Scatter(
-                    name=f'secondary line-{i}',
+                    name=f'secondary line-{i + 1}',
                     x=dates,
                     y=prices,
                     mode='lines',
@@ -166,7 +166,7 @@ class Line:
         for i, (dates, prices) in enumerate(self.neck_lines):
             fig.add_trace(
                 go.Scatter(
-                    name=f'neck line-{i}',
+                    name=f'neck line-{i + 1}',
                     x=dates,
                     y=prices,
                     mode='lines',

@@ -15,7 +15,7 @@ def filter_up_gaps(stock_df: pd.DataFrame) -> list:
     up_gaps.sort(key=lambda x: x[1], reverse=True)
     # print(f'up gaps {up_gaps}')
 
-    reserved = max(stock_df.shape[0] // 60, len(up_gaps) // 5)
+    reserved = min(stock_df.shape[0] // 100, len(up_gaps) // 5)
     return up_gaps[:reserved]
 
 
@@ -32,7 +32,7 @@ def filter_down_gaps(stock_df: pd.DataFrame) -> list:
     down_gaps.sort(key=lambda x: x[1], reverse=True)
     # print(f'down gaps {down_gaps}')
 
-    reserved = max(stock_df.shape[0] // 60, len(down_gaps) // 5)
+    reserved = min(stock_df.shape[0] // 100, len(down_gaps) // 5)
     return down_gaps[:reserved]
 
 
