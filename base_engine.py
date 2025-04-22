@@ -17,8 +17,6 @@ from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
 
-from trading.position_display import PositionDisplay
-
 from util import load_data, shrink_date_str, interval_to_label
 
 
@@ -56,7 +54,6 @@ class BaseEngine:
         self.gap = Gap(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
-        self.position = PositionDisplay(self.stock_df, self.stock_name)
 
     def setup_graph(self, rows=2):
         self.fig = make_subplots(rows=rows, cols=1,
@@ -111,11 +108,8 @@ class BaseEngine:
                     enable_rsi=(False, 2),
                     # technical
                     enable_min_max=False,
-                    enable_wave=False,
                     enable_sr=False,
                     enable_line=False,
-                    enable_box=False,
-                    enable_position=True,
                     enable_elliott=True,
                     enable_tech=True,
                     enable_rd=True,
@@ -146,5 +140,3 @@ class BaseEngine:
         self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
         self.macd.build_graph(self.fig, enable_macd)
         self.rsi.build_graph(self.fig, enable_rsi)
-
-        self.position.build_graph(self.fig, enable_position)
