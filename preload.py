@@ -46,11 +46,11 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
 
 if __name__ == '__main__':
     from conf import *
-    from trading.portfolio import portfolio
 
-    position = [TSM, AAPL, GOOG, NVDA, NU, UBER, TCOM, WMT, BIDU, IQ]
+    call = [DIS, TSLA, HPQ, CVX, BLOCK, MRK]
+    put = [AVGO, MCD, NFLX, KO, XOM, EBAY, SEA, KWEB, WMT, JPM, QQQ, SHOP]
 
-    for _stock_name in ALL:
+    for _stock_name in call:
         for _from_date, _to_date, _interval in default_periods():
             _base_engine = preload(_stock_name, _from_date, _to_date, _interval)
             _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
