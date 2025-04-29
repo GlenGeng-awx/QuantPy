@@ -39,6 +39,7 @@ BA = "BA"
 HPQ = "HPQ"             # HP Inc
 DELL = "DELL"           # Dell Technologies
 ERIC = "ERIC"
+SPOT = "SPOT"           # Spotify
 
 # FINANCIAL
 JPM = "JPM"             # JPMorgan
@@ -53,6 +54,7 @@ PYPL = "PYPL"           # PayPal
 EBAY = "EBAY"
 NU = "NU"               # Nu Holdings
 HOOD = "HOOD"           # Robinhood
+AFRM = "AFRM"           # Affirm Holdings
 
 # ENERGY
 XOM = "XOM"             # Exxon Mobil
@@ -135,17 +137,17 @@ V_1000B = [
 ]
 
 V_500B = [
-    NFLX,
-    JPM,
-    ASML,
     LLY,
     WMT,
+    JPM,
     MA,
     VISA,
     HK_0700,
 ]
 
 V_300B = [
+    NFLX,
+    ASML,
     ORCL,
     NVO,
     JNJ,
@@ -178,6 +180,7 @@ V_100B = [
     UBER,
     SHOP,
     PDD,
+    SPOT,
 ]
 
 V_50B = [
@@ -186,6 +189,7 @@ V_50B = [
     SNOW,
     JD,
     NU,
+    SEA,
 ]
 
 V_30B = [
@@ -193,7 +197,6 @@ V_30B = [
     CPNG,
     TTD,
     TCOM,
-    SEA,
     BLOCK,
     DELL,
     HPQ,
@@ -212,7 +215,10 @@ V_10B = [
     ERIC,
     OKTA,
     PINS,
+    AFRM,
     BIDU,
+    TME,
+    FUTU,
 ]
 
 V_SMALL = [
@@ -222,11 +228,8 @@ V_SMALL = [
     NIO,
     MNSO,
     EDU,
-    FUTU,
     BILI,
-    TME,
     YY,
-    IQ,
 ]
 
 ALL = V_INDEX \

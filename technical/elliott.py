@@ -40,12 +40,13 @@ def plot_tags(stock_df: pd.DataFrame, stock_name,
 
 
 # return (x, y, text)
-def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list):
+def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> ((list, list, list), (list, list, list)):
     diff = get_diff(stock_df)
     print(f'elliott diff {diff}')
 
     # date, price, text
     x, y, text = [], [], []
+    x1, y1, text1 = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
         if date not in stock_df['Date'].apply(shrink_date_str).values:
@@ -58,7 +59,13 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, l
         y.append(y_)
         text.append(text_)
 
-    return x, y, text
+        x1_, y1_, text1_ = plot_tags(stock_df, stock_name, date, [tags[0]], diff)
+
+        x1.append(x1_)
+        y1.append(y1_)
+        text1.append(text1_)
+
+    return (x, y, text), (x1, y1, text1)
 
 
 class Elliott:
@@ -70,7 +77,11 @@ class Elliott:
         self.y = []
         self.text = []
 
-        self.x, self.y, self.text = calculate_elliott(self.stock_df, self.stock_name)
+        self.x1 = []
+        self.y1 = []
+        self.text1 = []
+
+        (self.x, self.y, self.text), (self.x1, self.y1, self.text1) = calculate_elliott(self.stock_df, self.stock_name)
 
     def build_graph(self, fig: go.Figure, enable=False):
         size = 13 if self.stock_df.shape[0] <= 550 else 14
@@ -79,6 +90,15 @@ class Elliott:
             go.Scatter(
                 name='elliott',
                 x=self.x, y=self.y, text=self.text,
+                mode='text', textfont=dict(color="black", size=size),
+                visible='legendonly',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name='elliott 1',
+                x=self.x1, y=self.y1, text=self.text1,
                 mode='text', textfont=dict(color="black", size=size),
                 visible=None if enable else 'legendonly',
             )

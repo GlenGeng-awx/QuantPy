@@ -92,7 +92,7 @@ class Tech:
             go.Scatter(
                 name='tech',
                 x=self.x, y=self.y, text=self.text,
-                mode='text', textfont=dict(color="black", size=size),
+                mode='text', textfont=dict(color="purple", size=size),
                 visible=None if enable else 'legendonly',
             )
         )

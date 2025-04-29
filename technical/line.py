@@ -88,9 +88,10 @@ class Line:
 
         self.primary_lines = []
         self.secondary_lines = []
-        self.neck_lines = []
+        self.anchor_dates_ps = []
 
-        self.anchor_dates = []
+        self.neck_lines = []
+        self.anchor_dates_n = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
@@ -100,7 +101,7 @@ class Line:
                     continue
 
                 self.primary_lines.append(calculate_primary_line(stock_df, *line))
-                self.anchor_dates.extend((line[0], line[1]))
+                self.anchor_dates_ps.extend((line[0], line[1]))
 
             elif len(line) == 5:
                 date, _, _, date1, date2 = line
@@ -108,7 +109,7 @@ class Line:
                     continue
 
                 self.secondary_lines.append(calculate_secondary_line(stock_df, *line))
-                self.anchor_dates.append(line[0])
+                self.anchor_dates_ps.append(line[0])
 
             elif len(line) == 3:
                 date, _, _ = line
@@ -116,22 +117,38 @@ class Line:
                     continue
 
                 self.neck_lines.append(calculate_neck_line(stock_df, *line))
-                self.anchor_dates.append(line[0])
+                self.anchor_dates_n.append(line[0])
 
             else:
                 raise Exception(f'invalid line {line}')
 
     def build_graph(self, fig: go.Figure, enable=False):
-        anchor_prices = []
-        for date in self.anchor_dates:
+        anchor_prices_ps = []
+        for date in self.anchor_dates_ps:
             idx = get_idx_by_date(self.stock_df, date)
-            anchor_prices.append(self.stock_df.loc[idx]['close'])
+            anchor_prices_ps.append(self.stock_df.loc[idx]['close'])
+
+        anchor_prices_n = []
+        for date in self.anchor_dates_n:
+            idx = get_idx_by_date(self.stock_df, date)
+            anchor_prices_n.append(self.stock_df.loc[idx]['close'])
 
         fig.add_trace(
             go.Scatter(
-                name=f'anchor point',
-                x=self.anchor_dates,
-                y=anchor_prices,
+                name=f'anchor point ps',
+                x=self.anchor_dates_ps,
+                y=anchor_prices_ps,
+                mode='markers',
+                marker=dict(size=5, color='black'),
+                visible=None if enable else 'legendonly',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'anchor point n',
+                x=self.anchor_dates_n,
+                y=anchor_prices_n,
                 mode='markers',
                 marker=dict(size=5, color='blue'),
                 visible='legendonly',
