@@ -1,18 +1,25 @@
-from preload import default_periods, preload
-from guru import hit
-from conf import *
+import pandas as pd
 
-for stock_name in ALL:
-    from_date, to_date, interval = default_periods()[0]
+from base_engine import BaseEngine
 
-    base_engine = preload(stock_name, from_date, to_date, interval)
-    stock_df, fig = base_engine.stock_df, base_engine.fig
 
-    tags = hit(base_engine)
-    if not tags:
-        continue
+def _pick(stock_df: pd.DataFrame, dates: list) -> bool:
+    return stock_df['Date'].iloc[-2] in dates \
+        and stock_df['Date'].iloc[-1] in dates
 
-    fig.update_layout(
-        title=fig.layout.title.text + f'<br>{tags}'
-    )
-    fig.show()
+
+def pick(base_engine: BaseEngine) -> bool:
+    stock_df = base_engine.stock_df
+
+    hit_line = base_engine.hit_line
+    line_hits = hit_line.line_hits
+    neckline_hits = hit_line.neckline_hits
+
+    # hit_volume = base_engine.hit_volume
+    # vol_hits = hit_volume.hits
+
+    if _pick(stock_df, [date for date, _ in line_hits]) \
+            or _pick(stock_df, [date for date, _ in neckline_hits]):
+        return True
+
+    return False

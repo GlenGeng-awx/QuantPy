@@ -20,6 +20,8 @@ class Volume:
         self.volume_reg = self.stock_df[VOLUME].apply(
             lambda vol: vol if vol < volume_peak else volume_peak + (vol - volume_peak) / 10)
 
+        self.stock_df[VOLUME_REG] = self.volume_reg
+
     def add_tech(self, fig: go.Figure, row):
         # date, volume, tags
         x, y, text = [], [], []

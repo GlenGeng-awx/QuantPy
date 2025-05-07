@@ -17,6 +17,9 @@ from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
 
+from guru.hit_line import HitLine
+from guru.hit_volume import HitVolume
+
 from util import load_data, shrink_date_str, interval_to_label
 
 
@@ -54,6 +57,10 @@ class BaseEngine:
         self.gap = Gap(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
+
+        # guru
+        self.hit_line = HitLine(self.stock_df, self.line)
+        self.hit_volume = HitVolume(self.stock_df)
 
     def setup_graph(self, rows=2):
         self.fig = make_subplots(rows=rows, cols=1,
@@ -118,6 +125,9 @@ class BaseEngine:
                     enable_volume=(False, 2),
                     # misc
                     rows=2,
+                    # guru
+                    enable_hit_line=True,
+                    enable_hit_volume=(True, 2),
                     ):
         self.setup_graph(rows)
 
@@ -133,6 +143,10 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
         self.line.build_graph(self.fig, enable_line)
+
+        # guru
+        self.hit_line.build_graph(self.fig, enable_hit_line)
+        self.hit_volume.build_graph(self.fig, enable_hit_volume)
 
         self.ma.build_graph(self.fig, enable_ma)
         self.ema.build_graph(self.fig, enable_ema)
