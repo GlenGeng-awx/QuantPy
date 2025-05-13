@@ -65,7 +65,7 @@ class NeckLine:
                     x=dates,
                     y=prices,
                     mode='lines',
-                    line=dict(width=1, color='black', dash='dash'),
+                    line=dict(width=0.9, color='black', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
