@@ -25,6 +25,7 @@ class NeckLine:
         self.stock_df = stock_df
         self.stock_name = stock_name
 
+        # list of (dates, prices)
         self.neck_lines = []
         self.anchor_dates = []
 

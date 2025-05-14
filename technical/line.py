@@ -51,8 +51,10 @@ class _Line:
         self.stock_df = stock_df
         self.stock_name = stock_name
 
+        # list of (dates, prices, k)
         self.primary_lines = []
         self.secondary_lines = []
+
         self.anchor_dates_ps = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values

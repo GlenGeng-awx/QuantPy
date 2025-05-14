@@ -14,7 +14,7 @@ def _hit(target_price, price):
 def calculate_hits(stock_df: pd.DataFrame, lines: list) -> list:
     hits = []
 
-    for dates, prices in lines:
+    for dates, prices, _ in lines:
         for date, price in zip(dates, prices):
             idx = get_idx_by_date(stock_df, shrink_date_str(date))
             high, low, close = stock_df.loc[idx]['high'], stock_df.loc[idx]['low'], stock_df.loc[idx]['close']
@@ -31,12 +31,11 @@ def calculate_hits(stock_df: pd.DataFrame, lines: list) -> list:
 
 class HitLine:
     def __init__(self, stock_df: pd.DataFrame, line: Line):
-        # list of (date, price)
-        lines = [(dates, prices) for dates, prices, _ in line.primary_lines + line.secondary_lines]
-        self.line_hits = calculate_hits(stock_df, lines)
+        # list of (date, price, k)
+        lines = line.line.primary_lines + line.line.secondary_lines
 
         # list of (date, price)
-        self.neckline_hits = calculate_hits(stock_df, line.neck_lines)
+        self.line_hits = calculate_hits(stock_df, lines)
 
     def build_graph(self, fig: go.Figure, enable=False):
         fig.add_trace(
@@ -44,17 +43,7 @@ class HitLine:
                 name=f'hit line',
                 x=[date for date, _ in self.line_hits],
                 y=[price for _, price in self.line_hits],
-                mode='markers', marker=dict(color='purple', size=4),
-                visible=None if enable else 'legendonly',
-            )
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                name=f'hit neckline',
-                x=[date for date, _ in self.neckline_hits],
-                y=[price for _, price in self.neckline_hits],
-                mode='markers', marker=dict(color='orange', size=4),
+                mode='markers', marker=dict(color='DarkCyan', size=4),
                 visible=None if enable else 'legendonly',
             )
         )

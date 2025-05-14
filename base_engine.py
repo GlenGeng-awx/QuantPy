@@ -5,6 +5,8 @@ from technical.volume import Volume
 from technical.min_max import MinMax
 from technical.sr_level import SupportResistanceLevel
 from technical.line import Line
+from technical.line_expo import LineExpo
+from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.tech import Tech
 from technical.rd import RD
@@ -18,6 +20,9 @@ from statistical.macd import MACD
 from statistical.rsi import RSI
 
 from guru.hit_line import HitLine
+from guru.hit_line_expo import HitLineExpo
+from guru.hit_neck_line import HitNeckLine
+from guru.hit_sr import HitSR
 from guru.hit_volume import HitVolume
 
 from util import load_data, shrink_date_str, interval_to_label
@@ -50,7 +55,11 @@ class BaseEngine:
 
         self.min_max = MinMax(self.stock_df)
         self.sr_level = SupportResistanceLevel(self.stock_df)
+
         self.line = Line(self.stock_df, self.stock_name)
+        self.line_expo = LineExpo(self.stock_df, self.stock_name)
+        self.neck_line = NeckLine(self.stock_df, self.stock_name)
+
         self.elliott = Elliott(self.stock_df, self.stock_name)
         self.tech = Tech(self.stock_df, self.stock_name)
         self.rd = RD(self.stock_df, self.stock_name)
@@ -60,6 +69,9 @@ class BaseEngine:
 
         # guru
         self.hit_line = HitLine(self.stock_df, self.line)
+        self.hit_line_expo = HitLineExpo(self.stock_df, self.line_expo)
+        self.hit_neck_line = HitNeckLine(self.stock_df, self.neck_line)
+        self.hit_sr = HitSR(self.stock_df, self.sr_level)
         self.hit_volume = HitVolume(self.stock_df)
 
     def setup_graph(self, rows=2):
@@ -89,7 +101,7 @@ class BaseEngine:
         self.fig.update_layout(
             title=title,
             xaxis_rangeslider_visible=False,
-            # yaxis_type='log',
+            yaxis_type='log',
             hovermode="x unified",
             hoverdistance=1,  # Only show hoverlabel for the current day
             hoverlabel=dict(
@@ -117,6 +129,8 @@ class BaseEngine:
                     enable_min_max=False,
                     enable_sr=False,
                     enable_line=False,
+                    enable_line_expo=False,
+                    enable_neck_line=False,
                     enable_elliott=True,
                     enable_tech=True,
                     enable_rd=True,
@@ -126,7 +140,10 @@ class BaseEngine:
                     # misc
                     rows=2,
                     # guru
-                    enable_hit_line=True,
+                    enable_hit_line=False,
+                    enable_hit_line_expo=False,
+                    enable_hit_neck_line=False,
+                    enable_hit_sr=False,
                     enable_hit_volume=(True, 2),
                     ):
         self.setup_graph(rows)
@@ -142,10 +159,16 @@ class BaseEngine:
 
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
+
         self.line.build_graph(self.fig, enable_line)
+        self.line_expo.build_graph(self.fig, enable_line_expo)
+        self.neck_line.build_graph(self.fig, enable_neck_line)
 
         # guru
         self.hit_line.build_graph(self.fig, enable_hit_line)
+        self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo)
+        self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line)
+        self.hit_sr.build_graph(self.fig, enable_hit_sr)
         self.hit_volume.build_graph(self.fig, enable_hit_volume)
 
         self.ma.build_graph(self.fig, enable_ma)
