@@ -31,8 +31,8 @@ class HitVolume:
         # list of (date, vol)
         self.low_hits, self.high_hits = calculate_hits(stock_df, self.vol_avg_100)
 
-    def build_graph(self, fig: go.Figure, enable_hit_volume=(False, 2)):
-        enable, row = enable_hit_volume
+    def build_graph(self, fig: go.Figure, enable_hit_low_vol=(False, 2), enable_hit_high_vol=(False, 2)):
+        enable, row = enable_hit_low_vol
 
         fig.add_trace(
             go.Scatter(
@@ -44,6 +44,8 @@ class HitVolume:
             ),
             row=row, col=1
         )
+
+        enable, row = enable_hit_high_vol
 
         fig.add_trace(
             go.Scatter(

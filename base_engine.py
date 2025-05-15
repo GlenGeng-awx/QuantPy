@@ -144,7 +144,8 @@ class BaseEngine:
                     enable_hit_line_expo=False,
                     enable_hit_neck_line=False,
                     enable_hit_sr=False,
-                    enable_hit_volume=(True, 2),
+                    enable_hit_low_vol=(False, 2),
+                    enable_hit_high_vol=(False, 2),
                     ):
         self.setup_graph(rows)
 
@@ -169,7 +170,7 @@ class BaseEngine:
         self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo)
         self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line)
         self.hit_sr.build_graph(self.fig, enable_hit_sr)
-        self.hit_volume.build_graph(self.fig, enable_hit_volume)
+        self.hit_volume.build_graph(self.fig, enable_hit_low_vol, enable_hit_high_vol)
 
         self.ma.build_graph(self.fig, enable_ma)
         self.ema.build_graph(self.fig, enable_ema)
