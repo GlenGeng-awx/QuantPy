@@ -33,9 +33,6 @@ def plot_gap(stock_df: pd.DataFrame, date, text) -> (str, float, str):
 
 # return (x, y, text)
 def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list):
-    diff = get_diff(stock_df)
-    print(f'tech diff {diff}')
-
     # date, price, text
     x, y, text = [], [], []
 
@@ -65,6 +62,7 @@ def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list
                 text.append(text_)
 
         if tags:
+            diff = get_diff(stock_df, date)
             x_, y_, text_ = plot_tags(stock_df, stock_name, date, tags, diff)
 
             x.append(x_)
