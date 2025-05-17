@@ -9,9 +9,10 @@ class HitLineExpo:
     def __init__(self, stock_df: pd.DataFrame, line_expo: LineExpo):
         # list of (date, price, k)
         lines_expo = line_expo.line.primary_lines + line_expo.line.secondary_lines
+        lines_expo = [(date, price) for date, price, _ in lines_expo]
 
         # list of (date, price)
-        self.lines_expo_hits = calculate_hits(stock_df, lines_expo)
+        self.lines_expo_hits = calculate_hits(stock_df, lines_expo, 0.01)
 
     def build_graph(self, fig: go.Figure, enable=False):
         fig.add_trace(

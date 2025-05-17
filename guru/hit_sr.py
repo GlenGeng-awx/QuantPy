@@ -43,7 +43,7 @@ class HitSR:
                 name=f'hit sr',
                 x=[date for date, _ in self.hits],
                 y=[price for _, price in self.hits],
-                mode='markers', marker=dict(color='YellowGreen', size=3),
+                mode='markers', marker=dict(color='Sienna', size=3),
                 visible=None if enable else 'legendonly',
             )
         )

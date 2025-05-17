@@ -8,8 +8,7 @@ from guru.hit_line import calculate_hits
 class HitNeckLine:
     def __init__(self, stock_df: pd.DataFrame, neck_line: NeckLine):
         # list of (date, price)
-        neck_lines = [(date, price, 'noop') for date, price in neck_line.neck_lines]
-        self.neck_line_hits = calculate_hits(stock_df, neck_lines)
+        self.neck_line_hits = calculate_hits(stock_df, neck_line.neck_lines, 0.01)
 
     def build_graph(self, fig: go.Figure, enable=False):
         fig.add_trace(

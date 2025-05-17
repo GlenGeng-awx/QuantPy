@@ -23,6 +23,7 @@ from guru.hit_line import HitLine
 from guru.hit_line_expo import HitLineExpo
 from guru.hit_neck_line import HitNeckLine
 from guru.hit_sr import HitSR
+from guru.hit_ma import HitMA
 from guru.hit_volume import HitVolume
 
 from util import load_data, shrink_date_str, interval_to_label
@@ -72,6 +73,7 @@ class BaseEngine:
         self.hit_line_expo = HitLineExpo(self.stock_df, self.line_expo)
         self.hit_neck_line = HitNeckLine(self.stock_df, self.neck_line)
         self.hit_sr = HitSR(self.stock_df, self.sr_level)
+        self.hit_ma = HitMA(self.stock_df)
         self.hit_volume = HitVolume(self.stock_df)
 
     def setup_graph(self, rows=2):
@@ -119,7 +121,9 @@ class BaseEngine:
                     enable_close_price=False,
                     # statistical
                     enable_ema=False,
-                    enable_ma=False,
+                    enable_ma20=False,
+                    enable_ma60=False,
+                    enable_ma120=False,
                     enable_trend=False,
                     enable_bband=False,
                     enable_bband_pst=(False, 2),
@@ -144,6 +148,9 @@ class BaseEngine:
                     enable_hit_line_expo=False,
                     enable_hit_neck_line=False,
                     enable_hit_sr=False,
+                    enable_hit_ma20=False,
+                    enable_hit_ma60=False,
+                    enable_hit_ma120=False,
                     enable_hit_low_vol=(False, 2),
                     enable_hit_high_vol=(False, 2),
                     ):
@@ -170,9 +177,10 @@ class BaseEngine:
         self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo)
         self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line)
         self.hit_sr.build_graph(self.fig, enable_hit_sr)
+        self.hit_ma.build_graph(self.fig, enable_hit_ma20, enable_hit_ma60, enable_hit_ma120)
         self.hit_volume.build_graph(self.fig, enable_hit_low_vol, enable_hit_high_vol)
 
-        self.ma.build_graph(self.fig, enable_ma)
+        self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
         self.ema.build_graph(self.fig, enable_ema)
         self.trend.build_graph(self.fig, enable_trend)
         self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
