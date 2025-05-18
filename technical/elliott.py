@@ -31,10 +31,10 @@ def plot_tags(stock_df: pd.DataFrame, stock_name,
     close = stock_df.loc[idx]['close']
 
     diff_ = diff
-    if len(tags) == 2:
-        diff_ = diff * 1.25
-    elif len(tags) == 3:
-        diff_ = diff * 1.5
+    # if len(tags) == 2:
+    #     diff_ = diff * 1.25
+    if len(tags) == 3:
+        diff_ = diff * 1.75
     elif len(tags) == 4:
         diff_ = diff * 2
 
@@ -55,7 +55,6 @@ def plot_tags(stock_df: pd.DataFrame, stock_name,
 def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> ((list, list, list), (list, list, list)):
     # date, price, text
     x, y, text = [], [], []
-    x1, y1, text1 = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
         if date not in stock_df['Date'].apply(shrink_date_str).values:
@@ -69,13 +68,7 @@ def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> ((list, list, 
         y.append(y_)
         text.append(text_)
 
-        x1_, y1_, text1_ = plot_tags(stock_df, stock_name, date, [tags[0]], diff)
-
-        x1.append(x1_)
-        y1.append(y1_)
-        text1.append(text1_)
-
-    return (x, y, text), (x1, y1, text1)
+    return x, y, text
 
 
 class Elliott:
@@ -91,7 +84,7 @@ class Elliott:
         self.y1 = []
         self.text1 = []
 
-        (self.x, self.y, self.text), (self.x1, self.y1, self.text1) = calculate_elliott(self.stock_df, self.stock_name)
+        self.x, self.y, self.text = calculate_elliott(self.stock_df, self.stock_name)
 
     def build_graph(self, fig: go.Figure, enable=False):
         size = 13 if self.stock_df.shape[0] <= 550 else 14
@@ -102,14 +95,5 @@ class Elliott:
                 x=self.x, y=self.y, text=self.text,
                 mode='text', textfont=dict(color="black", size=size),
                 visible=None if enable else 'legendonly',
-            )
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                name='elliott 1',
-                x=self.x1, y=self.y1, text=self.text1,
-                mode='text', textfont=dict(color="black", size=size),
-                visible='legendonly',
             )
         )

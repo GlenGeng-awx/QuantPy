@@ -168,9 +168,9 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
 
-        self.line.build_graph(self.fig, enable_line)
         self.line_expo.build_graph(self.fig, enable_line_expo)
         self.neck_line.build_graph(self.fig, enable_neck_line)
+        self.line.build_graph(self.fig, enable_line)
 
         # guru
         self.hit_line.build_graph(self.fig, enable_hit_line)
