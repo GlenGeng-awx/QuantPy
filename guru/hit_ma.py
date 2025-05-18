@@ -13,7 +13,11 @@ class _HitMA:
         self.ma_type = ma_type
         self.ma_hits = calculate_hits(stock_df, [(ma_dates, ma)], 0.01)
 
-    def build_graph(self, fig: go.Figure, color: str, enable=False):
+    def build_graph(self, fig: go.Figure, color: str, enable=False,
+                    guru_start_date='2000-01-01', guru_end_date='2099-12-31'):
+        self.ma_hits = [
+            (date, price) for date, price in self.ma_hits if guru_start_date <= date <= guru_end_date
+        ]
         fig.add_trace(
             go.Scatter(
                 name=f'hit {self.ma_type.replace("_", "")}',
@@ -32,7 +36,8 @@ class HitMA:
         self.ma_120 = _HitMA(stock_df, MA_120)
 
     def build_graph(self, fig: go.Figure,
-                    enable_hit_ma20=False, enable_hit_ma60=False, enable_hit_ma120=False):
-        self.ma_20.build_graph(fig, 'Fuchsia', enable_hit_ma20)
-        self.ma_60.build_graph(fig, 'FireBrick', enable_hit_ma60)
-        self.ma_120.build_graph(fig, 'DarkViolet', enable_hit_ma120)
+                    enable_hit_ma20=False, enable_hit_ma60=False, enable_hit_ma120=False,
+                    guru_start_date='2000-01-01', guru_end_date='2099-12-31'):
+        self.ma_20.build_graph(fig, 'Fuchsia', enable_hit_ma20, guru_start_date, guru_end_date)
+        self.ma_60.build_graph(fig, 'FireBrick', enable_hit_ma60, guru_start_date, guru_end_date)
+        self.ma_120.build_graph(fig, 'DarkViolet', enable_hit_ma120, guru_start_date, guru_end_date)

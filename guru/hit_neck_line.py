@@ -10,7 +10,11 @@ class HitNeckLine:
         # list of (date, price)
         self.neck_line_hits = calculate_hits(stock_df, neck_line.neck_lines, 0.01)
 
-    def build_graph(self, fig: go.Figure, enable=False):
+    def build_graph(self, fig: go.Figure, enable=False,
+                    guru_start_date='2000-01-01', guru_end_date='2099-12-31'):
+        self.neck_line_hits = [
+            (date, price) for date, price in self.neck_line_hits if guru_start_date <= date <= guru_end_date
+        ]
         fig.add_trace(
             go.Scatter(
                 name=f'hit neck line',

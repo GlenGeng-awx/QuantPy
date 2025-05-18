@@ -14,7 +14,11 @@ class HitLineExpo:
         # list of (date, price)
         self.lines_expo_hits = calculate_hits(stock_df, lines_expo, 0.01)
 
-    def build_graph(self, fig: go.Figure, enable=False):
+    def build_graph(self, fig: go.Figure, enable=False,
+                    guru_start_date='2000-01-01', guru_end_date='2099-12-31'):
+        self.lines_expo_hits = [
+            (date, price) for date, price in self.lines_expo_hits if guru_start_date <= date <= guru_end_date
+        ]
         fig.add_trace(
             go.Scatter(
                 name=f'hit line expo',

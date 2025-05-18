@@ -19,6 +19,7 @@ from statistical.bband import BBand
 from statistical.macd import MACD
 from statistical.rsi import RSI
 
+from guru.hit_elliott import HitElliott
 from guru.hit_line import HitLine
 from guru.hit_line_expo import HitLineExpo
 from guru.hit_neck_line import HitNeckLine
@@ -69,6 +70,7 @@ class BaseEngine:
         self.volume = Volume(self.stock_df, self.stock_name)
 
         # guru
+        self.hit_elliott = HitElliott(self.stock_df, stock_name)
         self.hit_line = HitLine(self.stock_df, self.line)
         self.hit_line_expo = HitLineExpo(self.stock_df, self.line_expo)
         self.hit_neck_line = HitNeckLine(self.stock_df, self.neck_line)
@@ -144,6 +146,9 @@ class BaseEngine:
                     # misc
                     rows=2,
                     # guru
+                    guru_start_date='2000-01-01',
+                    guru_end_date='2099-12-31',
+                    enable_hit_elliott=False,
                     enable_hit_line=False,
                     enable_hit_line_expo=False,
                     enable_hit_neck_line=False,
@@ -173,12 +178,13 @@ class BaseEngine:
         self.line.build_graph(self.fig, enable_line)
 
         # guru
-        self.hit_line.build_graph(self.fig, enable_hit_line)
-        self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo)
-        self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line)
-        self.hit_sr.build_graph(self.fig, enable_hit_sr)
-        self.hit_ma.build_graph(self.fig, enable_hit_ma20, enable_hit_ma60, enable_hit_ma120)
-        self.hit_volume.build_graph(self.fig, enable_hit_low_vol, enable_hit_high_vol)
+        self.hit_elliott.build_graph(self.fig, enable_hit_elliott, guru_start_date, guru_end_date)
+        self.hit_line.build_graph(self.fig, enable_hit_line, guru_start_date, guru_end_date)
+        self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo, guru_start_date, guru_end_date)
+        self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line, guru_start_date, guru_end_date)
+        self.hit_sr.build_graph(self.fig, enable_hit_sr, guru_start_date, guru_end_date)
+        self.hit_ma.build_graph(self.fig, enable_hit_ma20, enable_hit_ma60, enable_hit_ma120, guru_start_date, guru_end_date)
+        self.hit_volume.build_graph(self.fig, enable_hit_low_vol, enable_hit_high_vol, guru_start_date, guru_end_date)
 
         self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
         self.ema.build_graph(self.fig, enable_ema)

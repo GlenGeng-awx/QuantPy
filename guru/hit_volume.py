@@ -31,7 +31,15 @@ class HitVolume:
         # list of (date, vol)
         self.low_hits, self.high_hits = calculate_hits(stock_df, self.vol_avg_100)
 
-    def build_graph(self, fig: go.Figure, enable_hit_low_vol=(False, 2), enable_hit_high_vol=(False, 2)):
+    def build_graph(self, fig: go.Figure, enable_hit_low_vol=(False, 2), enable_hit_high_vol=(False, 2),
+                     guru_start_date='2000-01-01', guru_end_date='2099-12-31'):
+        self.low_hits = [
+            (date, vol) for date, vol in self.low_hits if guru_start_date <= date <= guru_end_date
+        ]
+        self.high_hits = [
+            (date, vol) for date, vol in self.high_hits if guru_start_date <= date <= guru_end_date
+        ]
+
         enable, row = enable_hit_low_vol
 
         fig.add_trace(

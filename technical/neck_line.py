@@ -52,7 +52,7 @@ class NeckLine:
                 y=anchor_prices,
                 mode='markers',
                 marker=dict(size=5, color='blue'),
-                visible='legendonly',
+                visible=None if enable else 'legendonly',
             )
         )
 
