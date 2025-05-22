@@ -118,7 +118,7 @@ def hit_low_vol(hit_volume: HitVolume, selected_dates) -> list:
 def pick(base_engine: BaseEngine, selected_dates: list) -> tuple:
     var_p = []
     var_p.extend(hit_elliott_cond(base_engine.hit_elliott, selected_dates))
-    # var_p.extend(hit_line_cond(base_engine.hit_line, selected_dates))
+    var_p.extend(hit_line_cond(base_engine.hit_line, selected_dates))
     var_p.extend(hit_line_expo_cond(base_engine.hit_line_expo, selected_dates))
     var_p.extend(hit_neck_line_cond(base_engine.hit_neck_line, selected_dates))
     var_p.extend(hit_sr_cond(base_engine.hit_sr, selected_dates))
