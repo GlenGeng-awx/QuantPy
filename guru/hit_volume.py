@@ -60,7 +60,7 @@ class HitVolume:
                 name='hit high vol',
                 x=[date for date, _ in self.high_hits],
                 y=[vol for _, vol in self.high_hits],
-                mode='markers', marker=dict(color='blue', size=4),
+                mode='markers', marker=dict(color='brown', size=4),
                 visible=None if enable else 'legendonly',
             ),
             row=row, col=1
