@@ -14,10 +14,10 @@ from technical.gap import Gap
 
 from statistical.ema import EMA
 from statistical.ma import MA
-from statistical.trend import Trend
-from statistical.bband import BBand
-from statistical.macd import MACD
-from statistical.rsi import RSI
+# from statistical.trend import Trend
+# from statistical.bband import BBand
+# from statistical.macd import MACD
+# from statistical.rsi import RSI
 
 from guru.hit_elliott import HitElliott
 from guru.hit_line import HitLine
@@ -27,7 +27,7 @@ from guru.hit_sr import HitSR
 from guru.hit_ma import HitMA
 from guru.hit_volume import HitVolume
 
-from util import load_data, shrink_date_str, interval_to_label
+from util import load_data, shrink_date_str, interval_to_label, get_next_n_workday
 
 
 class BaseEngine:
@@ -50,10 +50,10 @@ class BaseEngine:
 
         self.ema = EMA(self.stock_df)
         self.ma = MA(self.stock_df)
-        self.trend = Trend(self.stock_df)
-        self.bband = BBand(self.stock_df)
-        self.macd = MACD(self.stock_df)
-        self.rsi = RSI(self.stock_df)
+        # self.trend = Trend(self.stock_df)
+        # self.bband = BBand(self.stock_df)
+        # self.macd = MACD(self.stock_df)
+        # self.rsi = RSI(self.stock_df)
 
         self.min_max = MinMax(self.stock_df)
         self.sr_level = SupportResistanceLevel(self.stock_df)
@@ -111,7 +111,26 @@ class BaseEngine:
             hoverlabel=dict(
                 namelength=200
             ),
-            height=500 + 250 * (rows - 1)
+            height=800 + 250 * (rows - 1)
+        )
+
+        # add range selector 1Y/2Y to row 1
+        self.fig.update_xaxes(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=12, label="1Y", step="month", stepmode="backward"),
+                    dict(count=24, label="2Y", step="month", stepmode="backward"),
+                ])
+            ),
+            row=1, col=1
+        )
+
+        # add range slider to row 2
+        self.fig.update_xaxes(
+            range=[self.stock_df['Date'].iloc[-750],
+                   get_next_n_workday(self.stock_df['Date'].iloc[-1], 10)],  # 初始显示最后750天
+            rangeslider_visible=True,
+            row=2, col=1
         )
 
         # # Apply xaxis_gridcolor to all rows
@@ -183,12 +202,13 @@ class BaseEngine:
         self.hit_line_expo.build_graph(self.fig, enable_hit_line_expo, guru_start_date, guru_end_date)
         self.hit_neck_line.build_graph(self.fig, enable_hit_neck_line, guru_start_date, guru_end_date)
         self.hit_sr.build_graph(self.fig, enable_hit_sr, guru_start_date, guru_end_date)
-        self.hit_ma.build_graph(self.fig, enable_hit_ma20, enable_hit_ma60, enable_hit_ma120, guru_start_date, guru_end_date)
+        self.hit_ma.build_graph(self.fig, enable_hit_ma20, enable_hit_ma60, enable_hit_ma120, guru_start_date,
+                                guru_end_date)
         self.hit_volume.build_graph(self.fig, enable_hit_low_vol, enable_hit_high_vol, guru_start_date, guru_end_date)
 
         self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
         self.ema.build_graph(self.fig, enable_ema)
-        self.trend.build_graph(self.fig, enable_trend)
-        self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
-        self.macd.build_graph(self.fig, enable_macd)
-        self.rsi.build_graph(self.fig, enable_rsi)
+        # self.trend.build_graph(self.fig, enable_trend)
+        # self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
+        # self.macd.build_graph(self.fig, enable_macd)
+        # self.rsi.build_graph(self.fig, enable_rsi)
