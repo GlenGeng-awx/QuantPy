@@ -126,9 +126,11 @@ class BaseEngine:
         )
 
         # add range slider to row 2
+        from_date = self.stock_df['Date'].iloc[-min(750, self.stock_df.shape[0])]
+        to_date = get_next_n_workday(self.stock_df['Date'].iloc[-1], 10)
+
         self.fig.update_xaxes(
-            range=[self.stock_df['Date'].iloc[-750],
-                   get_next_n_workday(self.stock_df['Date'].iloc[-1], 10)],  # 初始显示最后750天
+            range=[from_date, to_date],  # 初始显示最后750天
             rangeslider_visible=True,
             row=2, col=1
         )
