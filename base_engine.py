@@ -78,7 +78,7 @@ class BaseEngine:
         self.hit_ma = HitMA(self.stock_df)
         self.hit_volume = HitVolume(self.stock_df)
 
-    def setup_graph(self, rows=2):
+    def setup_graph(self, rows=2, yaxis_type='log'):
         self.fig = make_subplots(rows=rows, cols=1,
                                  row_heights=[0.5] + [0.25] * (rows - 1),
                                  shared_xaxes=True,
@@ -105,7 +105,7 @@ class BaseEngine:
         self.fig.update_layout(
             title=title,
             xaxis_rangeslider_visible=False,
-            yaxis_type='log',
+            yaxis_type=yaxis_type,
             hovermode="x unified",
             hoverdistance=1,  # Only show hoverlabel for the current day
             hoverlabel=dict(
@@ -140,6 +140,7 @@ class BaseEngine:
         #     self.fig.update_xaxes(gridcolor='gray', row=i, col=1)
 
     def build_graph(self,
+                    yaxis_type='log',
                     enable_candlestick=False,
                     enable_close_price=False,
                     # statistical
@@ -180,7 +181,7 @@ class BaseEngine:
                     enable_hit_low_vol=(False, 2),
                     enable_hit_high_vol=(False, 2),
                     ):
-        self.setup_graph(rows)
+        self.setup_graph(rows, yaxis_type)
 
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 

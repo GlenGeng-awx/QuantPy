@@ -15,6 +15,8 @@ def calculate_hits(stock_df: pd.DataFrame, lines: list, margin) -> list:
 
     for dates, prices in lines:
         for date, price in zip(dates, prices):
+            if date not in stock_df['Date'].apply(shrink_date_str).values:
+                continue
             idx = get_idx_by_date(stock_df, shrink_date_str(date))
             high, low, close = stock_df.loc[idx]['high'], stock_df.loc[idx]['low'], stock_df.loc[idx]['close']
 

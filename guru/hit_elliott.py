@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from trading.core_banking import CORE_BANKING
-from util import get_idx_by_date
+from util import get_idx_by_date, shrink_date_str
 
 
 def _hit(target_price, price, margin: float):
@@ -14,6 +14,10 @@ def calculate_hits(stock_df: pd.DataFrame, stock_name: str, margin) -> list:
     hits = []
 
     for elliott_date, _ in CORE_BANKING.get(stock_name, {}).get('elliott', {}).items():
+        if elliott_date not in stock_df['Date'].apply(shrink_date_str).values:
+            print(f'{stock_name} elliott date {elliott_date} is out of range')
+            continue
+
         idx = get_idx_by_date(stock_df, elliott_date)
         price = stock_df.loc[idx]['close']
 

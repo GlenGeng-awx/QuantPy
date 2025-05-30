@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from trading.core_banking import CORE_BANKING
-from util import get_idx_by_date, shrink_date_str
+from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 
 
 def calculate_primary_line(stock_df: pd.DataFrame,
@@ -139,11 +139,17 @@ def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     target_x = x + delta
     target_y = y + k * delta
 
+    if target_x > stock_df.index[-1] + 10 or target_x < stock_df.index[0]:
+        return ()
+
     if target_x in stock_df.index:
         target_date = stock_df.loc[target_x]['Date']
-        return target_date, target_y
     else:
-        return ()
+        diff = target_x - stock_df.index[-1]
+        last_date = stock_df['Date'].iloc[-1]
+        target_date = get_next_n_workday(last_date, diff)
+
+    return target_date, target_y
 
 
 class Line:
