@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from technical.elliott import get_diff, plot_tags
+from technical import plot_tags
 from trading.core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str
 
@@ -32,7 +32,7 @@ def plot_gap(stock_df: pd.DataFrame, date, text) -> (str, float, str):
 
 
 # return (x, y, text)
-def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list):
+def calculate_tech(stock_df: pd.DataFrame, stock_name: str, yaxis_type: str) -> (list, list, list):
     # date, price, text
     x, y, text = [], [], []
 
@@ -62,8 +62,7 @@ def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list
                 text.append(text_)
 
         if tags:
-            diff = get_diff(stock_df, date)
-            x_, y_, text_ = plot_tags(stock_df, stock_name, date, tags, diff)
+            x_, y_, text_ = plot_tags(stock_df, stock_name, yaxis_type, date, tags)
 
             x.append(x_)
             y.append(y_)
@@ -73,15 +72,16 @@ def calculate_tech(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list
 
 
 class Tech:
-    def __init__(self, stock_df: pd.DataFrame, stock_name: str):
+    def __init__(self, stock_df: pd.DataFrame, stock_name: str, yaxis_type: str):
         self.stock_df = stock_df
         self.stock_name = stock_name
+        self.yaxis_type = yaxis_type
 
         self.x = []
         self.y = []
         self.text = []
 
-        self.x, self.y, self.text = calculate_tech(self.stock_df, self.stock_name)
+        self.x, self.y, self.text = calculate_tech(self.stock_df, self.stock_name, self.yaxis_type)
 
     def build_graph(self, fig: go.Figure, enable=False):
         size = 11 if self.stock_df.shape[0] <= 550 else 12

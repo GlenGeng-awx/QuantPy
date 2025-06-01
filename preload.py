@@ -4,7 +4,6 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 from base_engine import BaseEngine
 from demo import pick
-from trading.core_banking import CORE_BANKING
 
 
 def default_periods() -> list[tuple]:
@@ -32,8 +31,6 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
         'enable_sr': False,             #
         'enable_elliott': False,        #
         'enable_neck_line': False,      #
-
-        'yaxis_type': 'log',            #
 
         'enable_line_expo': False,      #
         'enable_line': False,           #
@@ -75,19 +72,16 @@ def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwar
     }
 
     linear_args = {
-        'yaxis_type': 'linear',
         'enable_line': True,
     }
 
     log_args = {
-        'yaxis_type': 'log',
         'enable_line_expo': True,
     }
 
     default_args.update(common_args)
 
-    yaxis_type = CORE_BANKING.get(stock_name, {}).get('yaxis_type', 'log')
-    if yaxis_type == 'linear':
+    if base_engine.yaxis_type == 'linear':
         default_args.update(linear_args)
     else:
         default_args.update(log_args)
@@ -137,7 +131,10 @@ if __name__ == '__main__':
     # candidates = ['QQQ', '^IXIC', 'KWEB', '000300.SS', '000001.SS', 'AAPL', 'GOOG', 'JPM', 'MA', 'V', 'NFLX', 'NVO', 'XOM', 'PG', 'KO', 'BAC', 'GS', 'MS', 'ADBE', 'PLTR', 'AMD', 'QCOM', 'GILD', 'UBER', 'PDD', 'SPOT', 'PYPL', 'NU', 'EBAY', 'CPNG', 'HPQ', 'LI', 'BNTX', 'ZM', 'FUTU', 'GTLB']
     #
 
-    for _stock_name in ALL[:10]:
+    put = [DELL, AVGO, PLTR, TSM, COIN, BA]
+    call = [EDU, AMD, GOOG, INTC]
+
+    for _stock_name in ALL:
         for _from_date, _to_date, _interval in default_periods():
             _base_engine = preload(_stock_name, _from_date, _to_date, _interval)
             _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
