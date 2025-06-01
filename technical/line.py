@@ -46,8 +46,11 @@ def calculate_secondary_line(stock_df: pd.DataFrame,
 
 
 class _Line:
-    def __init__(self, stock_df: pd.DataFrame, stock_name: str,
-                 key, calculate_k_fn, calculate_point_fn):
+    def __init__(self,
+                 stock_df: pd.DataFrame,
+                 stock_name: str,
+                 line_key,
+                 calculate_k_fn, calculate_point_fn):
         self.stock_df = stock_df
         self.stock_name = stock_name
 
@@ -58,7 +61,7 @@ class _Line:
         self.anchor_dates_ps = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
-        for line in CORE_BANKING.get(stock_name, {}).get(key, []):
+        for line in CORE_BANKING.get(stock_name, {}).get(line_key, []):
             if len(line) == 4:
                 date1, date2, _, _ = line
                 if date1 not in dates or date2 not in dates:
@@ -139,7 +142,7 @@ def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     target_x = x + delta
     target_y = y + k * delta
 
-    if target_x > stock_df.index[-1] + 10 or target_x < stock_df.index[0]:
+    if not stock_df.index[0] <= target_x <= stock_df.index[-1] + 10:
         return ()
 
     if target_x in stock_df.index:

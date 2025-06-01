@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from trading.core_banking import CORE_BANKING
-from util import get_idx_by_date, shrink_date_str
+from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 
 
 def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
@@ -12,9 +12,20 @@ def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tup
     dates, prices = [], []
 
     for delta in range(-prev_len, post_len):
-        if idx + delta not in stock_df.index:
+        target_x = idx + delta
+
+        if not stock_df.index[0] <= target_x <= stock_df.index[-1] + 10:
             continue
-        dates.append(stock_df.loc[idx + delta]['Date'])
+
+        if target_x in stock_df.index:
+            target_date = stock_df.loc[target_x]['Date']
+        else:
+            diff = target_x - stock_df.index[-1]
+            last_date = stock_df['Date'].iloc[-1]
+
+            target_date = get_next_n_workday(last_date, diff)
+
+        dates.append(target_date)
         prices.append(price)
 
     return dates, prices
@@ -30,14 +41,13 @@ class NeckLine:
         self.anchor_dates = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
-        for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
-            if len(line) == 3:
-                date, _, _ = line
-                if date not in dates:
-                    continue
+        for line in CORE_BANKING.get(stock_name, {}).get('neck_lines', []):
+            date, _, _ = line
+            if date not in dates:
+                continue
 
-                self.neck_lines.append(calculate_neck_line(stock_df, *line))
-                self.anchor_dates.append(line[0])
+            self.neck_lines.append(calculate_neck_line(stock_df, *line))
+            self.anchor_dates.append(line[0])
 
     def build_graph(self, fig: go.Figure, enable=False):
         anchor_prices = []

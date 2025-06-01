@@ -26,7 +26,7 @@ def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     target_x = x + delta
     target_y = y * math.pow(k, delta)
 
-    if target_x > stock_df.index[-1] + 10 or target_x < stock_df.index[0]:
+    if not stock_df.index[0] <= target_x <= stock_df.index[-1] + 10:
         return ()
 
     if target_x in stock_df.index:
