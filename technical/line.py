@@ -92,7 +92,7 @@ class _Line:
                 y=anchor_prices,
                 mode='markers',
                 marker=dict(size=4, color='black'),
-                visible=None if enable else 'legendonly',
+                visible=None if enable and self.stock_df.shape[0] < 300 else 'legendonly',
             )
         )
 
