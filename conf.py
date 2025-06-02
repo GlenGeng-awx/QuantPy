@@ -102,7 +102,6 @@ MNSO = "MNSO"
 BILI = "BILI"
 EDU = "EDU"
 FUTU = "FUTU"
-YY = "YY"
 TME = "TME"             # Tencent Music Entertainment Group
 IQ = "IQ"
 
@@ -229,7 +228,6 @@ V_SMALL = [
     MNSO,
     EDU,
     BILI,
-    YY,
 ]
 
 ALL = V_INDEX \

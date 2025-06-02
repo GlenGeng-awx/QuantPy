@@ -37,7 +37,7 @@ class BaseEngine:
         self.interval = interval
         self.yaxis_type = CORE_BANKING.get(stock_name, {}).get('yaxis_type', 'log')
 
-        print(f"BaseEngine: {stock_name} {from_date}~{to_date} with interval {interval} and yaxis_type {self.yaxis_type}")
+        print(f"BaseEngine: {stock_name} {from_date}~{to_date} with interval {interval} and yaxis {self.yaxis_type}")
 
         self.stock_df = None
         self.fig = None
@@ -121,6 +121,7 @@ class BaseEngine:
         self.fig.update_xaxes(
             rangeselector=dict(
                 buttons=list([
+                    dict(count=6, label="6M", step="month", stepmode="backward"),
                     dict(count=12, label="1Y", step="month", stepmode="backward"),
                     dict(count=24, label="2Y", step="month", stepmode="backward"),
                 ])

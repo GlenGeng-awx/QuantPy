@@ -5,9 +5,10 @@ from trading.core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 
 
-def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
+# price_key: high, low, close, open
+def calculate_neck_line(stock_df: pd.DataFrame, date, price_key, prev_len, post_len) -> tuple:
     idx = get_idx_by_date(stock_df, date)
-    price = stock_df.loc[idx]['close']
+    price = stock_df.loc[idx][price_key]
 
     dates, prices = [], []
 
@@ -38,30 +39,33 @@ class NeckLine:
 
         # list of (dates, prices)
         self.neck_lines = []
-        self.anchor_dates = []
+        # list of (date, price_key)
+        self.anchors = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('neck_lines', []):
-            date, _, _ = line
+            date, price_key, _, _ = line
             if date not in dates:
                 continue
 
             self.neck_lines.append(calculate_neck_line(stock_df, *line))
-            self.anchor_dates.append(line[0])
+            self.anchors.append((date, price_key))
 
     def build_graph(self, fig: go.Figure, enable=False):
+        anchor_dates = []
         anchor_prices = []
-        for date in self.anchor_dates:
+        for date, price_key in self.anchors:
+            anchor_dates.append(date)
             idx = get_idx_by_date(self.stock_df, date)
-            anchor_prices.append(self.stock_df.loc[idx]['close'])
+            anchor_prices.append(self.stock_df.loc[idx][price_key])
 
         fig.add_trace(
             go.Scatter(
                 name=f'anchor point n',
-                x=self.anchor_dates,
+                x=anchor_dates,
                 y=anchor_prices,
                 mode='markers',
-                marker=dict(size=5, color='blue'),
+                marker=dict(size=3, color='blue'),
                 visible=None if enable else 'legendonly',
             )
         )
