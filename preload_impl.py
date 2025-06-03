@@ -23,10 +23,11 @@ def default_args():
         'enable_sr': False,         #
 
         'enable_elliott': False,    #
+        'enable_tech': False,       #
+
         'enable_line': False,       #
         'enable_neck_line': False,  #
 
-        'enable_tech': False,
         'enable_rd': False,
         'enable_gap': False,
 
@@ -59,8 +60,9 @@ def default_args():
 def args_4y():
     customized = {
         'enable_sr': False,
-        'enable_elliott': True,
-        'enable_line': True,
+        'enable_elliott': True,     #
+        'enable_tech': False,
+        'enable_line': True,        #
         'enable_neck_line': False,
     }
 
@@ -71,10 +73,11 @@ def args_4y():
 
 def args_1y():
     customized = {
-        'enable_sr': True,
-        'enable_elliott': True,
-        'enable_line': True,
-        'enable_neck_line': True,
+        'enable_sr': True,          #
+        'enable_elliott': False,
+        'enable_tech': True,        #
+        'enable_line': True,        #
+        'enable_neck_line': True,   #
     }
 
     args = default_args()
