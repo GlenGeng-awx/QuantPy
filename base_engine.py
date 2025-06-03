@@ -14,10 +14,6 @@ from technical.gap import Gap
 
 from statistical.ema import EMA
 from statistical.ma import MA
-# from statistical.trend import Trend
-# from statistical.bband import BBand
-# from statistical.macd import MACD
-# from statistical.rsi import RSI
 
 from guru.hit_elliott import HitElliott
 from guru.hit_line import HitLine
@@ -53,10 +49,6 @@ class BaseEngine:
 
         self.ema = EMA(self.stock_df)
         self.ma = MA(self.stock_df)
-        # self.trend = Trend(self.stock_df)
-        # self.bband = BBand(self.stock_df)
-        # self.macd = MACD(self.stock_df)
-        # self.rsi = RSI(self.stock_df)
 
         self.min_max = MinMax(self.stock_df)
         self.sr_level = SupportResistanceLevel(self.stock_df)
@@ -151,16 +143,10 @@ class BaseEngine:
                     enable_ma20=False,
                     enable_ma60=False,
                     enable_ma120=False,
-                    enable_trend=False,
-                    enable_bband=False,
-                    enable_bband_pst=(False, 2),
-                    enable_macd=(False, 2),
-                    enable_rsi=(False, 2),
                     # technical
                     enable_min_max=False,
                     enable_sr=False,
                     enable_line=False,
-                    enable_line_expo=False,
                     enable_neck_line=False,
                     enable_elliott=True,
                     enable_tech=True,
@@ -198,9 +184,14 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
 
-        self.line_expo.build_graph(self.fig, enable_line_expo)
         self.neck_line.build_graph(self.fig, enable_neck_line)
-        self.line.build_graph(self.fig, enable_line)
+
+        if self.yaxis_type == 'linear':     # or 'log'
+            self.line.build_graph(self.fig, enable_line)
+            self.line_expo.build_graph(self.fig, False)
+        else:
+            self.line.build_graph(self.fig, False)
+            self.line_expo.build_graph(self.fig, enable_line)
 
         # guru
         self.hit_elliott.build_graph(self.fig, enable_hit_elliott, guru_start_date, guru_end_date)
@@ -214,7 +205,3 @@ class BaseEngine:
 
         self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
         self.ema.build_graph(self.fig, enable_ema)
-        # self.trend.build_graph(self.fig, enable_trend)
-        # self.bband.build_graph(self.fig, enable_bband, enable_bband_pst)
-        # self.macd.build_graph(self.fig, enable_macd)
-        # self.rsi.build_graph(self.fig, enable_rsi)

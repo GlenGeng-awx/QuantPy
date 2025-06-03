@@ -1,95 +1,8 @@
-from datetime import datetime
-
 import pandas as pd
-from dateutil.relativedelta import relativedelta
+
 from base_engine import BaseEngine
 from demo import pick
-
-
-def default_periods() -> list[tuple]:
-    current_date = datetime.now()
-
-    start_date_4y = (current_date - relativedelta(months=48)).strftime('%Y-%m-%d')
-    start_date_1y = (current_date - relativedelta(months=12)).strftime('%Y-%m-%d')
-    current_date = current_date.strftime('%Y-%m-%d')
-
-    return [
-        (start_date_4y, current_date, '1d'),
-        (start_date_1y, current_date, '1d'),
-    ]
-
-
-def preload(stock_name: str, from_date: str, to_date: str, interval: str, **kwargs) -> BaseEngine:
-    base_engine = BaseEngine(stock_name, from_date, to_date, interval)
-
-    default_args = {
-        'enable_candlestick': True,
-        'enable_close_price': False,
-
-        'enable_min_max': False,
-
-        'enable_sr': False,             #
-        'enable_elliott': False,        #
-        'enable_neck_line': False,      #
-
-        'enable_line_expo': False,      #
-        'enable_line': False,           #
-
-        'enable_tech': False,
-        'enable_rd': False,
-        'enable_gap': False,
-
-        'enable_ma20': False,
-        'enable_ma60': False,
-        'enable_ma120': False,
-
-        'enable_volume': (True, 2),
-        'enable_bband_pst': (True, 3),
-        'enable_rsi': (True, 4),
-        'enable_macd': (True, 5),
-
-        'guru_start_date': '2000-01-01',
-        'guru_end_date': '2099-12-31',
-
-        'enable_hit_elliott': False,
-        'enable_hit_line': False,
-        'enable_hit_line_expo': False,
-        'enable_hit_neck_line': False,
-        'enable_hit_sr': False,
-        'enable_hit_ma20': False,
-        'enable_hit_ma60': False,
-        'enable_hit_ma120': False,
-        'enable_hit_low_vol': (False, 2),
-        'enable_hit_high_vol': (False, 2),
-
-        'rows': 2,
-    }
-
-    common_args = {
-        'enable_sr': True,
-        'enable_elliott': True,
-        'enable_neck_line': False,
-    }
-
-    linear_args = {
-        'enable_line': True,
-    }
-
-    log_args = {
-        'enable_line_expo': True,
-    }
-
-    default_args.update(common_args)
-
-    if base_engine.yaxis_type == 'linear':
-        default_args.update(linear_args)
-    else:
-        default_args.update(log_args)
-
-    default_args.update(kwargs)
-    base_engine.build_graph(**default_args)
-
-    return base_engine
+from preload_impl import *
 
 
 def select_dates(stock_df: pd.DataFrame) -> list:
@@ -133,10 +46,17 @@ if __name__ == '__main__':
 
     put = [DELL, AVGO, PLTR, TSM, COIN, BA]
     call = [EDU, AMD, GOOG, INTC]
+    position = [QQQ, COIN, TSM, BA, DELL, AMD, PLTR, INTC, GOOG, AVGO, EDU]
 
-    for _stock_name in ALL:
-        for _from_date, _to_date, _interval in default_periods():
-            _base_engine = preload(_stock_name, _from_date, _to_date, _interval)
-            _stock_df, _fig = _base_engine.stock_df, _base_engine.fig
+    spectrum = [
+        (period_4y(), args_4y()),
+        (period_1y(), args_1y()),
+    ]
 
-            _fig.show()
+    for stock_name in ALL[10:20]:
+        for (from_date, to_date, interval), args in spectrum:
+            base_engine = BaseEngine(stock_name, from_date, to_date, interval)
+            base_engine.build_graph(**args)
+
+            stock_df, fig = base_engine.stock_df, base_engine.fig
+            fig.show()
