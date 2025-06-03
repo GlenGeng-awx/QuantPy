@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from util import get_idx_by_date, get_next_n_workday
-from technical.line import _Line
+from technical._line import _Line
 
 
 def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:

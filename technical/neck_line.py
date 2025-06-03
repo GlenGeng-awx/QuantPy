@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from trading.core_banking import CORE_BANKING
+from core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 
 

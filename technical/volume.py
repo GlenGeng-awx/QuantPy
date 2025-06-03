@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from technical.gap import Gap
-from trading.core_banking import CORE_BANKING
+from core_banking import CORE_BANKING
 from util import shrink_date_str, get_idx_by_date
 
 VOLUME = 'volume'

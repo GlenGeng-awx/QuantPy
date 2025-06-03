@@ -26,7 +26,7 @@ from guru.hit_neck_line import HitNeckLine
 from guru.hit_sr import HitSR
 from guru.hit_ma import HitMA
 from guru.hit_volume import HitVolume
-from trading.core_banking import CORE_BANKING
+from core_banking import CORE_BANKING
 
 from util import load_data, shrink_date_str, interval_to_label, get_next_n_workday
 

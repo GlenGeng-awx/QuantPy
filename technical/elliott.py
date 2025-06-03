@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from technical import plot_tags
-from trading.core_banking import CORE_BANKING
+from core_banking import CORE_BANKING
 from util import shrink_date_str
 
 
