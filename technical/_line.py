@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 
 from core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str
+from technical import get_date, get_price_key
 
 
 def calculate_primary_line(stock_df: pd.DataFrame,
@@ -12,8 +13,9 @@ def calculate_primary_line(stock_df: pd.DataFrame,
     dates, prices = [], []
 
     k = calculate_k_fn(stock_df, date1, date2)
-    idx1 = get_idx_by_date(stock_df, date1)
-    idx2 = get_idx_by_date(stock_df, date2)
+
+    idx1 = get_idx_by_date(stock_df, get_date(date1))
+    idx2 = get_idx_by_date(stock_df, get_date(date2))
 
     for delta in range(-prev_len, idx2 - idx1):
         point = calculate_point_fn(stock_df, date1, delta, k)
@@ -66,6 +68,8 @@ class _Line:
         for line in CORE_BANKING.get(stock_name, {}).get(line_key, []):
             if len(line) == 4:
                 date1, date2, _, _ = line
+                date1, date2 = get_date(date1), get_date(date2)
+
                 if date1 not in dates or date2 not in dates:
                     continue
 
@@ -76,6 +80,8 @@ class _Line:
 
             if len(line) == 5:
                 date, _, _, date1, date2 = line
+                date, date1, date2 = get_date(date), get_date(date1), get_date(date2)
+
                 if date not in dates or date1 not in dates or date2 not in dates:
                     continue
 
@@ -85,18 +91,18 @@ class _Line:
                 self.anchor_dates_ps.append(line[0])
 
     def build_graph(self, fig: go.Figure, enable=False):
-        anchor_prices = []
+        anchor_dates, anchor_prices = [], []
         for date in self.anchor_dates_ps:
-            idx = get_idx_by_date(self.stock_df, date)
-            anchor_prices.append(self.stock_df.loc[idx]['close'])
+            anchor_dates.append(get_date(date))
+
+            idx = get_idx_by_date(self.stock_df, get_date(date))
+            anchor_prices.append(self.stock_df.loc[idx][get_price_key(date)])
 
         fig.add_trace(
             go.Scatter(
                 name=f'anchor point ps',
-                x=self.anchor_dates_ps,
-                y=anchor_prices,
-                mode='markers',
-                marker=dict(size=4, color='black'),
+                x=anchor_dates, y=anchor_prices,
+                mode='markers', marker=dict(size=4, color='black'),
                 visible=None if enable and self.stock_df.shape[0] < 300 else 'legendonly',
             )
         )
@@ -105,10 +111,8 @@ class _Line:
             fig.add_trace(
                 go.Scatter(
                     name=f'primary line-{i + 1}-{len(dates)}',
-                    x=dates,
-                    y=prices,
-                    mode='lines',
-                    line=dict(width=1, color='red', dash='dash'),
+                    x=dates, y=prices,
+                    mode='lines', line=dict(width=1, color='red', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )
@@ -117,10 +121,8 @@ class _Line:
             fig.add_trace(
                 go.Scatter(
                     name=f'secondary line-{i + 1}-{len(dates)}',
-                    x=dates,
-                    y=prices,
-                    mode='lines',
-                    line=dict(width=1, color='green', dash='dash'),
+                    x=dates, y=prices,
+                    mode='lines', line=dict(width=1, color='green', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )

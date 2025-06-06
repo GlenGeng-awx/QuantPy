@@ -3,12 +3,13 @@ import plotly.graph_objects as go
 
 from core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
+from technical import get_date, get_price_key
 
 
-# price_key: high, low, close, open
-def calculate_neck_line(stock_df: pd.DataFrame, date, price_key, prev_len, post_len) -> tuple:
-    idx = get_idx_by_date(stock_df, date)
-    price = stock_df.loc[idx][price_key]
+# date is in format of '20210101' or ('20210101', 'open')
+def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
+    idx = get_idx_by_date(stock_df, get_date(date))
+    price = stock_df.loc[idx][get_price_key(date)]
 
     dates, prices = [], []
 
@@ -44,28 +45,26 @@ class NeckLine:
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('neck_lines', []):
-            date, price_key, _, _ = line
-            if date not in dates:
+            date, _, _ = line
+            if get_date(date) not in dates:
                 continue
 
             self.neck_lines.append(calculate_neck_line(stock_df, *line))
-            self.anchors.append((date, price_key))
+            self.anchors.append(date)
 
     def build_graph(self, fig: go.Figure, enable=False):
-        anchor_dates = []
-        anchor_prices = []
-        for date, price_key in self.anchors:
-            anchor_dates.append(date)
-            idx = get_idx_by_date(self.stock_df, date)
-            anchor_prices.append(self.stock_df.loc[idx][price_key])
+        anchor_dates, anchor_prices = [], []
+        for date in self.anchors:
+            anchor_dates.append(get_date(date))
+
+            idx = get_idx_by_date(self.stock_df, get_date(date))
+            anchor_prices.append(self.stock_df.loc[idx][get_price_key(date)])
 
         fig.add_trace(
             go.Scatter(
                 name=f'anchor point n',
-                x=anchor_dates,
-                y=anchor_prices,
-                mode='markers',
-                marker=dict(size=4, color='blue'),
+                x=anchor_dates, y=anchor_prices,
+                mode='markers', marker=dict(size=4, color='blue'),
                 visible=None if enable else 'legendonly',
             )
         )
@@ -77,10 +76,8 @@ class NeckLine:
             fig.add_trace(
                 go.Scatter(
                     name=f'neck line-{i + 1}',
-                    x=dates,
-                    y=prices,
-                    mode='lines',
-                    line=dict(width=0.9, color='black', dash='dash'),
+                    x=dates, y=prices,
+                    mode='lines', line=dict(width=0.9, color='black', dash='dash'),
                     visible=None if enable else 'legendonly',
                 )
             )

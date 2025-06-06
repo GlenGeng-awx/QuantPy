@@ -3,15 +3,17 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from util import get_idx_by_date, get_next_n_workday
+from technical import get_date, get_price_key
 from technical._line import _Line
 
 
+# date1, date2 is in format of '20210101' or ('20210101', 'open')
 def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
-    x1 = get_idx_by_date(stock_df, date1)
-    y1 = stock_df.loc[x1]['close']
+    x1 = get_idx_by_date(stock_df, get_date(date1))
+    y1 = stock_df.loc[x1][get_price_key(date1)]
 
-    x2 = get_idx_by_date(stock_df, date2)
-    y2 = stock_df.loc[x2]['close']
+    x2 = get_idx_by_date(stock_df, get_date(date2))
+    y2 = stock_df.loc[x2][get_price_key(date2)]
 
     ratio = y2 / y1
     delta = x2 - x1
@@ -19,9 +21,10 @@ def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     return k
 
 
+# date is in format of '20210101' or ('20210101', 'open')
 def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
-    x = get_idx_by_date(stock_df, date)
-    y = stock_df.loc[x]['close']
+    x = get_idx_by_date(stock_df, get_date(date))
+    y = stock_df.loc[x][get_price_key(date)]
 
     target_x = x + delta
     target_y = y * math.pow(k, delta)

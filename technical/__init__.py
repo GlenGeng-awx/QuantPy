@@ -53,3 +53,19 @@ def plot_tags(stock_df: pd.DataFrame,
         raise ValueError
 
     return date, y, text
+
+
+# date is in format of '20210101' or ('20210101', 'open')
+def get_date(date):
+    if type(date) is tuple:
+        date, _ = date
+    return date
+
+
+# date is in format of '20210101' or ('20210101', 'open')
+def get_price_key(date):
+    if type(date) is tuple:
+        _, date_key = date
+    else:
+        date_key = 'close'
+    return date_key
