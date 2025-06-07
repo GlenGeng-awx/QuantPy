@@ -7,6 +7,7 @@ from util import shrink_date_str, get_idx_by_date
 
 VOLUME = 'volume'
 VOLUME_REG = 'volume_reg'
+SIZE = 100
 
 
 class Volume:
@@ -21,6 +22,7 @@ class Volume:
             lambda vol: vol if vol < volume_peak else volume_peak + (vol - volume_peak) / 10)
 
         self.stock_df[VOLUME_REG] = self.volume_reg
+        self.vol_avg_100 = self.volume_reg.rolling(SIZE).mean()
 
     def add_tech(self, fig: go.Figure, row):
         # date, volume, tags
@@ -95,6 +97,18 @@ class Volume:
                 y=self.volume_reg,
                 marker_color='blue',
                 opacity=0.5,
+            ),
+            row=row, col=1
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name='volume_avg_100',
+                x=self.stock_df['Date'],
+                y=self.vol_avg_100,
+                mode='lines',
+                line=dict(width=0.75, color='black'),
+                # visible='legendonly',
             ),
             row=row, col=1
         )

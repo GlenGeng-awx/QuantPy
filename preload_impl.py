@@ -36,21 +36,6 @@ def default_args():
         'enable_ma120': False,
 
         'enable_volume': (True, 2),
-
-        'guru_start_date': '2000-01-01',
-        'guru_end_date': '2099-12-31',
-
-        'enable_hit_elliott': False,
-        'enable_hit_line': False,
-        'enable_hit_line_expo': False,
-        'enable_hit_neck_line': False,
-        'enable_hit_sr': False,
-        'enable_hit_ma20': False,
-        'enable_hit_ma60': False,
-        'enable_hit_ma120': False,
-        'enable_hit_low_vol': (False, 2),
-        'enable_hit_high_vol': (False, 2),
-
         'rows': 2,
     }
 
@@ -81,5 +66,17 @@ def args_1y():
     }
 
     args = default_args()
+    args.update(customized)
+    return args
+
+
+def args_1y_guru():
+    customized = {
+        'enable_guru': (True, 2),
+        'enable_volume': (True, 3),
+        'rows': 3
+    }
+
+    args = args_1y()
     args.update(customized)
     return args
