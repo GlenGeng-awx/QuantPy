@@ -167,5 +167,5 @@ class BaseEngine:
         self.ema.build_graph(self.fig, enable_ema)
 
         if enable_guru[0]:
-            enable, row = enable_guru
-            guru.calculate(self.stock_df, self.fig, row=row, )
+            enable, row, last_n_days = enable_guru
+            guru.calculate(self.stock_df, self.fig, row, last_n_days)

@@ -8,4 +8,4 @@ KEY = 'hit ma120'
 def calculate_hits(stock_df: pd.DataFrame) -> list:
     prices = stock_df[MA_120].dropna()
     dates = [stock_df.loc[idx]['Date'] for idx in prices.index]
-    return _calculate_hits(stock_df, (dates, prices), 0.01)
+    return _calculate_hits(stock_df, (dates, prices), 0.005)

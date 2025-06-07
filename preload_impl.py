@@ -72,7 +72,7 @@ def args_1y():
 
 def args_1y_guru():
     customized = {
-        'enable_guru': (True, 2),
+        'enable_guru': (True, 2, 10),   # (True, 2, None)
         'enable_volume': (True, 3),
         'rows': 3
     }
