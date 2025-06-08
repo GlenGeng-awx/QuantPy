@@ -25,3 +25,15 @@ def _calculate_hits(stock_df: pd.DataFrame, line, margin) -> list:
             hits.append(date)
 
     return hits
+
+
+# calculates: list of (value, idx)
+def _pick_10pst(stock_df: pd.DataFrame, candidates: list) -> list:
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    reserved = int(len(candidates) * 0.1)
+
+    hits = []
+    for i in range(reserved):
+        idx = candidates[i][1]
+        hits.append(stock_df['Date'][idx])
+    return hits

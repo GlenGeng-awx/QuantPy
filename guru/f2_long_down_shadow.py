@@ -1,4 +1,5 @@
 import pandas as pd
+from guru.util import _pick_10pst
 
 KEY = 'long down shadow'
 
@@ -11,11 +12,4 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
         down_shadow = min(_open[idx], close[idx]) - low[idx]
         down_shadows.append((down_shadow, idx))
 
-    down_shadows.sort(key=lambda x: x[0], reverse=True)
-    reserved = int(len(down_shadows) * 0.1)
-
-    hits = []
-    for i in range(reserved):
-        idx = down_shadows[i][1]
-        hits.append(stock_df['Date'][idx])
-    return hits
+    return _pick_10pst(stock_df, down_shadows)
