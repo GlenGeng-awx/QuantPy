@@ -56,6 +56,9 @@ class BaseEngine:
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
+        # guru
+        self.context = {}
+
     def setup_graph(self, rows=2):
         self.fig = make_subplots(rows=rows, cols=1,
                                  row_heights=[0.5] + [0.25] * (rows - 1),
@@ -78,7 +81,8 @@ class BaseEngine:
         to_date = shrink_date_str(self.stock_df.iloc[-1]['Date'])
 
         title = (f"{self.stock_name}: {from_date} to {to_date}, "
-                 f"{self.stock_df.shape[0]} {interval_to_label(self.interval)}")
+                 f"{self.stock_df.shape[0]} {interval_to_label(self.interval)}, "
+                 f"yaxis: {self.yaxis_type}")
 
         self.fig.update_layout(
             title=title,
@@ -137,7 +141,7 @@ class BaseEngine:
                     enable_gap=False,
                     # other
                     enable_volume=(True, 2),
-                    enable_guru=(False, 2),
+                    enable_guru=(False, 2, None),
                     rows=2,
                     ):
         self.setup_graph(rows)
@@ -168,4 +172,4 @@ class BaseEngine:
 
         if enable_guru[0]:
             enable, row, last_n_days = enable_guru
-            guru.calculate(self.stock_df, self.fig, row, last_n_days)
+            self.context = guru.calculate(self.stock_df, self.fig, row, last_n_days)

@@ -30,9 +30,12 @@ factors = [
 ]
 
 
-def calculate(stock_df: pd.DataFrame, fig: go.Figure, row=2, last_n_days=None):
+def calculate(stock_df: pd.DataFrame, fig: go.Figure, row=2, last_n_days=None) -> dict:
+    context = {}
+
     for i, factor in enumerate(factors):
         dates = factor.calculate_hits(stock_df)
+        context[factor.KEY] = dates
 
         if last_n_days is not None:
             dates = [date for date in dates if date >= stock_df['Date'].iloc[-last_n_days]]
@@ -53,3 +56,20 @@ def calculate(stock_df: pd.DataFrame, fig: go.Figure, row=2, last_n_days=None):
             line=dict(color='black', width=0.5, dash='dash'),
             row=row, col=1
         )
+
+    return context
+
+
+def pick(stock_df: pd.DataFrame, context: dict) -> bool:
+    last_1d = stock_df['Date'].iloc[-1]
+    last_2d = stock_df['Date'].iloc[-2]
+
+    box = context.get(f0_high_vol.KEY, []) \
+          + context.get(f1_decr_3pst.KEY, []) \
+          + context.get(f1_incr_3pst.KEY, []) \
+          + context.get(f2_long_down_shadow.KEY, []) \
+          + context.get(f2_long_up_shadow.KEY, []) \
+          + context.get(f3_long_red_bar.KEY, []) \
+          + context.get(f3_long_green_bar.KEY, [])
+
+    return last_1d in box or last_2d in box
