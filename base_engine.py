@@ -172,4 +172,4 @@ class BaseEngine:
 
         if enable_guru[0]:
             enable, row, last_n_days = enable_guru
-            self.context = guru.calculate(self.stock_df, self.fig, row, last_n_days)
+            self.context = guru.plot.plot(self.stock_df, self.fig, row, last_n_days)
