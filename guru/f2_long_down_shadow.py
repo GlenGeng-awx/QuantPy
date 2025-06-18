@@ -1,5 +1,5 @@
 import pandas as pd
-from guru.util import _pick_10pst
+from guru.util import _pick_rolling_10pst
 
 KEY = 'long down shadow'
 
@@ -9,7 +9,8 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
 
     down_shadows = []
     for idx in stock_df.index:
-        down_shadow = min(_open[idx], close[idx]) - low[idx]
+        bottom = min(_open[idx], close[idx])
+        down_shadow = (bottom - low[idx]) / bottom
         down_shadows.append((down_shadow, idx))
 
-    return _pick_10pst(stock_df, down_shadows)
+    return _pick_rolling_10pst(stock_df, down_shadows, KEY)

@@ -56,6 +56,18 @@ def args_4y():
     return args
 
 
+def args_4y_guru():
+    customized = {
+        'enable_guru': (True, 2, None),  # (True, 2, 100)
+        'enable_volume': (True, 3),
+        'rows': 3
+    }
+
+    args = args_4y()
+    args.update(customized)
+    return args
+
+
 def args_1y():
     customized = {
         'enable_sr': True,          #
@@ -72,7 +84,7 @@ def args_1y():
 
 def args_1y_guru():
     customized = {
-        'enable_guru': (True, 2, 10),   # (True, 2, None)
+        'enable_guru': (True, 2, None),  # (True, 2, 10)
         'enable_volume': (True, 3),
         'rows': 3
     }
