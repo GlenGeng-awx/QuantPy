@@ -43,6 +43,6 @@ def _pick_rolling_10pst(stock_df: pd.DataFrame, candidates: list, tag: str, roll
         if value >= threshold_value:
             date = stock_df['Date'][idx]
             hits.append(date)
-            print(f'tag = {tag}, date = {date}, value = {value}, threshold_value = {threshold_value}')
+            # print(f'tag = {tag}, date = {date}, value = {value}, threshold_value = {threshold_value}')
 
     return hits

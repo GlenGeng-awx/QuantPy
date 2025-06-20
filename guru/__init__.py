@@ -31,3 +31,5 @@ factors = [
 ]
 
 import guru.plot
+import guru.train
+import guru.predict
