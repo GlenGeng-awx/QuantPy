@@ -13,8 +13,6 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: di
     fig.update_layout(title=title)
 
     last_1d = stock_df['Date'].iloc[-1]
-    last_2d = stock_df['Date'].iloc[-2]
-    last_3d = stock_df['Date'].iloc[-3]
     hit = False
 
     context = interpolate_context(stock_df, context)
@@ -26,9 +24,11 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: di
             dates = set.intersection(*(context[key] for key in keys if key in context))
             indices = [get_idx_by_date(stock_df, date) for date in dates]
 
-            if not (last_1d in dates or last_2d in dates or last_3d in dates):
+            if not (last_1d in dates):
                 continue
+
             hit = True
+            print(f'Found a hit for {stock_name} with keys {keys} and tag {tag}')
 
             fig.add_trace(
                 go.Scatter(

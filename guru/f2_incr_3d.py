@@ -9,8 +9,8 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
 
     hits = []
 
-    for idx in stock_df.index[2:]:
-        if close[idx - 2] < close[idx - 1] < close[idx]:
+    for idx in stock_df.index[3:]:
+        if close[idx - 3] < close[idx - 2] < close[idx - 1] < close[idx]:
             hits.append(dates[idx])
 
     return hits
