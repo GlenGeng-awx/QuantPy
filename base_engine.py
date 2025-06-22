@@ -9,7 +9,6 @@ from technical.line_expo import LineExpo
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.tech import Tech
-from technical.rd import RD
 
 from statistical.ema import EMA
 from statistical.ma import MA
@@ -50,7 +49,6 @@ class BaseEngine:
 
         self.elliott = Elliott(self.stock_df, self.stock_name, self.yaxis_type)
         self.tech = Tech(self.stock_df, self.stock_name, self.yaxis_type)
-        self.rd = RD(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
@@ -135,7 +133,6 @@ class BaseEngine:
                     enable_neck_line=False,
                     enable_elliott=True,
                     enable_tech=True,
-                    enable_rd=True,
                     # other
                     enable_volume=(True, 2),
                     enable_guru=(False, 2, None),
@@ -147,7 +144,6 @@ class BaseEngine:
 
         self.elliott.build_graph(self.fig, enable_elliott)
         self.tech.build_graph(self.fig, enable_tech)
-        self.rd.build_graph(self.fig, enable_rd)
 
         self.volume.build_graph(self.fig, enable_volume)
 

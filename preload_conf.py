@@ -28,8 +28,6 @@ def default_args():
         'enable_line': False,       #
         'enable_neck_line': False,  #
 
-        'enable_rd': False,
-
         'enable_ma20': False,
         'enable_ma60': False,
         'enable_ma120': False,
