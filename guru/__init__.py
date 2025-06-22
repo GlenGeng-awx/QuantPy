@@ -1,3 +1,5 @@
+import pandas as pd
+
 from guru import (
     f0_high_vol,
     f0_low_vol,
@@ -41,6 +43,17 @@ factors = [
     f8_hit_ma60,
     f8_hit_ma120,
 ]
+
+
+def calculate(stock_df: pd.DataFrame) -> dict:
+    context = {}
+
+    for factor in factors:
+        dates = factor.calculate_hits(stock_df)
+        context[factor.KEY] = dates
+
+    return context
+
 
 import guru.plot
 import guru.train

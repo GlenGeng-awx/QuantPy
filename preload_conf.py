@@ -29,7 +29,6 @@ def default_args():
         'enable_neck_line': False,  #
 
         'enable_rd': False,
-        'enable_gap': False,
 
         'enable_ma20': False,
         'enable_ma60': False,

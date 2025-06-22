@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from technical.gap import Gap
 from core_banking import CORE_BANKING
 from util import shrink_date_str, get_idx_by_date
 
@@ -50,42 +49,8 @@ class Volume:
             row=row, col=1
         )
 
-    def add_gap(self, fig: go.Figure, gap: Gap, row):
-        up_x, up_y, up_text = [], [], []
-        for idx, pst in gap.up_gaps:
-            up_x.append(self.stock_df['Date'][idx])
-            up_y.append(self.volume_reg[idx])
-            up_text.append(f'{pst:.2%}')
-
-        down_x, down_y, down_text = [], [], []
-        for idx, pst in gap.down_gaps:
-            down_x.append(self.stock_df['Date'][idx])
-            down_y.append(self.volume_reg[idx])
-            down_text.append(f'{pst:.2%}')
-
-        fig.add_trace(
-            go.Scatter(
-                name='vol up gap',
-                x=up_x, y=up_y, text=up_text,
-                mode='text', textfont=dict(color="red", size=10),
-                visible='legendonly',
-            ),
-            row=row, col=1
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                name='vol down gap',
-                x=down_x, y=down_y, text=down_text,
-                mode='text', textfont=dict(color="green", size=10),
-                visible='legendonly',
-            ),
-            row=row, col=1
-        )
-
     def build_graph(self,
                     fig: go.Figure,
-                    gap: Gap,
                     enable_volume=(False, 2),
                     ):
         enable, row = enable_volume
@@ -127,4 +92,3 @@ class Volume:
             )
 
         self.add_tech(fig, row)
-        self.add_gap(fig, gap, row)

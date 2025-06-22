@@ -38,10 +38,14 @@ def _pick_rolling_n_pst_reversed(stock_df: pd.DataFrame, candidates: list, tag: 
             continue
 
         rolling_window = [(_value, _idx) for (_value, _idx) in candidates[i - rolling_size:i] if _value is not None]
-        rolling_window.sort(key=lambda x: x[0], reverse=True)
+        # print(f'tag = {tag}, date = {stock_df["Date"][idx]}, rolling_window = {rolling_window}')
 
-        threshold_pos = int(len(rolling_window) * n) - 1
-        threshold_value = rolling_window[threshold_pos][0]
+        if rolling_window:
+            rolling_window.sort(key=lambda x: x[0], reverse=True)
+            threshold_pos = int(len(rolling_window) * n) - 1
+            threshold_value = rolling_window[threshold_pos][0]
+        else:
+            threshold_value = 0.0
 
         if value >= threshold_value:
             date = stock_df['Date'][idx]
@@ -62,10 +66,13 @@ def _pick_rolling_n_pst(stock_df: pd.DataFrame, candidates: list, tag: str,
             continue
 
         rolling_window = [(_value, _idx) for (_value, _idx) in candidates[i - rolling_size:i] if _value is not None]
-        rolling_window.sort(key=lambda x: x[0], reverse=False)
 
-        threshold_pos = int(len(rolling_window) * n) - 1
-        threshold_value = rolling_window[threshold_pos][0]
+        if rolling_window:
+            rolling_window.sort(key=lambda x: x[0], reverse=False)
+            threshold_pos = int(len(rolling_window) * n) - 1
+            threshold_value = rolling_window[threshold_pos][0]
+        else:
+            threshold_value = 1.0
 
         if value <= threshold_value:
             date = stock_df['Date'][idx]

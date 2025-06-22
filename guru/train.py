@@ -6,7 +6,7 @@ from guru import factors
 
 BIAS = 0.9
 RATIO = 0.7
-HITS = 5
+HITS = 4
 
 
 def touch_file(filename: str):

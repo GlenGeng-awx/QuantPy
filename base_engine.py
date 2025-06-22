@@ -10,7 +10,6 @@ from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.tech import Tech
 from technical.rd import RD
-from technical.gap import Gap
 
 from statistical.ema import EMA
 from statistical.ma import MA
@@ -52,7 +51,6 @@ class BaseEngine:
         self.elliott = Elliott(self.stock_df, self.stock_name, self.yaxis_type)
         self.tech = Tech(self.stock_df, self.stock_name, self.yaxis_type)
         self.rd = RD(self.stock_df, self.stock_name)
-        self.gap = Gap(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
@@ -138,7 +136,6 @@ class BaseEngine:
                     enable_elliott=True,
                     enable_tech=True,
                     enable_rd=True,
-                    enable_gap=False,
                     # other
                     enable_volume=(True, 2),
                     enable_guru=(False, 2, None),
@@ -151,9 +148,8 @@ class BaseEngine:
         self.elliott.build_graph(self.fig, enable_elliott)
         self.tech.build_graph(self.fig, enable_tech)
         self.rd.build_graph(self.fig, enable_rd)
-        self.gap.build_graph(self.fig, enable_gap)
 
-        self.volume.build_graph(self.fig, self.gap, enable_volume)
+        self.volume.build_graph(self.fig, enable_volume)
 
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
@@ -171,5 +167,7 @@ class BaseEngine:
         self.ema.build_graph(self.fig, enable_ema)
 
         if enable_guru[0]:
-            enable, row, last_n_days = enable_guru
-            self.context = guru.plot.plot(self.stock_df, self.fig, row, last_n_days)
+            self.context = guru.calculate(self.stock_df)
+
+            _, row, last_n_days = enable_guru
+            guru.plot.plot(self.stock_df, self.fig, self.context, row, last_n_days)
