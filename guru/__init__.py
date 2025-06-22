@@ -13,9 +13,11 @@ from guru import (
     f5_short_down_shadow,
     f6_short_red_bar,
     f6_short_green_bar,
-    f7_hit_ma20,
-    f7_hit_ma60,
-    f7_hit_ma120,
+    f7_up_gap,
+    f7_down_gap,
+    f8_hit_ma20,
+    f8_hit_ma60,
+    f8_hit_ma120,
 )
 
 factors = [
@@ -33,9 +35,11 @@ factors = [
     f5_short_down_shadow,
     f6_short_red_bar,
     f6_short_green_bar,
-    f7_hit_ma20,
-    f7_hit_ma60,
-    f7_hit_ma120,
+    f7_up_gap,
+    f7_down_gap,
+    f8_hit_ma20,
+    f8_hit_ma60,
+    f8_hit_ma120,
 ]
 
 import guru.plot

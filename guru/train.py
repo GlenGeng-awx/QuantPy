@@ -83,7 +83,7 @@ def select_impl(stock_df: pd.DataFrame, params: dict, keys: list, dates: set):
         if min_close <= curr_close * (1 - down_pst):
             down_hit += 1
 
-    if total_num != 0 and (up_hit + down_hit) / total_num >= RATIO:
+    if total_num >= HITS and (up_hit + down_hit) / total_num >= RATIO:
         with open(f'tmp/{params["stock_name"]}.txt', 'a') as fd:
             fd.write(f'{json.dumps(keys)}\ttotal {total_num}, up {up_hit}, down {down_hit}\n')
         print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')
