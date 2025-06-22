@@ -1,4 +1,3 @@
-import math
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -15,9 +14,7 @@ def _calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     x2 = get_idx_by_date(stock_df, get_date(date2))
     y2 = stock_df.loc[x2][get_price_key(date2)]
 
-    ratio = y2 / y1
-    delta = x2 - x1
-    k = math.pow(ratio, 1 / delta)
+    k = (y2 - y1) / (x2 - x1)
     return k
 
 
@@ -27,7 +24,7 @@ def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     y = stock_df.loc[x][get_price_key(date)]
 
     target_x = x + delta
-    target_y = y * math.pow(k, delta)
+    target_y = y + k * delta
 
     if not stock_df.index[0] <= target_x <= stock_df.index[-1] + 10:
         return ()
@@ -37,19 +34,18 @@ def _calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
     else:
         diff = target_x - stock_df.index[-1]
         last_date = stock_df['Date'].iloc[-1]
-
         target_date = get_next_n_workday(last_date, diff)
 
     return target_date, target_y
 
 
-class LineExpo:
+class LineLinear:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.line = Line(
             stock_df, stock_name,
-            'lines_expo',
+            'lines',
             _calculate_k,
-            _calculate_point,
+            _calculate_point
         )
 
     def build_graph(self, fig: go.Figure, enable=False):
