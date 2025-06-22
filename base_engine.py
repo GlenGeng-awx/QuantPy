@@ -150,8 +150,6 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
 
-        self.neck_line.build_graph(self.fig, enable_neck_line)
-
         if self.yaxis_type == 'linear':     # or 'log'
             self.line_linear.build_graph(self.fig, enable_line)
             self.line_expo.build_graph(self.fig, False)
@@ -159,8 +157,10 @@ class BaseEngine:
             self.line_linear.build_graph(self.fig, False)
             self.line_expo.build_graph(self.fig, enable_line)
 
+        self.neck_line.build_graph(self.fig, enable_neck_line)
+
         self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
-        self.ema.build_graph(self.fig, enable_ema)
+        # self.ema.build_graph(self.fig, enable_ema)
 
         if enable_guru[0]:
             self.context = guru.calculate(self.stock_df)
