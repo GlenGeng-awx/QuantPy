@@ -62,10 +62,10 @@ class NeckLine:
 
         fig.add_trace(
             go.Scatter(
-                name=f'anchor point n',
+                name=f'anchor point neck',
                 x=anchor_dates, y=anchor_prices,
                 mode='markers', marker=dict(size=4, color='blue'),
-                visible=None if enable else 'legendonly',
+                visible='legendonly',
             )
         )
 
@@ -73,11 +73,16 @@ class NeckLine:
         self.neck_lines.sort(key=lambda x: x[1][0], reverse=True)
 
         for i, (dates, prices) in enumerate(self.neck_lines):
+            if self.stock_df.shape[0] < 300:
+                visible = None if enable else 'legendonly'
+            else:
+                visible = None if enable and len(dates) > 100 else 'legendonly'
+
             fig.add_trace(
                 go.Scatter(
-                    name=f'neck line-{i + 1}',
+                    name=f'neck line-{i + 1}-{len(dates)}',
                     x=dates, y=prices,
                     mode='lines', line=dict(width=0.9, color='black', dash='dash'),
-                    visible=None if enable else 'legendonly',
+                    visible=visible,
                 )
             )

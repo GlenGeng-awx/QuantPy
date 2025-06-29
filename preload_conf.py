@@ -45,7 +45,7 @@ def args_4y():
         'enable_elliott': True,     #
         'enable_tech': False,
         'enable_line': True,        #
-        'enable_neck_line': False,
+        'enable_neck_line': True,   #
     }
 
     args = default_args()
