@@ -62,7 +62,8 @@ class Line:
         self.primary_lines = []
         self.secondary_lines = []
 
-        self.anchor_dates_ps = []
+        self.anchor_dates_long = []
+        self.anchor_dates_short = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get(line_key, []):
@@ -73,10 +74,13 @@ class Line:
                 if date1 not in dates or date2 not in dates:
                     continue
 
-                self.primary_lines.append(
-                    calculate_primary_line(stock_df, calculate_k_fn, calculate_point_fn, *line))
+                primary_line = calculate_primary_line(stock_df, calculate_k_fn, calculate_point_fn, *line)
+                self.primary_lines.append(primary_line)
 
-                self.anchor_dates_ps.extend((line[0], line[1]))
+                if len(primary_line[0]) > 200:
+                    self.anchor_dates_long.extend((line[0], line[1]))
+                else:
+                    self.anchor_dates_short.extend((line[0], line[1]))
 
             if len(line) == 5:
                 date, _, _, date1, date2 = line
@@ -85,23 +89,42 @@ class Line:
                 if date not in dates or date1 not in dates or date2 not in dates:
                     continue
 
-                self.secondary_lines.append(
-                    calculate_secondary_line(stock_df, calculate_k_fn, calculate_point_fn, *line))
+                secondary_line = calculate_secondary_line(stock_df, calculate_k_fn, calculate_point_fn, *line)
+                self.secondary_lines.append(secondary_line)
 
-                self.anchor_dates_ps.append(line[0])
+                if len(secondary_line[0]) > 200:
+                    self.anchor_dates_long.append(line[0])
+                else:
+                    self.anchor_dates_short.append(line[0])
 
     def build_graph(self, fig: go.Figure, enable=False):
-        anchor_dates, anchor_prices = [], []
-        for date in self.anchor_dates_ps:
-            anchor_dates.append(get_date(date))
+        anchor_dates_long, anchor_prices_long = [], []
+        for date in self.anchor_dates_long:
+            anchor_dates_long.append(get_date(date))
 
             idx = get_idx_by_date(self.stock_df, get_date(date))
-            anchor_prices.append(self.stock_df.loc[idx][get_price_key(date)])
+            anchor_prices_long.append(self.stock_df.loc[idx][get_price_key(date)])
+
+        anchor_dates_short, anchor_prices_short = [], []
+        for date in self.anchor_dates_short:
+            anchor_dates_short.append(get_date(date))
+
+            idx = get_idx_by_date(self.stock_df, get_date(date))
+            anchor_prices_short.append(self.stock_df.loc[idx][get_price_key(date)])
 
         fig.add_trace(
             go.Scatter(
-                name=f'anchor point ps',
-                x=anchor_dates, y=anchor_prices,
+                name=f'anchor point long',
+                x=anchor_dates_long, y=anchor_prices_long,
+                mode='markers', marker=dict(size=4, color='black'),
+                visible=None if enable else 'legendonly',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name=f'anchor point short',
+                x=anchor_dates_short, y=anchor_prices_short,
                 mode='markers', marker=dict(size=4, color='black'),
                 visible=None if enable and self.stock_df.shape[0] < 300 else 'legendonly',
             )
