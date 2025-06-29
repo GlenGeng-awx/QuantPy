@@ -5,9 +5,6 @@ import plotly.graph_objects as go
 def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict,
          row=2, display_last_n_days=None) -> dict:
     for i, (key, dates) in enumerate(context.items()):
-        if display_last_n_days is not None:
-            dates = [date for date in dates if date >= stock_df['Date'].iloc[-display_last_n_days]]
-
         fig.add_trace(
             go.Scatter(
                 name=key,

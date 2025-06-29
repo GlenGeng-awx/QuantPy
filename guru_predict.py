@@ -8,7 +8,7 @@ spectrum = [
     (period_1y(), args_1y_guru()),
 ]
 
-candidates = []
+candidates = set()
 
 for stock_name in ALL:
     for (from_date, to_date, interval), args in spectrum:
@@ -19,6 +19,6 @@ for stock_name in ALL:
 
         if guru.predict.predict(stock_df, fig, stock_name, context):
             fig.show()
-            candidates.append(stock_name)
+            candidates.add(stock_name)
 
 print(f'Candidates: {candidates}')
