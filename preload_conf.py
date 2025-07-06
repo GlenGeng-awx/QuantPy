@@ -3,9 +3,9 @@ from dateutil.relativedelta import relativedelta
 
 
 def period_4y():
-    from_date = (datetime.now() - relativedelta(months=48)).strftime('%Y-%m-%d')
+    # from_date = (datetime.now() - relativedelta(months=48)).strftime('%Y-%m-%d')
     to_date = datetime.now().strftime('%Y-%m-%d')
-    return from_date, to_date, '1d'
+    return '2021-01-01', to_date, '1d'
 
 
 def period_1y():

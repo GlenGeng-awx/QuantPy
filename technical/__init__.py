@@ -11,10 +11,10 @@ def get_diff(stock_df: pd.DataFrame, date: str, yaxis_type: str) -> float:
     min_close = stock_df['close'].min()
 
     if yaxis_type == 'linear':
-        return (max_close - min_close) / 15
+        return (max_close - min_close) / 20
 
     if yaxis_type == 'log':
-        ratio = math.pow(max_close / min_close, 1 / 15) - 1
+        ratio = math.pow(max_close / min_close, 1 / 20) - 1
 
         idx = get_idx_by_date(stock_df, date)
         close = stock_df.loc[idx]['close']
