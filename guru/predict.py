@@ -6,7 +6,7 @@ from guru.train import interpolate_context, get_15d_10pst_up, get_15d_10pst_down
 
 
 def target_dates(stock_df: pd.DataFrame):
-    return {stock_df['Date'].iloc[i] for i in range(-4, 0)}
+    return {stock_df['Date'].iloc[i] for i in range(-1, 0)}
 
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: dict) -> bool:

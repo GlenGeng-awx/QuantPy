@@ -9,7 +9,9 @@ spectrum = [
     (period_1y(), args_1y()),
 ]
 
-candidates = [MA, VISA, ADBE, MCD, AMD, TCOM, BEKE]
+baseline = [QQQ, KWEB]
+call = [AMZN, MRK, TCOM, INTC, HPQ]
+put = [BABA, BA, RIVN]
 
 for stock_name in ALL:
     for (from_date, to_date, interval), args in spectrum:
