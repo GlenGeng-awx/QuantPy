@@ -20,6 +20,8 @@ from guru import (
     f8_hit_ma20,
     f8_hit_ma60,
     f8_hit_ma120,
+    g0_negative_iv,
+    g0_positive_iv,
 )
 
 factors = [
@@ -44,11 +46,15 @@ factors = [
     f8_hit_ma120,
 ]
 
+targets = [
+    g0_negative_iv,
+    g0_positive_iv,
+]
 
 def calculate(stock_df: pd.DataFrame) -> dict:
     context = {}
 
-    for factor in factors:
+    for factor in factors + targets:
         dates = factor.calculate_hits(stock_df)
         context[factor.KEY] = dates
 

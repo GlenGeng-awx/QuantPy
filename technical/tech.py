@@ -37,7 +37,7 @@ def calculate_tech(stock_df: pd.DataFrame, stock_name: str, yaxis_type: str) -> 
     x, y, text = [], [], []
 
     for date, tags in CORE_BANKING.get(stock_name, {}).get('tech', {}).items():
-        if date not in stock_df['Date'].apply(shrink_date_str).values:
+        if date not in stock_df['Date'].iloc[1:-1].apply(shrink_date_str).values:
             print(f'tech {stock_name} {date} is out of range')
             continue
 
