@@ -5,7 +5,7 @@ from util import get_idx_by_date
 from guru import factors, targets
 
 RATIO = 0.7
-HITS = 4
+HITS = 5
 
 
 def touch_file(filename: str):

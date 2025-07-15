@@ -11,8 +11,10 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
     negative_ivs = []
 
     for idx in stock_df.index[:-SZ]:
-        min_close = stock_df.loc[idx:idx + SZ]['close'].min()
-        negative_iv = (close[idx] - min_close) / close[idx]
+        if close[idx] <= close[idx + SZ]:
+            negative_ivs.append((None, idx))
+            continue
+        negative_iv = (close[idx] - close[idx + SZ]) / close[idx]
         negative_ivs.append((negative_iv, idx))
 
-    return _pick_rolling_n_pst_reversed(stock_df, negative_ivs, KEY, n=0.1, rolling_size=100)
+    return _pick_rolling_n_pst_reversed(stock_df, negative_ivs, KEY, n=0.15, rolling_size=100)
