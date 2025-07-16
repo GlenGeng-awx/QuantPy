@@ -4,8 +4,7 @@ from datetime import datetime
 from util import get_idx_by_date
 from guru import factors, targets
 
-RATIO = 0.7
-HITS = 5
+HITS = 4
 
 
 def touch_file(filename: str):
@@ -26,6 +25,23 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
     return interpolated_context
 
 
+def pick(total_num, up_hit, down_hit) -> bool:
+    if total_num < HITS:
+        return False
+    ratio = (up_hit + down_hit) / total_num
+
+    if total_num == 4 and ratio == 1:
+        return True
+    if total_num == 5 and ratio >= 0.8:
+        return True
+    if 6 <= total_num <= 10 and ratio >= 0.7:
+        return True
+    if total_num >= 11 and ratio >= 0.6:
+        return True
+
+    return False
+
+
 def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: list, dates: set):
     # print(f'Selecting with keys: {keys} and dates: {dates}')
     total_num, up_hit, down_hit = 0, 0, 0
@@ -42,7 +58,7 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
         elif date in context.get(negative_iv.KEY, set()):
             down_hit += 1
 
-    if total_num >= HITS and (up_hit + down_hit) / total_num >= RATIO:
+    if pick(total_num, up_hit, down_hit):
         with open(f'tmp/{stock_name}.txt', 'a') as fd:
             fd.write(f'{json.dumps(keys)}\ttotal {total_num}, up {up_hit}, down {down_hit}\n')
         print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')
