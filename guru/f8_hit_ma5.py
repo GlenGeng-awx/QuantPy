@@ -1,11 +1,11 @@
 import pandas as pd
-from statistical.ma import MA_20
+from statistical.ma import MA_5
 from guru.util import _calculate_hits
 
-KEY = 'hit ma20'
+KEY = 'hit ma5'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:
-    prices = stock_df[MA_20].dropna()
+    prices = stock_df[MA_5].dropna()
     dates = [stock_df.loc[idx]['Date'] for idx in prices.index]
-    return _calculate_hits(stock_df, (dates, prices), 0.01)
+    return _calculate_hits(stock_df, (dates, prices), 0.005)

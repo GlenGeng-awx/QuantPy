@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 MA_5 = 'ma_5'
+MA_10 = 'ma_10'
 MA_20 = 'ma_20'
 MA_60 = 'ma_60'
 MA_120 = 'ma_120'
@@ -26,6 +27,7 @@ class MA:
         self.stock_df = stock_df
 
         stock_df[MA_5] = calculate_ma(stock_df['close'], 5)
+        stock_df[MA_10] = calculate_ma(stock_df['close'], 10)
         stock_df[MA_20] = calculate_ma(stock_df['close'], 20)
         stock_df[MA_60] = calculate_ma(stock_df['close'], 60)
         stock_df[MA_120] = calculate_ma(stock_df['close'], 120)
@@ -47,6 +49,7 @@ class MA:
 
     def build_graph(self, fig: go.Figure, enable_ma20=False, enable_ma60=False, enable_ma120=False):
         self._build_graph(fig, MA_5, 'red')
+        self._build_graph(fig, MA_10, 'green')
         self._build_graph(fig, MA_20, 'orange', enable=enable_ma20)
         self._build_graph(fig, MA_60, 'black', enable=enable_ma60)
         self._build_graph(fig, MA_120, 'blue', enable=enable_ma120)

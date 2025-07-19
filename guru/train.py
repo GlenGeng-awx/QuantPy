@@ -4,7 +4,7 @@ from datetime import datetime
 from util import get_idx_by_date
 from guru import factors, targets
 
-HITS = 4
+HITS = 5
 
 
 def touch_file(filename: str):
@@ -18,7 +18,7 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
         filled = set()
         for date in dates:
             idx = get_idx_by_date(stock_df, date)
-            for i in range(idx, idx + 3):
+            for i in range(idx, idx + 2):
                 if i in stock_df.index:
                     filled.add(stock_df.loc[i]['Date'])
         interpolated_context[key] = filled
@@ -30,13 +30,9 @@ def pick(total_num, up_hit, down_hit) -> bool:
         return False
     ratio = (up_hit + down_hit) / total_num
 
-    if total_num == 4 and ratio == 1:
+    if total_num <= 2 * HITS and ratio >= 0.8:
         return True
-    if total_num == 5 and ratio >= 0.8:
-        return True
-    if 6 <= total_num <= 10 and ratio >= 0.7:
-        return True
-    if total_num >= 11 and ratio >= 0.6:
+    if total_num > 2 * HITS and ratio >= 0.7:
         return True
 
     return False
@@ -52,11 +48,10 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
             continue
         total_num += 1
 
-        negative_iv, positive_iv = targets
-        if date in context.get(positive_iv.KEY, set()):
-            up_hit += 1
-        elif date in context.get(negative_iv.KEY, set()):
+        if date in context.get(targets[0].KEY, set()) or date in context.get(targets[1].KEY, set()):
             down_hit += 1
+        elif date in context.get(targets[2].KEY, set()) or date in context.get(targets[3].KEY, set()):
+            up_hit += 1
 
     if pick(total_num, up_hit, down_hit):
         with open(f'tmp/{stock_name}.txt', 'a') as fd:
