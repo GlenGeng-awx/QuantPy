@@ -5,7 +5,7 @@ from preload_conf import *
 import guru
 
 spectrum = [
-    (period_4y(), args_4y_guru()),
+    (period_train('2025-07-04'), args_4y_guru()),
 ]
 
 
