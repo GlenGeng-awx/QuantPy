@@ -18,6 +18,7 @@ from guru import (
     f2_spike_10d,
     f2_spike_15d,
 
+    f3_box_3d,
     f3_box_5d,
     f3_box_10d,
     f3_box_15d,
@@ -69,6 +70,7 @@ factors = [
     f2_spike_10d,
     f2_spike_15d,
 
+    f3_box_3d,
     f3_box_5d,
     f3_box_10d,
     f3_box_15d,
