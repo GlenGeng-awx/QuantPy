@@ -40,6 +40,12 @@ from guru import (
     f6_fake_green_bar,
     f6_fake_red_bar,
 
+    f7_mon,
+    f7_tue,
+    f7_wed,
+    f7_thu,
+    f7_fri,
+
     f8_hit_ma5,
     f8_hit_ma10,
     f8_hit_ma20,
@@ -91,6 +97,12 @@ factors = [
     f6_down_gap,
     f6_fake_green_bar,
     f6_fake_red_bar,
+
+    f7_mon,
+    f7_tue,
+    f7_wed,
+    f7_thu,
+    f7_fri,
 
     f8_hit_ma5,
     f8_hit_ma10,

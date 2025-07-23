@@ -12,15 +12,25 @@ def touch_file(filename: str):
         pass
 
 
+def _get_sz(factor_key: str) -> int:
+    if factor_key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+                      'fake green bar', 'fake red bar']:
+        return 1
+    return 2
+
+
 def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
     interpolated_context = {}
     for key, dates in context.items():
+        sz = _get_sz(key)
         filled = set()
+
         for date in dates:
             idx = get_idx_by_date(stock_df, date)
-            for i in range(idx, idx + 2):
+            for i in range(idx, idx + sz):
                 if i in stock_df.index:
                     filled.add(stock_df.loc[i]['Date'])
+
         interpolated_context[key] = filled
     return interpolated_context
 
