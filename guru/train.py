@@ -35,7 +35,7 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
     return interpolated_context
 
 
-def pick(total_num, up_hit, down_hit) -> bool:
+def _pick(total_num, up_hit, down_hit) -> bool:
     if total_num < HITS:
         return False
     ratio = (up_hit + down_hit) / total_num
@@ -63,7 +63,7 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
         elif date in context.get(targets[2].KEY, set()) or date in context.get(targets[3].KEY, set()):
             up_hit += 1
 
-    if pick(total_num, up_hit, down_hit):
+    if _pick(total_num, up_hit, down_hit):
         with open(f'tmp/{stock_name}.txt', 'a') as fd:
             fd.write(f'{json.dumps(keys)}\ttotal {total_num}, up {up_hit}, down {down_hit}\n')
         print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')

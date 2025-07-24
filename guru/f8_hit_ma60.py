@@ -1,6 +1,6 @@
 import pandas as pd
 from statistical.ma import MA_60
-from guru.util import _calculate_hits
+from guru.f8_hit_ma import _calculate_hits
 
 KEY = 'hit ma60'
 
