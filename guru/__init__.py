@@ -1,10 +1,21 @@
 import pandas as pd
 
 from guru import (
-    f0_high_vol,
-    f0_low_vol,
-    f0_extreme_high_vol,
-    f0_extreme_low_vol,
+    e1_high_vol,
+    e1_low_vol,
+
+    e2_extreme_high_vol,
+    e2_extreme_low_vol,
+
+    e3_vol_incr_3d,
+    e3_vol_incr_5d,
+    e3_vol_decr_3d,
+    e3_vol_decr_5d,
+
+    e4_vol_box_3d,
+    e4_vol_box_5d,
+    e4_vol_box_10d,
+    e4_vol_box_15d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -33,8 +44,6 @@ from guru import (
     f5_short_red_bar,
     f5_short_green_bar,
 
-    f6_incr_3d,
-    f6_decr_3d,
     f6_up_gap,
     f6_down_gap,
     f6_fake_green_bar,
@@ -52,17 +61,34 @@ from guru import (
     f8_hit_ma60,
     f8_hit_ma120,
 
+    f9_incr_3d,
+    f9_incr_5d,
+    f9_decr_3d,
+    f9_decr_5d,
+
     g0_will_crash,
     g0_will_spike,
+
     g1_will_shoot_down,
     g1_will_shoot_up,
 )
 
 factors = [
-    f0_high_vol,
-    f0_low_vol,
-    f0_extreme_high_vol,
-    f0_extreme_low_vol,
+    e1_high_vol,
+    e1_low_vol,
+
+    e2_extreme_high_vol,
+    e2_extreme_low_vol,
+
+    e3_vol_incr_3d,
+    e3_vol_incr_5d,
+    e3_vol_decr_3d,
+    e3_vol_decr_5d,
+
+    e4_vol_box_3d,
+    e4_vol_box_5d,
+    e4_vol_box_10d,
+    e4_vol_box_15d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -91,8 +117,6 @@ factors = [
     f5_short_red_bar,
     f5_short_green_bar,
 
-    f6_incr_3d,
-    f6_decr_3d,
     f6_up_gap,
     f6_down_gap,
     f6_fake_green_bar,
@@ -109,6 +133,11 @@ factors = [
     f8_hit_ma20,
     f8_hit_ma60,
     f8_hit_ma120,
+
+    f9_incr_3d,
+    f9_incr_5d,
+    f9_decr_3d,
+    f9_decr_5d,
 ]
 
 targets = [
