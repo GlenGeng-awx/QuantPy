@@ -17,4 +17,4 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
         spike_pst = (close[idx + SZ] - close[idx]) / close[idx]
         spike_psts.append((spike_pst, idx))
 
-    return _pick_rolling_n_pst_reversed(stock_df, spike_psts, KEY, n=0.15, rolling_size=100)
+    return _pick_rolling_n_pst_reversed(stock_df, spike_psts, KEY)

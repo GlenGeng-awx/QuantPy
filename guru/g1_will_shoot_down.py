@@ -15,4 +15,4 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
         shoot_down_pst = (close[idx] - min_close) / close[idx]
         shoot_down_psts.append((shoot_down_pst, idx))
 
-    return _pick_rolling_n_pst_reversed(stock_df, shoot_down_psts, KEY, n=0.1, rolling_size=100)
+    return _pick_rolling_n_pst_reversed(stock_df, shoot_down_psts, KEY)
