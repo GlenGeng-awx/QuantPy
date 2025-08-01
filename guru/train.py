@@ -12,9 +12,11 @@ def touch_file(filename: str):
         pass
 
 
-def _get_sz(factor_key: str) -> int:
-    if factor_key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
-                      'fake green bar', 'fake red bar']:
+def _get_sz(key: str) -> int:
+    if key in [target.KEY for target in targets]:
+        return 1
+    if key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+               'fake green bar', 'fake red bar', 'high vol', 'low vol']:
         return 1
     return 2
 

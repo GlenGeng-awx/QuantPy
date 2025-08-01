@@ -1,5 +1,5 @@
 import pandas as pd
-from guru.f7_weekday import _calculate_hits
+from guru.h3_weekday import _calculate_hits
 
 KEY = 'friday'
 

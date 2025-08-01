@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 
 from guru import (
@@ -34,43 +35,53 @@ from guru import (
     f3_box_10d,
     f3_box_15d,
 
-    f4_long_up_shadow,
-    f4_long_down_shadow,
-    f4_long_red_bar,
-    f4_long_green_bar,
+    g1_hit_ma5,
+    g1_hit_ma10,
+    g1_hit_ma20,
+    g1_hit_ma60,
+    g1_hit_ma120,
 
-    f5_short_up_shaodow,
-    f5_short_down_shadow,
-    f5_short_red_bar,
-    f5_short_green_bar,
+    g2_up_thru_ma10,
+    g2_up_thru_ma20,
+    g2_up_thru_ma60,
+    g2_up_thru_ma120,
 
-    f6_up_gap,
-    f6_down_gap,
-    f6_fake_green_bar,
-    f6_fake_red_bar,
+    g3_down_thru_ma10,
+    g3_down_thru_ma20,
+    g3_down_thru_ma60,
+    g3_down_thru_ma120,
 
-    f7_mon,
-    f7_tue,
-    f7_wed,
-    f7_thu,
-    f7_fri,
+    h1_long_up_shadow,
+    h1_long_down_shadow,
+    h1_long_red_bar,
+    h1_long_green_bar,
 
-    f8_hit_ma5,
-    f8_hit_ma10,
-    f8_hit_ma20,
-    f8_hit_ma60,
-    f8_hit_ma120,
+    h2_short_up_shadow,
+    h2_short_down_shadow,
+    h2_short_red_bar,
+    h2_short_green_bar,
 
-    f9_incr_3d,
-    f9_incr_5d,
-    f9_decr_3d,
-    f9_decr_5d,
+    h3_mon,
+    h3_tue,
+    h3_wed,
+    h3_thu,
+    h3_fri,
 
-    g0_will_crash,
-    g0_will_spike,
+    h4_up_gap,
+    h4_down_gap,
+    h4_fake_green_bar,
+    h4_fake_red_bar,
 
-    g1_will_shoot_down,
-    g1_will_shoot_up,
+    h5_incr_3d,
+    h5_incr_5d,
+    h5_decr_3d,
+    h5_decr_5d,
+
+    n0_will_crash,
+    n0_will_spike,
+
+    n1_will_shoot_down,
+    n1_will_shoot_up,
 )
 
 factors = [
@@ -107,53 +118,66 @@ factors = [
     f3_box_10d,
     f3_box_15d,
 
-    f4_long_up_shadow,
-    f4_long_down_shadow,
-    f4_long_red_bar,
-    f4_long_green_bar,
+    g1_hit_ma5,
+    g1_hit_ma10,
+    g1_hit_ma20,
+    g1_hit_ma60,
+    g1_hit_ma120,
 
-    f5_short_up_shaodow,
-    f5_short_down_shadow,
-    f5_short_red_bar,
-    f5_short_green_bar,
+    g2_up_thru_ma10,
+    g2_up_thru_ma20,
+    g2_up_thru_ma60,
+    g2_up_thru_ma120,
 
-    f6_up_gap,
-    f6_down_gap,
-    f6_fake_green_bar,
-    f6_fake_red_bar,
+    g3_down_thru_ma10,
+    g3_down_thru_ma20,
+    g3_down_thru_ma60,
+    g3_down_thru_ma120,
 
-    f7_mon,
-    f7_tue,
-    f7_wed,
-    f7_thu,
-    f7_fri,
+    h1_long_up_shadow,
+    h1_long_down_shadow,
+    h1_long_red_bar,
+    h1_long_green_bar,
 
-    f8_hit_ma5,
-    f8_hit_ma10,
-    f8_hit_ma20,
-    f8_hit_ma60,
-    f8_hit_ma120,
+    h2_short_up_shadow,
+    h2_short_down_shadow,
+    h2_short_red_bar,
+    h2_short_green_bar,
 
-    f9_incr_3d,
-    f9_incr_5d,
-    f9_decr_3d,
-    f9_decr_5d,
+    h3_mon,
+    h3_tue,
+    h3_wed,
+    h3_thu,
+    h3_fri,
+
+    h4_up_gap,
+    h4_down_gap,
+    h4_fake_green_bar,
+    h4_fake_red_bar,
+
+    h5_incr_3d,
+    h5_incr_5d,
+    h5_decr_3d,
+    h5_decr_5d,
 ]
 
 targets = [
-    g0_will_crash,
-    g1_will_shoot_down,
+    n0_will_crash,
+    n1_will_shoot_down,
 
-    g0_will_spike,
-    g1_will_shoot_up,
+    n0_will_spike,
+    n1_will_shoot_up,
 ]
+
 
 def calculate(stock_df: pd.DataFrame) -> dict:
     context = {}
 
+    start_time = datetime.now()
     for factor in factors + targets:
         dates = factor.calculate_hits(stock_df)
         context[factor.KEY] = dates
+    print(f'calculate context cost: {(datetime.now() - start_time).total_seconds()}s')
 
     return context
 
