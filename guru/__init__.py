@@ -13,10 +13,10 @@ from guru import (
     e3_vol_decr_3d,
     e3_vol_decr_5d,
 
-    e4_vol_box_3d,
     e4_vol_box_5d,
     e4_vol_box_10d,
     e4_vol_box_15d,
+    e4_vol_box_20d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -30,10 +30,10 @@ from guru import (
     f2_spike_10d,
     f2_spike_15d,
 
-    f3_box_3d,
     f3_box_5d,
     f3_box_10d,
     f3_box_15d,
+    f3_box_20d,
 
     g1_hit_ma5,
     g1_hit_ma10,
@@ -55,11 +55,15 @@ from guru import (
     h1_long_down_shadow,
     h1_long_red_bar,
     h1_long_green_bar,
+    h1_long_red_range,
+    h1_long_green_range,
 
     h2_short_up_shadow,
     h2_short_down_shadow,
     h2_short_red_bar,
     h2_short_green_bar,
+    h2_short_red_range,
+    h2_short_green_range,
 
     h3_mon,
     h3_tue,
@@ -99,10 +103,10 @@ factors = [
     e3_vol_decr_3d,
     e3_vol_decr_5d,
 
-    e4_vol_box_3d,
     e4_vol_box_5d,
     e4_vol_box_10d,
     e4_vol_box_15d,
+    e4_vol_box_20d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -116,10 +120,10 @@ factors = [
     f2_spike_10d,
     f2_spike_15d,
 
-    f3_box_3d,
     f3_box_5d,
     f3_box_10d,
     f3_box_15d,
+    f3_box_20d,
 
     g1_hit_ma5,
     g1_hit_ma10,
@@ -141,11 +145,15 @@ factors = [
     h1_long_down_shadow,
     h1_long_red_bar,
     h1_long_green_bar,
+    h1_long_red_range,
+    h1_long_green_range,
 
     h2_short_up_shadow,
     h2_short_down_shadow,
     h2_short_red_bar,
     h2_short_green_bar,
+    h2_short_red_range,
+    h2_short_green_range,
 
     h3_mon,
     h3_tue,
