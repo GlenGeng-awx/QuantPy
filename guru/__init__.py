@@ -68,14 +68,17 @@ from guru import (
     h3_fri,
 
     h4_up_gap,
+    h4_up_gap_huge,
     h4_down_gap,
-    h4_fake_green_bar,
-    h4_fake_red_bar,
+    h4_down_gap_huge,
 
     h5_incr_3d,
     h5_incr_5d,
     h5_decr_3d,
     h5_decr_5d,
+
+    h6_fake_green_bar,
+    h6_fake_red_bar,
 
     n0_will_crash,
     n0_will_spike,
@@ -151,14 +154,17 @@ factors = [
     h3_fri,
 
     h4_up_gap,
+    h4_up_gap_huge,
     h4_down_gap,
-    h4_fake_green_bar,
-    h4_fake_red_bar,
+    h4_down_gap_huge,
 
     h5_incr_3d,
     h5_incr_5d,
     h5_decr_3d,
     h5_decr_5d,
+
+    h6_fake_green_bar,
+    h6_fake_red_bar,
 ]
 
 targets = [
