@@ -7,7 +7,7 @@ SS_000001 = "000001.SS"
 
 # SEVEN GIANTS
 AAPL = "AAPL"
-MSFT = "MSFT"           # Microsoft
+MSFT = "MSFT"
 NVDA = "NVDA"
 GOOG = "GOOG"
 AMZN = "AMZN"
@@ -25,17 +25,17 @@ UBER = "UBER"
 OKTA = "OKTA"
 CFLT = "CFLT"
 ETSY = "ETSY"
-SHOP = "SHOP"
+SHOP = "SHOP"           # Shopify
 GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
-XYZ = "XYZ"
-COIN = "COIN"
+XYZ = "XYZ"             # Block
+COIN = "COIN"           # Coinbase
 LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
-SEA = "SE"
-CPNG = "CPNG"
+SEA = "SE"              # Shopee
+CPNG = "CPNG"           # Coupang
 ORCL = "ORCL"           # Oracle
 ADBE = "ADBE"
-BA = "BA"
+BA = "BA"               # Boeing
 HPQ = "HPQ"             # HP Inc
 DELL = "DELL"           # Dell Technologies
 ERIC = "ERIC"
@@ -68,7 +68,7 @@ MCD = "MCD"             # McDonald's
 DIS = "DIS"             # Disney
 
 # SEMI CONDUCTOR
-TSM = "TSM"             # Taiwan Semiconductor Manufacturing Company
+TSM = "TSM"             # TSMC
 AVGO = "AVGO"           # Broadcom Inc
 ASML = "ASML"
 AMD = "AMD"
@@ -81,9 +81,9 @@ NVO = "NVO"             # Novo Nordisk
 JNJ = "JNJ"             # Johnson & Johnson
 MRK = "MRK"             # Merck & Co.
 PFE = "PFE"             # Pfizer
-GILD = "GILD"
-MRNA = "MRNA"
-BNTX = "BNTX"
+GILD = "GILD"           # Gilead Sciences
+MRNA = "MRNA"           # Moderna
+BNTX = "BNTX"           # BioNTech SE
 
 # AUTOMOTIVE
 RIVN = "RIVN"
@@ -117,10 +117,13 @@ V_INDEX = [
     SS_000001,
 ]
 
-V_3000B = [
-    MSFT,
-    AAPL,
+V_4000B = [
     NVDA,
+    MSFT,
+]
+
+V_3000B = [
+    AAPL,
 ]
 
 V_2000B = [
@@ -139,39 +142,37 @@ V_500B = [
     LLY,
     WMT,
     JPM,
-    MA,
     VISA,
+    MA,
     HK_0700,
+    ORCL,
 ]
 
 V_300B = [
     NFLX,
     ASML,
-    ORCL,
-    NVO,
-    JNJ,
     XOM,
+    CVX,
+    JNJ,
     PG,
     KO,
     BAC,
-    BABA,
+    PLTR,
 ]
 
 V_200B = [
+    BABA,
+    AMD,
     GS,
     MS,
-    MRK,
-    ADBE,
-    CVX,
-    PLTR,
     MCD,
     DIS,
-    LVMUY,
+    NVO,
+    MRK,
 ]
 
 V_100B = [
-    AMD,
-    INTC,
+    ADBE,
     QCOM,
     PFE,
     GILD,
@@ -183,29 +184,29 @@ V_100B = [
 ]
 
 V_50B = [
+    INTC,
+    HOOD,
     PYPL,
     COIN,
     SNOW,
-    JD,
     NU,
     SEA,
+    CPNG,
+    DELL,
 ]
 
 V_30B = [
     EBAY,
-    CPNG,
     TTD,
-    TCOM,
     XYZ,
-    DELL,
-    HPQ,
-    HOOD,
+    TCOM,
+    JD,
+    TME,
+    BIDU,
 ]
 
 V_10B = [
-    RIVN,
-    LI,
-    XPEV,
+    HPQ,
     MRNA,
     BNTX,
     ZM,
@@ -215,27 +216,24 @@ V_10B = [
     OKTA,
     PINS,
     AFRM,
-    BIDU,
-    TME,
     FUTU,
+    RIVN,
+    LI,
+    XPEV,
+    NIO,
 ]
 
 V_SMALL = [
+    BILI,
     CFLT,
     ETSY,
     GTLB,
-    NIO,
     MNSO,
     EDU,
-    BILI,
 ]
 
 ALL = V_INDEX \
-      + V_3000B + V_2000B + V_1000B \
+      + V_4000B + V_3000B + V_2000B + V_1000B \
       + V_500B + V_300B + V_200B + V_100B \
       + V_50B + V_30B + V_10B \
       + V_SMALL
-
-BIG_BOY = [QQQ, KWEB] + V_3000B + V_2000B + V_1000B + V_500B
-MID_BOY = V_300B + V_200B
-TINY_BOY = V_100B + V_50B + V_30B + V_10B

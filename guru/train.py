@@ -56,7 +56,7 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
 
     for date in dates:
         idx = get_idx_by_date(stock_df, date)
-        if idx + 15 not in stock_df.index:
+        if not (idx in stock_df.index[200:-15]):
             continue
         total_num += 1
 

@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 
 def period_train(to_date: str):
-    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=50)).strftime('%Y-%m-%d')
+    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=54)).strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
 
 
