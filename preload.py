@@ -3,10 +3,10 @@ from preload_conf import *
 from x_portfolio import *
 
 spectrum = [
-    # (period_4y(), args_4y_guru()),
-    # (period_1y(), args_1y_guru()),
     (period_4y(), args_4y()),
-    (period_1y(), args_1y()),
+    # (period_1y(), args_1y()),
+    # (period_4y(), args_4y_guru()),
+    (period_1y(), args_1y_guru()),
 ]
 
 for stock_name in ALL:

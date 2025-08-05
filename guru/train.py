@@ -4,7 +4,7 @@ from datetime import datetime
 from util import get_idx_by_date
 from guru import factors, targets
 
-HITS = 5
+MIN_HITS = 7
 
 
 def touch_file(filename: str):
@@ -15,10 +15,9 @@ def touch_file(filename: str):
 def _get_sz(key: str) -> int:
     if key in [target.KEY for target in targets]:
         return 1
-    if key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
-               'fake green bar', 'fake red bar', 'high vol', 'low vol']:
+    if key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
         return 1
-    return 2
+    return 3
 
 
 def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
@@ -38,15 +37,10 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
 
 
 def _pick(total_num, up_hit, down_hit) -> bool:
-    if total_num < HITS:
-        return False
-    ratio = (up_hit + down_hit) / total_num
-
-    if total_num <= 2 * HITS and ratio >= 0.8:
+    if total_num in [7, 8, 9] and (up_hit + down_hit) / total_num == 1:
         return True
-    if total_num > 2 * HITS and ratio >= 0.7:
+    if total_num >= 10 and (up_hit + down_hit) / total_num >= 0.8:
         return True
-
     return False
 
 
@@ -71,9 +65,13 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
         print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')
 
 
-def select(stock_df: pd.DataFrame, stock_name: str, context: dict, i: int, keys: list, curr_dates: set):
+def select(stock_df: pd.DataFrame, stock_name: str, context: dict, i: int, keys: list, curr_dates: set,
+           target_dates: set):
     # fail fast
-    if len(curr_dates) < HITS:
+    if len(curr_dates) < MIN_HITS:
+        return
+
+    if len(curr_dates.intersection(target_dates)) < MIN_HITS:
         return
 
     # we are done
@@ -84,7 +82,7 @@ def select(stock_df: pd.DataFrame, stock_name: str, context: dict, i: int, keys:
     keys = keys.copy()
 
     # not pick i
-    select(stock_df, stock_name, context, i + 1, keys, curr_dates)
+    select(stock_df, stock_name, context, i + 1, keys, curr_dates, target_dates)
 
     # pick i
     key = factors[i].KEY
@@ -92,13 +90,21 @@ def select(stock_df: pd.DataFrame, stock_name: str, context: dict, i: int, keys:
     keys.append(key)
     curr_dates = context.get(key, set()).intersection(curr_dates)
 
-    select(stock_df, stock_name, context, i + 1, keys, curr_dates)
+    select(stock_df, stock_name, context, i + 1, keys, curr_dates, target_dates)
+
+
+def get_target_dates(context: dict) -> set:
+    dates = set()
+    for target in targets:
+        dates |= set(context.get(target.KEY, []))
+    return dates
 
 
 def train(stock_df: pd.DataFrame, stock_name: str, context: dict) -> None:
     touch_file(f'tmp/{stock_name}.txt')
+    target_dates = get_target_dates(context)
     context = interpolate_context(stock_df, context)
 
     start_time = datetime.now()
-    select(stock_df, stock_name, context, 0, [], set(stock_df['Date'].to_list()))
+    select(stock_df, stock_name, context, 0, [], set(stock_df['Date'].to_list()), target_dates)
     print(f'Training completed for {stock_name} in {(datetime.now() - start_time).total_seconds()} seconds')
