@@ -156,6 +156,10 @@ P_2025_0822 = {
         (LLong, Call, '2025-08-22', 19.0, 1, 1.15, None),
         (LLong, Put, '2025-08-22', 19.0, 1, 1.02, None),
     ],
+    MS: [
+        (LLong, Call, '2025-08-22', 142, 1, 2.64, None),
+        (LLong, Put, '2025-08-22', 137, 1, 1.34, None),
+    ],
 }
 
 ACTIVE_POSITIONS = [
@@ -164,11 +168,11 @@ ACTIVE_POSITIONS = [
 
 
 def get_portfolio() -> list:
-    portfolio = set()
+    portfolio = []
     for active_position in ACTIVE_POSITIONS:
         for stock_name in active_position:
             records = active_position[stock_name]
             for record in records:
-                if record[6] is None:
-                    portfolio.add(stock_name)
-    return list(portfolio)
+                if record[6] is None and stock_name not in portfolio:
+                    portfolio.append(stock_name)
+    return portfolio
