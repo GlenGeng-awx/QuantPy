@@ -31,7 +31,8 @@ class BaseEngine:
         # load data
         stock_data = load_data(self.stock_name, self.interval)
 
-        condition = (stock_data['Date'] >= from_date) & (stock_data['Date'] <= to_date)
+        dates = stock_data['Date'].apply(shrink_date_str)
+        condition = (dates >= from_date) & (dates <= to_date)
         self.stock_df = stock_data.copy()[condition]
 
         # calculate

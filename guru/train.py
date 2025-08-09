@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 from datetime import datetime
-from util import get_idx_by_date
+from util import get_idx_by_date, shrink_date_str
 from guru import factors, targets
 
 MIN_HITS = 7
@@ -10,6 +10,11 @@ MIN_HITS = 7
 def touch_file(filename: str):
     with open(filename, 'w'):
         pass
+
+
+def get_file_name(stock_name: str, stock_df: pd.DataFrame) -> str:
+    version = shrink_date_str(stock_df['Date'].iloc[-1])
+    return f'repo/{stock_name}.{version}.txt'
 
 
 def _get_sz(key: str) -> int:
@@ -60,7 +65,8 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
             up_hit += 1
 
     if _pick(total_num, up_hit, down_hit):
-        with open(f'tmp/{stock_name}.txt', 'a') as fd:
+        file_name = get_file_name(stock_name, stock_df)
+        with open(file_name, 'a') as fd:
             fd.write(f'{json.dumps(keys)}\ttotal {total_num}, up {up_hit}, down {down_hit}\n')
         print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')
 
@@ -101,7 +107,9 @@ def get_target_dates(context: dict) -> set:
 
 
 def train(stock_df: pd.DataFrame, stock_name: str, context: dict) -> None:
-    touch_file(f'tmp/{stock_name}.txt')
+    file_name = get_file_name(stock_name, stock_df)
+    touch_file(file_name)
+
     target_dates = get_target_dates(context)
     context = interpolate_context(stock_df, context)
 
