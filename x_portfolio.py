@@ -29,9 +29,7 @@ P_2025_0801 = {  # profit, 41
         (LLong, Put, '2025-08-01', 210, 1, 3.10, 6.25),
     ],
     COIN: [
-        #
-        # My mistake, became 15 at midnight.
-        #
+        # should wait, became 15 at midnight, 9.5 finally.
         # success, 230
         (LLong, Put, '2025-08-01', 325, 1, 0.50, 2.80),
     ],
@@ -85,10 +83,8 @@ P_2025_0808 = {  # loss, -520
         (LLong, Put, '2025-08-08', 48, 1, 0.64, 1.64),
     ],
     AAPL: [
-        #
-        # My mistake, became 10 at midnight, become 15 next day.
-        #
         # success, 251
+        # should wait, became 10 at midnight, 15 next day, and 24 finally.
         (LLong, Call, '2025-08-08', 205, 1, 2.50, 5.01),
     ],
 }
@@ -131,6 +127,7 @@ P_2025_0815 = {  # profit, 170
     ],
     TME: [
         # fail, -65
+        # should wait, become 3.9 in next few days.
         (LLong, Call, '2025-08-15', 22, 1, 0.77, 1.15),
         (LLong, Put, '2025-08-15', 22, 1, 1.03, 0.00),
     ],
@@ -138,19 +135,22 @@ P_2025_0815 = {  # profit, 170
 
 P_2025_0822 = {
     KWEB: [
+        # should wait, became 2.45 in next few days
         (LLong, Call, '2025-08-22', 35.5, 1, 1.05, 0.95),
         (LLong, Put, '2025-08-22', 35.5, 1, 0.97, None),
     ],
     QCOM: [
+        # should wait, became 8.75 in next few days
         (LLong, Call, '2025-08-22', 150, 1, 3.70, 2.00),
         (LLong, Put, '2025-08-22', 145, 1, 2.74, None),
     ],
     BAC: [
+        # should wait, became 2.30 in next few days
         (LLong, Call, '2025-08-22', 45.5, 1, 1.29, 1.30),
         (LLong, Put, '2025-08-22', 45.5, 1, 0.81, None),
     ],
     PINS: [
-        (LLong, Call, '2025-08-22', 40.5, 1, 1.70, None),
+        (LLong, Call, '2025-08-22', 40.5, 1, 1.70, 0.00),
         (LLong, Put, '2025-08-22', 36.5, 1, 1.56, 2.10),
     ],
     XPEV: [
@@ -171,6 +171,18 @@ P_2025_0829 = {
     ],
     UBER: [
         (LLong, Call, '2025-08-29', 92, 1, 2.49, None),
+    ],
+    XYZ: [
+        (LLong, Call, '2025-08-29', 79, 1, 1.25, None),
+    ],
+    NVO: [
+        (LLong, Put, '2025-08-29', 50, 1, 1.40, None),
+    ],
+    DIS: [
+        (LLong, Put, '2025-08-29', 116, 1, 2.00, None),
+    ],
+    TSLA: [
+        (LLong, Call, '2025-08-29', 365, 1, 2.45, None),
     ],
 }
 

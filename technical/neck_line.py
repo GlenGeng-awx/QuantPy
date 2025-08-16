@@ -76,7 +76,7 @@ class NeckLine:
             if self.stock_df.shape[0] < 300:
                 visible = None if enable else 'legendonly'
             else:
-                visible = None if enable and len(dates) > 100 else 'legendonly'
+                visible = None if enable and len(dates) > 50 else 'legendonly'
 
             fig.add_trace(
                 go.Scatter(
