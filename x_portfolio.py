@@ -193,6 +193,12 @@ P_2025_0905 = {
     ORCL: [
         (LLong, Call, '2025-09-05', 257.5, 1, 2.20, None),
     ],
+    TSM: [
+        (LLong, Call, '2025-09-05', 240, 1, 2.20, None),
+    ],
+    PLTR: [
+        (LLong, Call, '2025-09-05', 165, 1, 2.10, None),
+    ],
 }
 
 ACTIVE_POSITIONS = [
@@ -201,7 +207,7 @@ ACTIVE_POSITIONS = [
 
 
 def get_portfolio() -> list:
-    portfolio = []
+    portfolio = [QQQ]
     for active_position in ACTIVE_POSITIONS:
         for stock_name in active_position:
             records = active_position[stock_name]
