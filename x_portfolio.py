@@ -8,7 +8,8 @@ Put = 'put'
 LLong = 'long'
 Short = 'short'
 
-P_2025_0801 = {  # profit, 41
+# profit, 41
+P_2025_0801 = {
     NVO: [
         # fail, -178
         (LLong, Call, '2025-08-01', 71, 2, 1.71, 0.00),
@@ -39,7 +40,8 @@ P_2025_0801 = {  # profit, 41
     ],
 }
 
-P_2025_0808 = {  # loss, -520
+# loss, -520
+P_2025_0808 = {
     PYPL: [
         # fail, -199
         (LLong, Call, '2025-08-08', 76, 1, 2.65, 0.00),
@@ -89,7 +91,8 @@ P_2025_0808 = {  # loss, -520
     ],
 }
 
-P_2025_0815 = {  # profit, 170
+# profit, 170
+P_2025_0815 = {
     HOOD: [
         # success, 70
         (LLong, Call, '2025-08-15', 110, 1, 4.08, 5.40),
@@ -133,47 +136,56 @@ P_2025_0815 = {  # profit, 170
     ],
 }
 
+# loss, -406
 P_2025_0822 = {
     KWEB: [
-        # should wait, became 2.45 in next few days
+        # fail, -107
+        # should wait, became 2.95 finally
         (LLong, Call, '2025-08-22', 35.5, 1, 1.05, 0.95),
-        (LLong, Put, '2025-08-22', 35.5, 1, 0.97, None),
+        (LLong, Put, '2025-08-22', 35.5, 1, 0.97, 0.0),
     ],
     QCOM: [
-        # should wait, became 8.75 in next few days
+        # fail, -444
+        # should wait, became 9.5 finally
         (LLong, Call, '2025-08-22', 150, 1, 3.70, 2.00),
-        (LLong, Put, '2025-08-22', 145, 1, 2.74, None),
+        (LLong, Put, '2025-08-22', 145, 1, 2.74, 0.0),
     ],
     BAC: [
-        # should wait, became 2.30 in next few days
+        # fail, -80
+        # should wait, became 4.05 finally
         (LLong, Call, '2025-08-22', 45.5, 1, 1.29, 1.30),
-        (LLong, Put, '2025-08-22', 45.5, 1, 0.81, None),
+        (LLong, Put, '2025-08-22', 45.5, 1, 0.81, 0.0),
     ],
     PINS: [
+        # fail, -116
         (LLong, Call, '2025-08-22', 40.5, 1, 1.70, 0.00),
         (LLong, Put, '2025-08-22', 36.5, 1, 1.56, 2.10),
     ],
     XPEV: [
         # success, 89
+        # should wait, became 5.05 finally
         (LLong, Call, '2025-08-22', 19.0, 1, 1.15, 2.55),
         (LLong, Put, '2025-08-22', 19.0, 1, 1.02, 0.51),
     ],
     MS: [
-        # success,
+        # success, 252
         (LLong, Call, '2025-08-22', 142, 1, 2.64, 6.50),
-        (LLong, Put, '2025-08-22', 137, 1, 1.34, None),
+        (LLong, Put, '2025-08-22', 137, 1, 1.34, 0.0),
     ],
 }
 
 P_2025_0829 = {
-    BA: [
-        (LLong, Put, '2025-08-29', 220, 1, 2.38, None),
-    ],
     UBER: [
         (LLong, Call, '2025-08-29', 92, 1, 2.49, None),
     ],
     XYZ: [
         (LLong, Call, '2025-08-29', 79, 1, 1.25, None),
+    ],
+    TSLA: [
+        (LLong, Call, '2025-08-29', 365, 1, 2.45, None),
+    ],
+    BA: [
+        (LLong, Put, '2025-08-29', 220, 1, 2.38, None),
     ],
     NVO: [
         (LLong, Put, '2025-08-29', 50, 1, 1.40, None),
@@ -181,15 +193,9 @@ P_2025_0829 = {
     DIS: [
         (LLong, Put, '2025-08-29', 116, 1, 2.00, None),
     ],
-    TSLA: [
-        (LLong, Call, '2025-08-29', 365, 1, 2.45, None),
-    ],
 }
 
 P_2025_0905 = {
-    EBAY: [
-        (LLong, Put, '2025-09-05', 98, 2, 1.50, None),
-    ],
     ORCL: [
         (LLong, Call, '2025-09-05', 257.5, 1, 2.20, None),
     ],
@@ -199,10 +205,18 @@ P_2025_0905 = {
     PLTR: [
         (LLong, Call, '2025-09-05', 165, 1, 2.10, None),
     ],
+    EBAY: [
+        (LLong, Put, '2025-09-05', 98, 2, 1.50, None),
+    ],
+}
+
+P_2025_0912 = {
+
 }
 
 ACTIVE_POSITIONS = [
-    P_2025_0822, P_2025_0829, P_2025_0905,
+    P_2025_0829,
+    P_2025_0905, P_2025_0912,
 ]
 
 

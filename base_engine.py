@@ -8,7 +8,7 @@ from technical.line_linear import LineLinear
 from technical.line_expo import LineExpo
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
-from technical.tech import Tech
+from technical.fs import FS
 
 from statistical.ema import EMA
 from statistical.ma import MA
@@ -49,7 +49,7 @@ class BaseEngine:
         self.neck_line = NeckLine(self.stock_df, self.stock_name)
 
         self.elliott = Elliott(self.stock_df, self.stock_name, self.yaxis_type)
-        self.tech = Tech(self.stock_df, self.stock_name, self.yaxis_type)
+        self.fs = FS(self.stock_df, self.stock_name, self.yaxis_type)
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
@@ -133,7 +133,7 @@ class BaseEngine:
                     enable_line=False,
                     enable_neck_line=False,
                     enable_elliott=True,
-                    enable_tech=True,
+                    enable_fs=True,
                     # other
                     enable_volume=(True, 2),
                     enable_guru=(False, 2, None),
@@ -144,7 +144,7 @@ class BaseEngine:
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 
         self.elliott.build_graph(self.fig, enable_elliott)
-        self.tech.build_graph(self.fig, enable_tech)
+        self.fs.build_graph(self.fig, enable_fs)
 
         self.volume.build_graph(self.fig, enable_volume)
 
