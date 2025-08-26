@@ -4,7 +4,7 @@ from datetime import datetime
 from util import get_idx_by_date, shrink_date_str
 from guru import factors, targets
 
-MIN_HITS = 7
+MIN_HITS = 6
 
 
 def touch_file(filename: str):
@@ -14,7 +14,7 @@ def touch_file(filename: str):
 
 def get_file_name(stock_name: str, stock_df: pd.DataFrame) -> str:
     version = shrink_date_str(stock_df['Date'].iloc[-1])
-    return f'repo/{stock_name}.{version}.txt'
+    return f'_train/{stock_name}.{version}.txt'
 
 
 def _get_sz(key: str) -> int:
@@ -42,9 +42,7 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
 
 
 def _pick(total_num, up_hit, down_hit) -> bool:
-    if total_num in [7, 8, 9] and (up_hit + down_hit) / total_num == 1:
-        return True
-    if total_num >= 10 and (up_hit + down_hit) / total_num >= 0.8:
+    if (up_hit + down_hit) / total_num >= 0.8:
         return True
     return False
 
@@ -74,9 +72,6 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, keys: li
 def select(stock_df: pd.DataFrame, stock_name: str, context: dict, i: int, keys: list, curr_dates: set,
            target_dates: set):
     # fail fast
-    if len(curr_dates) < MIN_HITS:
-        return
-
     if len(curr_dates.intersection(target_dates)) < MIN_HITS:
         return
 

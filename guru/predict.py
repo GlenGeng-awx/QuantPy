@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import json
 from util import get_idx_by_date
-from guru.train import interpolate_context
+from guru.train import interpolate_context, get_file_name
 
 
 def target_dates(stock_df: pd.DataFrame):
@@ -11,9 +11,10 @@ def target_dates(stock_df: pd.DataFrame):
 
 def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: dict) -> bool:
     context = interpolate_context(stock_df, context)
+    filename = get_file_name(stock_name, stock_df)
 
     hit = False
-    with open(f'tmp/{stock_name}.txt', 'r') as fd:
+    with open(filename, 'r') as fd:
         for line in fd:
             keys, tag = line.strip().split('\t')
             keys = json.loads(keys)

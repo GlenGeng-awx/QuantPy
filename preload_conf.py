@@ -7,10 +7,18 @@ def period_train(to_date: str):
     return from_date, to_date, '1d'
 
 
+def period_4y_to(to_date: str):
+    return '2021-01-01', to_date, '1d'
+
+
 def period_4y():
-    # from_date = (datetime.now() - relativedelta(months=48)).strftime('%Y-%m-%d')
     to_date = datetime.now().strftime('%Y-%m-%d')
     return '2021-01-01', to_date, '1d'
+
+
+def period_1y_to(to_date: str):
+    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=12)).strftime('%Y-%m-%d')
+    return from_date, to_date, '1d'
 
 
 def period_1y():
