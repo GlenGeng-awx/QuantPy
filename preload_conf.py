@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
+# last 4 and a half year for training
 def period_train(to_date: str):
     from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=54)).strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
@@ -52,6 +53,16 @@ def default_args():
     return args
 
 
+def guru_args():
+    args = {
+        'enable_guru': (True, 2, 14),  # (True, 2, None)
+        'enable_volume': (True, 3),
+        'rows': 3
+    }
+
+    return args
+
+
 def args_4y():
     customized = {
         'enable_sr': False,
@@ -67,14 +78,8 @@ def args_4y():
 
 
 def args_4y_guru():
-    customized = {
-        'enable_guru': (True, 2, 14),  # (True, 2, None)
-        'enable_volume': (True, 3),
-        'rows': 3
-    }
-
     args = args_4y()
-    args.update(customized)
+    args.update(guru_args())
     return args
 
 
@@ -93,12 +98,6 @@ def args_1y():
 
 
 def args_1y_guru():
-    customized = {
-        'enable_guru': (True, 2, 14),  # (True, 2, None)
-        'enable_volume': (True, 3),
-        'rows': 3
-    }
-
     args = args_1y()
-    args.update(customized)
+    args.update(guru_args())
     return args

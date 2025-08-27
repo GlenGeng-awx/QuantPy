@@ -3,20 +3,12 @@ from multiprocessing import Pool
 from base_engine import BaseEngine
 from conf import *
 from preload_conf import *
+from guru_train import valid_dates
 import guru
 
 spectrum = [
     (period_1y_to(to_date), args_1y_guru())
-    for to_date in [
-        '2025-07-14', '2025-07-15', '2025-07-16', '2025-07-17', '2025-07-18',
-        '2025-07-21', '2025-07-22', '2025-07-23', '2025-07-24', '2025-07-25',
-        '2025-07-28', '2025-07-29', '2025-07-30', '2025-07-31', '2025-08-01',
-
-        '2025-08-04', '2025-08-05', '2025-08-06', '2025-08-07', '2025-08-08',
-        '2025-08-11', '2025-08-12', '2025-08-13', '2025-08-14', '2025-08-15',
-        '2025-08-18', '2025-08-19', '2025-08-20', '2025-08-21', '2025-08-22',
-        '2025-08-25',
-    ]
+    for to_date in valid_dates
 ]
 
 spectrum_ = [
