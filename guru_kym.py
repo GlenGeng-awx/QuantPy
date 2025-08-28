@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import plotly.graph_objects as go
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
@@ -7,10 +8,63 @@ from util import shrink_date_str, get_idx_by_date
 from guru_train import valid_dates
 from x_financial_statements import Financial_Statements
 
+
+def is_x(cell_):
+    return 'X' in cell_
+
+
+def is_just_x(cell_):
+    return 'X______' in cell_
+
+
+def recall(cell_):
+    return is_x(cell_)
+
+
+def negative(cell_):
+    return is_just_x(cell_)
+
+
+def positive(cell_):
+    return is_x(cell_) and not is_just_x(cell_)
+
+
+def show(stock_name_, hit_dates_: list):
+    if not hit_dates_:
+        return
+
+    spectrum = [
+        (period_4y(), args_4y()),
+        (period_1y(), args_1y_guru()),
+    ]
+
+    for (from_date_, to_date_, interval_), args_ in spectrum:
+        base_engine_ = BaseEngine(stock_name_, from_date_, to_date_, interval_)
+        base_engine_.build_graph(**args_)
+
+        stock_df_, fig_ = base_engine_.stock_df, base_engine_.fig
+
+        y = []
+        for date_ in hit_dates_:
+            idx_ = get_idx_by_date(stock_df_, date_)
+            y.append(stock_df_['close'].loc[idx_])
+
+        fig_.add_trace(
+            go.Scatter(
+                name='hit', x=hit_dates_, y=y,
+                mode='markers',
+                marker=dict(color='red', size=8, symbol='star'),
+            ),
+            row=1, col=1,
+        )
+
+        fig_.show()
+
+
+dates = valid_dates
+
 # step 1
 kym_report = {}
-
-dates = valid_dates[:]
 
 # load predictions
 with open("_predict", "r") as f:
@@ -18,6 +72,7 @@ with open("_predict", "r") as f:
 
 for stock_name in ALL:
     kym_report[stock_name] = {}
+    hit_dates = []
 
     (from_date, to_date, interval), args = period_1y(), args_1y_guru()
 
@@ -55,14 +110,10 @@ for stock_name in ALL:
 
         kym_report[stock_name][date] = cell
 
+        if positive(cell):
+            hit_dates.append(date)
 
-def is_x(_cell):
-    return 'X' in _cell
-
-
-def is_just_x(_cell):
-    return 'X______' in _cell
-
+    show(stock_name, hit_dates)
 
 # step 2
 kym_df = pd.DataFrame(kym_report).T

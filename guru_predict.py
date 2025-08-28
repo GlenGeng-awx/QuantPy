@@ -12,8 +12,8 @@ spectrum = [
 ]
 
 spectrum_ = [
-    (period_4y_to('2025-08-22'), args_4y_guru()),
-    (period_1y_to('2025-08-22'), args_1y_guru()),
+    (period_4y_to(valid_dates[-1]), args_4y_guru()),
+    (period_1y_to(valid_dates[-1]), args_1y_guru()),
 ]
 
 
