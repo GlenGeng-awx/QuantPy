@@ -1,6 +1,7 @@
 from conf import *
 
 # (long/short, call/put, date, strike, num, buy_price, sell_price),
+# (long/short, call/put, date, strike, num, buy_price, sell_price, txn_date),
 # None if no sell_price yet
 
 Call = 'call'
@@ -174,70 +175,81 @@ P_2025_0822 = {
     ],
 }
 
+# loss, -834
 P_2025_0829 = {
     UBER: [
         # success, 21
-        (LLong, Call, '2025-08-29', 92, 1, 2.49, 2.70),
+        (LLong, Call, '2025-08-29', 92, 1, 2.49, 2.70, '2025-08-12'),
     ],
     XYZ: [
         # success, 45
-        (LLong, Call, '2025-08-29', 79, 1, 1.25, 1.70),
+        (LLong, Call, '2025-08-29', 79, 1, 1.25, 1.70, '2025-08-13'),
     ],
     TSLA: [
-        (LLong, Call, '2025-08-29', 365, 1, 2.45, None),
+        # fail, -245
+        (LLong, Call, '2025-08-29', 365, 1, 2.45, 0.0, '2025-08-15'),
     ],
     PDD: [
-        (LLong, Call, '2025-08-29', 134, 1, 0.77, None),
+        # fail, -77
+        (LLong, Call, '2025-08-29', 134, 1, 0.77, 0.0, '2025-08-25'),
     ],
     BA: [
-        (LLong, Put, '2025-08-29', 220, 1, 2.38, None),
+        # fail, -238
+        (LLong, Put, '2025-08-29', 220, 1, 2.38, 0.0, '2025-08-11'),
     ],
     NVO: [
-        (LLong, Put, '2025-08-29', 50, 1, 1.40, None),
+        # fail, -140
+        (LLong, Put, '2025-08-29', 50, 1, 1.40, 0.0, '2025-08-13'),
     ],
     DIS: [
-        (LLong, Put, '2025-08-29', 116, 1, 2.00, None),
+        # fail, -200
+        (LLong, Put, '2025-08-29', 116, 1, 2.00, 0.0, '2025-08-14'),
     ],
 }
 
 P_2025_0905 = {
     ORCL: [
-        (LLong, Call, '2025-09-05', 257.5, 1, 2.20, None),
+        (LLong, Call, '2025-09-05', 257.5, 1, 2.20, None, '2025-08-19'),
     ],
     TSM: [
-        (LLong, Call, '2025-09-05', 240, 1, 2.20, None),
+        (LLong, Call, '2025-09-05', 240, 1, 2.20, None, '2025-08-20'),
     ],
     PLTR: [
-        (LLong, Call, '2025-09-05', 165, 1, 2.10, None),
+        (LLong, Call, '2025-09-05', 165, 1, 2.10, None, '2025-08-20'),
     ],
     EBAY: [
-        # success, 450
-        (LLong, Put, '2025-09-05', 98, 1, 1.50, 6.00),
-
-        (LLong, Put, '2025-09-05', 98, 1, 1.50, None),
+        # success, 900
+        (LLong, Put, '2025-09-05', 98, 2, 1.50, 6.00, '2025-08-18'),
+        (LLong, Put, '2025-09-05', 92, 1, 1.48, None, '2025-08-29'),
     ],
 }
 
 P_2025_0912 = {
-    GOOG: [
-        (LLong, Put, '2025-09-12', 200, 1, 2.75, None),
-    ],
     OKTA: [
-        (LLong, Put, '2025-09-12', 99, 1, 1.25, None),
+        (LLong, Call, '2025-09-12', 99, 1, 1.25, None, '2025-08-27'),
+    ],
+    GOOG: [
+        (LLong, Put, '2025-09-12', 200, 1, 2.75, None, '2025-08-26'),
     ],
 }
 
 P_2025_0919 = {
     JPM: [
-        (LLong, Call, '2025-09-19', 310, 1, 2.50, None),
+        (LLong, Call, '2025-09-19', 310, 1, 2.50, None, '2025-08-28'),
     ],
     COIN: [
-        (LLong, Call, '2025-09-19', 355, 1, 3.30, None),
+        (LLong, Call, '2025-09-19', 355, 1, 3.30, None, '2025-08-28'),
+    ],
+    LI: [
+        (LLong, Call, '2025-09-19', 23, 2, 1.28, None, '2025-08-29'),
     ],
 }
 
-ACTIVE_POSITIONS = [
+CLOSED_POSITIONS = [
     P_2025_0829,
+]
+
+ACTIVE_POSITIONS = [
     P_2025_0905, P_2025_0912, P_2025_0919
 ]
 

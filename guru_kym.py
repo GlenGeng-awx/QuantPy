@@ -133,4 +133,5 @@ def kym():
     print(kym_df)
 
 
-kym()
+if __name__ == '__main__':
+    kym()
