@@ -1,15 +1,10 @@
 import pandas as pd
 import json
 from datetime import datetime
-from util import get_idx_by_date, shrink_date_str
+from util import get_idx_by_date, shrink_date_str, touch_file
 from guru import factors, targets
 
 MIN_HITS = 6
-
-
-def touch_file(filename: str):
-    with open(filename, 'w'):
-        pass
 
 
 def get_file_name(stock_name: str, stock_df: pd.DataFrame) -> str:

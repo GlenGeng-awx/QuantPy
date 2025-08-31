@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 import plotly.graph_objects as go
 from base_engine import BaseEngine
@@ -6,6 +5,7 @@ from preload_conf import *
 from conf import *
 from util import shrink_date_str, get_idx_by_date
 from guru_train import valid_dates
+from guru_predict import load_prediction
 from x_financial_statements import Financial_Statements
 
 
@@ -34,8 +34,8 @@ def show(stock_name, hit_dates: list):
         return
 
     spectrum = [
-        (period_4y(), args_4y()),
         (period_1y(), args_1y_guru()),
+        (period_4y(), args_4y()),
     ]
 
     for (from_date, to_date, interval), args in spectrum:
@@ -68,8 +68,7 @@ def kym():
     kym_report = {}
 
     # load predictions
-    with open("_predict", "r") as f:
-        prediction = json.load(f)
+    prediction = load_prediction()
 
     for stock_name in ALL:
         kym_report[stock_name] = {}
@@ -84,13 +83,17 @@ def kym():
         stock_df, context = base_engine.stock_df, base_engine.context
 
         for date in target_dates:
+            if date not in stock_df['Date'].apply(shrink_date_str).values:
+                print(f'kym {stock_name} {date} is out of range')
+                continue
+
             idx = get_idx_by_date(stock_df, date)
             close = stock_df['close'].loc[idx]
             min_close = stock_df['close'].loc[idx:idx + 15].min()
             max_close = stock_df['close'].loc[idx:idx + 15].max()
 
             # predict
-            cell = 'X' if date in prediction[stock_name] else '_'
+            cell = 'X' if date in prediction.get(stock_name, []) else '_'
 
             # Up
             for key in ['will spike', 'will shoot up']:
@@ -122,8 +125,8 @@ def kym():
     correct_rates = []
 
     for date in kym_df.columns:
-        count_all = kym_df[date].apply(is_x).sum()
-        count_fail = kym_df[date].apply(is_just_x).sum()
+        count_all = kym_df[date].dropna().apply(is_x).sum()
+        count_fail = kym_df[date].dropna().apply(is_just_x).sum()
 
         correct_rate = (1 - count_fail / count_all) if count_all > 0 else None
         correct_rates.append(f'{correct_rate:.2f}/{count_all}')

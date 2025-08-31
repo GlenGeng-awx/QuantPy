@@ -3,19 +3,21 @@ from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
 from util import get_idx_by_date
+from guru_predict import load_prediction
 from x_portfolio import Call, Put, CLOSED_POSITIONS, ACTIVE_POSITIONS
 
 
-# txn_dates: [date]
-# calls:     [(date, strike_price)]
-# puts:      [(date, strike_price)]
-def show(stock_name, txn_dates: list, calls: list, puts: list):
+# predict_dates : [date]
+# txn_dates     : [date]
+# calls         : [(date, strike_price)]
+# puts          : [(date, strike_price)]
+def show(stock_name, predict_dates: list, txn_dates: list, calls: list, puts: list):
     if not txn_dates:
         return
 
     spectrum = [
-        (period_4y(), args_4y()),
-        # (period_1y(), args_1y_guru()),
+        # (period_4y(), args_4y()),
+        (period_1y(), args_1y_guru()),
     ]
 
     for (from_date, to_date, interval), args in spectrum:
@@ -23,6 +25,21 @@ def show(stock_name, txn_dates: list, calls: list, puts: list):
         base_engine.build_graph(**args)
 
         stock_df, fig = base_engine.stock_df, base_engine.fig
+
+        y = []
+        for date in predict_dates:
+            idx = get_idx_by_date(stock_df, date)
+            y.append(stock_df['close'].loc[idx])
+
+        fig.add_trace(
+            go.Scatter(
+                name='predict_dates', x=predict_dates, y=y,
+                mode='markers',
+                marker=dict(color='blue', size=6, symbol='star'),
+                visible='legendonly',
+            ),
+            row=1, col=1,
+        )
 
         y = []
         for date in txn_dates:
@@ -64,7 +81,10 @@ def show(stock_name, txn_dates: list, calls: list, puts: list):
 
 
 def kyc():
+    prediction = load_prediction()
+
     for stock_name in ALL:
+        predict_dates = prediction.get(stock_name, [])
         txn_dates, calls, puts = [], [], []
 
         for position in ACTIVE_POSITIONS:
@@ -77,7 +97,7 @@ def kyc():
                 elif direction == Put:
                     puts.append((strike_date, strike_price))
 
-        show(stock_name, txn_dates, calls, puts)
+        show(stock_name, predict_dates, txn_dates, calls, puts)
 
 
 if __name__ == '__main__':
