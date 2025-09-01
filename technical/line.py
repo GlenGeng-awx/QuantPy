@@ -1,3 +1,4 @@
+import math
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -57,6 +58,7 @@ class Line:
                  calculate_k_fn, calculate_point_fn):
         self.stock_df = stock_df
         self.stock_name = stock_name
+        self.line_key = line_key
 
         # list of (dates, prices, k)
         self.primary_lines = []
@@ -66,7 +68,7 @@ class Line:
         self.anchor_dates_short = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
-        for line in CORE_BANKING.get(stock_name, {}).get(line_key, []):
+        for line in CORE_BANKING.get(stock_name, {}).get(self.line_key, []):
             if len(line) == 4:
                 date1, date2, _, _ = line
                 date1, date2 = get_date(date1), get_date(date2)
@@ -131,9 +133,14 @@ class Line:
         )
 
         for i, (dates, prices, k) in enumerate(self.primary_lines):
+            if self.line_key == 'lines_expo':
+                ratio = f'{math.pow(k, 250) - 1:.1%}'
+            else:
+                ratio = f'{k * 250:.1f}$'
+
             fig.add_trace(
                 go.Scatter(
-                    name=f'primary line-{i + 1}-{len(dates)}',
+                    name=f'p line-{i + 1} {len(dates)}d {ratio}',
                     x=dates, y=prices,
                     mode='lines', line=dict(width=1, color='red', dash='dash'),
                     visible=None if enable else 'legendonly',
@@ -143,7 +150,7 @@ class Line:
         for i, (dates, prices, k) in enumerate(self.secondary_lines):
             fig.add_trace(
                 go.Scatter(
-                    name=f'secondary line-{i + 1}-{len(dates)}',
+                    name=f's line-{i + 1} {len(dates)}d',
                     x=dates, y=prices,
                     mode='lines', line=dict(width=1, color='green', dash='dash'),
                     visible=None if enable else 'legendonly',

@@ -11,7 +11,6 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
     hits = []
 
     for idx in stock_df.index[3:]:
-
         if vol[idx - 3] < vol[idx - 2] < vol[idx - 1] < vol[idx]:
             hits.append(dates[idx])
 

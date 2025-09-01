@@ -65,7 +65,7 @@ def get_date(date):
 # date is in format of '20210101' or ('20210101', 'open')
 def get_price_key(date):
     if type(date) is tuple:
-        _, date_key = date
+        _, price_key = date
     else:
-        date_key = 'close'
-    return date_key
+        price_key = 'close'
+    return price_key

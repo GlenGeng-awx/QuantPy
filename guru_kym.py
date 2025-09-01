@@ -61,9 +61,7 @@ def show(stock_name, hit_dates: list):
         fig.show()
 
 
-def kym():
-    target_dates = valid_dates
-
+def kym(target_dates: list):
     # step 1
     kym_report = {}
 
@@ -137,4 +135,5 @@ def kym():
 
 
 if __name__ == '__main__':
-    kym()
+    target_dates_ = valid_dates
+    kym(target_dates_)
