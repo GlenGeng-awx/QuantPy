@@ -222,7 +222,7 @@ P_2025_0905 = {
         (LLong, Put, '2025-09-05', 98, 2, 1.50, 6.00, '2025-08-18'),
 
         (LLong, Put, '2025-09-05', 92, 1, 1.48, None, '2025-08-29'),
-        (Short, Put, '2025-09-05', 88, 1, 0.48, None, '2025-09-02'),
+        (Short, Put, '2025-09-05', 88, 1, 0.48, 0.10, '2025-09-02'),
     ],
 }
 
@@ -238,16 +238,29 @@ P_2025_0912 = {
 
 P_2025_0919 = {
     JPM: [
-        (LLong, Call, '2025-09-19', 310, 1, 2.50, None, '2025-08-28'),
+        # fail, -85
+        (LLong, Call, '2025-09-19', 310, 1, 2.50, 1.65, '2025-08-28'),
     ],
     COIN: [
         (LLong, Call, '2025-09-19', 355, 1, 3.30, None, '2025-08-28'),
+        (Short, Call, '2025-09-19', 360, 1, 1.10, None, '2025-09-04'),
     ],
     LI: [
         (LLong, Call, '2025-09-19', 23, 2, 1.28, None, '2025-08-29'),
     ],
     SNAP: [
         (LLong, Call, '2025-09-19', 7.0, 7, 0.3, None, '2025-08-29'),
+    ],
+    VISA: [
+        (LLong, Put, '2025-09-19', 345, 1, 4.15, None, '2025-09-03'),
+        (Short, Put, '2025-09-19', 335, 1, 1.75, None, '2025-09-03'),
+    ],
+}
+
+P_2025_0926 = {
+    JPM: [
+        (LLong, Put, '2025-09-26', 295, 1, 3.66, None, '2025-09-04'),
+        (Short, Put, '2025-09-26', 285, 1, 1.64, None, '2025-09-04'),
     ],
 }
 
@@ -261,7 +274,7 @@ ACTIVE_POSITIONS = [
 
 
 def get_portfolio() -> list:
-    portfolio = [QQQ]
+    portfolio = [QQQ, SS_000300, SS_000001]
     for active_position in ACTIVE_POSITIONS:
         for stock_name in active_position:
             records = active_position[stock_name]
