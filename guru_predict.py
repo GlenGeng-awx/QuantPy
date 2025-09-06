@@ -13,8 +13,8 @@ spectrum = [
 ]
 
 spectrum_ = [
-    (period_4y_to(valid_dates[-1]), args_4y_guru()),
-    (period_1y_to(valid_dates[-1]), args_1y_guru()),
+    (period_4y_to(to_date), args_4y_guru())
+    for to_date in valid_dates[-1:]
 ]
 
 
