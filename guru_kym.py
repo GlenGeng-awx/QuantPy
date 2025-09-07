@@ -29,7 +29,7 @@ def positive(cell):
     return is_x(cell) and not is_just_x(cell)
 
 
-def show(stock_name, hit_dates: list):
+def display_stock(stock_name, hit_dates: list):
     if not hit_dates:
         return
 
@@ -59,6 +59,70 @@ def show(stock_name, hit_dates: list):
         )
 
         fig.show()
+
+
+# summary_report: [(date, correct_rate, count_all)]
+def display_summary(summary_report: list):
+    dates, correct_rates, counts = [], [], []
+
+    for date, correct_rate, count_all in summary_report:
+        dates.append(date)
+        correct_rates.append(int(correct_rate * 100) if correct_rate is not None else None)
+        counts.append(count_all)
+
+    fig = go.Figure()
+
+    # Add correct_rate as a line plot on the left y-axis
+    fig.add_trace(
+        go.Scatter(
+            x=dates,
+            y=correct_rates,
+            mode='lines+markers',
+            name='Correct Rate (%)',
+            line=dict(color='blue'),
+            marker=dict(size=6),
+            yaxis='y1'
+        )
+    )
+
+    # Add count_all as a bar plot on the right y-axis
+    fig.add_trace(
+        go.Bar(
+            x=dates,
+            y=counts,
+            name='Count All',
+            marker=dict(color='orange'),
+            yaxis='y2'
+        )
+    )
+
+    # Update layout for dual y-axes
+    fig.update_layout(
+        title='Summary Report',
+        xaxis=dict(title='Date'),
+        yaxis=dict(
+            title='Correct Rate (%)',
+            titlefont=dict(color='blue'),
+            tickfont=dict(color='blue'),
+        ),
+        yaxis2=dict(
+            title='Count All',
+            titlefont=dict(color='orange'),
+            tickfont=dict(color='orange'),
+            overlaying='y',
+            side='right',
+        ),
+        legend=dict(x=0.5, y=1.2, xanchor='center', orientation='h'),
+        template='plotly_white',
+    )
+
+    # Mark last 15d
+    fig.add_vline(
+        x=dates[-16],
+        line=dict(color='red', width=1, dash='dash'),
+    )
+
+    fig.show()
 
 
 def kym(target_dates: list):
@@ -115,22 +179,24 @@ def kym(target_dates: list):
             if positive(cell):
                 hit_dates.append(date)
 
-        show(stock_name, hit_dates)
+        display_stock(stock_name, hit_dates)
 
     # step 2
     kym_df = pd.DataFrame(kym_report).T
 
+    summary_report = []
     correct_rates = []
 
     for date in kym_df.columns:
         count_all = kym_df[date].dropna().apply(is_x).sum()
         count_fail = kym_df[date].dropna().apply(is_just_x).sum()
-
         correct_rate = (1 - count_fail / count_all) if count_all > 0 else None
+
+        summary_report.append((date, correct_rate, count_all))
         correct_rates.append(f'{correct_rate:.2f}/{count_all}')
 
+    display_summary(summary_report)
     kym_df.loc['correct_rates'] = correct_rates
-
     print(kym_df)
 
 

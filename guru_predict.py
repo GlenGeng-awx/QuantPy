@@ -5,24 +5,24 @@ from conf import *
 from preload_conf import *
 from util import touch_file
 from guru_train import valid_dates
+from x_kym import get_kym_dates
 import guru
 
-spectrum = [
-    (period_1y_to(to_date), args_1y_guru())
-    for to_date in valid_dates[-1:]
-]
 
-spectrum_ = [
-    (period_4y_to(to_date), args_4y_guru())
-    for to_date in valid_dates[-1:]
-]
+def get_spectrum(_stock_name):
+    spectrum = []
+    # for to_date in get_kym_dates(_stock_name):
+    for to_date in valid_dates[-1:]:
+        spectrum.append((period_1y_to(to_date), args_1y_guru()))
+        spectrum.append((period_4y_to(to_date), args_4y_guru()))
+    return spectrum
 
 
 def predict(stock_name: str):
     figs = []
     hits = set()
 
-    for (from_date, to_date, interval), args in spectrum:
+    for (from_date, to_date, interval), args in get_spectrum(stock_name):
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
 
