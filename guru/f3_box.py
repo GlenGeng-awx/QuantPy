@@ -2,7 +2,7 @@ import pandas as pd
 from guru.util import _pick_rolling_n_pst
 
 
-# sz: 3/5/10/15
+# sz: 3/5/10/15/20/25/30
 def _calculate_hits(stock_df: pd.DataFrame, sz: int, key: str) -> list:
     close = stock_df['close']
 
