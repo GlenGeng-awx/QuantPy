@@ -4,7 +4,7 @@ from datetime import datetime
 from util import get_idx_by_date, shrink_date_str, touch_file
 from guru import factors, targets
 
-MIN_HITS = 6
+MIN_HITS = 7
 
 
 def get_file_name(stock_name: str, stock_df: pd.DataFrame) -> str:
