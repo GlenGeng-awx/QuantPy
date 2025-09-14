@@ -2,9 +2,9 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-# last 4 and a half year for training
+# last 5 year for training
 def period_train(to_date: str):
-    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=54)).strftime('%Y-%m-%d')
+    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=60)).strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
 
 
@@ -42,9 +42,8 @@ def default_args():
         'enable_line': False,       #
         'enable_neck_line': False,  #
 
-        'enable_ma20': False,
-        'enable_ma60': False,
-        'enable_ma120': False,
+        # 5/10/20/60/120/200/250
+        'enable_ma': (False, False, False, False, False, False, False),
 
         'enable_volume': (True, 2),
         'rows': 2,

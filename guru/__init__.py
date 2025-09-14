@@ -17,6 +17,8 @@ from guru import (
     e4_vol_box_10d,
     e4_vol_box_15d,
     e4_vol_box_20d,
+    e4_vol_box_25d,
+    e4_vol_box_30d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -48,16 +50,22 @@ from guru import (
     g1_hit_ma20,
     g1_hit_ma60,
     g1_hit_ma120,
+    g1_hit_ma200,
+    g1_hit_ma250,
 
     g2_up_thru_ma10,
     g2_up_thru_ma20,
     g2_up_thru_ma60,
     g2_up_thru_ma120,
+    g2_up_thru_ma200,
+    g2_up_thru_ma250,
 
     g3_down_thru_ma10,
     g3_down_thru_ma20,
     g3_down_thru_ma60,
     g3_down_thru_ma120,
+    g3_down_thru_ma200,
+    g3_down_thru_ma250,
 
     h1_long_up_shadow,
     h1_long_down_shadow,
@@ -115,6 +123,8 @@ factors = [
     e4_vol_box_10d,
     e4_vol_box_15d,
     e4_vol_box_20d,
+    e4_vol_box_25d,
+    e4_vol_box_30d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -146,16 +156,22 @@ factors = [
     g1_hit_ma20,
     g1_hit_ma60,
     g1_hit_ma120,
+    g1_hit_ma200,
+    g1_hit_ma250,
 
     g2_up_thru_ma10,
     g2_up_thru_ma20,
     g2_up_thru_ma60,
     g2_up_thru_ma120,
+    g2_up_thru_ma200,
+    g2_up_thru_ma250,
 
     g3_down_thru_ma10,
     g3_down_thru_ma20,
     g3_down_thru_ma60,
     g3_down_thru_ma120,
+    g3_down_thru_ma200,
+    g3_down_thru_ma250,
 
     h1_long_up_shadow,
     h1_long_down_shadow,

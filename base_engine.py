@@ -124,9 +124,7 @@ class BaseEngine:
                     enable_close_price=False,
                     # statistical
                     enable_ema=False,
-                    enable_ma20=False,
-                    enable_ma60=False,
-                    enable_ma120=False,
+                    enable_ma=(False, False, False, False, False, False, False),
                     # technical
                     enable_min_max=False,
                     enable_sr=False,
@@ -160,7 +158,7 @@ class BaseEngine:
 
         self.neck_line.build_graph(self.fig, enable_neck_line)
 
-        self.ma.build_graph(self.fig, enable_ma20, enable_ma60, enable_ma120)
+        self.ma.build_graph(self.fig, enable_ma)
         # self.ema.build_graph(self.fig, enable_ema)
 
         if enable_guru[0]:
