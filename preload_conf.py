@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 
 # last 5 year for training
 def period_train(to_date: str):
-    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=60)).strftime('%Y-%m-%d')
+    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=36)).strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
 
 

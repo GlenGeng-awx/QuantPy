@@ -29,6 +29,10 @@ def positive(cell):
     return is_x(cell) and not is_just_x(cell)
 
 
+def is_target(cell):
+    return 'U' in cell or 'D' in cell
+
+
 def display_stock(stock_name, hit_dates: list):
     if not hit_dates:
         return
@@ -184,19 +188,26 @@ def kym(target_dates: list):
     # step 2
     kym_df = pd.DataFrame(kym_report).T
 
-    summary_report = []
+    target_rates = []
     correct_rates = []
+    summary_report = []
 
     for date in kym_df.columns:
-        count_all = kym_df[date].dropna().apply(is_x).sum()
+        count_all = kym_df[date].notna().sum()
+        count_target = kym_df[date].dropna().apply(is_target).sum()
+        target_rate = count_target / count_all if count_all > 0 else None
+
+        count_hit = kym_df[date].dropna().apply(is_x).sum()
         count_fail = kym_df[date].dropna().apply(is_just_x).sum()
-        correct_rate = (1 - count_fail / count_all) if count_all > 0 else None
+        correct_rate = (1 - count_fail / count_hit) if count_hit > 0 else None
 
-        summary_report.append((date, correct_rate, count_all))
-        correct_rates.append(f'{correct_rate:.2f}/{count_all}')
+        target_rates.append(f'{target_rate:.2f}/{count_all}')
+        correct_rates.append(f'{correct_rate:.2f}/{count_hit}')
+        summary_report.append((date, correct_rate, count_hit))
 
-    display_summary(summary_report)
+    kym_df.loc['target_rates'] = target_rates
     kym_df.loc['correct_rates'] = correct_rates
+    display_summary(summary_report)
     print(kym_df)
 
 

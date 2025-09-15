@@ -4,7 +4,8 @@ from datetime import datetime
 from util import get_idx_by_date, shrink_date_str, touch_file
 from guru import factors, targets
 
-MIN_HITS = 7
+MIN_HITS = 6
+CORRECT_RATIO = 0.85
 
 
 def get_file_name(stock_name: str, stock_df: pd.DataFrame) -> str:
@@ -37,7 +38,7 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
 
 
 def _pick(total_num, up_hit, down_hit) -> bool:
-    if (up_hit + down_hit) / total_num >= 0.8:
+    if (up_hit + down_hit) / total_num >= CORRECT_RATIO:
         return True
     return False
 

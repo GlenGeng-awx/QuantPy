@@ -15,10 +15,6 @@ from guru import (
 
     e4_vol_box_5d,
     e4_vol_box_10d,
-    e4_vol_box_15d,
-    e4_vol_box_20d,
-    e4_vol_box_25d,
-    e4_vol_box_30d,
 
     f1_crash_1d,
     f1_crash_3d,
@@ -121,10 +117,6 @@ factors = [
 
     e4_vol_box_5d,
     e4_vol_box_10d,
-    e4_vol_box_15d,
-    e4_vol_box_20d,
-    e4_vol_box_25d,
-    e4_vol_box_30d,
 
     f1_crash_1d,
     f1_crash_3d,
