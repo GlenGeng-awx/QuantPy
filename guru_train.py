@@ -1,46 +1,37 @@
+import re
 from multiprocessing import Pool
 from base_engine import BaseEngine
 from conf import *
 from preload_conf import *
+from guru_wizard import TRAIN_MODE, valid_dates
 import guru
 
-valid_dates = [
-    '2025-06-02', '2025-06-03', '2025-06-04', '2025-06-05', '2025-06-06',
-    '2025-06-09', '2025-06-10', '2025-06-11', '2025-06-12', '2025-06-13',
-    '2025-06-16', '2025-06-17', '2025-06-18',               '2025-06-20',
-    '2025-06-23', '2025-06-24', '2025-06-25', '2025-06-26', '2025-06-27',
 
-    '2025-06-30', '2025-07-01', '2025-07-02', '2025-07-03',
-    '2025-07-07', '2025-07-08', '2025-07-09', '2025-07-10', '2025-07-11',
-    '2025-07-14', '2025-07-15', '2025-07-16', '2025-07-17', '2025-07-18',
-    '2025-07-21', '2025-07-22', '2025-07-23', '2025-07-24', '2025-07-25',
-    '2025-07-28', '2025-07-29', '2025-07-30', '2025-07-31', '2025-08-01',
-
-    '2025-08-04', '2025-08-05', '2025-08-06', '2025-08-07', '2025-08-08',
-    '2025-08-11', '2025-08-12', '2025-08-13', '2025-08-14', '2025-08-15',
-    '2025-08-18', '2025-08-19', '2025-08-20', '2025-08-21', '2025-08-22',
-    '2025-08-25', '2025-08-26', '2025-08-27', '2025-08-28', '2025-08-29',
-
-                  '2025-09-02', '2025-09-03', '2025-09-04', '2025-09-05',
-    '2025-09-08', '2025-09-09', '2025-09-10', '2025-09-11', '2025-09-12',
-    '2025-09-15', '2025-09-16',
-]
-
-spectrum = [
-    (period_train(to_date), args_4y_guru())
-    for to_date in valid_dates[-1:]
-]
+def build_tasks() -> list:
+    tasks = []
+    for stock_name in ALL:
+        for to_date in valid_dates[-9:-8]:
+            for train_mode in TRAIN_MODE:
+                # _train_48m/42m/36m
+                months = re.search(r'\d+', train_mode).group()
+                from_date, to_date, interval = period_train(to_date, int(months))
+                tasks.append((stock_name, from_date, to_date, interval, args_4y_guru(), train_mode))
+    return tasks
 
 
-def train(stock_name: str):
-    for (from_date, to_date, interval), args in spectrum:
-        base_engine = BaseEngine(stock_name, from_date, to_date, interval)
-        base_engine.build_graph(**args)
+# task: (stock_name, from_date, to_date, interval, args, train_mode)
+def train(task: list):
+    stock_name, from_date, to_date, interval, args, train_mode = task
 
-        stock_df, context = base_engine.stock_df, base_engine.context
-        guru.train.train(stock_df, stock_name, context)
+    base_engine = BaseEngine(stock_name, from_date, to_date, interval)
+    base_engine.build_graph(**args)
+
+    stock_df, context = base_engine.stock_df, base_engine.context
+    guru.train.train(stock_df, stock_name, context, train_mode)
 
 
 if __name__ == '__main__':
+    _tasks = build_tasks()
+
     with Pool(processes=12) as pool:
-        pool.map(train, ALL)
+        pool.map(train, _tasks)

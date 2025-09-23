@@ -44,5 +44,6 @@ bin/
 
 __pycache__/
 stock_data/
-_train/
-_predict/
+_train_*/
+_predict_*/
+_kym/

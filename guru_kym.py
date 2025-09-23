@@ -1,11 +1,12 @@
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
-from util import shrink_date_str, get_idx_by_date
-from guru_train import valid_dates
+from util import shrink_date_str, get_idx_by_date, touch_file
 from guru_predict import load_prediction
+from guru_wizard import PREDICT_MODE, valid_dates
 from x_financial_statements import Financial_Statements
 
 
@@ -65,76 +66,11 @@ def display_stock(stock_name, hit_dates: list):
         fig.show()
 
 
-# summary_report: [(date, correct_rate, count_all)]
-def display_summary(summary_report: list):
-    dates, correct_rates, counts = [], [], []
-
-    for date, correct_rate, count_all in summary_report:
-        dates.append(date)
-        correct_rates.append(int(correct_rate * 100) if correct_rate is not None else None)
-        counts.append(count_all)
-
-    fig = go.Figure()
-
-    # Add correct_rate as a line plot on the left y-axis
-    fig.add_trace(
-        go.Scatter(
-            x=dates,
-            y=correct_rates,
-            mode='lines+markers',
-            name='Correct Rate (%)',
-            line=dict(color='blue'),
-            marker=dict(size=6),
-            yaxis='y1'
-        )
-    )
-
-    # Add count_all as a bar plot on the right y-axis
-    fig.add_trace(
-        go.Bar(
-            x=dates,
-            y=counts,
-            name='Count All',
-            marker=dict(color='orange'),
-            yaxis='y2'
-        )
-    )
-
-    # Update layout for dual y-axes
-    fig.update_layout(
-        title='Summary Report',
-        xaxis=dict(title='Date'),
-        yaxis=dict(
-            title='Correct Rate (%)',
-            titlefont=dict(color='blue'),
-            tickfont=dict(color='blue'),
-        ),
-        yaxis2=dict(
-            title='Count All',
-            titlefont=dict(color='orange'),
-            tickfont=dict(color='orange'),
-            overlaying='y',
-            side='right',
-        ),
-        legend=dict(x=0.5, y=1.2, xanchor='center', orientation='h'),
-        template='plotly_white',
-    )
-
-    # Mark last 15d
-    fig.add_vline(
-        x=dates[-16],
-        line=dict(color='red', width=1, dash='dash'),
-    )
-
-    fig.show()
-
-
-def kym(target_dates: list):
-    # step 1
+def build_report(target_dates: list, predict_mode: str) -> dict:
     kym_report = {}
 
     # load predictions
-    prediction = load_prediction()
+    prediction = load_prediction(predict_mode)
 
     for stock_name in ALL:
         kym_report[stock_name] = {}
@@ -185,32 +121,137 @@ def kym(target_dates: list):
 
         display_stock(stock_name, hit_dates)
 
-    # step 2
+    return kym_report
+
+
+def build_df(kym_report: dict) -> pd.DataFrame:
     kym_df = pd.DataFrame(kym_report).T
 
-    target_rates = []
-    correct_rates = []
-    summary_report = []
+    nature_rates = []
+    model_rates = []
 
     for date in kym_df.columns:
         count_all = kym_df[date].notna().sum()
         count_target = kym_df[date].dropna().apply(is_target).sum()
-        target_rate = count_target / count_all if count_all > 0 else None
+        nature_rate = count_target / count_all if count_all > 0 else 0
 
         count_hit = kym_df[date].dropna().apply(is_x).sum()
         count_fail = kym_df[date].dropna().apply(is_just_x).sum()
-        correct_rate = (1 - count_fail / count_hit) if count_hit > 0 else None
+        model_rate = (1 - count_fail / count_hit) if count_hit > 0 else 0
 
-        target_rates.append(f'{target_rate:.2f}/{count_all}')
-        correct_rates.append(f'{correct_rate:.2f}/{count_hit}')
-        summary_report.append((date, correct_rate, count_hit))
+        nature_rates.append(f'{nature_rate:.2f}/{count_all}')
+        model_rates.append(f'{model_rate:.2f}/{count_hit}')
 
-    kym_df.loc['target_rates'] = target_rates
-    kym_df.loc['correct_rates'] = correct_rates
-    display_summary(summary_report)
-    print(kym_df)
+    kym_df.loc['nature_rates'] = nature_rates
+    kym_df.loc['model_rates'] = model_rates
+    return kym_df
+
+
+def kym(kym_df: pd.DataFrame, predict_mode: str):
+    nature_rates = []
+    nature_hits = []
+
+    model_rates = []
+    model_hits = []
+
+    for date in kym_df.columns[:-6]:
+        nature_rate, nature_hit = kym_df.loc['nature_rates'][date].split('/')
+        nature_rate, nature_hit = float(nature_rate), int(nature_hit)
+
+        nature_rates.append(nature_rate)
+        nature_hits.append(nature_hit)
+
+        model_rate, model_hit = kym_df.loc['model_rates'][date].split('/')
+        model_rate, model_hit = float(model_rate), int(model_hit)
+
+        model_rates.append(model_rate)
+        model_hits.append(model_hit)
+
+    # 自然准确率 均值/方差
+    nature_rates_avg = np.array(nature_rates).mean()
+    nature_rates_std = np.array(nature_rates).std()
+
+    # 模型准确率 均值/方差 (剔除零信号)
+    filtered_rates = []
+    for rate, hit in zip(model_rates, model_hits):
+        if hit != 0:
+            filtered_rates.append(rate)
+
+    filtered_rates = np.array(filtered_rates)
+    model_rates_avg = filtered_rates.mean()
+    model_rates_std = filtered_rates.std()
+
+    # 平均信号数
+    model_hits_avg = np.array(model_hits).mean()
+
+    # 零信号 天数
+    zero_hit_days = model_hits.count(0)
+
+    # 零准确率 天数 - 严重劣势
+    # 显著劣势 天数
+    # 显著优势 天数
+    # 劣势 天数
+    # 优势 天数
+    zero_accuracy_days = 0
+
+    significant_loss_days = 0
+    significant_gain_days = 0
+
+    loss_days = 0
+    gain_days = 0
+
+    for model_rate, model_hit, nature_rate in zip(model_rates, model_hits, nature_rates):
+        if model_hit == 0:
+            continue
+
+        if model_rate == 0:
+            zero_accuracy_days += 1
+
+        if model_rate < nature_rate:
+            loss_days += 1
+        if model_rate < nature_rate - 0.05:
+            significant_loss_days += 1
+
+        if model_rate > nature_rate:
+            gain_days += 1
+        if model_rate > nature_rate + 0.05:
+            significant_gain_days += 1
+
+    with open('_kym/summary', 'a') as fd:
+        print(f'KYM Report for {predict_mode}\n', file=fd)
+
+        kym_df.loc[['nature_rates', 'model_rates']].to_csv(fd, mode='a', sep='\t')
+
+        print('', file=fd)
+        print(f'评估天数 : {len(model_hits)}', file=fd)
+        print(f'自然准确率 mean: {nature_rates_avg:.2%}, std: {nature_rates_std:.2%}', file=fd)
+
+        print(f'模型准确率 mean: {model_rates_avg:.2%}, std: {model_rates_std:.2%}', file=fd)
+        print(f'准确率提升: {model_rates_avg - nature_rates_avg:.2%}', file=fd)
+        print(f'平均信号数: {model_hits_avg:.2f}', file=fd)
+
+        print(f'零信号 days: {zero_hit_days}, ratio: {zero_hit_days / len(model_hits):.2%}', file=fd)
+        print(f'零准确率 days: {zero_accuracy_days}, ratio: {zero_accuracy_days / len(model_hits):.2%}', file=fd)
+
+        print(f'显著 劣势 days: {significant_loss_days}, ratio: {significant_loss_days / len(model_hits):.2%}', file=fd)
+        print(f'显著 优势 days: {significant_gain_days}, ratio: {significant_gain_days / len(model_hits):.2%}', file=fd)
+        print(f'劣势 days: {loss_days}, ratio: {loss_days / len(model_hits):.2%}', file=fd)
+        print(f'优势 days: {gain_days}, ratio: {gain_days / len(model_hits):.2%}', file=fd)
+        print('\n--------------------\n', file=fd)
 
 
 if __name__ == '__main__':
-    target_dates_ = valid_dates
-    kym(target_dates_)
+    target_dates_ = valid_dates[:65]
+    touch_file('_kym/summary')
+
+    for predict_mode_ in PREDICT_MODE:
+        output_file = f'_kym/{predict_mode_}.csv'
+
+        kym_report_ = build_report(target_dates_, predict_mode_)
+        kym_df_ = build_df(kym_report_)
+
+        print(kym_df_)
+        kym_df_.to_csv(output_file)
+
+        kym_df_ = pd.read_csv(output_file, index_col=0)
+        kym(kym_df_, predict_mode_)
