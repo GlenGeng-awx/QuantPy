@@ -1,4 +1,5 @@
 import re
+import random
 from multiprocessing import Pool
 from base_engine import BaseEngine
 from conf import *
@@ -10,7 +11,7 @@ import guru
 def build_tasks() -> list:
     tasks = []
     for stock_name in ALL:
-        for to_date in valid_dates[-9:-8]:
+        for to_date in valid_dates[-1:]:
             for train_mode in TRAIN_MODE:
                 # _train_48m/42m/36m
                 months = re.search(r'\d+', train_mode).group()
@@ -32,6 +33,7 @@ def train(task: list):
 
 if __name__ == '__main__':
     _tasks = build_tasks()
+    random.shuffle(_tasks)
 
     with Pool(processes=12) as pool:
         pool.map(train, _tasks)

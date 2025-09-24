@@ -119,7 +119,7 @@ def build_report(target_dates: list, predict_mode: str) -> dict:
             if positive(cell):
                 hit_dates.append(date)
 
-        display_stock(stock_name, hit_dates)
+        # display_stock(stock_name, hit_dates)
 
     return kym_report
 
@@ -154,7 +154,7 @@ def kym(kym_df: pd.DataFrame, predict_mode: str):
     model_rates = []
     model_hits = []
 
-    for date in kym_df.columns[:-6]:
+    for date in kym_df.columns[:-15]:
         nature_rate, nature_hit = kym_df.loc['nature_rates'][date].split('/')
         nature_rate, nature_hit = float(nature_rate), int(nature_hit)
 
@@ -241,7 +241,7 @@ def kym(kym_df: pd.DataFrame, predict_mode: str):
 
 
 if __name__ == '__main__':
-    target_dates_ = valid_dates[:65]
+    target_dates_ = valid_dates
     touch_file('_kym/summary')
 
     for predict_mode_ in PREDICT_MODE:
@@ -250,6 +250,7 @@ if __name__ == '__main__':
         kym_report_ = build_report(target_dates_, predict_mode_)
         kym_df_ = build_df(kym_report_)
 
+        print(f'Processing {predict_mode_}')
         print(kym_df_)
         kym_df_.to_csv(output_file)
 
