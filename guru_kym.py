@@ -147,14 +147,70 @@ def build_df(kym_report: dict) -> pd.DataFrame:
     return kym_df
 
 
-def kym(kym_df: pd.DataFrame, predict_mode: str):
+def model_score(
+        model_acc,          # 模型准确率
+        nature_acc,         # 自然准确率
+        std,                # 标准差
+        avg_signal,         # 平均信号数
+        zero_signal_ratio,  # 零信号天数占比
+        zero_acc_ratio,     # 0%准确率天数占比
+        adv_ratio,          # 优势天数（> baseline）占比
+        strong_adv_ratio    # 显著优势（> baseline+0.05）占比
+):
+    # 1. 准确率提升（至多35分）：提升15%及以上得满分
+    component = 35
+    acc_improve = max(0, model_acc - nature_acc)
+    acc_score = min(component, acc_improve / 0.15 * component)
+
+    # 2. 标准差分（至多10分）：std<=0.10满分，std>=0.25为0，线性扣分
+    component = 15
+    if std <= 0.10:
+        std_score = component
+    elif std >= 0.25:
+        std_score = 0
+    else:
+        std_score = component * (0.25 - std) / (0.25 - 0.10)
+
+    # 3. 平均信号区间（至多10分）：5-10之间得满分，否则每超出/不足1，扣2分（单边最少为0分）
+    component = 10
+    if 5 <= avg_signal <= 10:
+        signal_score = component
+    elif avg_signal < 5:
+        signal_score = max(0, component - (5 - avg_signal) * 2)
+    else:  # avg_signal > 10
+        signal_score = max(0, component - (avg_signal - 10) * 2)
+
+    # 4. 零信号天数轻惩（5分满分）：每1%零信号天数扣1分，达到或超过5%得0分
+    component = 5
+    zero_signal_score = max(0, component - zero_signal_ratio * 100)
+
+    # 5. 0%准确率严重惩罚（15分满分）：每1%占比扣1分，达到或超过15%得0分
+    component = 15
+    zero_acc_score = max(0, component - zero_acc_ratio * 100)
+
+    # 6. 优势天数（10分，优势>=70%得满分）、显著优势天数（10分，>=50%得满分）
+    component = 10
+    adv_score = min(component, adv_ratio / 0.7 * component)
+
+    component = 10
+    strong_adv_score = min(component, strong_adv_ratio / 0.5 * component)
+
+    components = (acc_score, std_score, signal_score, zero_signal_score, zero_acc_score, adv_score, strong_adv_score)
+
+    total = round(sum(components), 2)
+    components = tuple(float(round(c, 2)) for c in components)
+
+    return total, components
+
+
+def kym(kym_df: pd.DataFrame, predict_mode: str) -> (float, tuple):
     nature_rates = []
     nature_hits = []
 
     model_rates = []
     model_hits = []
 
-    for date in kym_df.columns[:-15]:
+    for date in kym_df.columns[:-10]:
         nature_rate, nature_hit = kym_df.loc['nature_rates'][date].split('/')
         nature_rate, nature_hit = float(nature_rate), int(nature_hit)
 
@@ -217,6 +273,17 @@ def kym(kym_df: pd.DataFrame, predict_mode: str):
         if model_rate > nature_rate + 0.05:
             significant_gain_days += 1
 
+    score, components = model_score(
+        model_acc=model_rates_avg,
+        nature_acc=nature_rates_avg,
+        std=model_rates_std,
+        avg_signal=model_hits_avg,
+        zero_signal_ratio=zero_hit_days / len(model_hits),
+        zero_acc_ratio=zero_accuracy_days / len(model_hits),
+        adv_ratio=gain_days / len(model_hits),
+        strong_adv_ratio=significant_gain_days / len(model_hits),
+    )
+
     with open('_kym/summary', 'a') as fd:
         print(f'KYM Report for {predict_mode}\n', file=fd)
 
@@ -237,12 +304,16 @@ def kym(kym_df: pd.DataFrame, predict_mode: str):
         print(f'显著 优势 days: {significant_gain_days}, ratio: {significant_gain_days / len(model_hits):.2%}', file=fd)
         print(f'劣势 days: {loss_days}, ratio: {loss_days / len(model_hits):.2%}', file=fd)
         print(f'优势 days: {gain_days}, ratio: {gain_days / len(model_hits):.2%}', file=fd)
+        print(f'得分 {score}', file=fd)
         print('\n--------------------\n', file=fd)
+
+    return score, components
 
 
 if __name__ == '__main__':
     target_dates_ = valid_dates
     touch_file('_kym/summary')
+    rank = []
 
     for predict_mode_ in PREDICT_MODE:
         output_file = f'_kym/{predict_mode_}.csv'
@@ -255,4 +326,10 @@ if __name__ == '__main__':
         kym_df_.to_csv(output_file)
 
         kym_df_ = pd.read_csv(output_file, index_col=0)
-        kym(kym_df_, predict_mode_)
+        score_, components_ = kym(kym_df_, predict_mode_)
+        rank.append((predict_mode_, score_, components_))
+
+    print('KYM Rank:')
+    rank.sort(key=lambda x: x[1], reverse=True)
+    for mode, score_, components_ in rank:
+        print(f'{mode}: {score_}, components: {components_}')
