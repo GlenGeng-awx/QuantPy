@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+from multiprocessing import Pool
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
@@ -149,139 +150,167 @@ def build_df(kym_report: dict) -> pd.DataFrame:
 
 def model_score(
         model_acc,          # 模型准确率
+        model_std,          # 模型标准差
         nature_acc,         # 自然准确率
-        std,                # 标准差
+        nature_std,         # 自然标准差
         avg_signal,         # 平均信号数
         zero_signal_ratio,  # 零信号天数占比
         zero_acc_ratio,     # 0%准确率天数占比
-        adv_ratio,          # 优势天数（> baseline）占比
-        strong_adv_ratio    # 显著优势（> baseline+0.05）占比
+        loss_ratio,         # 劣势天数（< baseline）占比
+        strong_loss_ratio,  # 显著劣势（< baseline-0.05）占比
+        gain_ratio,         # 优势天数（> baseline）占比
+        strong_gain_ratio,  # 显著优势（> baseline+0.05）占比
 ):
-    # 1. 准确率提升（至多35分）：提升15%及以上得满分
-    component = 35
+    # 1. 准确率提升（最多40分）：每提高1%得4分，提升10%及以上满分
+    score = 40
     acc_improve = max(0, model_acc - nature_acc)
-    acc_score = min(component, acc_improve / 0.15 * component)
+    acc_score = min(score, acc_improve / 0.10 * score)
 
-    # 2. 标准差分（至多10分）：std<=0.10满分，std>=0.25为0，线性扣分
-    component = 15
-    if std <= 0.10:
-        std_score = component
-    elif std >= 0.25:
+    # 2. 标准差奖励（最多20分）：标准差≤3×基线满分，≥6×基线0分，线性评分
+    score = 20
+    std_low, std_high = nature_std * 3, nature_std * 6
+    if model_std <= std_low:
+        std_score = score
+    elif model_std >= std_high:
         std_score = 0
     else:
-        std_score = component * (0.25 - std) / (0.25 - 0.10)
+        std_score = (std_high - model_std) / (std_high - std_low) * score
 
-    # 3. 平均信号区间（至多10分）：5-10之间得满分，否则每超出/不足1，扣2分（单边最少为0分）
-    component = 10
+    # 3. 平均信号（最多5分）：5~10之间满分，超出或不足每1扣2分，最小0分
+    score = 5
     if 5 <= avg_signal <= 10:
-        signal_score = component
+        avg_signal_score = score
     elif avg_signal < 5:
-        signal_score = max(0, component - (5 - avg_signal) * 2)
+        avg_signal_score = max(0, score - (5 - avg_signal) * 2)
     else:  # avg_signal > 10
-        signal_score = max(0, component - (avg_signal - 10) * 2)
+        avg_signal_score = max(0, score - (avg_signal - 10) * 2)
 
-    # 4. 零信号天数轻惩（5分满分）：每1%零信号天数扣1分，达到或超过5%得0分
-    component = 5
-    zero_signal_score = max(0, component - zero_signal_ratio * 100)
+    # 4. 零信号惩罚（最多5分）：每1%零信号天数扣1分，5%以上0分
+    score = 5
+    zero_signal_score = max(0, score - zero_signal_ratio * 100)
 
-    # 5. 0%准确率严重惩罚（15分满分）：每1%占比扣1分，达到或超过15%得0分
-    component = 15
-    zero_acc_score = max(0, component - zero_acc_ratio * 100)
+    # 5. 0%准确率惩罚（最多10分）：每1%占比扣1分，10%以上0分
+    score = 10
+    zero_acc_score = max(0, score - zero_acc_ratio * 100)
 
-    # 6. 优势天数（10分，优势>=70%得满分）、显著优势天数（10分，>=50%得满分）
-    component = 10
-    adv_score = min(component, adv_ratio / 0.7 * component)
+    # 6. 劣势天数惩罚（最多4分）：≥50%全扣完，线性递减
+    score = 4
+    loss_score = max(0, score - loss_ratio / 0.5 * score)
 
-    component = 10
-    strong_adv_score = min(component, strong_adv_ratio / 0.5 * component)
+    # 7. 显著劣势天数惩罚（最多6分）：≥30%全扣完，线性递减
+    score = 6
+    strong_loss_score = max(0, score - strong_loss_ratio / 0.3 * score)
 
-    components = (acc_score, std_score, signal_score, zero_signal_score, zero_acc_score, adv_score, strong_adv_score)
+    # 8. 优势天数奖励（最多4分）：≥70%满分，线性递增
+    score = 4
+    gain_score = min(score, gain_ratio / 0.7 * score)
 
-    total = round(sum(components), 2)
-    components = tuple(float(round(c, 2)) for c in components)
+    # 9. 显著优势天数奖励（最多6分）：≥50%满分，线性递增
+    score = 6
+    strong_gain_score = min(score, strong_gain_ratio / 0.5 * score)
 
-    return total, components
+    detail = {
+        'acc_score': acc_score,
+        'std_score': std_score,
+        'avg_signal_score': avg_signal_score,
+        'zero_signal_score': zero_signal_score,
+        'zero_acc_score': zero_acc_score,
+        'loss_score': loss_score,
+        'strong_loss_score': strong_loss_score,
+        'gain_score': gain_score,
+        'strong_gain_score': strong_gain_score,
+    }
+
+    total = round(sum(detail.values()), 2)
+    detail = {key: float(round(value, 2)) for key, value in detail.items()}
+
+    return total, detail
 
 
 def kym(kym_df: pd.DataFrame, predict_mode: str) -> (float, tuple):
     nature_rates = []
-    nature_hits = []
+    nature_signals = []
 
     model_rates = []
-    model_hits = []
+    model_signals = []
 
-    for date in kym_df.columns[:-10]:
-        nature_rate, nature_hit = kym_df.loc['nature_rates'][date].split('/')
-        nature_rate, nature_hit = float(nature_rate), int(nature_hit)
+    for date in kym_df.columns[-75:-15]:
+        nature_rate, nature_signal = kym_df.loc['nature_rates'][date].split('/')
+        nature_rate, nature_signal = float(nature_rate), int(nature_signal)
 
         nature_rates.append(nature_rate)
-        nature_hits.append(nature_hit)
+        nature_signals.append(nature_signal)
 
-        model_rate, model_hit = kym_df.loc['model_rates'][date].split('/')
-        model_rate, model_hit = float(model_rate), int(model_hit)
+        model_rate, model_signal = kym_df.loc['model_rates'][date].split('/')
+        model_rate, model_signal = float(model_rate), int(model_signal)
 
         model_rates.append(model_rate)
-        model_hits.append(model_hit)
+        model_signals.append(model_signal)
 
     # 自然准确率 均值/方差
-    nature_rates_avg = np.array(nature_rates).mean()
-    nature_rates_std = np.array(nature_rates).std()
+    nature_acc = np.array(nature_rates).mean()
+    nature_std = np.array(nature_rates).std()
 
     # 模型准确率 均值/方差 (剔除零信号)
     filtered_rates = []
-    for rate, hit in zip(model_rates, model_hits):
-        if hit != 0:
+    for rate, signal in zip(model_rates, model_signals):
+        if signal != 0:
             filtered_rates.append(rate)
 
-    filtered_rates = np.array(filtered_rates)
-    model_rates_avg = filtered_rates.mean()
-    model_rates_std = filtered_rates.std()
+    model_acc = np.array(filtered_rates).mean()
+    model_std = np.array(filtered_rates).std()
 
     # 平均信号数
-    model_hits_avg = np.array(model_hits).mean()
+    avg_signal = np.array(model_signals).mean()
 
     # 零信号 天数
-    zero_hit_days = model_hits.count(0)
+    zero_signal_days = model_signals.count(0)
+
+    # 有效天数（非零信号天数），所有相关比率均以此为分母
+    valid_days = len(model_signals) - zero_signal_days
 
     # 零准确率 天数 - 严重劣势
     # 显著劣势 天数
     # 显著优势 天数
     # 劣势 天数
     # 优势 天数
-    zero_accuracy_days = 0
+    zero_acc_days = 0
 
-    significant_loss_days = 0
-    significant_gain_days = 0
+    strong_loss_days = 0
+    strong_gain_days = 0
 
     loss_days = 0
     gain_days = 0
 
-    for model_rate, model_hit, nature_rate in zip(model_rates, model_hits, nature_rates):
-        if model_hit == 0:
+    for model_rate, model_signal, nature_rate in zip(model_rates, model_signals, nature_rates):
+        if model_signal == 0:
             continue
 
         if model_rate == 0:
-            zero_accuracy_days += 1
+            zero_acc_days += 1
 
         if model_rate < nature_rate:
             loss_days += 1
         if model_rate < nature_rate - 0.05:
-            significant_loss_days += 1
+            strong_loss_days += 1
 
         if model_rate > nature_rate:
             gain_days += 1
         if model_rate > nature_rate + 0.05:
-            significant_gain_days += 1
+            strong_gain_days += 1
 
-    score, components = model_score(
-        model_acc=model_rates_avg,
-        nature_acc=nature_rates_avg,
-        std=model_rates_std,
-        avg_signal=model_hits_avg,
-        zero_signal_ratio=zero_hit_days / len(model_hits),
-        zero_acc_ratio=zero_accuracy_days / len(model_hits),
-        adv_ratio=gain_days / len(model_hits),
-        strong_adv_ratio=significant_gain_days / len(model_hits),
+    score, detail = model_score(
+        model_acc=model_acc,
+        model_std=model_std,
+        nature_acc=nature_acc,
+        nature_std=nature_std,
+        avg_signal=avg_signal,
+        zero_signal_ratio=zero_signal_days / len(model_signals),
+        zero_acc_ratio=zero_acc_days / valid_days,
+        loss_ratio=loss_days / valid_days,
+        strong_loss_ratio=strong_loss_days / valid_days,
+        gain_ratio=gain_days / valid_days,
+        strong_gain_ratio=strong_gain_days / valid_days,
     )
 
     with open('_kym/summary', 'a') as fd:
@@ -290,46 +319,51 @@ def kym(kym_df: pd.DataFrame, predict_mode: str) -> (float, tuple):
         kym_df.loc[['nature_rates', 'model_rates']].to_csv(fd, mode='a', sep='\t')
 
         print('', file=fd)
-        print(f'评估天数 : {len(model_hits)}', file=fd)
-        print(f'自然准确率 mean: {nature_rates_avg:.2%}, std: {nature_rates_std:.2%}', file=fd)
+        print(f'自然准确率 mean: {nature_acc:.2%}, std: {nature_std:.2%}', file=fd)
+        print(f'评估天数: {len(model_signals)}，有效天数: {valid_days}', file=fd)
 
-        print(f'模型准确率 mean: {model_rates_avg:.2%}, std: {model_rates_std:.2%}', file=fd)
-        print(f'准确率提升: {model_rates_avg - nature_rates_avg:.2%}', file=fd)
-        print(f'平均信号数: {model_hits_avg:.2f}', file=fd)
+        print(f'模型准确率 mean: {model_acc:.2%}, std: {model_std:.2%}', file=fd)
+        print(f'准确率提升: {model_acc - nature_acc:.2%}', file=fd)
+        print(f'平均信号数: {avg_signal:.2f}', file=fd)
 
-        print(f'零信号 days: {zero_hit_days}, ratio: {zero_hit_days / len(model_hits):.2%}', file=fd)
-        print(f'零准确率 days: {zero_accuracy_days}, ratio: {zero_accuracy_days / len(model_hits):.2%}', file=fd)
+        print(f'零信号 days: {zero_signal_days}, ratio: {zero_signal_days / len(model_signals):.2%}', file=fd)
+        print(f'零准确率 days: {zero_acc_days}, ratio: {zero_acc_days / valid_days:.2%}', file=fd)
 
-        print(f'显著 劣势 days: {significant_loss_days}, ratio: {significant_loss_days / len(model_hits):.2%}', file=fd)
-        print(f'显著 优势 days: {significant_gain_days}, ratio: {significant_gain_days / len(model_hits):.2%}', file=fd)
-        print(f'劣势 days: {loss_days}, ratio: {loss_days / len(model_hits):.2%}', file=fd)
-        print(f'优势 days: {gain_days}, ratio: {gain_days / len(model_hits):.2%}', file=fd)
-        print(f'得分 {score}', file=fd)
+        print(f'显著 劣势 days: {strong_loss_days}, ratio: {strong_loss_days / valid_days:.2%}', file=fd)
+        print(f'显著 优势 days: {strong_gain_days}, ratio: {strong_gain_days / valid_days:.2%}', file=fd)
+        print(f'劣势 days: {loss_days}, ratio: {loss_days / valid_days:.2%}', file=fd)
+        print(f'优势 days: {gain_days}, ratio: {gain_days / valid_days:.2%}', file=fd)
+        print(f'得分 {score} with detail {detail}', file=fd)
         print('\n--------------------\n', file=fd)
 
-    return score, components
+    return score, detail
+
+
+def preprocess(predict_mode: str):
+    target_dates = valid_dates
+
+    kym_report = build_report(target_dates, predict_mode)
+    kym_df = build_df(kym_report)
+
+    output_file = f'_kym/{predict_mode}.csv'
+    kym_df.to_csv(output_file)
 
 
 if __name__ == '__main__':
-    target_dates_ = valid_dates
+    with Pool(processes=12) as pool:
+        pool.map(preprocess, PREDICT_MODE)
+
     touch_file('_kym/summary')
     rank = []
 
     for predict_mode_ in PREDICT_MODE:
-        output_file = f'_kym/{predict_mode_}.csv'
+        output_file_ = f'_kym/{predict_mode_}.csv'
+        kym_df_ = pd.read_csv(output_file_, index_col=0)
 
-        kym_report_ = build_report(target_dates_, predict_mode_)
-        kym_df_ = build_df(kym_report_)
-
-        print(f'Processing {predict_mode_}')
-        print(kym_df_)
-        kym_df_.to_csv(output_file)
-
-        kym_df_ = pd.read_csv(output_file, index_col=0)
-        score_, components_ = kym(kym_df_, predict_mode_)
-        rank.append((predict_mode_, score_, components_))
+        score_, detail_ = kym(kym_df_, predict_mode_)
+        rank.append((predict_mode_, score_, detail_))
 
     print('KYM Rank:')
     rank.sort(key=lambda x: x[1], reverse=True)
-    for mode, score_, components_ in rank:
-        print(f'{mode}: {score_}, components: {components_}')
+    for mode, score_, detail_ in rank:
+        print(f'{mode}\t score:{score_}, detail: {detail_}')
