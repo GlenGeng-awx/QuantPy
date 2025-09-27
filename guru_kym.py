@@ -8,7 +8,7 @@ from conf import *
 from util import shrink_date_str, get_idx_by_date, touch_file
 from guru_predict import load_prediction
 from guru_wizard import PREDICT_MODE, valid_dates
-from x_financial_statements import Financial_Statements
+from financial_statements import Financial_Statements
 
 
 def is_x(cell):

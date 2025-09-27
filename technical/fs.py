@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from x_financial_statements import Financial_Statements
+from financial_statements import Financial_Statements
 from util import get_idx_by_date, shrink_date_str
 from technical import get_diff
 

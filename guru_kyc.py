@@ -4,7 +4,7 @@ from preload_conf import *
 from conf import *
 from util import get_idx_by_date
 from guru_predict import load_prediction
-from x_kyc import Call, Put, CLOSED_POSITIONS, ACTIVE_POSITIONS
+from x_position import Call, Put, CLOSED_POSITIONS, ACTIVE_POSITIONS
 
 
 # predict_dates : [date]
