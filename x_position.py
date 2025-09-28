@@ -1,4 +1,8 @@
+import plotly.graph_objects as go
+from base_engine import BaseEngine
+from preload_conf import *
 from conf import *
+from util import get_idx_by_date
 
 # (long/short, call/put, date, strike, num, buy_price, sell_price),
 # (long/short, call/put, date, strike, num, buy_price, sell_price, txn_date),
@@ -273,17 +277,16 @@ P_2025_0919 = {
     ],
 }
 
+# loss, -283
 P_2025_0926 = {
     JPM: [
-        (LLong, Put, '2025-09-26', 295, 1, 3.66, None, '2025-09-04'),
-
-        # success, 113
+        # fail, -253
+        (LLong, Put, '2025-09-26', 295, 1, 3.66, 0, '2025-09-04'),
         (Short, Put, '2025-09-26', 285, 1, 1.64, 0.51, '2025-09-04'),
     ],
     MSFT: [
-        (LLong, Call, '2025-09-26', 515, 1, 2.10, None, '2025-09-05'),
-
-        # success, 180
+        # fail, -30
+        (LLong, Call, '2025-09-26', 515, 1, 2.10, 0, '2025-09-05'),
         (LLong, Call, '2025-09-26', 515, 1, 4.00, 7.49, '2025-09-05'),
         (Short, Call, '2025-09-26', 525, 1, 1.80, 3.49, '2025-09-05'),
     ],
@@ -302,7 +305,7 @@ P_2025_1010 = {
     ],
     KO: [
         (LLong, Call, '2025-10-10', 67, 3, 1.09, None, '2025-09-18'),
-        (Short, Call, '2025-10-10', 71, 3, 0.13, None, '2025-09-18'),
+        (Short, Call, '2025-10-10', 71, 3, 0.13, 0.06, '2025-09-18'),
     ],
 }
 
@@ -311,25 +314,118 @@ P_2025_1017 = {
         (LLong, Call, '2025-10-17', 350, 1, 3.31, None, '2025-09-24'),
         (Short, Call, '2025-10-17', 365, 1, 0.91, None, '2025-09-24'),
     ],
+    AVGO: [
+        (LLong, Put, '2025-10-17', 310, 1, 4.67, None, '2025-09-25'),
+        (Short, Put, '2025-10-17', 290, 1, 1.87, None, '2025-09-25'),
+    ],
+    BABA: [
+        (LLong, Put, '2025-10-17', 162.5, 1, 2.60, None, '2025-09-26'),
+    ],
 }
 
-CLOSED_POSITIONS = [
+POSITIONS = [
     P_2025_0829,
-    P_2025_0905, P_2025_0912
-]
-
-ACTIVE_POSITIONS = [
-    P_2025_0919, P_2025_0926,
-    P_2025_1003,
+    P_2025_0905, P_2025_0912, P_2025_0919, P_2025_0926,
+    P_2025_1003, P_2025_1010, P_2025_1017,
 ]
 
 
 def get_portfolio() -> list:
     portfolio = [QQQ, SS_000300, SS_000001]
-    for active_position in ACTIVE_POSITIONS:
-        for stock_name in active_position:
-            records = active_position[stock_name]
-            for record in records:
-                if record[6] is None and stock_name not in portfolio:
+    for position in POSITIONS:
+        for stock_name in position:
+            for txn in position[stock_name]:
+                sell_price = txn[6]
+                if sell_price is None and stock_name not in portfolio:
                     portfolio.append(stock_name)
     return portfolio
+
+
+# txn_dates : [date]
+# calls     : [(date, strike_price)]
+# puts      : [(date, strike_price)]
+def show_position(stock_name, txn_dates: list, calls: list, puts: list):
+    if not txn_dates:
+        return
+
+    spectrum = [
+        (period_4y(), args_4y()),
+        (period_1y(), args_1y_guru()),
+    ]
+
+    for (from_date, to_date, interval), args in spectrum:
+        base_engine = BaseEngine(stock_name, from_date, to_date, interval)
+        base_engine.build_graph(**args)
+
+        stock_df, fig = base_engine.stock_df, base_engine.fig
+
+        y = []
+        for date in txn_dates:
+            idx = get_idx_by_date(stock_df, date)
+            y.append(stock_df['close'].loc[idx])
+
+        fig.add_trace(
+            go.Scatter(
+                name='txn_dates', x=txn_dates, y=y,
+                mode='markers',
+                marker=dict(color='black', size=8, symbol='star'),
+            ),
+            row=1, col=1,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name='calls',
+                x=[date for date, _ in calls],
+                y=[strike_price for _, strike_price in calls],
+                mode='markers',
+                marker=dict(color='red', size=8, symbol='star'),
+            ),
+            row=1, col=1,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                name='puts',
+                x=[date for date, _ in puts],
+                y=[strike_price for _, strike_price in puts],
+                mode='markers',
+                marker=dict(color='green', size=8, symbol='star'),
+            ),
+            row=1, col=1,
+        )
+
+        fig.show()
+
+
+# mode: open/close/all
+def show_positions(mode: str):
+    for stock_name in ALL:
+        txn_dates, calls, puts = [], [], []
+
+        for position in POSITIONS[-4:]:
+            for txn in position.get(stock_name, []):
+                if len(txn) != 8:
+                    continue
+                direction, strike_date, strike_price, sell_price, txn_date = txn[1], txn[2], txn[3], txn[6], txn[7]
+
+                if mode == 'open' and sell_price is not None:
+                    continue
+                if mode == 'close' and sell_price is None:
+                    continue
+
+                txn_dates.append(txn_date)
+
+                if direction == Call:
+                    calls.append((strike_date, strike_price))
+                elif direction == Put:
+                    puts.append((strike_date, strike_price))
+
+        show_position(stock_name, txn_dates, calls, puts)
+
+
+if __name__ == '__main__':
+    print(get_portfolio())
+
+    # all/open/close
+    show_positions('open')

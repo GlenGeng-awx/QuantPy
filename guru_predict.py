@@ -5,14 +5,18 @@ from base_engine import BaseEngine
 from conf import *
 from preload_conf import *
 from util import touch_file
-from guru_wizard import PREDICT_MODE, valid_dates
+from guru_wizard import PREDICT_MODE, PREDICT_MODE_SELECTED, VALID_DATES
+from x_opinion import get_opinion_at
 import guru
+
+# ALL = get_opinion_at('2025-09-26')
+# PREDICT_MODE = PREDICT_MODE_SELECTED
 
 
 # (stock_name, from_date, to_date, interval, args_fn) -> list of predict_mode
 def build_tasks(stock_name):
     tasks = {}
-    for to_date in valid_dates[-1:]:
+    for to_date in VALID_DATES[-1:]:
         from_date, to_date, interval = period_1y_to(to_date)
         tasks[(stock_name, from_date, to_date, interval, args_1y_guru)] = PREDICT_MODE[:]
 

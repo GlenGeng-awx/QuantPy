@@ -3,7 +3,8 @@ from technical.volume import VOLUME_REG
 from guru.util import _pick_rolling_n_pst
 
 
-# sz: 3/5/10/15
+# sz: 5/10,
+# 3 and 15/20/25/30 are abandoned
 def _calculate_hits(stock_df: pd.DataFrame, sz: int, key: str) -> list:
     vol = stock_df[VOLUME_REG]
 

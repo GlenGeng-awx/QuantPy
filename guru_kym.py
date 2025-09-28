@@ -7,7 +7,7 @@ from preload_conf import *
 from conf import *
 from util import shrink_date_str, get_idx_by_date, touch_file
 from guru_predict import load_prediction
-from guru_wizard import PREDICT_MODE, valid_dates
+from guru_wizard import PREDICT_MODE, VALID_DATES
 from financial_statements import Financial_Statements
 
 
@@ -17,10 +17,6 @@ def is_x(cell):
 
 def is_just_x(cell):
     return 'X______' in cell
-
-
-def recall(cell):
-    return is_x(cell)
 
 
 def negative(cell):
@@ -35,8 +31,16 @@ def is_target(cell):
     return 'U' in cell or 'D' in cell
 
 
-def display_stock(stock_name, hit_dates: list):
-    if not hit_dates:
+def get_summary_file():
+    return '_kym/summary'
+
+
+def get_csv_file(predict_mode: str):
+    return f'_kym/{predict_mode}.csv'
+
+
+def display_stock(stock_name, positive_dates: list, negative_dates: list):
+    if not (positive_dates and negative_dates):
         return
 
     spectrum = [
@@ -51,15 +55,29 @@ def display_stock(stock_name, hit_dates: list):
         stock_df, fig = base_engine.stock_df, base_engine.fig
 
         y = []
-        for date in hit_dates:
+        for date in positive_dates:
             idx = get_idx_by_date(stock_df, date)
             y.append(stock_df['close'].loc[idx])
 
         fig.add_trace(
             go.Scatter(
-                name='hit', x=hit_dates, y=y,
+                name='hit', x=positive_dates, y=y,
                 mode='markers',
                 marker=dict(color='red', size=8, symbol='star'),
+            ),
+            row=1, col=1,
+        )
+
+        y = []
+        for date in negative_dates:
+            idx = get_idx_by_date(stock_df, date)
+            y.append(stock_df['close'].loc[idx])
+
+        fig.add_trace(
+            go.Scatter(
+                name='miss', x=negative_dates, y=y,
+                mode='markers',
+                marker=dict(color='blue', size=6, symbol='x'),
             ),
             row=1, col=1,
         )
@@ -75,7 +93,8 @@ def build_report(target_dates: list, predict_mode: str) -> dict:
 
     for stock_name in ALL:
         kym_report[stock_name] = {}
-        hit_dates = []
+        positive_dates = []
+        negative_dates = []
 
         (from_date, to_date, interval), args = period_1y(), args_1y_guru()
 
@@ -118,9 +137,11 @@ def build_report(target_dates: list, predict_mode: str) -> dict:
             kym_report[stock_name][date] = cell
 
             if positive(cell):
-                hit_dates.append(date)
+                positive_dates.append(date)
+            if negative(cell):
+                negative_dates.append(date)
 
-        # display_stock(stock_name, hit_dates)
+        # display_stock(stock_name, positive_dates, negative_dates)
 
     return kym_report
 
@@ -313,7 +334,7 @@ def kym(kym_df: pd.DataFrame, predict_mode: str) -> (float, tuple):
         strong_gain_ratio=strong_gain_days / valid_days,
     )
 
-    with open('_kym/summary', 'a') as fd:
+    with open(get_summary_file(), 'a') as fd:
         print(f'KYM Report for {predict_mode}\n', file=fd)
 
         kym_df.loc[['nature_rates', 'model_rates']].to_csv(fd, mode='a', sep='\t')
@@ -339,31 +360,35 @@ def kym(kym_df: pd.DataFrame, predict_mode: str) -> (float, tuple):
     return score, detail
 
 
+# prepare csv file for each predict_mode
 def preprocess(predict_mode: str):
-    target_dates = valid_dates
+    target_dates = VALID_DATES
 
     kym_report = build_report(target_dates, predict_mode)
     kym_df = build_df(kym_report)
 
-    output_file = f'_kym/{predict_mode}.csv'
-    kym_df.to_csv(output_file)
+    kym_df.to_csv(get_csv_file(predict_mode))
+
+
+# summarize all predict_mode by score and ranking
+def summarize():
+    touch_file(get_summary_file())
+    rank = []
+
+    for predict_mode in PREDICT_MODE:
+        kym_df = pd.read_csv(get_csv_file(predict_mode), index_col=0)
+
+        score, detail = kym(kym_df, predict_mode)
+        rank.append((predict_mode, score, detail))
+
+    print('KYM Rank:')
+    rank.sort(key=lambda x: x[1], reverse=True)
+    for mode, score, detail in rank:
+        print(f'{mode}\t score:{score}, detail: {detail}')
 
 
 if __name__ == '__main__':
     with Pool(processes=12) as pool:
         pool.map(preprocess, PREDICT_MODE)
 
-    touch_file('_kym/summary')
-    rank = []
-
-    for predict_mode_ in PREDICT_MODE:
-        output_file_ = f'_kym/{predict_mode_}.csv'
-        kym_df_ = pd.read_csv(output_file_, index_col=0)
-
-        score_, detail_ = kym(kym_df_, predict_mode_)
-        rank.append((predict_mode_, score_, detail_))
-
-    print('KYM Rank:')
-    rank.sort(key=lambda x: x[1], reverse=True)
-    for mode, score_, detail_ in rank:
-        print(f'{mode}\t score:{score_}, detail: {detail_}')
+    summarize()

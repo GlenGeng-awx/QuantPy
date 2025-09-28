@@ -1,6 +1,6 @@
 import re
 
-valid_dates = [
+VALID_DATES = [
     '2025-06-02', '2025-06-03', '2025-06-04', '2025-06-05', '2025-06-06',
     '2025-06-09', '2025-06-10', '2025-06-11', '2025-06-12', '2025-06-13',
     '2025-06-16', '2025-06-17', '2025-06-18',               '2025-06-20',
@@ -176,10 +176,12 @@ PREDICT_MODE = [
     predict_36m_t10_h7,
 ]
 
-PREDICT_MODE_ = [
+PREDICT_MODE_SELECTED = [
     predict_36m_t8_h7,
+    predict_36m_t7_h6,
     predict_42m_t8_h6,
     predict_48m_t6_h6,
+    predict_36m_t6_h6,
 ]
 
 
