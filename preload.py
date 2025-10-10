@@ -2,7 +2,6 @@ from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
 from x_position import get_portfolio
-from x_opinion import get_opinion_at
 
 spectrum = [
     (period_4y(), args_4y()),
