@@ -84,11 +84,11 @@ def build_report(stock_name: str, target_dates: list) -> pd.DataFrame:
 def summarize(kym_df: pd.DataFrame):
     nature_rates = []
     model_rates = []
-    ranking = set()
+    ranking = []
 
     for predict_mode in kym_df.columns:
-        # ignore last 15d
-        model_results = kym_df[predict_mode].iloc[:-15].dropna()
+        # ignore last 15d, total 85d
+        model_results = kym_df[predict_mode].iloc[-100:-15].dropna()
 
         count_all = model_results.count()
         count_target = model_results.apply(is_target).sum()
@@ -100,40 +100,40 @@ def summarize(kym_df: pd.DataFrame):
 
         nature_rates.append(f'{nature_rate:.2f}/{count_all}')
         model_rates.append(f'{model_rate:.2f}/{count_hit}')
-
-        ranking.add((nature_rate, count_all, f'nature_rate {nature_rate:.2f} {count_all}'))
-        ranking.add((model_rate, count_hit, f'{predict_mode} {model_rate:.2f} {count_hit}'))
+        ranking.append((model_rate, count_hit, nature_rate, count_all, predict_mode))
 
     kym_df.loc['nature_rates'] = nature_rates
     kym_df.loc['model_rates'] = model_rates
 
-    ranking = list(ranking)
     ranking.sort(key=lambda x: (-x[0], -x[1]))
-    ranking = [item[2] for item in ranking]
+
+    ranking = [
+        f'{predict_mode} {model_rate:.2f} {count_hit} {nature_rate:.2f} {count_all}'
+        for model_rate, count_hit, nature_rate, count_all, predict_mode in ranking
+    ]
 
     return kym_df, ranking
 
 
-# return list of (predict_mode, model_rate, count_hit)
+# return list of (predict_mode, model_rate, count_hit, nature_rate, count_all)
 def filter_predict_modes(stock_name: str) -> list:
     summary = json.load(open(get_summary_file(), 'r'))
     records = summary.get(stock_name, [])
 
-    # get nature_rate
-    nature_rate = None
-    for record in records:
-        predict_mode, model_rate, _ = record.split()
-        if predict_mode == 'nature_rate':
-            nature_rate = float(model_rate)
-            break
-
-    # filter predict_modes
     predict_modes = []
+
     for record in records:
-        predict_mode, model_rate, count_hit = record.split()
+        predict_mode, model_rate, count_hit, nature_rate, count_all = record.split()
+
         model_rate, count_hit = float(model_rate), int(count_hit)
-        if model_rate > nature_rate and model_rate >= 0.6:
-            predict_modes.append((predict_mode, model_rate, count_hit))
+        nature_rate, count_all = float(nature_rate), int(count_all)
+
+        # high nature_rate is bad for strangle/straddle strategy
+        # if model_rate >= 0.7 and model_rate > nature_rate >= 0.5:
+        #     predict_modes.append((predict_mode, model_rate, count_hit, nature_rate, count_all))
+
+        if nature_rate < 0.5 and model_rate >= 0.6:
+            predict_modes.append((predict_mode, model_rate, count_hit, nature_rate, count_all))
 
     return predict_modes
 
@@ -144,9 +144,9 @@ if __name__ == '__main__':
 
     for stock_name_ in ALL:
         kym_df_ = build_report(stock_name_, target_dates_)
-        kym_df_, results_ = summarize(kym_df_)
+        kym_df_, ranking_ = summarize(kym_df_)
 
-        summary_[stock_name_] = results_
+        summary_[stock_name_] = ranking_
         print(kym_df_, file=open(get_txt_file(stock_name_), 'w'))
 
     print(json.dumps(summary_, indent=2), file=open(get_summary_file(), 'w'))

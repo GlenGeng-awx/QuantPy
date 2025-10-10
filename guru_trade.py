@@ -11,7 +11,7 @@ import guru
 def build_tasks():
     tasks = []
 
-    for stock_name in ALL:
+    for stock_name in ALL[:10]:
         predict_modes = filter_predict_modes(stock_name)
         if not predict_modes:
             continue
@@ -40,12 +40,12 @@ def predict(task: list):
 
     figs = []
 
-    for predict_mode, model_rate, count_hit in predict_modes:
-        print(f'Predicting {stock_name} {to_date} with {predict_mode} {model_rate} {count_hit}...')
+    for predict_mode, model_rate, count_hit, nature_rate, count_all in predict_modes:
+        print(f'Predicting {stock_name} {to_date} with {predict_mode} {model_rate} {count_hit}')
         fig_ = go.Figure(fig)
 
-        new_title = f"{fig.layout.title.text}<br>{' ' * 18}{predict_mode}: {model_rate * 100}% {count_hit} hit"
-        fig_.update_layout(title=new_title)
+        sub_title = f'{predict_mode} {model_rate * 100:.1f}% {count_hit} hit <-- nature {nature_rate * 100:.1f}% {count_all} total'
+        fig_.update_layout(title=f"{fig.layout.title.text}<br>{' ' * 18}{sub_title}")
 
         if guru.predict.predict(stock_df, fig_, stock_name, context, predict_mode):
             figs.append(fig_)
@@ -57,5 +57,5 @@ def predict(task: list):
 if __name__ == '__main__':
     _tasks = build_tasks()
 
-    with Pool(processes=3) as pool:
+    with Pool(processes=1) as pool:
         pool.map(predict, _tasks)
