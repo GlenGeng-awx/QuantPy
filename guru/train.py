@@ -14,7 +14,7 @@ def get_file_name(stock_name: str, stock_df: pd.DataFrame, train_mode: str) -> s
 
 
 def _get_sz(key: str) -> int:
-    if key in [target.KEY for target in targets]:
+    if key not in [factor.KEY for factor in factors]:
         return 1
     if key in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
         return 1

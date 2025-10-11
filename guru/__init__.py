@@ -101,6 +101,12 @@ from guru import (
 
     n1_will_shoot_down,
     n1_will_shoot_up,
+
+    n2_will_crash_p80,
+    n2_will_spike_p80,
+
+    n3_will_shoot_down_p80,
+    n3_will_shoot_up_p80,
 )
 
 factors = [
@@ -207,12 +213,20 @@ targets = [
     n1_will_shoot_up,
 ]
 
+recalls = [
+    n2_will_crash_p80,
+    n3_will_shoot_down_p80,
+
+    n2_will_spike_p80,
+    n3_will_shoot_up_p80,
+]
+
 
 def calculate(stock_df: pd.DataFrame) -> dict:
     context = {}
 
     start_time = datetime.now()
-    for factor in factors + targets:
+    for factor in factors + targets + recalls:
         dates = factor.calculate_hits(stock_df)
         context[factor.KEY] = dates
     print(f'calculate context cost: {(datetime.now() - start_time).total_seconds()}s')

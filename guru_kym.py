@@ -48,26 +48,17 @@ def build_report(stock_name: str, target_dates: list) -> pd.DataFrame:
 
         kym_report[date] = {}
 
-        idx = get_idx_by_date(stock_df, date)
-        close = stock_df['close'].loc[idx]
-        min_close = stock_df['close'].loc[idx:idx + 15].min()
-        max_close = stock_df['close'].loc[idx:idx + 15].max()
-
         cell = ''
 
         # Up
-        for key in ['will spike', 'will shoot up']:
+        for key in ['will spike', 'will shoot up', 'will spike p80', 'will shoot up p80']:
             hits = [shrink_date_str(d) for d in context.get(key, [])]
             cell += 'U' if date in hits else '_'
 
-        cell += 'U' if max_close / close - 1 > 0.1 else '_'
-
         # Down
-        for key in ['will crash', 'will shoot down']:
+        for key in ['will crash', 'will shoot down', 'will crash p80', 'will shoot down p80']:
             hits = [shrink_date_str(d) for d in context.get(key, [])]
             cell += 'D' if date in hits else '_'
-
-        cell += 'D' if 1 - min_close / close > 0.1 else '_'
 
         # FS
         cell += 'F' if date in Financial_Statements.get(stock_name, []) else '_'
@@ -128,11 +119,7 @@ def filter_predict_modes(stock_name: str) -> list:
         model_rate, count_hit = float(model_rate), int(count_hit)
         nature_rate, count_all = float(nature_rate), int(count_all)
 
-        # high nature_rate is bad for strangle/straddle strategy
-        # if model_rate >= 0.7 and model_rate > nature_rate >= 0.5:
-        #     predict_modes.append((predict_mode, model_rate, count_hit, nature_rate, count_all))
-
-        if nature_rate < 0.5 and model_rate >= 0.6:
+        if model_rate >= 0.5 and model_rate > nature_rate:
             predict_modes.append((predict_mode, model_rate, count_hit, nature_rate, count_all))
 
     return predict_modes

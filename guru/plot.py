@@ -20,16 +20,18 @@ def summarize(stock_df: pd.DataFrame) -> str:
     incr_days = len(incr_psts)
     incr_10 = incr_psts[int(incr_days * 0.1)]
     incr_50 = incr_psts[int(incr_days * 0.5)]
+    incr_80 = incr_psts[int(incr_days * 0.8)]
     incr_90 = incr_psts[int(incr_days * 0.9)]
 
     decr_psts.sort()
     decr_days = len(decr_psts)
     decr_10 = decr_psts[int(decr_days * 0.1)]
     decr_50 = decr_psts[int(decr_days * 0.5)]
+    decr_80 = decr_psts[int(decr_days * 0.8)]
     decr_90 = decr_psts[int(decr_days * 0.9)]
 
-    summary = f'incr {incr_days}d, 10/50/90: {incr_10:.2%}/{incr_50:.2%}/{incr_90:.2%}, ' \
-              f'decr {decr_days}d, 10/50/90: {decr_10:.2%}/{decr_50:.2%}/{decr_90:.2%}'
+    summary = f'incr {incr_days}d, 10/50/80/90: {incr_10:.2%}/{incr_50:.2%}/{incr_80:.2%}/{incr_90:.2%}, ' \
+              f'decr {decr_days}d, 10/50/80/90: {decr_10:.2%}/{decr_50:.2%}/{decr_80:.2%}/{decr_90:.2%}'
     return summary
 
 

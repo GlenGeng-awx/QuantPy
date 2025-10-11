@@ -18,11 +18,11 @@ def build_tasks():
 
         for to_date in VALID_DATES[-1:]:
             # 1y
-            from_date, to_date, interval = period_1y_to(to_date)
+            from_date, to_date, interval = period_predict(to_date)
             tasks.append((stock_name, from_date, to_date, interval, args_1y_guru, predict_modes[:]))
 
             # 4y
-            from_date, to_date, interval = period_4y_to(to_date)
+            from_date, to_date, interval = period_train(to_date, 48)
             tasks.append((stock_name, from_date, to_date, interval, args_4y_guru, predict_modes[:]))
 
     return tasks
