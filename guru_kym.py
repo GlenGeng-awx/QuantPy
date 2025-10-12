@@ -33,7 +33,8 @@ def get_txt_file(stock_name: str):
 def build_report(stock_name: str, target_dates: list) -> pd.DataFrame:
     kym_report = {}
 
-    (from_date, to_date, interval), args = period_1y(), args_1y_guru()
+    to_date = target_dates[-1]
+    (from_date, to_date, interval), args = period_predict(to_date), args_1y_guru()
 
     base_engine = BaseEngine(stock_name, from_date, to_date, interval)
     base_engine.build_graph(**args)

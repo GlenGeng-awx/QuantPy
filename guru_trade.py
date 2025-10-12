@@ -11,7 +11,7 @@ import guru
 def build_tasks():
     tasks = []
 
-    for stock_name in ALL[:10]:
+    for stock_name in ALL:
         predict_modes = filter_predict_modes(stock_name)
         if not predict_modes:
             continue
