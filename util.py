@@ -14,32 +14,6 @@ pd.set_option('display.max_colwidth', None)
 pd.set_option('display.float_format', '{:.3f}'.format)
 
 
-def local_max(data: pd.DataFrame, column='close') -> pd.Series:
-    hits = []
-    indices = []
-
-    for pos in range(1, data.shape[0] - 1):
-        if (data.iloc[pos][column] > data.iloc[pos - 1][column]
-                and data.iloc[pos][column] >= data.iloc[pos + 1][column]):
-            hits.append(True)
-            indices.append(data.iloc[pos].name)
-
-    return pd.Series(hits, index=indices)
-
-
-def local_min(data: pd.DataFrame, column='close') -> pd.Series:
-    hits = []
-    indices = []
-
-    for pos in range(1, data.shape[0] - 1):
-        if (data.iloc[pos][column] < data.iloc[pos - 1][column]
-                and data.iloc[pos][column] <= data.iloc[pos + 1][column]):
-            hits.append(True)
-            indices.append(data.iloc[pos].name)
-
-    return pd.Series(hits, index=indices)
-
-
 def max_between(data: pd.DataFrame, start_idx, end_idx, column='close') -> int:
     # max price in [start_idx, end_idx]
     # print(f'max_between(start_idx={start_idx}, end_idx={end_idx})')

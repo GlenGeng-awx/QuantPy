@@ -9,6 +9,7 @@ from technical.line_expo import LineExpo
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.fs import FS
+from technical.implied_neck_line import ImpliedNeckLine
 
 from statistical.ema import EMA
 from statistical.ma import MA
@@ -52,6 +53,9 @@ class BaseEngine:
         self.fs = FS(self.stock_df, self.stock_name, self.yaxis_type)
 
         self.volume = Volume(self.stock_df, self.stock_name)
+
+        # implied
+        self.implied_neck_line = ImpliedNeckLine(self.stock_df)
 
         # guru
         self.context = {}
@@ -132,6 +136,8 @@ class BaseEngine:
                     enable_neck_line=False,
                     enable_elliott=True,
                     enable_fs=True,
+                    # implied
+                    enable_implied_neck_line=True,
                     # other
                     enable_volume=(True, 2),
                     enable_guru=(False, 2, None),
@@ -149,7 +155,7 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
 
-        if self.yaxis_type == 'linear':     # or 'log'
+        if self.yaxis_type == 'linear':  # or 'log'
             self.line_linear.build_graph(self.fig, enable_line)
             self.line_expo.build_graph(self.fig, False)
         else:
@@ -160,6 +166,8 @@ class BaseEngine:
 
         self.ma.build_graph(self.fig, enable_ma)
         # self.ema.build_graph(self.fig, enable_ema)
+
+        self.implied_neck_line.build_graph(self.fig, enable_implied_neck_line)
 
         if enable_guru[0]:
             self.context = guru.calculate(self.stock_df)

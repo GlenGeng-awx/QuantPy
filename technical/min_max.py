@@ -1,8 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from util import local_max, local_min
-
 LOCAL_MAX_PRICE_1ST = 'local_max_price_1st'
 LOCAL_MAX_PRICE_2ND = 'local_max_price_2nd'
 LOCAL_MAX_PRICE_3RD = 'local_max_price_3rd'
@@ -14,46 +12,63 @@ LOCAL_MIN_PRICE_3RD = 'local_min_price_3rd'
 LOCAL_MIN_PRICE_4TH = 'local_min_price_4th'
 
 
+def local_max(stock_df: pd.DataFrame, data: pd.Series) -> pd.Series:
+    indices = []
+
+    for pos in range(1, data.size - 1):
+        prev_val = data.iloc[pos - 1]
+        curr_val = data.iloc[pos]
+        next_val = data.iloc[pos + 1]
+
+        if curr_val > prev_val and curr_val >= next_val:
+            indices.append(data.index[pos])
+
+    return pd.Series([True] * len(indices), index=indices).reindex(stock_df.index, fill_value=False)
+
+
+def local_min(stock_df: pd.DataFrame, data: pd.Series) -> pd.Series:
+    indices = []
+
+    for pos in range(1, data.size - 1):
+        prev_val = data.iloc[pos - 1]
+        curr_val = data.iloc[pos]
+        next_val = data.iloc[pos + 1]
+
+        if curr_val < prev_val and curr_val <= next_val:
+            indices.append(data.index[pos])
+
+    return pd.Series([True] * len(indices), index=indices).reindex(stock_df.index, fill_value=False)
+
+
 class MinMax:
     def __init__(self, stock_df: pd.DataFrame):
         self.stock_df = stock_df
 
         # local max price
-        stock_df[LOCAL_MAX_PRICE_1ST] = local_max(stock_df).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MAX_PRICE_2ND] = local_max(stock_df[stock_df[LOCAL_MAX_PRICE_1ST]]).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MAX_PRICE_3RD] = local_max(stock_df[stock_df[LOCAL_MAX_PRICE_2ND]]).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MAX_PRICE_4TH] = local_max(stock_df[stock_df[LOCAL_MAX_PRICE_3RD]]).reindex(stock_df.index, fill_value=False)
+        stock_df[LOCAL_MAX_PRICE_1ST] = local_max(stock_df, stock_df['close'])
+        stock_df[LOCAL_MAX_PRICE_2ND] = local_max(stock_df, stock_df[stock_df[LOCAL_MAX_PRICE_1ST]]['close'])
+        stock_df[LOCAL_MAX_PRICE_3RD] = local_max(stock_df, stock_df[stock_df[LOCAL_MAX_PRICE_2ND]]['close'])
+        stock_df[LOCAL_MAX_PRICE_4TH] = local_max(stock_df, stock_df[stock_df[LOCAL_MAX_PRICE_3RD]]['close'])
 
         # local min price
-        stock_df[LOCAL_MIN_PRICE_1ST] = local_min(stock_df).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MIN_PRICE_2ND] = local_min(stock_df[stock_df[LOCAL_MIN_PRICE_1ST]]).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MIN_PRICE_3RD] = local_min(stock_df[stock_df[LOCAL_MIN_PRICE_2ND]]).reindex(stock_df.index, fill_value=False)
-        stock_df[LOCAL_MIN_PRICE_4TH] = local_min(stock_df[stock_df[LOCAL_MIN_PRICE_3RD]]).reindex(stock_df.index, fill_value=False)
+        stock_df[LOCAL_MIN_PRICE_1ST] = local_min(stock_df, stock_df['close'])
+        stock_df[LOCAL_MIN_PRICE_2ND] = local_min(stock_df, stock_df[stock_df[LOCAL_MIN_PRICE_1ST]]['close'])
+        stock_df[LOCAL_MIN_PRICE_3RD] = local_min(stock_df, stock_df[stock_df[LOCAL_MIN_PRICE_2ND]]['close'])
+        stock_df[LOCAL_MIN_PRICE_4TH] = local_min(stock_df, stock_df[stock_df[LOCAL_MIN_PRICE_3RD]]['close'])
 
     def _build_graph(self, fig: go.Figure, name: str, color: str, size: int, enable=False):
         df = self.stock_df[self.stock_df[name]]
 
         fig.add_trace(
             go.Scatter(
-                name=name,
-                x=df['Date'],
-                y=df['close'],
-                mode='markers',
-                marker=dict(
-                    color=color,
-                    size=size
-                ),
+                name=name, x=df['Date'], y=df['close'],
+                mode='markers', marker=dict(color=color, size=size),
                 visible=None if enable else 'legendonly',
             ),
             row=1, col=1,
         )
 
     def build_graph(self, fig: go.Figure, interval, enable=False):
-        # self._build_graph(fig, LOCAL_MAX_PRICE_3RD, 'red', 6,
-        #                   True if enable and interval == '1d' else False)
-        # self._build_graph(fig, LOCAL_MIN_PRICE_3RD, 'green', 6,
-        #                   True if enable and interval == '1d' else False)
-
         self._build_graph(fig, LOCAL_MAX_PRICE_4TH, 'red', 8,
                           True if enable and interval == '1d' else False)
         self._build_graph(fig, LOCAL_MIN_PRICE_4TH, 'green', 8,
