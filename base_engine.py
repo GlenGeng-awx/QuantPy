@@ -22,9 +22,7 @@ class BaseEngine:
     def __init__(self, stock_name, from_date, to_date, interval='1d'):
         self.stock_name = stock_name
         self.interval = interval
-        self.yaxis_type = CORE_BANKING.get(stock_name, {}).get('yaxis_type', 'log')
-
-        print(f"BaseEngine: {stock_name} {from_date}~{to_date} with interval {interval} and yaxis {self.yaxis_type}")
+        print(f"BaseEngine: {stock_name} {from_date}~{to_date} with interval {interval}")
 
         self.stock_df = None
         self.fig = None
@@ -49,8 +47,8 @@ class BaseEngine:
         self.secondary_line = SecondaryLine(self.stock_df, self.stock_name)
         self.neck_line = NeckLine(self.stock_df, self.stock_name)
 
-        self.elliott = Elliott(self.stock_df, self.stock_name, self.yaxis_type)
-        self.fs = FS(self.stock_df, self.stock_name, self.yaxis_type)
+        self.elliott = Elliott(self.stock_df, self.stock_name)
+        self.fs = FS(self.stock_df, self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
@@ -82,13 +80,12 @@ class BaseEngine:
         to_date = shrink_date_str(self.stock_df.iloc[-1]['Date'])
 
         title = (f"{self.stock_name}: {from_date} to {to_date}, "
-                 f"{self.stock_df.shape[0]} {interval_to_label(self.interval)}, "
-                 f"yaxis: {self.yaxis_type}")
+                 f"{self.stock_df.shape[0]} {interval_to_label(self.interval)}")
 
         self.fig.update_layout(
             title=title,
             xaxis_rangeslider_visible=False,
-            yaxis_type=self.yaxis_type,
+            yaxis_type='log',
             hovermode="x unified",
             hoverdistance=1,  # Only show hoverlabel for the current day
             hoverlabel=dict(

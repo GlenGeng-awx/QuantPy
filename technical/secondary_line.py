@@ -32,7 +32,7 @@ class SecondaryLine:
         self.anchor_dates = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
-        for line in CORE_BANKING.get(stock_name, {}).get('lines_expo', []):
+        for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
             if len(line) == 5:
                 date, _, _, date1, date2 = line
                 date, date1, date2 = get_date(date), get_date(date1), get_date(date2)

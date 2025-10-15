@@ -77,7 +77,7 @@ class PrimaryLine:
         self.anchor_dates = []
 
         dates = stock_df['Date'].apply(shrink_date_str).values
-        for line in CORE_BANKING.get(stock_name, {}).get('lines_expo', []):
+        for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
             if len(line) == 4:
                 date1, date2, _, _ = line
                 date1, date2 = get_date(date1), get_date(date2)
