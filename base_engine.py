@@ -4,8 +4,8 @@ from technical.price import Price
 from technical.volume import Volume
 from technical.min_max import MinMax
 from technical.sr_level import SupportResistanceLevel
-from technical.line_linear import LineLinear
-from technical.line_expo import LineExpo
+from technical.primary_line import PrimaryLine
+from technical.secondary_line import SecondaryLine
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.fs import FS
@@ -45,8 +45,8 @@ class BaseEngine:
         self.min_max = MinMax(self.stock_df)
         self.sr_level = SupportResistanceLevel(self.stock_df)
 
-        self.line_linear = LineLinear(self.stock_df, self.stock_name)
-        self.line_expo = LineExpo(self.stock_df, self.stock_name)
+        self.primary_line = PrimaryLine(self.stock_df, self.stock_name)
+        self.secondary_line = SecondaryLine(self.stock_df, self.stock_name)
         self.neck_line = NeckLine(self.stock_df, self.stock_name)
 
         self.elliott = Elliott(self.stock_df, self.stock_name, self.yaxis_type)
@@ -155,13 +155,8 @@ class BaseEngine:
         self.min_max.build_graph(self.fig, self.interval, enable_min_max)
         self.sr_level.build_graph(self.fig, enable_sr)
 
-        if self.yaxis_type == 'linear':  # or 'log'
-            self.line_linear.build_graph(self.fig, enable_line)
-            self.line_expo.build_graph(self.fig, False)
-        else:
-            self.line_linear.build_graph(self.fig, False)
-            self.line_expo.build_graph(self.fig, enable_line)
-
+        self.primary_line.build_graph(self.fig, enable_line)
+        self.secondary_line.build_graph(self.fig, enable_line)
         self.neck_line.build_graph(self.fig, enable_neck_line)
 
         self.ma.build_graph(self.fig, enable_ma)

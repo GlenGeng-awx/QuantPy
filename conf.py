@@ -103,7 +103,6 @@ BILI = "BILI"
 EDU = "EDU"
 FUTU = "FUTU"
 TME = "TME"             # Tencent Music Entertainment Group
-IQ = "IQ"
 
 # HONG KONG COMPANIES
 HK_0700 = "0700.HK"     # Tencent
