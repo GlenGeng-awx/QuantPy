@@ -8,10 +8,7 @@ from core_banking import CORE_BANKING
 
 
 # return (x, y, text)
-def plot_tags(stock_df: pd.DataFrame,
-              stock_name,
-              date: str,
-              tags: list) -> (str, float, str):
+def plot_tags(stock_df: pd.DataFrame, stock_name, date: str, tags: list) -> (str, float, str):
     idx = get_idx_by_date(stock_df, date)
     close = stock_df.loc[idx]['close']
 

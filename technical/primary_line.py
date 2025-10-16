@@ -4,7 +4,7 @@ import math
 
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 from technical import get_date, get_price_key
-from core_banking import CORE_BANKING
+from core_banking import CORE_BANKING, LONG_TERM
 
 
 # date1, date2 is in format of '20210101' or ('20210101', 'open')
@@ -78,17 +78,14 @@ class PrimaryLine:
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
-            if len(line) == 4:
-                date1, date2, _, _ = line
-                date1, date2 = get_date(date1), get_date(date2)
-
-                if date1 not in dates or date2 not in dates:
+            if len(line) == 4 or (len(line) == 5 and line[4] == LONG_TERM):
+                date1, date2 = line[0], line[1]
+                if get_date(date1) not in dates or get_date(date2) not in dates:
                     continue
 
-                primary_line = calculate_primary_line(stock_df, line[0], line[1], line[2], line[3])
-
+                primary_line = calculate_primary_line(stock_df, *line[0:4])
                 self.primary_lines.append(primary_line)
-                self.anchor_dates.extend((line[0], line[1]))
+                self.anchor_dates.extend((date1, date2))
 
     def build_graph(self, fig: go.Figure, enable=False):
         anchor_dates, anchor_prices = [], []

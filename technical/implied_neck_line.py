@@ -15,7 +15,7 @@ class ImpliedNeckLine:
             return
 
         for date in dates:
-            self.implied_neck_lines.append(calculate_neck_line(stock_df, date, 10, 250))
+            self.implied_neck_lines.append(calculate_neck_line(stock_df, date, 5, 250))
 
         # sort by price
         self.implied_neck_lines.sort(key=lambda x: x[1][0], reverse=True)
@@ -26,7 +26,7 @@ class ImpliedNeckLine:
                 go.Scatter(
                     name=f'implied neck line-{i + 1}',
                     x=dates, y=prices,
-                    mode='lines', line=dict(width=0.75, color='blue', dash='dot'),
+                    mode='lines', line=dict(width=0.75, color='brown', dash='dot'),
                     visible=None if enable else 'legendonly',
                 )
             )

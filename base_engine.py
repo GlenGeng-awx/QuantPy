@@ -10,10 +10,10 @@ from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.fs import FS
 from technical.implied_neck_line import ImpliedNeckLine
+from technical.implied_line import ImpliedLine
 
 from statistical.ema import EMA
 from statistical.ma import MA
-from core_banking import CORE_BANKING
 from util import load_data, shrink_date_str, interval_to_label, get_next_n_workday
 import guru
 
@@ -54,6 +54,7 @@ class BaseEngine:
 
         # implied
         self.implied_neck_line = ImpliedNeckLine(self.stock_df)
+        self.implied_line = ImpliedLine(self.stock_df, self.stock_name)
 
         # guru
         self.context = {}
@@ -135,6 +136,7 @@ class BaseEngine:
                     enable_fs=True,
                     # implied
                     enable_implied_neck_line=True,
+                    enable_implied_line=True,
                     # other
                     enable_volume=(True, 2),
                     enable_guru=(False, 2, None),
@@ -160,6 +162,7 @@ class BaseEngine:
         # self.ema.build_graph(self.fig, enable_ema)
 
         self.implied_neck_line.build_graph(self.fig, enable_implied_neck_line)
+        self.implied_line.build_graph(self.fig, enable_implied_line)
 
         if enable_guru[0]:
             self.context = guru.calculate(self.stock_df)

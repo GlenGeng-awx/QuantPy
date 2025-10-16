@@ -30,16 +30,19 @@ def default_args():
         'enable_close_price': False,
 
         'enable_min_max': False,
-        'enable_sr': False,         #
+        'enable_sr': False,
 
-        'enable_elliott': False,    #
-        'enable_fs': False,         #
+        'enable_elliott': False,
+        'enable_fs': False,
 
-        'enable_line': False,       #
-        'enable_neck_line': False,  #
+        'enable_line': False,
+        'enable_neck_line': False,
 
         # 5/10/20/60/120/200/250
         'enable_ma': (False, False, False, False, False, False, False),
+
+        'enable_implied_neck_line': False,
+        'enable_implied_line': False,
 
         'enable_volume': (True, 2),
         'rows': 2,
@@ -61,10 +64,11 @@ def guru_args():
 def args_4y():
     customized = {
         'enable_sr': False,
-        'enable_elliott': True,     #
-        'enable_fs': False,         #
-        'enable_line': True,        #
-        'enable_neck_line': True,   #
+        'enable_elliott': True,
+        'enable_fs': False,
+        'enable_line': True,
+        'enable_neck_line': True,
+        'enable_implied_line': True,
     }
 
     args = default_args()
@@ -80,11 +84,12 @@ def args_4y_guru():
 
 def args_1y():
     customized = {
-        'enable_sr': True,          #
+        'enable_sr': True,
         'enable_elliott': False,
-        'enable_fs': True,          #
-        'enable_line': True,        #
-        'enable_neck_line': True,   #
+        'enable_fs': True,
+        'enable_line': True,
+        'enable_neck_line': True,
+        'enable_implied_neck_line': True,
     }
 
     args = default_args()
