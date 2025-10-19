@@ -65,9 +65,9 @@ class Price:
             )
         )
 
-        last_close = self.stock_df['close'].iloc[-1]
-        fig.add_hline(y=last_close,
-                      line_dash='dot',
-                      line_color='black',
-                      line_width=1,
-                      row=1, col=1)
+        # last_close = self.stock_df['close'].iloc[-1]
+        # fig.add_hline(y=last_close,
+        #               line_dash='dot',
+        #               line_color='black',
+        #               line_width=1,
+        #               row=1, col=1)

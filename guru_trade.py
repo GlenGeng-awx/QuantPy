@@ -53,6 +53,12 @@ def predict(task: list):
     for fig in figs:
         fig.show()
 
+    if figs:
+        (from_date, to_date, interval), args = period_1y(), args_1y_guru()
+        base_engine = BaseEngine(stock_name, from_date, to_date, interval)
+        base_engine.build_graph(**args)
+        base_engine.fig.show()
+
 
 if __name__ == '__main__':
     _tasks = build_tasks()

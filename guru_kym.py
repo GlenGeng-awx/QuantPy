@@ -3,7 +3,7 @@ import json
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
-from util import shrink_date_str, get_idx_by_date
+from util import shrink_date_str
 from guru_predict import load_prediction
 from guru_wizard import PREDICT_MODE, VALID_DATES
 from financial_statements import Financial_Statements
@@ -14,11 +14,11 @@ def is_x(cell):
 
 
 def is_just_x(cell):
-    return 'X______' in cell
+    return 'X__' in cell
 
 
 def is_target(cell):
-    return 'U' in cell or 'D' in cell
+    return 'H' in cell
 
 
 def get_summary_file():
@@ -51,15 +51,10 @@ def build_report(stock_name: str, target_dates: list) -> pd.DataFrame:
 
         cell = ''
 
-        # Up
-        for key in ['will spike', 'will shoot up', 'will spike p80', 'will shoot up p80']:
+        # Hit
+        for key in ['will box 15d', 'will box 15d p80']:
             hits = [shrink_date_str(d) for d in context.get(key, [])]
-            cell += 'U' if date in hits else '_'
-
-        # Down
-        for key in ['will crash', 'will shoot down', 'will crash p80', 'will shoot down p80']:
-            hits = [shrink_date_str(d) for d in context.get(key, [])]
-            cell += 'D' if date in hits else '_'
+            cell += 'H' if date in hits else '_'
 
         # FS
         cell += 'F' if date in Financial_Statements.get(stock_name, []) else '_'

@@ -37,16 +37,10 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
     return interpolated_context
 
 
-def _pick(total_num, up_hit, down_hit) -> bool:
-    if (up_hit + down_hit) / total_num >= CORRECT_RATIO:
-        return True
-    return False
-
-
 def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str,
                 keys: list, dates: set):
     # print(f'Selecting with keys: {keys} and dates: {dates}')
-    total_num, up_hit, down_hit = 0, 0, 0
+    total_num, hit_num = 0, 0
 
     for date in dates:
         idx = get_idx_by_date(stock_df, date)
@@ -54,16 +48,14 @@ def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mo
             continue
         total_num += 1
 
-        if date in context.get(targets[0].KEY, set()) or date in context.get(targets[1].KEY, set()):
-            down_hit += 1
-        elif date in context.get(targets[2].KEY, set()) or date in context.get(targets[3].KEY, set()):
-            up_hit += 1
+        if date in context.get(targets[0].KEY, set()):
+            hit_num += 1
 
-    if _pick(total_num, up_hit, down_hit):
+    if hit_num / total_num >= CORRECT_RATIO:
         file_name = get_file_name(stock_name, stock_df, train_mode)
         with open(file_name, 'a') as fd:
-            fd.write(f'{json.dumps(keys)}\ttotal {total_num}, up {up_hit}, down {down_hit}\n')
-        print(f'Found a selection: {keys} with {total_num} total, {up_hit} up hits, {down_hit} down hits')
+            fd.write(f'{json.dumps(keys)}\ttotal {total_num}, hit {hit_num}\n')
+        print(f'Found a selection: {keys} with {total_num} total, {hit_num} hits.')
 
 
 def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str,

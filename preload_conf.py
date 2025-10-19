@@ -69,6 +69,7 @@ def args_4y():
         'enable_line': True,
         'enable_neck_line': True,
         'enable_implied_line': True,
+        'enable_implied_neck_line': True,
     }
 
     args = default_args()
@@ -89,6 +90,7 @@ def args_1y():
         'enable_fs': True,
         'enable_line': True,
         'enable_neck_line': True,
+        'enable_implied_line': True,
         'enable_implied_neck_line': True,
     }
 

@@ -15,8 +15,8 @@ import re
 # 9: 9, 8, 7
 # 10: 90%, 80%, 70%
 def pick_line(line, predict_mode) -> bool:
-    match = re.search(r'total (\d+), up (\d+), down (\d+)', line)
-    total, up, down = map(int, match.groups())
+    match = re.search(r'total (\d+), hit (\d+)', line)
+    total, hit = map(int, match.groups())
 
     _months, _total, _hit = re.findall(r'\d+', predict_mode)
     _total, _hit = int(_total), int(_hit)
@@ -29,16 +29,16 @@ def pick_line(line, predict_mode) -> bool:
         (8, 8), (8, 7), (8, 6),
         (9, 9), (9, 8), (9, 7),
     ]:
-        return total == _total and up + down == _hit
+        return total == _total and hit == _hit
 
     if (_total, _hit) == (10, 9):
-        return total >= 10 and (up + down) / total >= 0.9
+        return total >= 10 and hit / total >= 0.9
 
     if (_total, _hit) == (10, 8):
-        return total >= 10 and 0.9 > (up + down) / total >= 0.8
+        return total >= 10 and 0.9 > hit / total >= 0.8
 
     if (_total, _hit) == (10, 7):
-        return total >= 10 and 0.8 > (up + down) / total >= 0.7
+        return total >= 10 and 0.8 > hit / total >= 0.7
 
     return False
 

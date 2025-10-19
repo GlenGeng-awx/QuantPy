@@ -41,7 +41,6 @@ from guru import (
     f3_box_25d,
     f3_box_30d,
 
-    g1_hit_ma5,
     g1_hit_ma10,
     g1_hit_ma20,
     g1_hit_ma60,
@@ -96,17 +95,8 @@ from guru import (
     h6_fake_green_bar,
     h6_fake_red_bar,
 
-    n0_will_crash,
-    n0_will_spike,
-
-    n1_will_shoot_down,
-    n1_will_shoot_up,
-
-    n2_will_crash_p80,
-    n2_will_spike_p80,
-
-    n3_will_shoot_down_p80,
-    n3_will_shoot_up_p80,
+    n0_will_box_15d,
+    n1_will_box_15d_p80,
 )
 
 factors = [
@@ -149,7 +139,6 @@ factors = [
     f3_box_25d,
     f3_box_30d,
 
-    g1_hit_ma5,
     g1_hit_ma10,
     g1_hit_ma20,
     g1_hit_ma60,
@@ -206,19 +195,11 @@ factors = [
 ]
 
 targets = [
-    n0_will_crash,
-    n1_will_shoot_down,
-
-    n0_will_spike,
-    n1_will_shoot_up,
+    n0_will_box_15d,
 ]
 
 recalls = [
-    n2_will_crash_p80,
-    n3_will_shoot_down_p80,
-
-    n2_will_spike_p80,
-    n3_will_shoot_up_p80,
+    n1_will_box_15d_p80,
 ]
 
 

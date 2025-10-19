@@ -6,32 +6,21 @@ def summarize(stock_df: pd.DataFrame) -> str:
     close = stock_df['close']
     sz = 15
 
-    decr_psts, incr_psts = [], []
+    box_psts = []
 
     for idx in stock_df.index[-200:]:
-        if close[idx] >= close[idx - sz]:
-            incr_pst = (close[idx] - close[idx - sz]) / close[idx - sz]
-            incr_psts.append(incr_pst)
-        else:
-            decr_pst = (close[idx - sz] - close[idx]) / close[idx - sz]
-            decr_psts.append(decr_pst)
+        max_close = close.loc[idx - sz + 1:idx].max()
+        min_close = close.loc[idx - sz + 1:idx].min()
+        box_pst = (max_close - min_close) / min_close
+        box_psts.append(box_pst)
 
-    incr_psts.sort()
-    incr_days = len(incr_psts)
-    incr_10 = incr_psts[int(incr_days * 0.1)]
-    incr_50 = incr_psts[int(incr_days * 0.5)]
-    incr_80 = incr_psts[int(incr_days * 0.8)]
-    incr_90 = incr_psts[int(incr_days * 0.9)]
+    box_psts.sort()
+    box_10 = box_psts[int(len(box_psts) * 0.1)]
+    box_20 = box_psts[int(len(box_psts) * 0.2)]
+    box_50 = box_psts[int(len(box_psts) * 0.5)]
+    box_90 = box_psts[int(len(box_psts) * 0.9)]
 
-    decr_psts.sort()
-    decr_days = len(decr_psts)
-    decr_10 = decr_psts[int(decr_days * 0.1)]
-    decr_50 = decr_psts[int(decr_days * 0.5)]
-    decr_80 = decr_psts[int(decr_days * 0.8)]
-    decr_90 = decr_psts[int(decr_days * 0.9)]
-
-    summary = f'incr {incr_days}d, 10/50/80/90: {incr_10:.2%}/{incr_50:.2%}/{incr_80:.2%}/{incr_90:.2%}, ' \
-              f'decr {decr_days}d, 10/50/80/90: {decr_10:.2%}/{decr_50:.2%}/{decr_80:.2%}/{decr_90:.2%}'
+    summary = f'box 10p: {box_10:.2%}, box 20p: {box_20:.2%}, box 50p: {box_50:.2%}, box 90p: {box_90:.2%}'
     return summary
 
 
