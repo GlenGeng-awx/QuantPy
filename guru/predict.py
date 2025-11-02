@@ -47,6 +47,7 @@ def target_dates(stock_df: pd.DataFrame):
     return {stock_df['Date'].iloc[i] for i in range(-1, 0)}
 
 
+# for efficiency, context is already interpolated
 def predict(stock_df: pd.DataFrame, fig, stock_name: str, context: dict,
             predict_mode: str, model_name: str) -> bool:
     train_mode = get_train_mode(predict_mode)
