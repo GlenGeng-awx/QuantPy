@@ -2,15 +2,16 @@ import pandas as pd
 import json
 from datetime import datetime
 from util import get_idx_by_date, shrink_date_str, touch_file
-from guru import factors, targets
+from guru import factors, get_target_dates
 
 MIN_HITS = 4
 CORRECT_RATIO = 0.70
 
 
-def get_file_name(stock_name: str, stock_df: pd.DataFrame, train_mode: str) -> str:
+# box/_train_36m/QQQ.2025-10-21.txt
+def get_file_name(stock_name: str, stock_df: pd.DataFrame, train_mode: str, model_name: str) -> str:
     version = shrink_date_str(stock_df['Date'].iloc[-1])
-    return f'{train_mode}/{stock_name}.{version}.txt'
+    return f'{model_name}/{train_mode}/{stock_name}.{version}.txt'
 
 
 def _get_sz(key: str) -> int:
@@ -37,28 +38,28 @@ def interpolate_context(stock_df: pd.DataFrame, context: dict) -> dict:
     return interpolated_context
 
 
-def select_impl(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str,
-                keys: list, dates: set):
+def select_impl(stock_df: pd.DataFrame, stock_name: str, train_mode: str, model_name: str,
+                keys: list, curr_dates: set, target_dates: set):
     # print(f'Selecting with keys: {keys} and dates: {dates}')
     total_num, hit_num = 0, 0
 
-    for date in dates:
+    for date in curr_dates:
         idx = get_idx_by_date(stock_df, date)
         if not (idx in stock_df.index[200:-15]):
             continue
         total_num += 1
 
-        if date in context.get(targets[0].KEY, set()):
+        if date in target_dates:
             hit_num += 1
 
     if hit_num / total_num >= CORRECT_RATIO:
-        file_name = get_file_name(stock_name, stock_df, train_mode)
+        file_name = get_file_name(stock_name, stock_df, train_mode, model_name)
         with open(file_name, 'a') as fd:
             fd.write(f'{json.dumps(keys)}\ttotal {total_num}, hit {hit_num}\n')
-        print(f'Found a selection: {keys} with {total_num} total, {hit_num} hits.')
+        print(f'Found a selection for {stock_name} {model_name}: {keys} with {total_num} total, {hit_num} hits.')
 
 
-def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str,
+def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str, model_name: str,
            i: int, keys: list, curr_dates: set, target_dates: set):
     # fail fast
     if len(curr_dates.intersection(target_dates)) < MIN_HITS:
@@ -66,13 +67,13 @@ def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: s
 
     # we are done
     if i == len(factors):
-        select_impl(stock_df, stock_name, context, train_mode, keys, curr_dates)
+        select_impl(stock_df, stock_name, train_mode, model_name, keys, curr_dates, target_dates)
         return
 
     keys = keys.copy()
 
     # not pick i
-    select(stock_df, stock_name, context, train_mode, i + 1, keys, curr_dates, target_dates)
+    select(stock_df, stock_name, context, train_mode, model_name, i + 1, keys, curr_dates, target_dates)
 
     # pick i
     key = factors[i].KEY
@@ -80,23 +81,17 @@ def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: s
     keys.append(key)
     curr_dates = context.get(key, set()).intersection(curr_dates)
 
-    select(stock_df, stock_name, context, train_mode, i + 1, keys, curr_dates, target_dates)
+    select(stock_df, stock_name, context, train_mode, model_name, i + 1, keys, curr_dates, target_dates)
 
 
-def get_target_dates(context: dict) -> set:
-    dates = set()
-    for target in targets:
-        dates |= set(context.get(target.KEY, []))
-    return dates
-
-
-def train(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str) -> None:
-    file_name = get_file_name(stock_name, stock_df, train_mode)
+def train(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str, model_name: str):
+    file_name = get_file_name(stock_name, stock_df, train_mode, model_name)
     touch_file(file_name)
 
-    target_dates = get_target_dates(context)
+    target_dates = get_target_dates(context, model_name)
     context = interpolate_context(stock_df, context)
 
     start_time = datetime.now()
-    select(stock_df, stock_name, context, train_mode, 0, [], set(stock_df['Date'].to_list()), target_dates)
-    print(f'Training completed for {stock_name} in {(datetime.now() - start_time).total_seconds()} seconds')
+    curr_dates = set(stock_df['Date'].to_list())
+    select(stock_df, stock_name, context, train_mode, model_name, 0, [], curr_dates, target_dates)
+    print(f'Train completed for {stock_name} {model_name} in {(datetime.now() - start_time).total_seconds()} seconds')

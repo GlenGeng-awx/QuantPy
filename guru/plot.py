@@ -7,6 +7,8 @@ def summarize(stock_df: pd.DataFrame) -> str:
     sz = 15
 
     box_psts = []
+    incr_psts = []
+    decr_psts = []
 
     for idx in stock_df.index[-200:]:
         max_close = close.loc[idx - sz + 1:idx].max()
@@ -14,13 +16,28 @@ def summarize(stock_df: pd.DataFrame) -> str:
         box_pst = (max_close - min_close) / min_close
         box_psts.append(box_pst)
 
+        if close[idx] >= close[idx - sz]:
+            incr_pst = (close[idx] - close[idx - sz]) / close[idx - sz]
+            incr_psts.append(incr_pst)
+        else:
+            decr_pst = (close[idx - sz] - close[idx]) / close[idx - sz]
+            decr_psts.append(decr_pst)
+
     box_psts.sort()
     box_10 = box_psts[int(len(box_psts) * 0.1)]
     box_20 = box_psts[int(len(box_psts) * 0.2)]
-    box_50 = box_psts[int(len(box_psts) * 0.5)]
-    box_90 = box_psts[int(len(box_psts) * 0.9)]
 
-    summary = f'box 10p: {box_10:.2%}, box 20p: {box_20:.2%}, box 50p: {box_50:.2%}, box 90p: {box_90:.2%}'
+    incr_psts.sort(reverse=True)
+    incr_10 = incr_psts[int(len(incr_psts) * 0.1)]
+    incr_20 = incr_psts[int(len(incr_psts) * 0.2)]
+
+    decr_psts.sort(reverse=True)
+    decr_10 = decr_psts[int(len(decr_psts) * 0.1)]
+    decr_20 = decr_psts[int(len(decr_psts) * 0.2)]
+
+    summary = f'box 10/20: {box_10:.2%}/{box_20:.2%}, ' \
+              f'spike 10/20: {incr_10:.2%}/{incr_20:.2%}, ' \
+              f'crash 10/20: {decr_10:.2%}/{decr_20:.2%}'
     return summary
 
 

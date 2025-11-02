@@ -95,8 +95,10 @@ from guru import (
     h6_fake_green_bar,
     h6_fake_red_bar,
 
-    n0_will_box_15d,
-    n1_will_box_15d_p80,
+    n0_common,
+    n1_will_box,
+    n2_will_crash,
+    n3_will_spike,
 )
 
 factors = [
@@ -194,25 +196,48 @@ factors = [
     h6_fake_red_bar,
 ]
 
-targets = [
-    n0_will_box_15d,
-]
+BOX = 'box'
+TREND = 'trend'
 
-recalls = [
-    n1_will_box_15d_p80,
-]
+# model_name to targets
+models = {
+    BOX: [
+        n1_will_box,
+    ],
+    TREND: [
+        n2_will_crash,
+        n3_will_spike,
+    ],
+}
 
 
 def calculate(stock_df: pd.DataFrame) -> dict:
     context = {}
-
     start_time = datetime.now()
-    for factor in factors + targets + recalls:
+
+    for factor in factors:
         dates = factor.calculate_hits(stock_df)
         context[factor.KEY] = dates
-    print(f'calculate context cost: {(datetime.now() - start_time).total_seconds()}s')
 
+    for targets in models.values():
+        for target in targets:
+            for mode in [n0_common.TRAIN, n0_common.RECALL]:
+                key, dates = target.calculate_hits(stock_df, mode)
+                context[key] = dates
+
+    print(f'calculate context cost: {(datetime.now() - start_time).total_seconds()}s')
     return context
+
+
+def get_target_dates(context: dict, model_name) -> set:
+    dates = set()
+
+    targets = models[model_name]
+    for target in targets:
+        key = n0_common.get_key(target.TARGET, n0_common.TRAIN)
+        dates |= set(context.get(key, []))
+
+    return dates
 
 
 import guru.plot

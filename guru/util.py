@@ -3,7 +3,7 @@ import pandas as pd
 
 # calculates: list of (value, idx)
 def _pick_rolling_n_pst_reversed(stock_df: pd.DataFrame, candidates: list, tag: str,
-                                 n: float = 0.1, rolling_size: int = 200) -> list:
+                                 ratio: float = 0.1, rolling_size: int = 200) -> list:
     hits = []
 
     for i in range(rolling_size, len(candidates)):
@@ -16,7 +16,7 @@ def _pick_rolling_n_pst_reversed(stock_df: pd.DataFrame, candidates: list, tag: 
 
         if rolling_window:
             rolling_window.sort(key=lambda x: x[0], reverse=True)
-            threshold_pos = int(len(rolling_window) * n) - 1
+            threshold_pos = int(len(rolling_window) * ratio) - 1
             threshold_value = rolling_window[threshold_pos][0]
         else:
             threshold_value = 0.0
@@ -31,7 +31,7 @@ def _pick_rolling_n_pst_reversed(stock_df: pd.DataFrame, candidates: list, tag: 
 
 # calculates: list of (value, idx)
 def _pick_rolling_n_pst(stock_df: pd.DataFrame, candidates: list, tag: str,
-                        n: float = 0.1, rolling_size: int = 200) -> list:
+                        ratio: float = 0.1, rolling_size: int = 200) -> list:
     hits = []
 
     for i in range(rolling_size, len(candidates)):
@@ -43,7 +43,7 @@ def _pick_rolling_n_pst(stock_df: pd.DataFrame, candidates: list, tag: str,
 
         if rolling_window:
             rolling_window.sort(key=lambda x: x[0], reverse=False)
-            threshold_pos = int(len(rolling_window) * n) - 1
+            threshold_pos = int(len(rolling_window) * ratio) - 1
             threshold_value = rolling_window[threshold_pos][0]
         else:
             threshold_value = 1.0

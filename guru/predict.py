@@ -47,14 +47,13 @@ def target_dates(stock_df: pd.DataFrame):
     return {stock_df['Date'].iloc[i] for i in range(-1, 0)}
 
 
-def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: dict, predict_mode: str) -> bool:
-    context = interpolate_context(stock_df, context)
-
+def predict(stock_df: pd.DataFrame, fig, stock_name: str, context: dict,
+            predict_mode: str, model_name: str) -> bool:
     train_mode = get_train_mode(predict_mode)
-    filename = get_file_name(stock_name, stock_df, train_mode)
+    file_name = get_file_name(stock_name, stock_df, train_mode, model_name)
 
     hit = False
-    with open(filename, 'r') as fd:
+    with open(file_name, 'r') as fd:
         for line in fd:
             if not pick_line(line, predict_mode):
                 continue
@@ -68,7 +67,10 @@ def predict(stock_df: pd.DataFrame, fig: go.Figure, stock_name: str, context: di
                 continue
 
             hit = True
-            print(f'Found a hit for {stock_name} with keys {keys} and tag {tag}')
+            print(f'Found a hit for {stock_name} {model_name} with keys {keys} and tag {tag}')
+
+            if fig is None:
+                continue
 
             indices = [get_idx_by_date(stock_df, date) for date in dates]
             fig.add_trace(
