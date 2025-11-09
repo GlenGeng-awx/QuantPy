@@ -17,7 +17,7 @@ def build_tasks() -> list:
                     months = re.search(r'\d+', train_mode).group()
                     from_date, to_date, interval = period_train(to_date, int(months))
 
-                    task = (stock_name, from_date, to_date, interval, args_1y_guru(), train_mode, model_name)
+                    task = (stock_name, from_date, to_date, interval, model_args(), train_mode, model_name)
                     tasks.append(task)
     return tasks
 

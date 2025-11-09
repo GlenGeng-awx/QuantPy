@@ -15,7 +15,7 @@ def build_tasks():
         for to_date in VALID_DATES[-1:]:
             for model_name in guru.models:  # box or trend
                 from_date, to_date, interval = period_predict(to_date)
-                task = (stock_name, from_date, to_date, interval, args_1y_guru, PREDICT_MODE[:], model_name)
+                task = (stock_name, from_date, to_date, interval, model_args, PREDICT_MODE[:], model_name)
                 tasks.append(task)
     return tasks
 

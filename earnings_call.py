@@ -6,7 +6,7 @@ from conf import *
 # https://www.nasdaq.com/market-activity/stocks/orcl/earnings
 # https://finance.yahoo.com/calendar/earnings?day=2025-08-25
 #
-Financial_Statements = {
+Earnings_Call = {
     ERIC: [
         '2026-01-23',
 
@@ -1260,9 +1260,9 @@ Financial_Statements = {
 }
 
 
-def _filter_fs(from_date: str, to_date: str):
+def _filter_ec(from_date: str, to_date: str):
     hits = []
-    for stock_name, dates in Financial_Statements.items():
+    for stock_name, dates in Earnings_Call.items():
         for date in dates:
             if from_date <= date <= to_date:
                 hits.append((stock_name, date))
@@ -1285,18 +1285,18 @@ def _filter_fs(from_date: str, to_date: str):
         stock_names.append(stock_name)
 
 
-def get_incoming_fs():
+def get_incoming_ec():
     from_date = datetime.now().strftime('%Y-%m-%d')
     to_date = (datetime.now() + relativedelta(months=1)).strftime('%Y-%m-%d')
-    _filter_fs(from_date, to_date)
+    _filter_ec(from_date, to_date)
 
 
-def get_past_fs():
+def get_past_ec():
     from_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m-%d')
     to_date = datetime.now().strftime('%Y-%m-%d')
-    _filter_fs(from_date, to_date)
+    _filter_ec(from_date, to_date)
 
 
 if __name__ == '__main__':
     # get_incoming_fs()
-    get_past_fs()
+    get_past_ec()

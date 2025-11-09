@@ -7,7 +7,7 @@ from util import shrink_date_str
 from guru_predict import load_prediction
 from guru_wizard import PREDICT_MODE, VALID_DATES
 from guru import models, n0_common, BOX, TREND
-from financial_statements import Financial_Statements
+from earnings_call import Earnings_Call
 
 
 def is_hit(cell):
@@ -35,7 +35,7 @@ def build_report(stock_name: str, target_dates: list, model_name: str) -> pd.Dat
     kym_report = {}
 
     to_date = target_dates[-1]
-    (from_date, to_date, interval), args = period_predict(to_date), args_1y_guru()
+    (from_date, to_date, interval), args = period_predict(to_date), model_args()
 
     base_engine = BaseEngine(stock_name, from_date, to_date, interval)
     base_engine.build_graph(**args)
@@ -59,8 +59,8 @@ def build_report(stock_name: str, target_dates: list, model_name: str) -> pd.Dat
                 dates = [shrink_date_str(d) for d in context.get(key, [])]
                 cell += 'H' if date in dates else '_'
 
-        # FS
-        cell += 'F' if date in Financial_Statements.get(stock_name, []) else '_'
+        # Earnings Call
+        cell += 'E' if date in Earnings_Call.get(stock_name, []) else '_'
 
         # Predict
         for predict_mode in PREDICT_MODE:

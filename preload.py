@@ -1,13 +1,12 @@
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
-from x_position import get_portfolio
 
 spectrum = [
-    (period_4y(), args_4y()),
-    # (period_1y(), args_1y()),
-    # (period_4y(), args_4y_guru()),
-    (period_1y(), args_1y_guru()),
+    (period_4y(), display_args()),
+    (period_4y(), display_args(with_high=True)),
+    (period_4y(), display_args(with_high=True, with_mid=True)),
+    (period_1y(), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
 ]
 
 for stock_name in ALL:

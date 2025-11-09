@@ -21,12 +21,12 @@ def build_tasks(model_name: str):
         for to_date in VALID_DATES[-1:]:
             # 1y
             from_date, to_date, interval = period_predict(to_date)
-            task = (stock_name, from_date, to_date, interval, args_1y_guru, predict_modes[:], model_name)
+            task = (stock_name, from_date, to_date, interval, model_args, predict_modes[:], model_name)
             tasks.append(task)
 
             # 4y
             from_date, to_date, interval = period_train(to_date, 48)
-            task = (stock_name, from_date, to_date, interval, args_4y_guru, predict_modes[:], model_name)
+            task = (stock_name, from_date, to_date, interval, model_args, predict_modes[:], model_name)
             tasks.append(task)
 
     return tasks
@@ -59,7 +59,9 @@ def predict(task: list):
         fig.show()
 
     if figs:
-        (from_date, to_date, interval), args = period_1y(), args_1y_guru()
+        from_date, to_date, interval = period_1y()
+        args = display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)
+
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
         base_engine.fig.show()

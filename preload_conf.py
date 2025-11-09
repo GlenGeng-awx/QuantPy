@@ -8,6 +8,7 @@ def period_train(to_date: str, months):
     return from_date, to_date, '1d'
 
 
+# 18m
 def period_predict(to_date: str):
     from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=18)).strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
@@ -24,7 +25,7 @@ def period_1y():
     return from_date, to_date, '1d'
 
 
-def default_args():
+def _default_args():
     args = {
         'enable_candlestick': True,
         'enable_close_price': False,
@@ -32,8 +33,8 @@ def default_args():
         'enable_min_max': False,
         'enable_sr': False,
 
+        'enable_ec': False,
         'enable_elliott': False,
-        'enable_fs': False,
 
         'enable_line': False,
         'enable_neck_line': False,
@@ -51,7 +52,35 @@ def default_args():
     return args
 
 
-def guru_args():
+def _high_args():
+    args = {
+        'enable_elliott': True,
+        'enable_line': True,
+        'enable_neck_line': True,
+    }
+
+    return args
+
+
+def _mid_args():
+    args = {
+        'enable_implied_line': True,
+        'enable_implied_neck_line': True,
+    }
+
+    return args
+
+
+def _low_args():
+    args = {
+        'enable_ec': True,
+        'enable_sr': True,
+    }
+
+    return args
+
+
+def _guru_args():
     args = {
         'enable_guru': (True, 2, 14),  # (True, 2, None)
         'enable_volume': (True, 3),
@@ -61,45 +90,21 @@ def guru_args():
     return args
 
 
-def args_4y():
-    customized = {
-        'enable_sr': False,
-        'enable_elliott': True,
-        'enable_fs': False,
-        'enable_line': True,
-        'enable_neck_line': True,
-        'enable_implied_line': True,
-        'enable_implied_neck_line': True,
-    }
-
-    args = default_args()
-    args.update(customized)
+def display_args(with_high=False, with_mid=False, with_low=False, with_guru=False):
+    args = _default_args()
+    if with_high:
+        args.update(_high_args())
+    if with_mid:
+        args.update(_mid_args())
+    if with_low:
+        args.update(_low_args())
+    if with_guru:
+        args.update(_guru_args())
     return args
 
 
-def args_4y_guru():
-    args = args_4y()
-    args.update(guru_args())
-    return args
-
-
-def args_1y():
-    customized = {
-        'enable_sr': True,
-        'enable_elliott': False,
-        'enable_fs': True,
-        'enable_line': True,
-        'enable_neck_line': True,
-        'enable_implied_line': True,
-        'enable_implied_neck_line': True,
-    }
-
-    args = default_args()
-    args.update(customized)
-    return args
-
-
-def args_1y_guru():
-    args = args_1y()
-    args.update(guru_args())
+def model_args():
+    args = _default_args()
+    args.update(_high_args())
+    args.update(_guru_args())
     return args
