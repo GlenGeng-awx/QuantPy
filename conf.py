@@ -1,9 +1,11 @@
 # INDEX
-IXIC = "^IXIC"
 QQQ = "QQQ"
+SPY = "SPY"
 KWEB = "KWEB"
+GOLD = "GC=F"
+BTC = "BTC-USD"
 SS_000300 = "000300.SS"
-SS_000001 = "000001.SS"
+SS_510880 = "510880.SS"
 
 # SEVEN GIANTS
 AAPL = "AAPL"
@@ -105,28 +107,29 @@ FUTU = "FUTU"
 TME = "TME"             # Tencent Music Entertainment Group
 
 # HONG KONG COMPANIES
-HK_0700 = "0700.HK"     # Tencent
-HK_1211 = "1211.HK"     # BYD
+TENCENT = "0700.HK"     # Tencent
 
 V_INDEX = [
     QQQ,
-    IXIC,
+    SPY,
     KWEB,
+    GOLD,
+    BTC,
     SS_000300,
-    SS_000001,
+    SS_510880,
 ]
 
 V_4000B = [
     NVDA,
-    MSFT,
-]
-
-V_3000B = [
     AAPL,
 ]
 
-V_2000B = [
+V_3000B = [
+    MSFT,
     GOOG,
+]
+
+V_2000B = [
     AMZN,
 ]
 
@@ -143,7 +146,7 @@ V_500B = [
     JPM,
     VISA,
     MA,
-    HK_0700,
+    TENCENT,
     ORCL,
 ]
 
@@ -231,8 +234,7 @@ V_SMALL = [
     EDU,
 ]
 
-ALL = V_INDEX \
-      + V_4000B + V_3000B + V_2000B + V_1000B \
+ALL = V_4000B + V_3000B + V_2000B + V_1000B \
       + V_500B + V_300B + V_200B + V_100B \
       + V_50B + V_30B + V_10B \
       + V_SMALL

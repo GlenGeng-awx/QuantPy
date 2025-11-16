@@ -9,6 +9,7 @@ from technical.secondary_line import SecondaryLine
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.ec import EC
+from technical.transaction import Transaction
 from technical.implied_neck_line import ImpliedNeckLine
 from technical.implied_line import ImpliedLine
 
@@ -49,6 +50,7 @@ class BaseEngine:
 
         self.elliott = Elliott(self.stock_df, self.stock_name)
         self.ec = EC(self.stock_df, self.stock_name)
+        self.transaction = Transaction(self.stock_name)
 
         self.volume = Volume(self.stock_df, self.stock_name)
 
@@ -134,6 +136,7 @@ class BaseEngine:
                     enable_neck_line=False,
                     enable_elliott=True,
                     enable_ec=True,
+                    enable_transaction=False,
                     # implied
                     enable_implied_neck_line=True,
                     enable_implied_line=True,
@@ -148,6 +151,7 @@ class BaseEngine:
 
         self.elliott.build_graph(self.fig, enable_elliott)
         self.ec.build_graph(self.fig, enable_ec)
+        self.transaction.build_graph(self.fig, enable_transaction)
 
         self.volume.build_graph(self.fig, enable_volume)
 

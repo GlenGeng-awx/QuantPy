@@ -127,19 +127,19 @@ def filter_predict_modes(stock_name: str, model_name: str) -> list:
 
 if __name__ == '__main__':
     target_dates_ = VALID_DATES
-    model_name_ = BOX
-    # model_name_ = TREND
-    summary_ = {}
 
-    for stock_name_ in ALL:
-        kym_df_ = build_report(stock_name_, target_dates_, model_name_)
-        kym_df_, ranking_ = summarize(kym_df_)
+    for model_name_ in [BOX, TREND]:
+        summary_ = {}
 
-        summary_[stock_name_] = ranking_
-        print(kym_df_, file=open(get_stock_file(stock_name_, model_name_), 'w'))
+        for stock_name_ in ALL:
+            kym_df_ = build_report(stock_name_, target_dates_, model_name_)
+            kym_df_, ranking_ = summarize(kym_df_)
 
-    print(json.dumps(summary_, indent=2), file=open(get_summary_file(model_name_), 'w'))
+            summary_[stock_name_] = ranking_
+            print(kym_df_, file=open(get_stock_file(stock_name_, model_name_), 'w'))
 
-    for stock_name_ in ALL:
-        predict_modes_ = filter_predict_modes(stock_name_, model_name_)
-        print(stock_name_, predict_modes_)
+        print(json.dumps(summary_, indent=2), file=open(get_summary_file(model_name_), 'w'))
+
+        for stock_name_ in ALL:
+            predict_modes_ = filter_predict_modes(stock_name_, model_name_)
+            print(stock_name_, predict_modes_)

@@ -75,6 +75,7 @@ def _low_args():
     args = {
         'enable_ec': True,
         'enable_sr': True,
+        'enable_transaction': True,
     }
 
     return args
