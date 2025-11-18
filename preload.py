@@ -10,7 +10,10 @@ spectrum = [
     (period_1y(), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
 ]
 
-for stock_name in V_INDEX + ALL:
+# candidates = get_unexpired_stock_names()
+candidates = V_INDEX + ALL
+
+for stock_name in candidates:
     for (from_date, to_date, interval), args in spectrum:
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
