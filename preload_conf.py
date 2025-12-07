@@ -14,9 +14,21 @@ def period_predict(to_date: str):
     return from_date, to_date, '1d'
 
 
-def period_4y():
+def period_ny(years: int):
+    if years == 7:
+        from_date = '2018-01-01'
+    elif years == 6:
+        from_date = '2019-01-01'
+    elif years == 5:
+        from_date = '2020-01-01'
+    elif years == 4:
+        from_date = '2021-01-01'
+    elif years == 3:
+        from_date = '2022-01-01'
+    else:
+        raise ValueError(f'unsupported years {years}')
     to_date = datetime.now().strftime('%Y-%m-%d')
-    return '2021-01-01', to_date, '1d'
+    return from_date, to_date, '1d'
 
 
 def period_1y():
@@ -34,16 +46,17 @@ def _default_args():
         'enable_sr': False,
 
         'enable_ec': False,
+        'enable_transaction': False,
+
         'enable_elliott': False,
-
-        'enable_line': False,
         'enable_neck_line': False,
-
-        # 5/10/20/60/120/200/250
-        'enable_ma': (False, False, False, False, False, False, False),
+        'enable_line': False,
 
         'enable_implied_neck_line': False,
         'enable_implied_line': False,
+
+        # 5/10/20/60/120/200/250
+        'enable_ma': (False, False, False, False, False, False, False),
 
         'enable_volume': (True, 2),
         'rows': 2,
@@ -55,8 +68,8 @@ def _default_args():
 def _high_args():
     args = {
         'enable_elliott': True,
-        'enable_line': True,
         'enable_neck_line': True,
+        'enable_line': True,
     }
 
     return args
@@ -64,8 +77,8 @@ def _high_args():
 
 def _mid_args():
     args = {
-        'enable_implied_line': True,
         'enable_implied_neck_line': True,
+        'enable_implied_line': True,
     }
 
     return args
@@ -73,8 +86,8 @@ def _mid_args():
 
 def _low_args():
     args = {
-        'enable_ec': True,
         'enable_sr': True,
+        'enable_ec': True,
         'enable_transaction': True,
     }
 
@@ -91,8 +104,10 @@ def _guru_args():
     return args
 
 
-def display_args(with_high=False, with_mid=False, with_low=False, with_guru=False):
+def display_args(with_high=False, with_mid=False, with_low=False, with_guru=False, **kwargs):
     args = _default_args()
+    args.update(kwargs)
+
     if with_high:
         args.update(_high_args())
     if with_mid:
@@ -101,6 +116,7 @@ def display_args(with_high=False, with_mid=False, with_low=False, with_guru=Fals
         args.update(_low_args())
     if with_guru:
         args.update(_guru_args())
+
     return args
 
 
