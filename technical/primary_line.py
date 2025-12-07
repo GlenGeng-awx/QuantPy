@@ -4,7 +4,7 @@ import math
 
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 from technical import get_date, get_price_key
-from core_banking import CORE_BANKING, LONG_TERM
+from core_banking import CORE_BANKING, MID_TERM
 
 
 # date1, date2 is in format of '20210101' or ('20210101', 'open')
@@ -78,7 +78,7 @@ class PrimaryLine:
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
-            if len(line) == 4 or (len(line) == 5 and line[4] == LONG_TERM):
+            if len(line) == 4 or (len(line) == 5 and line[4] == MID_TERM):
                 date1, date2 = line[0], line[1]
                 if get_date(date1) not in dates or get_date(date2) not in dates:
                     continue

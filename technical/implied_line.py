@@ -5,7 +5,7 @@ from util import shrink_date_str
 from technical import get_date
 from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 from technical.secondary_line import calculate_secondary_line
-from core_banking import CORE_BANKING, LONG_TERM
+from core_banking import CORE_BANKING, MID_TERM
 
 
 class ImpliedLine:
@@ -16,7 +16,7 @@ class ImpliedLine:
         # list of (dates, prices, k)
         self.implied_lines = []
 
-        date1, date2 = self.get_long_term_line()
+        date1, date2 = self.get_mid_term_line()
         if date1 is None or date2 is None:
             return
 
@@ -29,11 +29,11 @@ class ImpliedLine:
             implied_line = calculate_secondary_line(stock_df, date, 5, 250, date1, date2)
             self.implied_lines.append(implied_line)
 
-    def get_long_term_line(self):
+    def get_mid_term_line(self):
         dates = self.stock_df['Date'].apply(shrink_date_str).values
 
         for line in CORE_BANKING.get(self.stock_name, {}).get('lines', []):
-            if len(line) == 5 and line[4] == LONG_TERM:
+            if len(line) == 5 and line[4] == MID_TERM:
                 date1, date2 = line[0], line[1]
                 if get_date(date1) in dates and get_date(date2) in dates:
                     return date1, date2

@@ -6,7 +6,7 @@ from util import get_idx_by_date, shrink_date_str, get_next_n_workday
 from technical import get_date, get_price_key
 
 
-# date is in format of '20210101' or ('20210101', 'open')
+# date is in format of '2021-01-01' or ('2021-01-01', 'open')
 def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
     idx = get_idx_by_date(stock_df, get_date(date))
     price = stock_df.loc[idx][get_price_key(date)]
@@ -73,16 +73,17 @@ class NeckLine:
         self.neck_lines.sort(key=lambda x: x[1][0], reverse=True)
 
         for i, (dates, prices) in enumerate(self.neck_lines):
-            if self.stock_df.shape[0] < 300:
-                visible = None if enable else 'legendonly'
-            else:
-                visible = None if enable and len(dates) > 50 else 'legendonly'
+            ratio = 0
+            if i < len(self.neck_lines) - 1:
+                current_price = prices[0]
+                below_price = self.neck_lines[i + 1][1][0]
+                ratio = current_price / below_price - 1
 
             fig.add_trace(
                 go.Scatter(
-                    name=f'neck line-{i + 1}-{len(dates)}',
+                    name=f'neck line-{i + 1}-{ratio:.1%}',
                     x=dates, y=prices,
                     mode='lines', line=dict(width=0.9, color='black', dash='dash'),
-                    visible=visible,
+                    visible=None if enable else 'legendonly',
                 )
             )
