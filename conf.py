@@ -234,7 +234,8 @@ V_SMALL = [
     EDU,
 ]
 
-ALL = V_4000B + V_3000B + V_2000B + V_1000B \
+ALL = V_INDEX \
+      + V_4000B + V_3000B + V_2000B + V_1000B \
       + V_500B + V_300B + V_200B + V_100B \
       + V_50B + V_30B + V_10B \
       + V_SMALL

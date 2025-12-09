@@ -44,5 +44,4 @@ bin/
 
 __pycache__/
 stock_data/
-box/
-trend/
+model/

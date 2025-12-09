@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import json
 from util import get_idx_by_date
-from guru.train import interpolate_context, get_file_name
+from guru.train import get_file_name
 from guru_wizard import get_train_mode
 import re
 
@@ -48,10 +48,9 @@ def target_dates(stock_df: pd.DataFrame):
 
 
 # for efficiency, context is already interpolated
-def predict(stock_df: pd.DataFrame, fig, stock_name: str, context: dict,
-            predict_mode: str, model_name: str) -> bool:
+def predict(stock_df: pd.DataFrame, fig, stock_name: str, context: dict, predict_mode: str) -> bool:
     train_mode = get_train_mode(predict_mode)
-    file_name = get_file_name(stock_name, stock_df, train_mode, model_name)
+    file_name = get_file_name(stock_name, stock_df, train_mode)
 
     hit = False
     with open(file_name, 'r') as fd:
@@ -68,7 +67,7 @@ def predict(stock_df: pd.DataFrame, fig, stock_name: str, context: dict,
                 continue
 
             hit = True
-            print(f'Found a hit for {stock_name} {model_name} with keys {keys} and tag {tag}')
+            print(f'Found a hit for {stock_name} with keys {keys} and tag {tag}')
 
             if fig is None:
                 continue

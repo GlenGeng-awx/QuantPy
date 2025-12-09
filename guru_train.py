@@ -11,26 +11,25 @@ import guru
 def build_tasks() -> list:
     tasks = []
     for stock_name in ALL:
-        for to_date in VALID_DATES[-1:]:
-            for model_name in guru.models:  # box or trend
-                for train_mode in TRAIN_MODE:  # _train_48m/42m/36m
-                    months = re.search(r'\d+', train_mode).group()
-                    from_date, to_date, interval = period_train(to_date, int(months))
+        for to_date in VALID_DATES[-3:]:
+            for train_mode in TRAIN_MODE:  # _train_48m/42m/36m
+                months = re.search(r'\d+', train_mode).group()
+                from_date, to_date, interval = period_train(to_date, int(months))
 
-                    task = (stock_name, from_date, to_date, interval, model_args(), train_mode, model_name)
-                    tasks.append(task)
+                task = (stock_name, from_date, to_date, interval, model_args(), train_mode)
+                tasks.append(task)
     return tasks
 
 
-# task: (stock_name, from_date, to_date, interval, args, train_mode, model_name)
+# task: (stock_name, from_date, to_date, interval, args, train_mode)
 def train(task: list):
-    stock_name, from_date, to_date, interval, args, train_mode, model_name = task
+    stock_name, from_date, to_date, interval, args, train_mode = task
 
     base_engine = BaseEngine(stock_name, from_date, to_date, interval)
     base_engine.build_graph(**args)
 
     stock_df, context = base_engine.stock_df, base_engine.context
-    guru.train.train(stock_df, stock_name, context, train_mode, model_name)
+    guru.train.train(stock_df, stock_name, context, train_mode)
 
 
 if __name__ == '__main__':
