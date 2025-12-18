@@ -219,17 +219,21 @@ def calculate(stock_df: pd.DataFrame) -> dict:
 
 
 required_factors = set(f.KEY for f in [
+    f1_crash_3d,
     f1_crash_5d,
     f1_crash_10d,
     f1_crash_15d,
+    f1_crash_20d,
+    f1_crash_25d,
+    f1_crash_30d,
 
+    f2_spike_3d,
     f2_spike_5d,
     f2_spike_10d,
     f2_spike_15d,
-
-    f3_box_5d,
-    f3_box_10d,
-    f3_box_15d,
+    f2_spike_20d,
+    f2_spike_25d,
+    f2_spike_30d,
 ])
 
 

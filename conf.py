@@ -25,7 +25,6 @@ SNAP = "SNAP"
 TTD = "TTD"             # The Trade Desk
 UBER = "UBER"
 OKTA = "OKTA"
-CFLT = "CFLT"
 ETSY = "ETSY"
 SHOP = "SHOP"           # Shopify
 GTLB = "GTLB"
@@ -84,7 +83,6 @@ JNJ = "JNJ"             # Johnson & Johnson
 MRK = "MRK"             # Merck & Co.
 PFE = "PFE"             # Pfizer
 GILD = "GILD"           # Gilead Sciences
-MRNA = "MRNA"           # Moderna
 BNTX = "BNTX"           # BioNTech SE
 
 # AUTOMOTIVE
@@ -209,7 +207,6 @@ V_30B = [
 
 V_10B = [
     HPQ,
-    MRNA,
     BNTX,
     ZM,
     SNAP,
@@ -227,7 +224,6 @@ V_10B = [
 
 V_SMALL = [
     BILI,
-    CFLT,
     ETSY,
     GTLB,
     MNSO,
