@@ -1,11 +1,15 @@
-# INDEX
+# CN INDEX
+CSI_300_ETF = "510300.SS"
+Dividend_ETF = "510880.SS"
+STAR_MARKET_50_ETF = "588000.SS"
+
+# US INDEX
 QQQ = "QQQ"
 SPY = "SPY"
+SCHD = "SCHD"
 KWEB = "KWEB"
-GOLD = "GC=F"
+GOLD = "GLD"
 BTC = "BTC-USD"
-SS_000300 = "000300.SS"
-SS_510880 = "510880.SS"
 
 # SEVEN GIANTS
 AAPL = "AAPL"
@@ -108,13 +112,17 @@ TME = "TME"             # Tencent Music Entertainment Group
 TENCENT = "0700.HK"     # Tencent
 
 V_INDEX = [
+    CSI_300_ETF,
+    Dividend_ETF,
+    STAR_MARKET_50_ETF,
+
+    SCHD,
     QQQ,
     SPY,
     KWEB,
+
     GOLD,
     BTC,
-    SS_000300,
-    SS_510880,
 ]
 
 V_4000B = [
