@@ -33,13 +33,17 @@ drill_down_4 = [
     (period_ny(years=4), display_args(enable_neck_line=True, enable_elliott=True, enable_line=True)),
 ]
 
+drill_down_1 = [
+    (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
+]
 
 spectrum = [
     (period_ny(years=7), display_args(with_high=True)),
     (period_ny(years=4), display_args(with_high=True, with_mid=True, with_guru=True)),
-    (period_1y(), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
+    (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
 ]
 
+# spectrum = drill_down_7 + drill_down_4 + drill_down_1
 # candidates = get_unexpired_stock_names()
 
 for stock_name in ALL:

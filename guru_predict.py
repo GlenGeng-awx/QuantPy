@@ -5,6 +5,7 @@ from conf import *
 from preload_conf import *
 from guru_wizard import VALID_DATES, PREDICT_MODE
 from guru.train import interpolate_context
+from technical.prediction import dump_prediction
 import guru
 
 
@@ -46,12 +47,13 @@ def predict(task: list):
 
         if guru.predict.predict(stock_df, fig_, stock_name, context, predict_mode):
             figs.append(fig_)
+            dump_prediction(stock_name, to_date, predict_mode)
 
     for fig in figs:
         fig.show()
 
     if figs:
-        from_date, to_date, interval = period_1y()
+        from_date, to_date, interval = period_ny(years=1)
         args = display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)
 
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)

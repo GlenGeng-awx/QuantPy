@@ -5,9 +5,9 @@ STAR_MARKET_50_ETF = "588000.SS"
 
 # US INDEX
 QQQ = "QQQ"
-SPY = "SPY"
-SCHD = "SCHD"
+VOO = "VOO"
 KWEB = "KWEB"
+SCHD = "SCHD"
 GOLD = "GLD"
 BTC = "BTC-USD"
 
@@ -116,11 +116,11 @@ V_INDEX = [
     Dividend_ETF,
     STAR_MARKET_50_ETF,
 
-    SCHD,
     QQQ,
-    SPY,
+    VOO,
     KWEB,
 
+    SCHD,
     GOLD,
     BTC,
 ]

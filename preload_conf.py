@@ -25,14 +25,12 @@ def period_ny(years: int):
         from_date = '2021-01-01'
     elif years == 3:
         from_date = '2022-01-01'
+    elif years == 2:
+        from_date = '2023-01-01'
+    elif years == 1:
+        from_date = '2024-01-01'
     else:
         raise ValueError(f'unsupported years {years}')
-    to_date = datetime.now().strftime('%Y-%m-%d')
-    return from_date, to_date, '1d'
-
-
-def period_1y():
-    from_date = (datetime.now() - relativedelta(months=18)).strftime('%Y-%m-%d')
     to_date = datetime.now().strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
 
@@ -47,6 +45,7 @@ def _default_args():
 
         'enable_ec': False,
         'enable_transaction': False,
+        'enable_prediction': False,
 
         'enable_elliott': False,
         'enable_neck_line': False,
@@ -89,6 +88,7 @@ def _low_args():
         'enable_sr': True,
         'enable_ec': True,
         'enable_transaction': True,
+        'enable_prediction': True,
     }
 
     return args
