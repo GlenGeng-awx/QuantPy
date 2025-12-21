@@ -7,10 +7,10 @@ from transaction_book import get_unexpired_stock_names
 Weekly SOP
     7y
     7y neckline
-
     7y elliott
     7y line
 
+    4y
     4y elliott
     4y line
 
@@ -33,21 +33,16 @@ drill_down_4 = [
     (period_ny(years=4), display_args(enable_neck_line=True, enable_elliott=True, enable_line=True)),
 ]
 
-drill_down_1 = [
-    (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
-]
-
-spectrum = [
+hologram = [
     (period_ny(years=7), display_args(with_high=True)),
     (period_ny(years=4), display_args(with_high=True, with_mid=True, with_guru=True)),
     (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
 ]
 
-# spectrum = drill_down_7 + drill_down_4 + drill_down_1
-# candidates = get_unexpired_stock_names()
+# ALL = get_unexpired_stock_names()
 
 for stock_name in ALL:
-    for (from_date, to_date, interval), args in spectrum:  # drill_down
+    for (from_date, to_date, interval), args in hologram:  # drill_down
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
 
