@@ -1,13 +1,13 @@
 # CN INDEX
-CSI_300_ETF = "510300.SS"
-Dividend_ETF = "510880.SS"
-STAR_MARKET_50_ETF = "588000.SS"
+ETF_CSI_300 = "510300.SS"
+ETF_SSE_DIVIDEND = "510880.SS"
+ETF_STAR_50 = "588000.SS"
+ETF_CHI_NEXT = "159915.SZ"
 
 # US INDEX
 QQQ = "QQQ"
 VOO = "VOO"
 KWEB = "KWEB"
-SCHD = "SCHD"
 GOLD = "GLD"
 BTC = "BTC-USD"
 
@@ -111,16 +111,17 @@ TME = "TME"             # Tencent Music Entertainment Group
 # HONG KONG COMPANIES
 TENCENT = "0700.HK"     # Tencent
 
-V_INDEX = [
-    CSI_300_ETF,
-    Dividend_ETF,
-    STAR_MARKET_50_ETF,
+CN_INDEX = [
+    ETF_CSI_300,
+    ETF_SSE_DIVIDEND,
+    ETF_STAR_50,
+    ETF_CHI_NEXT,
+]
 
+US_INDEX = [
     QQQ,
     VOO,
     KWEB,
-
-    SCHD,
     GOLD,
     BTC,
 ]
@@ -238,7 +239,7 @@ V_SMALL = [
     EDU,
 ]
 
-ALL = V_INDEX \
+ALL = CN_INDEX + US_INDEX \
       + V_4000B + V_3000B + V_2000B + V_1000B \
       + V_500B + V_300B + V_200B + V_100B \
       + V_50B + V_30B + V_10B \
