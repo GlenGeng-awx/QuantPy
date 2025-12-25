@@ -29,9 +29,7 @@ SNAP = "SNAP"
 TTD = "TTD"             # The Trade Desk
 UBER = "UBER"
 OKTA = "OKTA"
-ETSY = "ETSY"
 SHOP = "SHOP"           # Shopify
-GTLB = "GTLB"
 PINS = "PINS"           # Pinterest
 XYZ = "XYZ"             # Block
 COIN = "COIN"           # Coinbase
@@ -102,9 +100,7 @@ JD = "JD"
 TCOM = "TCOM"           # Trip.com
 BIDU = "BIDU"           # Baidu
 BEKE = "BEKE"
-MNSO = "MNSO"
 BILI = "BILI"
-EDU = "EDU"
 FUTU = "FUTU"
 TME = "TME"             # Tencent Music Entertainment Group
 
@@ -132,8 +128,8 @@ V_4000B = [
 ]
 
 V_3000B = [
-    MSFT,
     GOOG,
+    MSFT,
 ]
 
 V_2000B = [
@@ -143,18 +139,19 @@ V_2000B = [
 V_1000B = [
     META,
     TSLA,
-    TSM,
     AVGO,
+    TSM,
+    LLY,
 ]
 
 V_500B = [
-    LLY,
     WMT,
     JPM,
     VISA,
     MA,
     TENCENT,
     ORCL,
+    JNJ,
 ]
 
 V_300B = [
@@ -162,22 +159,22 @@ V_300B = [
     ASML,
     XOM,
     CVX,
-    JNJ,
     PG,
     KO,
     BAC,
     PLTR,
+    AMD,
+    BABA,
 ]
 
 V_200B = [
-    BABA,
-    AMD,
     GS,
     MS,
     MCD,
     DIS,
     NVO,
     MRK,
+    SHOP,
 ]
 
 V_100B = [
@@ -187,40 +184,39 @@ V_100B = [
     GILD,
     BA,
     UBER,
-    SHOP,
     PDD,
     SPOT,
+    HOOD,
+    INTC,
 ]
 
 V_50B = [
-    INTC,
-    HOOD,
     PYPL,
     COIN,
     SNOW,
     NU,
     SEA,
-    CPNG,
     DELL,
 ]
 
 V_30B = [
+    CPNG,
     EBAY,
-    TTD,
     XYZ,
     TCOM,
     JD,
-    TME,
     BIDU,
+    ERIC,
 ]
 
 V_10B = [
+    TTD,
+    TME,
     HPQ,
     BNTX,
     ZM,
     SNAP,
     BEKE,
-    ERIC,
     OKTA,
     PINS,
     AFRM,
@@ -229,18 +225,10 @@ V_10B = [
     LI,
     XPEV,
     NIO,
-]
-
-V_SMALL = [
     BILI,
-    ETSY,
-    GTLB,
-    MNSO,
-    EDU,
 ]
 
 ALL = CN_INDEX + US_INDEX \
       + V_4000B + V_3000B + V_2000B + V_1000B \
       + V_500B + V_300B + V_200B + V_100B \
-      + V_50B + V_30B + V_10B \
-      + V_SMALL
+      + V_50B + V_30B + V_10B
