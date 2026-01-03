@@ -9,6 +9,7 @@ QQQ = "QQQ"
 VOO = "VOO"
 KWEB = "KWEB"
 GOLD = "GLD"
+SLV = "SLV"
 BTC = "BTC-USD"
 
 # SEVEN GIANTS
@@ -119,6 +120,7 @@ US_INDEX = [
     VOO,
     KWEB,
     GOLD,
+    SLV,
     BTC,
 ]
 
