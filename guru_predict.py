@@ -13,7 +13,7 @@ def build_tasks():
     tasks = []
 
     for stock_name in ALL:
-        for to_date in VALID_DATES[-1:]:
+        for to_date in VALID_DATES[:]:
             # 1y
             from_date, to_date, interval = period_predict(to_date)
             task = (stock_name, from_date, to_date, interval, model_args, PREDICT_MODE)

@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import os.path
 from datetime import datetime
 from util import get_idx_by_date, shrink_date_str, touch_file
 from guru import factors, required_factors, get_target_dates
@@ -89,6 +90,10 @@ def select(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: s
 
 def train(stock_df: pd.DataFrame, stock_name: str, context: dict, train_mode: str):
     file_name = get_file_name(stock_name, stock_df, train_mode)
+    if os.path.exists(file_name):
+        print(f'Train file {file_name} exists, skip training for {stock_name} {train_mode}')
+        return
+
     touch_file(file_name)
 
     target_dates = get_target_dates(context)

@@ -11,7 +11,7 @@ import guru
 def build_tasks() -> list:
     tasks = []
     for stock_name in ALL:
-        for to_date in VALID_DATES[-1:]:
+        for to_date in VALID_DATES[:]:
             for train_mode in TRAIN_MODE:  # _train_48m/42m/36m
                 months = re.search(r'\d+', train_mode).group()
                 from_date, to_date, interval = period_train(to_date, int(months))
