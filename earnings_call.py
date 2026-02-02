@@ -742,6 +742,8 @@ Earnings_Call = {
         '2023-02-08',
     ],
     SHOP: [
+        '2026-02-11',
+
         '2025-11-04',
         '2025-08-06',
         '2025-05-08',
@@ -776,6 +778,8 @@ Earnings_Call = {
         '2023-02-06',
     ],
     TTD: [
+        '2026-02-25',
+
         '2025-11-06',
         '2025-08-07',
         '2025-05-08',
@@ -792,6 +796,8 @@ Earnings_Call = {
         '2023-02-15',
     ],
     XYZ: [
+        '2026-02-26',
+
         '2025-11-06',
         '2025-08-07',
         '2025-05-01',
@@ -826,6 +832,8 @@ Earnings_Call = {
         '2023-02-02',
     ],
     GILD: [
+        '2026-02-10',
+
         '2025-10-30',
         '2025-08-07',
         '2025-04-24',
@@ -1010,6 +1018,8 @@ Earnings_Call = {
         '2023-02-21',
     ],
     ZM: [
+        '2026-02-25',
+
         '2025-11-24',
         '2025-08-21',
         '2025-05-21',
@@ -1271,43 +1281,35 @@ Earnings_Call = {
 }
 
 
-def _filter_ec(from_date: str, to_date: str):
-    hits = []
+def filter_earnings_call():
+    past_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m-%d')
+    incoming_date = (datetime.now() + relativedelta(months=1)).strftime('%Y-%m-%d')
+
+    hits = {}
     for stock_name, dates in Earnings_Call.items():
         for date in dates:
-            if from_date <= date <= to_date:
-                hits.append((stock_name, date))
+            if past_date <= date <= incoming_date:
+                hits.setdefault(date, []).append(stock_name)
 
-    hits.sort(key=lambda x: x[1])
+    hits = list(hits.items())
+    hits.sort()
 
+    current_date = datetime.now().strftime('%Y-%m-%d')
     current_week = None
-    stock_names = []
 
-    for stock_name, date in hits:
+    for date, stock_names in hits:
         dto = datetime.strptime(date, '%Y-%m-%d')
         week, weekday = dto.isocalendar()[1], dto.strftime('%a')
 
         if current_week != week:
-            print(f"----------\t{stock_names}")
+            print(f"-------------------")
             current_week = week
-            stock_names = []
 
-        print(f"{date}\t{weekday}\t\t{stock_name}")
-        stock_names.append(stock_name)
-
-
-def get_incoming_ec():
-    from_date = datetime.now().strftime('%Y-%m-%d')
-    to_date = (datetime.now() + relativedelta(months=1)).strftime('%Y-%m-%d')
-    _filter_ec(from_date, to_date)
-
-
-def get_past_ec():
-    from_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m-%d')
-    to_date = datetime.now().strftime('%Y-%m-%d')
-    _filter_ec(from_date, to_date)
+        if date < current_date:
+            print(f"- {date}\t{weekday}\t\t{' '.join(stock_names)}")
+        else:
+            print(f"+ {date}\t{weekday}\t\t{' '.join(stock_names)}")
 
 
 if __name__ == '__main__':
-    get_incoming_ec()
-    # get_past_ec()
+    filter_earnings_call()
