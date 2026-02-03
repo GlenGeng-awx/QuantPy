@@ -5,6 +5,8 @@ import yfinance as yf
 import pandas as pd
 import plotly.io as pio
 
+from conf import ALL
+
 pio.renderers.default = "browser"
 
 pd.set_option('display.max_rows', None)
@@ -90,6 +92,14 @@ def get_indices_of_period(stock_df: pd.DataFrame, from_date, to_date) -> tuple[i
 def touch_file(filename: str):
     with open(filename, 'w'):
         pass
+
+
+def sort_stock_names(stock_names):
+    stock_names_sorted = []
+    for stock_name in ALL:
+        if stock_name in stock_names:
+            stock_names_sorted.append(stock_name)
+    return stock_names_sorted
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from conf import *
+from util import sort_stock_names
 
 #
 # https://www.nasdaq.com/market-activity/stocks/orcl/earnings
@@ -1295,20 +1296,19 @@ def filter_earnings_call():
     hits.sort()
 
     current_date = datetime.now().strftime('%Y-%m-%d')
-    current_week = None
+    processing_week = None
 
     for date, stock_names in hits:
         dto = datetime.strptime(date, '%Y-%m-%d')
         week, weekday = dto.isocalendar()[1], dto.strftime('%a')
 
-        if current_week != week:
+        if processing_week != week:
             print(f"-------------------")
-            current_week = week
+            processing_week = week
 
-        if date < current_date:
-            print(f"- {date}\t{weekday}\t\t{' '.join(stock_names)}")
-        else:
-            print(f"+ {date}\t{weekday}\t\t{' '.join(stock_names)}")
+        prefix = '-' if date < current_date else '+'
+        stock_names = sort_stock_names(stock_names)
+        print(f"{prefix} {date}\t{weekday}\t\t{' '.join(stock_names)}")
 
 
 if __name__ == '__main__':

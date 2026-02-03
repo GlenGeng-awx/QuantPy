@@ -1,11 +1,20 @@
+from datetime import datetime
+from util import sort_stock_names
 from conf import *
 
-CC = 'CC'  # Covered Call
+# Transaction Types
 CSP = 'CSP'  # Cash Secured Put
+CC = 'CC'  # Covered Call
+BUY = 'BUY'  # Buy Stock
+SELL = 'SELL'  # Sell Stock
 
-# (txn_type, txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, [fees])
-#  or
-# (txn_type, txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, num, [fees])
+"""
+(CC/CSP,   txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, [fees])
+  or
+(CC/CSP,   txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, num, [fees])
+  or
+(BUY/SELL, txn_date, None,        stock_name, stock_price,  num,       [fees])
+"""
 TRANSACTION_BOOK = [
     # 2025-12-29 ~ 2026-01-02
     (CSP, '2025-12-30', '2026-01-30', QQQ, 600, 5.25, 0.00, [2.51]),
@@ -29,6 +38,7 @@ TRANSACTION_BOOK = [
     # 2026-01-19 ~ 2026-01-23
     (CSP, '2026-01-21', '2026-02-20', TME, 16, 0.65, None, 10, [11.66]),  # TME
     (CC, '2026-01-23', '2026-02-06', COIN, 240, 2.25, None, [2.51]),
+    (BUY, '2026-01-23', COIN, 230, 100, [0.00]),
 
     # 2026-01-26 ~ 2026-01-30
     (CSP, '2026-01-26', '2026-02-20', TTD, 33.5, 1.34, None, 6, [7]),  # TTD
@@ -38,6 +48,8 @@ TRANSACTION_BOOK = [
     (CSP, '2026-01-30', '2026-02-27', GOLD, 407, 3.50, None, [2.51]),
     (CC, '2026-01-30', '2026-02-20', PYPL, 60, 0.59, None, 4, [4.66]),
     (CC, '2026-01-30', '2026-02-20', NFLX, 90, 0.45, None, 3, [3.54]),
+    (BUY, '2026-01-30', NFLX, 85, 300, [0.00]),
+    (BUY, '2026-01-30', PYPL, 57, 400, [0.00]),
 
     # 2026-02-02 ~ 2026-02-06
 ]
@@ -45,29 +57,41 @@ TRANSACTION_BOOK = [
 
 def get_alpha_stock() -> list:
     stock_names = set()
-    stock_names_sorted = []
-
     for transaction in TRANSACTION_BOOK:
+        txn_type = transaction[0]
+        if txn_type not in {CC, CSP}:
+            continue
+
         stock_name = transaction[3]
         stock_names.add(stock_name)
 
-    for stock_name in ALL:
-        if stock_name in stock_names:
-            stock_names_sorted.append(stock_name)
-
+    stock_names_sorted = sort_stock_names(stock_names)
     print(f"\nalpha stocks: {stock_names_sorted}")
     return stock_names_sorted
 
 
 def get_transactions_expired_at(date: str) -> list:
     transactions = []
+    current_date = datetime.now().strftime('%Y-%m-%d')
 
     for transaction in TRANSACTION_BOOK:
-        txn_type, expire_date, stock_name = transaction[0], transaction[2], transaction[3]
-        if expire_date == date:
-            transactions.append(f'{stock_name} {txn_type}')
+        txn_type = transaction[0]
 
-    print(f"expired at {date}: {transactions}")
+        if txn_type in {CC, CSP}:
+            expire_date, stock_name = transaction[2], transaction[3]
+            if expire_date == date:
+                transactions.append(f'{stock_name} {txn_type}')
+
+        if txn_type in {BUY, SELL}:
+            txn_date, stock_name = transaction[1], transaction[3]
+            if txn_date == date:
+                transactions.append(f'{stock_name} {txn_type}')
+
+    if not transactions:
+        return []
+
+    prefix = '-' if date < current_date else '+'
+    print(f"{prefix} expired at {date}: {transactions}")
     return transactions
 
 
@@ -87,34 +111,45 @@ def get_per_stock_view() -> dict:
     return per_stock_view
 
 
-def get_total_pnl_and_fees():
+def get_pnl_and_fees():
     total_pnl = 0.0
+    realized_pnl = 0.0
+    unrealized_pnl = 0.0
     total_fees = 0.0
 
     for transaction in TRANSACTION_BOOK:
-        buy_price, sell_price = transaction[5], transaction[6]
-        if sell_price is None:
-            sell_price = 0.0
+        txn_type = transaction[0]
+        if txn_type not in {CC, CSP}:
+            continue
 
         num = 1
         if len(transaction) == 9:  # num is not 1
             num = transaction[7]
 
-        pnl = (buy_price - sell_price) * num * 100  # for CSP and CC
-        total_pnl += pnl
+        buy_price, sell_price = transaction[5], transaction[6]
+        if sell_price is None:
+            sell_price = 0.0
+            pnl = (buy_price - sell_price) * num * 100
+            total_pnl += pnl
+            unrealized_pnl += pnl
+        else:
+            pnl = (buy_price - sell_price) * num * 100
+            total_pnl += pnl
+            realized_pnl += pnl
 
         fees = transaction[-1]
         total_fees += sum(fees)
 
-    print(f"\nTotal pnl: {total_pnl}, Total fees: {total_fees}")
+    print(f"\nTotal pnl: {total_pnl}, Total fees: {total_fees}, "
+          f"Realized pnl: {realized_pnl}, Unrealized pnl: {unrealized_pnl}")
     return total_pnl, total_fees
 
 
 if __name__ == '__main__':
-    for expired_date in ['2026-01-09', '2026-01-23', '2026-01-30',
-                         '2026-02-06', '2026-02-13', '2026-02-20', '2026-02-27']:
+    for expired_date in ['2026-01-09', '2026-01-16', '2026-01-23', '2026-01-30',
+                         '2026-02-06', '2026-02-13', '2026-02-20', '2026-02-27', ]:
         get_transactions_expired_at(expired_date)
 
     get_alpha_stock()
     get_per_stock_view()
-    get_total_pnl_and_fees()
+    get_pnl_and_fees()
