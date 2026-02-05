@@ -4,71 +4,113 @@ from conf import *
 
 # Transaction Types
 CSP = 'CSP'  # Cash Secured Put
-CCX = 'CC'  # Covered Call
+CC = 'CC'  # Covered Call
+PP = 'PP'  # Protective Put
 BUY = 'BUY'  # Buy Stock
 SELL = 'SELL'  # Sell Stock
 
 """
-(CC/CSP,   txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, [fees])
-  or
-(CC/CSP,   txn_date, expire_date, stock_name, strike_price, buy_price, sell_price, num, [fees])
-  or
-(BUY/SELL, txn_date, None,        stock_name, stock_price,  num,       [fees])
+(CC/CSP,   open_date, close_date, (stock_name, expire_date, strike_price), buy_price, sell_price, num, [fees])
+(BUY/SELL, txn_date, (stock_name, stock_price), num, [fees])
 """
+
+
+class Transaction:
+    def __init__(self, txn):
+        self.transaction = txn
+        self.txn_type = txn[0]
+
+        # CSP/CC
+        self.stock_name = None
+        self.expired_date = None
+        self.strike_price = None
+
+        self.open_date = None
+        self.close_date = None
+
+        self.buy_price = None
+        self.sell_price = None
+
+        self.num = None
+        self.fees = None
+
+        # BUY/SELL
+        self.txn_date = None
+        self.stock_price = None
+
+        if self.txn_type in {CC, CSP}:
+            self.open_date, self.close_date, option, self.buy_price, self.sell_price, self.num, self.fees = txn[1:]
+            self.stock_name, self.expired_date, self.strike_price = option
+
+        if self.txn_type in {BUY, SELL}:
+            self.txn_date, stock, self.num, self.fees = txn[1:]
+            self.stock_name, self.stock_price = stock
+
+
 TRANSACTION_BOOK = [
     # 2025-12-29 ~ 2026-01-02
-    (CSP, '2025-12-30', '2026-01-30', QQQ, 600, 5.25, 0.00, [2.51]),
-    (CSP, '2025-12-30', '2026-01-30', GOLD, 380, 3.10, 0.00, [2.51]),
-    (CSP, '2025-12-30', '2026-01-23', COIN, 230, 9.50, 0.00, [2.51]),  # COIN
-    (CSP, '2025-12-31', '2026-01-30', VOO, 612.5, 3.60, 0.00, [2.51]),
-    (CSP, '2026-01-02', '2026-01-09', SLV, 60, 0.52, 0.00, 2, [3.03]),
-    (CSP, '2026-01-02', '2026-01-09', ORCL, 182.5, 1.07, 0.00, [2.51]),  # ORCL
+    (CSP, '2025-12-30', None, (QQQ, '2026-01-30', 600), 5.25, 0.00, 1, [2.51]),
+    (CSP, '2025-12-30', None, (GOLD, '2026-01-30', 380), 3.10, 0.00, 1, [2.51]),
+    (CSP, '2025-12-30', None, (COIN, '2026-01-23', 230), 9.50, 0.00, 1, [2.51]),  # COIN
+
+    (CSP, '2025-12-31', None, (VOO, '2026-01-30', 612.5), 3.60, 0.00, 1, [2.51]),
+
+    (CSP, '2026-01-02', None, (SLV, '2026-01-09', 60), 0.52, 0.00, 2, [3.03]),
+    (CSP, '2026-01-02', None, (ORCL, '2026-01-09', 182.5), 1.07, 0.00, 1, [2.51]),  # ORCL
 
     # 2026-01-05 ~ 2026-01-09
-    (CSP, '2026-01-05', '2026-02-06', ADBE, 320, 6.50, 0.00, [2.51]),  # ADBE
-    (CSP, '2026-01-05', '2026-02-06', ORCL, 185, 6.80, None, [2.51]),
-    (CSP, '2026-01-06', '2026-01-30', NFLX, 85, 2.06, 0.00, 3, [3.54]),  # NFLX
-    (CSP, '2026-01-07', '2026-01-30', PYPL, 57, 0.96, 0.00, 4, [4.66]),  # PYPL
+    (CSP, '2026-01-05', None, (ADBE, '2026-02-06', 320), 6.50, 0.00, 1, [2.51]),  # ADBE
+    (CSP, '2026-01-05', None, (ORCL, '2026-02-06', 185), 6.80, 0.00, 1, [2.51]),
+
+    (CSP, '2026-01-06', None, (NFLX, '2026-01-30', 85), 2.06, 0.00, 3, [3.54]),  # NFLX
+
+    (CSP, '2026-01-07', None, (PYPL, '2026-01-30', 57), 0.96, 0.00, 4, [4.66]),  # PYPL
 
     # 2026-01-12 ~ 2026-01-16
-    (CSP, '2026-01-14', '2026-02-20', TCOM, 55, 1.00, None, 2, [3.03]),  # TCOM
-    (CSP, '2026-01-14', '2026-02-13', PDD, 100, 1.50, None, [2.51]),  # PDD
-    (CSP, '2026-01-14', '2026-02-06', AVGO, 315, 5.25, None, [2.51]),  # AVGO
+    (CSP, '2026-01-14', '2026-02-04', (TCOM, '2026-02-20', 55), 1.00, 0.60, 2, [3.03, 3.02]),  # TCOM
+    (CSP, '2026-01-14', None, (PDD, '2026-02-13', 100), 1.50, None, 1, [2.51]),  # PDD
+    (CSP, '2026-01-14', None, (AVGO, '2026-02-06', 315), 5.25, None, 1, [2.51]),  # AVGO
 
     # 2026-01-19 ~ 2026-01-23
-    (CSP, '2026-01-21', '2026-02-20', TME, 16, 0.65, None, 10, [11.66]),  # TME
-    (CCX, '2026-01-23', '2026-02-06', COIN, 240, 2.25, 0.0, [2.51]),
-    (BUY, '2026-01-23', None, COIN, 230, 100, [0.00]),
+    (CSP, '2026-01-21', '2026-02-04', (TME, '2026-02-20', 16), 0.65, 0.65, 10, [11.66, 11.62]),  # TME
+
+    (CC, '2026-01-23', None, (COIN, '2026-02-06', 240), 2.25, 0.0, 1, [2.51]),
+
+    (BUY, '2026-01-23', (COIN, 230), 100, [0.00]),
 
     # 2026-01-26 ~ 2026-01-30
-    (CSP, '2026-01-26', '2026-02-20', TTD, 33.5, 1.34, None, 6, [7]),  # TTD
-    (CSP, '2026-01-28', '2026-02-13', PDD, 100, 1.45, None, [2.51]),
-    (CSP, '2026-01-29', '2026-02-20', QQQ, 610, 5.55, None, [2.51]),
-    (CSP, '2026-01-29', '2026-02-27', MSFT, 385, 2.50, None, [2.51]),  # MSFT
-    (CSP, '2026-01-30', '2026-02-27', GOLD, 407, 3.50, None, [2.51]),
-    (CCX, '2026-01-30', '2026-02-20', PYPL, 60, 0.59, None, 4, [4.66]),
-    (CCX, '2026-01-30', '2026-02-20', NFLX, 90, 0.45, None, 3, [3.54]),
-    (BUY, '2026-01-30', None, NFLX, 85, 300, [0.00]),
-    (BUY, '2026-01-30', None, PYPL, 57, 400, [0.00]),
+    (CSP, '2026-01-26', None, (TTD, '2026-02-20', 33.5), 1.34, None, 6, [7]),  # TTD
+
+    (CSP, '2026-01-28', None, (PDD, '2026-02-13', 100), 1.45, None, 1, [2.51]),
+
+    (CSP, '2026-01-29', None, (QQQ, '2026-02-20', 610), 5.55, None, 1, [2.51]),
+    (CSP, '2026-01-29', '2026-02-04', (MSFT, '2026-02-27', 385), 2.50, 2.70, 1, [2.51, 2.50]),  # MSFT
+
+    (CSP, '2026-01-30', '2026-02-04', (GOLD, '2026-02-27', 407), 3.50, 3.50, 1, [2.51, 2.50]),
+    (CC, '2026-01-30', None, (PYPL, '2026-02-20', 60), 0.59, None, 4, [4.66]),
+    (CC, '2026-01-30', None, (NFLX, '2026-02-20', 90), 0.45, None, 3, [3.54]),
+
+    (BUY, '2026-01-30', (NFLX, 85), 300, [0.00]),
+    (BUY, '2026-01-30', (PYPL, 57), 400, [0.00]),
 
     # 2026-02-02 ~ 2026-02-06
-    (CCX, '2026-02-03', '2026-02-20', COIN, 230, 1.60, None, [2.51]),
-    (CCX, '2026-02-03', '2026-02-27', ADBE, 320, 1.50, None, [2.51]),
-    (CCX, '2026-02-03', '2026-02-27', ORCL, 185, 1.55, None, [2.51]),
-    (CSP, '2026-02-03', '2026-02-20', PYPL, 42.5, 1.50, None, [2.51]),
-    (BUY, '2026-02-06', None, ADBE, 320, 100, [0.00]),
+    (CC, '2026-02-03', None, (COIN, '2026-02-20', 230), 1.60, None, 1, [2.51]),
+    (CC, '2026-02-03', None, (ADBE, '2026-02-27', 320), 1.50, None, 1, [2.51]),
+    (CC, '2026-02-03', None, (ORCL, '2026-02-27', 185), 1.55, None, 1, [2.51]),
+    (CSP, '2026-02-03', None, (PYPL, '2026-02-20', 42.5), 1.50, None, 1, [2.51]),
+
+    (CC, '2026-02-04', None, (TTD, '2026-02-27', 35), 0.50, None, 6, [7]),
+
+    (BUY, '2026-02-06', (ADBE, 320), 100, [0.00]),
+    (BUY, '2026-02-06', (ORCL, 185), 100, [0.00]),
 ]
 
 
 def get_alpha_stock() -> list:
     stock_names = set()
     for transaction in TRANSACTION_BOOK:
-        txn_type = transaction[0]
-        if txn_type not in {CCX, CSP}:
-            continue
-
-        stock_name = transaction[3]
-        stock_names.add(stock_name)
+        t = Transaction(transaction)
+        stock_names.add(t.stock_name)
 
     stock_names_sorted = sort_stock_names(stock_names)
     print(f"\nalpha stocks: {stock_names_sorted}")
@@ -80,17 +122,13 @@ def _get_transactions_expired_at(date: str) -> list:
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     for transaction in TRANSACTION_BOOK:
-        txn_type = transaction[0]
+        t = Transaction(transaction)
 
-        if txn_type in {CCX, CSP}:
-            expire_date, stock_name = transaction[2], transaction[3]
-            if expire_date == date:
-                transactions.append(f'{stock_name} {txn_type}')
+        if t.txn_type in {CC, CSP} and t.expired_date == date:
+            transactions.append(f'{t.stock_name} {t.txn_type}')
 
-        if txn_type in {BUY, SELL}:
-            txn_date, stock_name = transaction[1], transaction[3]
-            if txn_date == date:
-                transactions.append(f'{stock_name} {txn_type}')
+        if t.txn_type in {BUY, SELL} and t.txn_date == date:
+            transactions.append(f'{t.stock_name} {t.txn_type}')
 
     if not transactions:
         return []
@@ -111,8 +149,8 @@ def list_by_expired_date():
 def list_by_stock_name() -> dict:
     per_stock_view = {}
     for transaction in TRANSACTION_BOOK:
-        stock_name = transaction[3]
-        per_stock_view.setdefault(stock_name, []).append(transaction)
+        t = Transaction(transaction)
+        per_stock_view.setdefault(t.stock_name, []).append(transaction)
 
     for stock_name in ALL:
         if stock_name not in per_stock_view:
@@ -131,27 +169,20 @@ def get_pnl_and_fees():
     total_fees = 0.0
 
     for transaction in TRANSACTION_BOOK:
-        txn_type = transaction[0]
-        if txn_type not in {CCX, CSP}:
+        t = Transaction(transaction)
+        if t.txn_type not in {CC, CSP}:
             continue
 
-        num = 1
-        if len(transaction) == 9:  # num is not 1
-            num = transaction[7]
-
-        buy_price, sell_price = transaction[5], transaction[6]
-        if sell_price is None:
-            sell_price = 0.0
-            pnl = (buy_price - sell_price) * num * 100
+        if t.sell_price is None:
+            pnl = (t.buy_price - 0.0) * t.num * 100
             total_pnl += pnl
             unrealized_pnl += pnl
         else:
-            pnl = (buy_price - sell_price) * num * 100
+            pnl = (t.buy_price - t.sell_price) * t.num * 100
             total_pnl += pnl
             realized_pnl += pnl
 
-        fees = transaction[-1]
-        total_fees += sum(fees)
+        total_fees += sum(t.fees)
 
     print(f"\nTotal pnl: {total_pnl}, Total fees: {total_fees}, "
           f"Realized pnl: {realized_pnl}, Unrealized pnl: {unrealized_pnl}")
@@ -161,16 +192,13 @@ def get_pnl_and_fees():
 def get_potential_position():
     position = {}
     for transaction in TRANSACTION_BOOK:
-        txn_type = transaction[0]
+        t = Transaction(transaction)
 
-        if txn_type == CSP:
-            expired_date, sell_price = transaction[2], transaction[6]
-            if sell_price is None:
-                position.setdefault(expired_date, []).append(transaction)
+        if t.txn_type == CSP and t.sell_price is None:
+            position.setdefault(t.expired_date, []).append(transaction)
 
-        if txn_type == BUY:
-            txn_date, stock_name = transaction[1], transaction[3]
-            position.setdefault(txn_date, []).append(transaction)
+        if t.txn_type == BUY:
+            position.setdefault(t.txn_date, []).append(transaction)
 
     position = dict(sorted(position.items()))
 
