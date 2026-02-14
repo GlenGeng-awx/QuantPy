@@ -19,6 +19,9 @@ class Transaction:
     def filtered_date(self):
         raise NotImplementedError("filtered_date() must be implemented by subclass")
 
+    def abbr(self):
+        raise NotImplementedError("abbr() must be implemented by subclass")
+
 
 class Option(Transaction):
     def __init__(self, stock_name, expire_date, strike_price, num, fees,
@@ -50,6 +53,16 @@ class Option(Transaction):
 
         return f"{self.open_date}  {close_date:<10}  {self.txn_type():<4}  {option:<25}" \
                f"{self.buy_price:>4}  {sell_price:>4}  {self.num:>4}  {self.fees}"
+
+    def abbr(self):
+        if self.sell_price is None:
+            flag = '-'
+        else:
+            if self.close_date is not None:
+                flag = 'x'
+            else:
+                flag = ' '
+        return f"{self.stock_name:<4}  {self.txn_type():<4} {self.strike_price:<5} {flag}"
 
 
 class Long(Option):
@@ -106,6 +119,9 @@ class Stock(Transaction):
         stock = f"({self.stock_name:<4} {self.stock_price})"
         return f"{self.txn_date:<22}  {self.txn_type():<4}  {stock:<35}  {self.num:>4}  {self.fees}"
 
+    def abbr(self):
+        return f"{self.stock_name:<4}  {self.txn_type():<4} {self.stock_price:<5}"
+
 
 class Buy(Stock):
     pass
@@ -149,7 +165,8 @@ def get_alpha_stock() -> list:
         stock_names.add(txn.stock_name)
 
     stock_names_sorted = sort_stock_names(stock_names)
-    print(f"alpha stocks:\n\t{stock_names_sorted}\n")
+    print(f"\nalpha stocks\n------------")
+    print(f"{stock_names_sorted}\n")
     return stock_names_sorted
 
 
@@ -184,16 +201,35 @@ def get_potential_position():
 
         if (isinstance(txn, CSP) and txn.sell_price is None) \
                 or isinstance(txn, Buy):
-            position.setdefault(txn.filtered_date(), []).append(raw_txn)
+            position.setdefault(txn.filtered_date(), []).append(txn)
 
     position = dict(sorted(position.items()))
 
-    print(f"Potential Position:")
+    print(f"\nPotential Position\n------------------")
     for filtered_date in position:
-        print(f"{filtered_date}:")
-        for raw_txn in position[filtered_date]:
-            print(f"\t{raw_txn}")
+        print(f"\n{filtered_date}:")
+        for txn in position[filtered_date]:
+            print(f"\t{txn}")
     return position
+
+
+def get_open_covered_call():
+    covered_call = {}
+
+    for raw_txn in TRANSACTION_BOOK:
+        txn = build_transaction(raw_txn)
+
+        if isinstance(txn, CC) and txn.sell_price is None:
+            covered_call.setdefault(txn.filtered_date(), []).append(txn)
+
+    covered_call = dict(sorted(covered_call.items()))
+
+    print(f"\nOpen Covered Call\n------------------")
+    for filtered_date in covered_call:
+        print(f"\n{filtered_date}:")
+        for txn in covered_call[filtered_date]:
+            print(f"\t{txn}")
+    return covered_call
 
 
 def _filter_transactions_by_date(date: str) -> list:
@@ -201,30 +237,22 @@ def _filter_transactions_by_date(date: str) -> list:
 
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
-
-        if txn.filtered_date() != date:
-            continue
-
-        if isinstance(txn, Option):
-            if txn.sell_price is None:
-                transactions.append(f'{txn.stock_name} {txn.txn_type()} (_)')
-            else:
-                transactions.append(f'{txn.stock_name} {txn.txn_type()}')
-
-        if isinstance(txn, Stock):
-            transactions.append(f'{txn.stock_name} {txn.txn_type()}')
+        if txn.filtered_date() == date:
+            transactions.append(txn)
 
     if not transactions:
         return []
 
     current_date = datetime.now().strftime('%Y-%m-%d')
     prefix = '-' if date < current_date else '+'
-    print(f"{prefix} {date}: {transactions}")
+    print(f"\n{prefix} {date}:")
+    for txn in transactions:
+        print(f"\t{txn.abbr()}")
     return transactions
 
 
 def list_by_date():
-    print("\nlist by date:")
+    print("\nlist by date\n------------")
     for filter_date in ['2026-01-09', '2026-01-16', '2026-01-23', '2026-01-30',
                         '2026-02-06', '2026-02-13', '2026-02-20', '2026-02-27',
                         '2026-03-06', '2026-03-13', '2026-03-20', '2026-03-27']:
@@ -238,6 +266,7 @@ def list_by_stock_name() -> dict:
         txn = build_transaction(raw_txn)
         stock_name_view.setdefault(txn.stock_name, []).append(txn)
 
+    print("\nlist by stock name\n------------------")
     for stock_name in ALL:
         if stock_name not in stock_name_view:
             continue
@@ -252,9 +281,10 @@ def list_by_stock_name() -> dict:
 
 if __name__ == '__main__':
     get_alpha_stock()
-
     get_pnl_and_fees()
+
     get_potential_position()
+    get_open_covered_call()
 
     list_by_date()
     list_by_stock_name()
