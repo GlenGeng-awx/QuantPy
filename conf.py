@@ -59,6 +59,7 @@ EBAY = "EBAY"
 NU = "NU"               # Nu Holdings
 HOOD = "HOOD"           # Robinhood
 AFRM = "AFRM"           # Affirm Holdings
+KLAR = "KLAR"           # Klarna
 
 # ENERGY
 XOM = "XOM"             # Exxon Mobil
@@ -228,6 +229,7 @@ V_10B = [
     XPEV,
     NIO,
     BILI,
+    KLAR,
 ]
 
 ALL = CN_INDEX + US_INDEX \
