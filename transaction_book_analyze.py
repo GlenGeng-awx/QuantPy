@@ -242,6 +242,7 @@ def _filter_transactions_by_date(date: str) -> list:
 
     if not transactions:
         return []
+    transactions.sort(key=lambda x: x.stock_name)
 
     current_date = datetime.now().strftime('%Y-%m-%d')
     prefix = '-' if date < current_date else '+'
