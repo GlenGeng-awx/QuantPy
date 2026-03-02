@@ -142,6 +142,9 @@ TXN_TYPE_MAP = {
 
 
 def build_transaction(raw_txn) -> Transaction:
+    if isinstance(raw_txn, Transaction):
+        return raw_txn
+
     if len(raw_txn) == 8:
         txn_type, open_date, close_date, option, buy_price, sell_price, num, fees = raw_txn
         stock_name, expire_date, strike_price = option
@@ -170,14 +173,14 @@ def get_alpha_stock() -> list:
     return stock_names_sorted
 
 
-def get_pnl_and_fees():
+def _get_pnl_and_fees(transactions: list):
     total_pnl = 0.0
     total_fees = 0.0
 
     realized_pnl = 0.0
     unrealized_pnl = 0.0
 
-    for raw_txn in TRANSACTION_BOOK:
+    for raw_txn in transactions:
         txn = build_transaction(raw_txn)
         total_fees += txn.total_fees()
 
@@ -188,8 +191,9 @@ def get_pnl_and_fees():
         unrealized_pnl += txn.unrealized_pnl()
         realized_pnl += txn.realized_pnl()
 
-    print(f"Total pnl: {total_pnl}, Total fees: {total_fees:.2f}, "
-          f"Realized pnl: {realized_pnl}, Unrealized pnl: {unrealized_pnl}\n")
+    print("\n---------")
+    print(f"Total pnl: {total_pnl:.2f}, Total fees: {total_fees:.2f}, "
+          f"Realized pnl: {realized_pnl:.2f}, Unrealized pnl: {unrealized_pnl:.2f}")
     return total_pnl, total_fees
 
 
@@ -249,6 +253,8 @@ def _filter_transactions_by_date(date: str) -> list:
     print(f"\n{prefix} {date}:")
     for txn in transactions:
         print(f"\t{txn.abbr()}")
+
+    _get_pnl_and_fees(transactions)
     return transactions
 
 
@@ -276,13 +282,14 @@ def list_by_stock_name() -> dict:
         print(f"\n{stock_name}:")
         for txn in stock_name_view[stock_name]:
             print(f"\t{txn}")
+        _get_pnl_and_fees(stock_name_view[stock_name])
 
     return stock_name_view
 
 
 if __name__ == '__main__':
     get_alpha_stock()
-    get_pnl_and_fees()
+    _get_pnl_and_fees(TRANSACTION_BOOK)
 
     get_potential_position()
     get_open_covered_call()
