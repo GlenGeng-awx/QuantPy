@@ -94,14 +94,6 @@ def touch_file(filename: str):
         pass
 
 
-def sort_stock_names(stock_names):
-    stock_names_sorted = []
-    for stock_name in ALL:
-        if stock_name in stock_names:
-            stock_names_sorted.append(stock_name)
-    return stock_names_sorted
-
-
 if __name__ == '__main__':
     today = datetime.now().strftime('%Y-%m-%d')
     print(get_next_n_workday(today, 5))

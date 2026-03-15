@@ -1,5 +1,4 @@
 from datetime import datetime
-from util import sort_stock_names
 from transaction_book import _BUY, _SELL, _CALL, _PUT, _CSP, _CC, TRANSACTION_BOOK, ALL, get_current_position
 
 
@@ -52,9 +51,10 @@ class Option(Transaction):
         option = f"({self.stock_name:<4} {self.expire_date} {self.strike_price})"
 
         return f"{self.open_date}  {close_date:<10}  {self.txn_type():<4}  {option:<25}" \
-               f"{self.buy_price:>4}  {sell_price:>4}  {self.num:>4}  {self.fees}"
+               f"{self.buy_price:>5}  {sell_price:>5}  {self.num:>4}  {self.fees}"
 
     def abbr(self):
+        # '-' for open position, 'x' for closed position, ' ' for expired position
         if self.sell_price is None:
             flag = '-'
         else:
@@ -117,7 +117,7 @@ class Stock(Transaction):
 
     def __str__(self):
         stock = f"({self.stock_name:<4} {self.stock_price})"
-        return f"{self.txn_date:<22}  {self.txn_type():<4}  {stock:<35}  {self.num:>4}  {self.fees}"
+        return f"{self.txn_date:<22}  {self.txn_type():<4}  {stock:<37}  {self.num:>4}  {self.fees}"
 
     def abbr(self):
         return f"{self.stock_name:<4}  {self.txn_type():<4} {self.stock_price:<5}"
@@ -140,18 +140,66 @@ TXN_TYPE_MAP = {
     _SELL: Sell,
 }
 
+TXN_NAME_MAP = {
+    CSP: _CSP,
+    CC: _CC,
+    Put: _PUT,
+    Call: _CALL,
+    Buy: _BUY,
+    Sell: _SELL,
+}
+
+
+class Position:
+    def __init__(self, transactions: list):
+        self.transactions = transactions
+
+        # 1. total fees
+        self.total_fees = sum(txn.total_fees() for txn in transactions)
+
+        # 2. avg_price
+        self.buy = [txn for txn in transactions if isinstance(txn, Buy)]
+        self.sell = [txn for txn in transactions if isinstance(txn, Sell)]
+
+        self.num = sum(txn.num for txn in self.buy) - sum(txn.num for txn in self.sell)
+        self.outflow = sum(txn.stock_price * txn.num for txn in self.buy)
+        self.inflow = sum(txn.stock_price * txn.num for txn in self.sell)
+        self.avg_price = (self.outflow - self.inflow) / self.num if self.num != 0 else 0.0
+
+        # 3. option pnl and real_price
+        self.option = [txn for txn in transactions if isinstance(txn, Option)]
+
+        self.realized_pnl = sum(txn.realized_pnl() for txn in self.option)
+        self.unrealized_pnl = sum(txn.unrealized_pnl() for txn in self.option)
+        self.real_price = self.avg_price - self.realized_pnl / self.num if self.num != 0 else 0.0
+
+    def log(self, full=False):
+        if self.num == 0:
+            return
+        print(f"\nPosition for {self.transactions[0].stock_name}:")
+        print(f"\tNum: {self.num}, Avg Price: {self.avg_price:.2f}, Real Price: {self.real_price:.2f}")
+        print(f"\tRealized PnL: {self.realized_pnl:.2f}, Unrealized PnL: {self.unrealized_pnl:.2f}")
+        print(f"\tTotal Fees: {self.total_fees:.2f}")
+
+        if not full:
+            return
+        print(f"\tTransactions:")
+        for txn in self.transactions:
+            print(f"\t\t{txn}")
+
 
 def build_transaction(raw_txn) -> Transaction:
     if isinstance(raw_txn, Transaction):
         return raw_txn
 
+    # Option
     if len(raw_txn) == 8:
         txn_type, open_date, close_date, option, buy_price, sell_price, num, fees = raw_txn
         stock_name, expire_date, strike_price = option
 
         return TXN_TYPE_MAP[txn_type](stock_name, expire_date, strike_price, num, fees,
                                       open_date, close_date, buy_price, sell_price, raw_txn)
-
+    # Stock
     if len(raw_txn) == 5:
         txn_type, txn_date, stock, num, fees = raw_txn
         stock_name, stock_price = stock
@@ -161,138 +209,71 @@ def build_transaction(raw_txn) -> Transaction:
     raise ValueError(f"Invalid transaction format: {raw_txn}")
 
 
-def get_alpha_stock() -> list:
-    stock_names = set()
-    for raw_txn in TRANSACTION_BOOK:
-        txn = build_transaction(raw_txn)
-        stock_names.add(txn.stock_name)
+def get_pnl_and_fees(transactions: list):
+    transactions = [build_transaction(txn) for txn in transactions]
+    options = [txn for txn in transactions if isinstance(txn, Option)]
 
-    stock_names_sorted = sort_stock_names(stock_names)
-    print(f"\nalpha stocks\n------------")
-    print(f"{stock_names_sorted}\n")
-    return stock_names_sorted
+    unrealized_pnl = sum(txn.unrealized_pnl() for txn in options)
+    realized_pnl = sum(txn.realized_pnl() for txn in options)
+    total_pnl = unrealized_pnl + realized_pnl
+    total_fees = sum(txn.total_fees() for txn in transactions)
 
-
-def _get_pnl_and_fees(transactions: list):
-    total_pnl = 0.0
-    total_fees = 0.0
-
-    realized_pnl = 0.0
-    unrealized_pnl = 0.0
-
-    for raw_txn in transactions:
-        txn = build_transaction(raw_txn)
-        total_fees += txn.total_fees()
-
-        if not isinstance(txn, Option):
-            continue
-
-        total_pnl += txn.unrealized_pnl() + txn.realized_pnl()
-        unrealized_pnl += txn.unrealized_pnl()
-        realized_pnl += txn.realized_pnl()
-
-    print("\n---------")
-    print(f"Total pnl: {total_pnl:.2f}, Total fees: {total_fees:.2f}, "
+    print(f"\n\t\tTotal pnl: {total_pnl:.2f}, Total fees: {total_fees:.2f}, "
           f"Realized pnl: {realized_pnl:.2f}, Unrealized pnl: {unrealized_pnl:.2f}")
-    return total_pnl, total_fees
 
 
-def get_potential_position():
-    position = {}
-
+def get_open_txn(txn_type):
+    print(f"\n---------------------\nOpen {TXN_NAME_MAP[txn_type]}\n---------------------")
+    date_map = {}
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
-
-        if (isinstance(txn, CSP) and txn.sell_price is None) \
-                or isinstance(txn, Buy):
-            position.setdefault(txn.filtered_date(), []).append(txn)
-
-    position = dict(sorted(position.items()))
-
-    print(f"\nPotential Position\n------------------")
-    for filtered_date in position:
-        print(f"\n{filtered_date}:")
-        for txn in position[filtered_date]:
+        if isinstance(txn, txn_type) and txn.sell_price is None:
+            date_map.setdefault(txn.filtered_date(), []).append(txn)
+    for date in sorted(date_map.keys()):
+        print(f"\n{date}:")
+        for txn in date_map[date]:
             print(f"\t{txn}")
-    return position
-
-
-def get_open_covered_call():
-    covered_call = {}
-
-    for raw_txn in TRANSACTION_BOOK:
-        txn = build_transaction(raw_txn)
-
-        if isinstance(txn, CC) and txn.sell_price is None:
-            covered_call.setdefault(txn.filtered_date(), []).append(txn)
-
-    covered_call = dict(sorted(covered_call.items()))
-
-    print(f"\nOpen Covered Call\n------------------")
-    for filtered_date in covered_call:
-        print(f"\n{filtered_date}:")
-        for txn in covered_call[filtered_date]:
-            print(f"\t{txn}")
-    return covered_call
-
-
-def _filter_transactions_by_date(date: str) -> list:
-    transactions = []
-
-    for raw_txn in TRANSACTION_BOOK:
-        txn = build_transaction(raw_txn)
-        if txn.filtered_date() == date:
-            transactions.append(txn)
-
-    if not transactions:
-        return []
-    transactions.sort(key=lambda x: x.stock_name)
-
-    current_date = datetime.now().strftime('%Y-%m-%d')
-    prefix = '-' if date < current_date else '+'
-    print(f"\n{prefix} {date}:")
-    for txn in transactions:
-        print(f"\t{txn.abbr()}")
-
-    _get_pnl_and_fees(transactions)
-    return transactions
+        get_pnl_and_fees(date_map[date])
+    return date_map
 
 
 def list_by_date():
     print("\nlist by date\n------------")
-    for filter_date in ['2026-01-09', '2026-01-16', '2026-01-23', '2026-01-30',
-                        '2026-02-06', '2026-02-13', '2026-02-20', '2026-02-27',
-                        '2026-03-06', '2026-03-13', '2026-03-20', '2026-03-27']:
-        _filter_transactions_by_date(filter_date)
+    # 1. group transactions by date
+    date_map = {}
+    for raw_txn in TRANSACTION_BOOK:
+        txn = build_transaction(raw_txn)
+        date_map.setdefault(txn.filtered_date(), []).append(txn)
+    # 2. sort by date
+    for date in sorted(date_map.keys()):
+        transactions = date_map[date]
+        transactions.sort(key=lambda x: x.stock_name)
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        prefix = '-' if date < current_date else '+'
+        print(f"\n{prefix} {date}:")
+        for txn in transactions:
+            print(f"\t{txn.abbr()}")
+        get_pnl_and_fees(transactions)
 
 
-def list_by_stock_name() -> dict:
+def list_by_stock_name():
+    print("\nlist by stock name\n------------------")
     stock_name_view = {}
-
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
         stock_name_view.setdefault(txn.stock_name, []).append(txn)
-
-    print("\nlist by stock name\n------------------")
     for stock_name in ALL:
-        if stock_name not in stock_name_view:
-            continue
-        if stock_name not in get_current_position():
-            continue
-        print(f"\n{stock_name}:")
-        for txn in stock_name_view[stock_name]:
-            print(f"\t{txn}")
-        _get_pnl_and_fees(stock_name_view[stock_name])
-
-    return stock_name_view
+        if stock_name in stock_name_view:
+            Position(stock_name_view[stock_name]).log(True)
 
 
 if __name__ == '__main__':
-    get_alpha_stock()
-    _get_pnl_and_fees(TRANSACTION_BOOK)
+    get_pnl_and_fees(TRANSACTION_BOOK)
 
-    get_potential_position()
-    get_open_covered_call()
+    get_open_txn(CSP)
+    get_open_txn(Call)
+    get_open_txn(CC)
+    get_open_txn(Put)
 
-    list_by_date()
     list_by_stock_name()
+    list_by_date()

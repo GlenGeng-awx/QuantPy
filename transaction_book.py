@@ -1,16 +1,16 @@
 from conf import *
 
 # Transaction Types
-_CSP = 'CSP'  # Cash Secured Put
-_CC = 'CC'  # Covered Call
-_PUT = 'PUT'  # Long Put
-_CALL = 'CALL'  # Long Call
-_BUY = 'BUY'  # Buy Stock
-_SELL = 'SELL'  # Sell Stock
+_CSP = 'Cash Secured Put'
+_CC = 'Covered Call'
+_PUT = 'Protect Put'
+_CALL = 'Long Call'
+_BUY = 'Buy Stock'
+_SELL = 'Sell Stock'
 
 """
-(CC/CSP,   open_date, close_date, (stock_name, expire_date, strike_price), buy_price, sell_price, num, [fees])
-(BUY/SELL, txn_date, (stock_name, stock_price), num, [fees])
+(Option, open_date, close_date, (stock_name, expire_date, strike_price), buy_price, sell_price, num, [fees])
+(Stock, txn_date, (stock_name, stock_price), num, [fees])
 """
 TRANSACTION_BOOK = [
     # 2025-12-29 ~ 2026-01-02
