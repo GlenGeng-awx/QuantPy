@@ -258,13 +258,13 @@ def list_by_date():
 
 def list_by_stock_name():
     print("\nlist by stock name\n------------------")
-    stock_name_view = {}
+    stock_name_map = {}
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
-        stock_name_view.setdefault(txn.stock_name, []).append(txn)
+        stock_name_map.setdefault(txn.stock_name, []).append(txn)
     for stock_name in ALL:
-        if stock_name in stock_name_view:
-            Position(stock_name_view[stock_name]).log(True)
+        if stock_name in stock_name_map:
+            Position(stock_name_map[stock_name]).log(True)
 
 
 if __name__ == '__main__':

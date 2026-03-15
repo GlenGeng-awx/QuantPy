@@ -1,26 +1,25 @@
 import plotly.graph_objects as go
 from transaction_book import TRANSACTION_BOOK
+from transaction_book_analyze import build_transaction, Option
 
 
 class Transaction:
     def __init__(self, stock_name: str):
-        self.transactions = []
-        for transaction in TRANSACTION_BOOK:
-            if transaction[2] == stock_name:
-                self.transactions.append(transaction)
+        transactions = [build_transaction(transaction) for transaction in TRANSACTION_BOOK]
+        self.options = [txn for txn in transactions if txn.stock_name == stock_name and isinstance(txn, Option)]
 
     def build_graph(self, fig: go.Figure, enable=False):
         dates, prices = [], []
 
-        for transaction_date, expiration_date, stock_name, strike_prices in self.transactions:
-            for strike_price in strike_prices:
-                dates.extend([transaction_date, expiration_date, None])
-                prices.extend([strike_price, strike_price, None])
+        for option in self.options:
+            end_date = option.close_date if option.close_date else option.expire_date
+            dates.extend([option.open_date, end_date, None])
+            prices.extend([option.strike_price, option.strike_price, None])
 
         fig.add_trace(
             go.Scatter(
                 name='transactions', x=dates, y=prices,
-                mode='lines', line=dict(width=1, color='blue', dash='dot'),
+                mode='lines', line=dict(width=1.5, color='black', dash='dot'),
                 visible=None if enable else 'legendonly',
             )
         )
