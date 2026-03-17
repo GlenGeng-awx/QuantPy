@@ -237,7 +237,7 @@ def get_open_txn(txn_type):
     return date_map
 
 
-def list_by_date():
+def list_by_date(full: bool = False):
     print("\nlist by date\n------------")
     # 1. group transactions by date
     date_map = {}
@@ -250,6 +250,8 @@ def list_by_date():
         transactions.sort(key=lambda x: x.stock_name)
         current_date = datetime.now().strftime('%Y-%m-%d')
         prefix = '-' if date < current_date else '+'
+        if not full and prefix == '-':
+            continue
         print(f"\n{prefix} {date}:")
         for txn in transactions:
             print(f"\t{txn.abbr()}")
@@ -275,5 +277,5 @@ if __name__ == '__main__':
     get_open_txn(CC)
     get_open_txn(Put)
 
+    list_by_date(full=False)
     list_by_stock_name()
-    list_by_date()
