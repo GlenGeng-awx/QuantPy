@@ -222,13 +222,15 @@ def get_pnl_and_fees(transactions: list):
           f"Realized pnl: {realized_pnl:.2f}, Unrealized pnl: {unrealized_pnl:.2f}")
 
 
-def get_open_txn(txn_type):
-    print(f"\n---------------------\nOpen {TXN_NAME_MAP[txn_type]}\n---------------------")
+def get_open_txn(*txn_types):
+    tag = ' and '.join(TXN_NAME_MAP[txn_type] for txn_type in txn_types)
+    print(f"\n---------------------\nOpen {tag}\n---------------------")
     date_map = {}
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
-        if isinstance(txn, txn_type) and txn.sell_price is None:
-            date_map.setdefault(txn.filtered_date(), []).append(txn)
+        for txn_type in txn_types:
+            if isinstance(txn, txn_type) and txn.sell_price is None:
+                date_map.setdefault(txn.filtered_date(), []).append(txn)
     for date in sorted(date_map.keys()):
         print(f"\n{date}:")
         for txn in date_map[date]:
@@ -272,10 +274,8 @@ def list_by_stock_name():
 if __name__ == '__main__':
     get_pnl_and_fees(TRANSACTION_BOOK)
 
-    get_open_txn(CSP)
-    get_open_txn(Call)
+    get_open_txn(CSP, Call)
     get_open_txn(CC)
-    get_open_txn(Put)
 
     list_by_date(full=False)
     list_by_stock_name()
