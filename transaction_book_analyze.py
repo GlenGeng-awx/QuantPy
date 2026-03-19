@@ -157,7 +157,7 @@ class Position:
         # 1. total fees
         self.total_fees = sum(txn.total_fees() for txn in transactions)
 
-        # 2. avg_price
+        # 2. stock avg_price
         self.buy = [txn for txn in transactions if isinstance(txn, Buy)]
         self.sell = [txn for txn in transactions if isinstance(txn, Sell)]
 
@@ -166,7 +166,7 @@ class Position:
         self.inflow = sum(txn.stock_price * txn.num for txn in self.sell)
         self.avg_price = (self.outflow - self.inflow) / self.num if self.num != 0 else 0.0
 
-        # 3. option pnl and real_price
+        # 3. option pnl and stock real_price
         self.option = [txn for txn in transactions if isinstance(txn, Option)]
 
         self.realized_pnl = sum(txn.realized_pnl() for txn in self.option)
@@ -213,6 +213,9 @@ def get_pnl_and_fees(transactions: list):
     transactions = [build_transaction(txn) for txn in transactions]
     options = [txn for txn in transactions if isinstance(txn, Option)]
 
+    if not options:
+        return
+
     unrealized_pnl = sum(txn.unrealized_pnl() for txn in options)
     realized_pnl = sum(txn.realized_pnl() for txn in options)
     total_pnl = unrealized_pnl + realized_pnl
@@ -229,7 +232,8 @@ def get_open_txn(*txn_types):
     for raw_txn in TRANSACTION_BOOK:
         txn = build_transaction(raw_txn)
         for txn_type in txn_types:
-            if isinstance(txn, txn_type) and txn.sell_price is None:
+            if isinstance(txn, txn_type) \
+                    and (raw_txn[0] in [_BUY, _SELL] or txn.sell_price is None):
                 date_map.setdefault(txn.filtered_date(), []).append(txn)
     for date in sorted(date_map.keys()):
         print(f"\n{date}:")
@@ -274,6 +278,7 @@ def list_by_stock_name():
 if __name__ == '__main__':
     get_pnl_and_fees(TRANSACTION_BOOK)
 
+    get_open_txn(Buy, Sell)
     get_open_txn(CSP, Call)
     get_open_txn(CC)
 
