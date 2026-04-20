@@ -2,18 +2,6 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-# 48m/42m/36m
-def period_train(to_date: str, months):
-    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=months)).strftime('%Y-%m-%d')
-    return from_date, to_date, '1d'
-
-
-# 18m
-def period_predict(to_date: str):
-    from_date = (datetime.strptime(to_date, '%Y-%m-%d') - relativedelta(months=18)).strftime('%Y-%m-%d')
-    return from_date, to_date, '1d'
-
-
 def period_ny(years: int):
     if years == 7:
         from_date = '2018-01-01'
@@ -45,7 +33,6 @@ def _default_args():
 
         'enable_ec': False,
         'enable_transaction': False,
-        'enable_prediction': False,
 
         'enable_elliott': False,
         'enable_neck_line': False,
@@ -88,7 +75,6 @@ def _low_args():
         'enable_sr': True,
         'enable_ec': True,
         'enable_transaction': True,
-        'enable_prediction': True,
     }
 
     return args
@@ -117,11 +103,4 @@ def display_args(with_high=False, with_mid=False, with_low=False, with_guru=Fals
     if with_guru:
         args.update(_guru_args())
 
-    return args
-
-
-def model_args():
-    args = _default_args()
-    args.update(_high_args())
-    args.update(_guru_args())
     return args

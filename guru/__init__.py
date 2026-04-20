@@ -76,12 +76,6 @@ from guru import (
     h2_short_red_range,
     h2_short_green_range,
 
-    h3_mon,
-    h3_tue,
-    h3_wed,
-    h3_thu,
-    h3_fri,
-
     h4_up_gap,
     h4_up_gap_huge,
     h4_down_gap,
@@ -91,13 +85,6 @@ from guru import (
     h5_incr_5d,
     h5_decr_3d,
     h5_decr_5d,
-
-    h6_fake_green_bar,
-    h6_fake_red_bar,
-
-    n0_common,
-    n1_will_spike,
-    n2_will_crash,
 )
 
 factors = [
@@ -175,12 +162,6 @@ factors = [
     h2_short_red_range,
     h2_short_green_range,
 
-    h3_mon,
-    h3_tue,
-    h3_wed,
-    h3_thu,
-    h3_fri,
-
     h4_up_gap,
     h4_up_gap_huge,
     h4_down_gap,
@@ -191,13 +172,6 @@ factors = [
     h5_decr_3d,
     h5_decr_5d,
 
-    h6_fake_green_bar,
-    h6_fake_red_bar,
-]
-
-model = [
-    n1_will_spike,
-    n2_will_crash,
 ]
 
 
@@ -209,44 +183,8 @@ def calculate(stock_df: pd.DataFrame) -> dict:
         dates = factor.calculate_hits(stock_df)
         context[factor.KEY] = dates
 
-    for target in model:
-        for mode in [n0_common.TRAIN, n0_common.RECALL]:
-            key, dates = target.calculate_hits(stock_df, mode)
-            context[key] = dates
-
     print(f'calculate context cost: {(datetime.now() - start_time).total_seconds()}s')
     return context
 
 
-required_factors = set(f.KEY for f in [
-    f1_crash_3d,
-    f1_crash_5d,
-    f1_crash_10d,
-    f1_crash_15d,
-    f1_crash_20d,
-    f1_crash_25d,
-    f1_crash_30d,
-
-    f2_spike_3d,
-    f2_spike_5d,
-    f2_spike_10d,
-    f2_spike_15d,
-    f2_spike_20d,
-    f2_spike_25d,
-    f2_spike_30d,
-])
-
-
-def get_target_dates(context: dict) -> set:
-    dates = set()
-
-    for target in model:
-        key = n0_common.get_key(target.TARGET, n0_common.TRAIN)
-        dates |= set(context.get(key, []))
-
-    return dates
-
-
 import guru.plot
-import guru.train
-import guru.predict
