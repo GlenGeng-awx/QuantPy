@@ -3,6 +3,7 @@ from statistical.ma import MA_200
 from guru.g3_down_thru_ma import _calculate_hits
 
 KEY = 'down thru ma200'
+COLOR = 'green'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

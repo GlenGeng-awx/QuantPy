@@ -2,6 +2,7 @@ import pandas as pd
 from technical.volume import VOLUME_REG
 
 KEY = 'vol incr 5d'
+COLOR = 'black'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

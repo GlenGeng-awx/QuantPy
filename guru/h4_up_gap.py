@@ -1,6 +1,7 @@
 import pandas as pd
 
 KEY = 'up gap'
+COLOR = 'red'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

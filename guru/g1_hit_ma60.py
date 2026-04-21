@@ -3,6 +3,7 @@ from statistical.ma import MA_60
 from guru.g1_hit_ma import _calculate_hits
 
 KEY = 'hit ma60'
+COLOR = 'black'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

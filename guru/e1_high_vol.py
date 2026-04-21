@@ -2,6 +2,7 @@ import pandas as pd
 from technical.volume import VOLUME_REG
 
 KEY = 'high vol'
+COLOR = 'black'
 SIZE = 100
 
 

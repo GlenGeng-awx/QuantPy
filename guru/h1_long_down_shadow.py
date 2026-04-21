@@ -2,6 +2,7 @@ import pandas as pd
 from guru.util import _pick_rolling_n_pst_reversed
 
 KEY = 'long down shadow'
+COLOR = 'red'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

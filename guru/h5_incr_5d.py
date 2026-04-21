@@ -1,6 +1,7 @@
 import pandas as pd
 
 KEY = 'incr 5d'
+COLOR = 'red'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

@@ -2,6 +2,7 @@ import pandas as pd
 from guru.f2_spike import _calculate_hits
 
 KEY = 'spike 20d'
+COLOR = 'red'
 
 
 def calculate_hits(stock_df: pd.DataFrame) -> list:

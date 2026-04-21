@@ -41,15 +41,24 @@ def summarize(stock_df: pd.DataFrame) -> str:
     return summary
 
 
+def _get_color(key: str) -> str:
+    from guru import factors
+    for f in factors:
+        if f.KEY == key:
+            return f.COLOR
+    return 'black'
+
+
 def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict,
          row=2, display_last_n_days=None) -> dict:
     for i, (key, dates) in enumerate(context.items()):
+        color = _get_color(key)
         fig.add_trace(
             go.Scatter(
                 name=key,
                 x=dates,
-                y=[1 * (i + 1)] * len(dates),  # Dummy y values for plotting
-                mode='markers', marker=dict(size=4),
+                y=[1 * (i + 1)] * len(dates),
+                mode='markers', marker=dict(size=4, color=color),
             ),
             row=row, col=1
         )
