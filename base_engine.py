@@ -8,12 +8,11 @@ from technical.primary_line import PrimaryLine
 from technical.secondary_line import SecondaryLine
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
-from technical.ec import EC
+from technical.earnings_call import EarningsCall
 from technical.implied_neck_line import ImpliedNeckLine
 from technical.implied_line import ImpliedLine
 
-from statistical.ema import EMA
-from statistical.ma import MA
+from technical.ma import MA
 from util import load_data, shrink_date_str, interval_to_label, get_next_n_workday
 import guru
 
@@ -37,7 +36,6 @@ class BaseEngine:
         # calculate
         self.price = Price(self.stock_df)
 
-        self.ema = EMA(self.stock_df)
         self.ma = MA(self.stock_df)
 
         self.min_max = MinMax(self.stock_df)
@@ -48,7 +46,7 @@ class BaseEngine:
         self.neck_line = NeckLine(self.stock_df, self.stock_name)
 
         self.elliott = Elliott(self.stock_df, self.stock_name)
-        self.ec = EC(self.stock_df, self.stock_name)
+        self.earnings_call = EarningsCall(self.stock_df, self.stock_name)
         self.volume = Volume(self.stock_df, self.stock_name)
 
         # implied
@@ -123,8 +121,6 @@ class BaseEngine:
     def build_graph(self,
                     enable_candlestick=False,
                     enable_close_price=False,
-                    # statistical
-                    enable_ema=False,
                     enable_ma=(False, False, False, False, False, False, False),
                     # technical
                     enable_min_max=False,
@@ -132,7 +128,7 @@ class BaseEngine:
                     enable_line=False,
                     enable_neck_line=False,
                     enable_elliott=True,
-                    enable_ec=True,
+                    enable_earnings_call=True,
                     # implied
                     enable_implied_neck_line=True,
                     enable_implied_line=True,
@@ -146,7 +142,7 @@ class BaseEngine:
         self.price.build_graph(self.fig, enable_candlestick, enable_close_price)
 
         self.elliott.build_graph(self.fig, enable_elliott)
-        self.ec.build_graph(self.fig, enable_ec)
+        self.earnings_call.build_graph(self.fig, enable_earnings_call)
 
         self.volume.build_graph(self.fig, enable_volume)
 
@@ -158,7 +154,6 @@ class BaseEngine:
         self.neck_line.build_graph(self.fig, enable_neck_line)
 
         self.ma.build_graph(self.fig, enable_ma)
-        # self.ema.build_graph(self.fig, enable_ema)
 
         self.implied_neck_line.build_graph(self.fig, enable_implied_neck_line)
         self.implied_line.build_graph(self.fig, enable_implied_line)

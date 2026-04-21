@@ -1,5 +1,5 @@
 import pandas as pd
-from statistical.ma import MA_20
+from technical.ma import MA_20
 from guru.g1_hit_ma import _calculate_hits
 
 KEY = 'hit ma20'

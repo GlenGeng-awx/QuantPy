@@ -12,7 +12,7 @@ _BASE = {
     'enable_close_price': False,
     'enable_min_max': False,
     'enable_sr': False,
-    'enable_ec': False,
+    'enable_earnings_call': False,
     'enable_elliott': False,
     'enable_neck_line': False,
     'enable_line': False,
@@ -40,7 +40,7 @@ FOUR_YEAR = {
 TWO_YEAR = {
     **FOUR_YEAR,
     'enable_sr': True,
-    'enable_ec': True,
+    'enable_earnings_call': True,
     'enable_guru': (True, 2),
     'enable_volume': (True, 3),
     'rows': 3,

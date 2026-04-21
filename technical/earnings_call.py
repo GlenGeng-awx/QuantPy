@@ -6,7 +6,7 @@ from util import get_idx_by_date, shrink_date_str
 from technical import get_diff
 
 
-class EC:
+class EarningsCall:
     def __init__(self, stock_df: pd.DataFrame, stock_name: str):
         self.stock_df = stock_df
         self.stock_name = stock_name
@@ -27,7 +27,7 @@ class EC:
 
         fig.add_trace(
             go.Scatter(
-                name='EC', x=x, y=y,
+                name='earnings call', x=x, y=y,
                 mode='lines', line=dict(width=2, color='blue', dash='dot'),
                 visible=None if enable else 'legendonly',
             )
