@@ -1,48 +1,29 @@
 from base_engine import BaseEngine
-from preload_conf import *
-from conf import *
+from preload_conf import period, FULL, FOUR_YEAR, TWO_YEAR, with_overrides
 from transaction_book import get_current_position
 
-"""
-Weekly SOP
-    7y
-    7y neckline
-    7y elliott
-    7y line
-
-    4y
-    4y elliott
-    4y line
-
-My View
-    who is up / down ?
-    who is too expensive / cheap ?
-    why PE is so high / low ?
-"""
-
-drill_down_7 = [
-    (period_ny(years=7), display_args()),
-    (period_ny(years=7), display_args(enable_neck_line=True)),
-    (period_ny(years=7), display_args(enable_neck_line=True, enable_elliott=True)),
-    (period_ny(years=7), display_args(enable_neck_line=True, enable_elliott=True, enable_line=True)),
+drill_down_full = [
+    (period(7), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=False)),
+    (period(7), with_overrides(FULL, enable_elliott=False, enable_line=False)),
+    (period(7), with_overrides(FULL, enable_elliott=False)),
+    (period(7), FULL),
 ]
 
-drill_down_4 = [
-    (period_ny(years=4), display_args()),
-    (period_ny(years=4), display_args(enable_neck_line=True, enable_elliott=True)),
-    (period_ny(years=4), display_args(enable_neck_line=True, enable_elliott=True, enable_line=True)),
+drill_down_4y = [
+    (period(4), with_overrides(FOUR_YEAR, enable_elliott=False, enable_neck_line=False, enable_line=False,
+                               enable_implied_neck_line=False, enable_implied_line=False)),
+    (period(4), with_overrides(FOUR_YEAR, enable_implied_neck_line=False, enable_implied_line=False)),
+    (period(4), FOUR_YEAR),
 ]
 
 hologram = [
-    # (period_ny(years=7), display_args(with_high=True)),
-    # (period_ny(years=4), display_args(with_high=True, with_mid=True, with_guru=True)),
-    (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
+    (period(7), FULL),
+    (period(4), FOUR_YEAR),
+    (period(2), TWO_YEAR),
 ]
 
 for stock_name in get_current_position():
-    for (from_date, to_date, interval), args in hologram:  # drill_down
+    for (from_date, to_date, interval), args in hologram:
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
-
-        stock_df, fig = base_engine.stock_df, base_engine.fig
-        fig.show()
+        base_engine.fig.show()

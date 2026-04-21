@@ -1,104 +1,51 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
-def period_ny(years: int):
-    if years == 7:
-        from_date = '2018-01-01'
-    elif years == 6:
-        from_date = '2019-01-01'
-    elif years == 5:
-        from_date = '2020-01-01'
-    elif years == 4:
-        from_date = '2021-01-01'
-    elif years == 3:
-        from_date = '2022-01-01'
-    elif years == 2:
-        from_date = '2023-01-01'
-    elif years == 1:
-        from_date = '2024-01-01'
-    else:
-        raise ValueError(f'unsupported years {years}')
+def period(years):
+    from_date = f'{datetime.now().year - years}-01-01'
     to_date = datetime.now().strftime('%Y-%m-%d')
     return from_date, to_date, '1d'
 
 
-def _default_args():
-    args = {
-        'enable_candlestick': True,
-        'enable_close_price': False,
+_BASE = {
+    'enable_candlestick': True,
+    'enable_close_price': False,
+    'enable_min_max': False,
+    'enable_sr': False,
+    'enable_ec': False,
+    'enable_elliott': False,
+    'enable_neck_line': False,
+    'enable_line': False,
+    'enable_implied_neck_line': False,
+    'enable_implied_line': False,
+    'enable_ma': (False, False, False, False, False, False, False),
+    'enable_volume': (True, 2),
+    'enable_guru': (False, 2),
+    'rows': 2,
+}
 
-        'enable_min_max': False,
-        'enable_sr': False,
+FULL = {
+    **_BASE,
+    'enable_elliott': True,
+    'enable_neck_line': True,
+    'enable_line': True,
+}
 
-        'enable_ec': False,
+FOUR_YEAR = {
+    **FULL,
+    'enable_implied_neck_line': True,
+    'enable_implied_line': True,
+}
 
-        'enable_elliott': False,
-        'enable_neck_line': False,
-        'enable_line': False,
-
-        'enable_implied_neck_line': False,
-        'enable_implied_line': False,
-
-        # 5/10/20/60/120/200/250
-        'enable_ma': (False, False, False, False, False, False, False),
-
-        'enable_volume': (True, 2),
-        'rows': 2,
-    }
-
-    return args
-
-
-def _high_args():
-    args = {
-        'enable_elliott': True,
-        'enable_neck_line': True,
-        'enable_line': True,
-    }
-
-    return args
-
-
-def _mid_args():
-    args = {
-        'enable_implied_neck_line': True,
-        'enable_implied_line': True,
-    }
-
-    return args
+TWO_YEAR = {
+    **FOUR_YEAR,
+    'enable_sr': True,
+    'enable_ec': True,
+    'enable_guru': (True, 2),
+    'enable_volume': (True, 3),
+    'rows': 3,
+}
 
 
-def _low_args():
-    args = {
-        'enable_sr': True,
-        'enable_ec': True,
-    }
-
-    return args
-
-
-def _guru_args():
-    args = {
-        'enable_guru': (True, 2),
-        'enable_volume': (True, 3),
-        'rows': 3
-    }
-
-    return args
-
-
-def display_args(with_high=False, with_mid=False, with_low=False, with_guru=False, **kwargs):
-    args = _default_args()
-    args.update(kwargs)
-
-    if with_high:
-        args.update(_high_args())
-    if with_mid:
-        args.update(_mid_args())
-    if with_low:
-        args.update(_low_args())
-    if with_guru:
-        args.update(_guru_args())
-
-    return args
+def with_overrides(preset, **kwargs):
+    return {**preset, **kwargs}
