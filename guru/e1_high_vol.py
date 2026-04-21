@@ -15,7 +15,7 @@ def calculate_hits(stock_df: pd.DataFrame) -> list:
     for idx in stock_df.index[SIZE:]:
         date, vol, rolling_avg = dates[idx], volume_reg[idx], volume_rolling_avg[idx]
 
-        if vol > rolling_avg * (1 + 0.3):
+        if vol > rolling_avg * (1 + 1):
             hits.append(date)
 
     return hits

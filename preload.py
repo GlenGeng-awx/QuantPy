@@ -1,7 +1,7 @@
 from base_engine import BaseEngine
 from preload_conf import *
 from conf import *
-from transaction_book import get_unexpired_stock_names
+from transaction_book import get_current_position
 
 """
 Weekly SOP
@@ -34,14 +34,12 @@ drill_down_4 = [
 ]
 
 hologram = [
-    (period_ny(years=7), display_args(with_high=True)),
-    (period_ny(years=4), display_args(with_high=True, with_mid=True, with_guru=True)),
+    # (period_ny(years=7), display_args(with_high=True)),
+    # (period_ny(years=4), display_args(with_high=True, with_mid=True, with_guru=True)),
     (period_ny(years=1), display_args(with_high=True, with_mid=True, with_low=True, with_guru=True)),
 ]
 
-# ALL = get_unexpired_stock_names()
-
-for stock_name in ALL:
+for stock_name in get_current_position():
     for (from_date, to_date, interval), args in hologram:  # drill_down
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
