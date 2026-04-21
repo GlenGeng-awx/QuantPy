@@ -9,7 +9,6 @@ from technical.secondary_line import SecondaryLine
 from technical.neck_line import NeckLine
 from technical.elliott import Elliott
 from technical.ec import EC
-from technical.transaction import Transaction
 from technical.implied_neck_line import ImpliedNeckLine
 from technical.implied_line import ImpliedLine
 
@@ -50,7 +49,6 @@ class BaseEngine:
 
         self.elliott = Elliott(self.stock_df, self.stock_name)
         self.ec = EC(self.stock_df, self.stock_name)
-        self.transaction = Transaction(self.stock_name)
         self.volume = Volume(self.stock_df, self.stock_name)
 
         # implied
@@ -135,13 +133,12 @@ class BaseEngine:
                     enable_neck_line=False,
                     enable_elliott=True,
                     enable_ec=True,
-                    enable_transaction=False,
                     # implied
                     enable_implied_neck_line=True,
                     enable_implied_line=True,
                     # other
                     enable_volume=(True, 2),
-                    enable_guru=(False, 2, None),
+                    enable_guru=(False, 2),
                     rows=2,
                     ):
         self.setup_graph(rows)
@@ -150,7 +147,6 @@ class BaseEngine:
 
         self.elliott.build_graph(self.fig, enable_elliott)
         self.ec.build_graph(self.fig, enable_ec)
-        self.transaction.build_graph(self.fig, enable_transaction)
 
         self.volume.build_graph(self.fig, enable_volume)
 
@@ -170,5 +166,5 @@ class BaseEngine:
         if enable_guru[0]:
             self.context = guru.calculate(self.stock_df)
 
-            _, row, last_n_days = enable_guru
-            guru.plot.plot(self.stock_df, self.fig, self.context, row, last_n_days)
+            _, row = enable_guru
+            guru.plot.plot(self.stock_df, self.fig, self.context, row)

@@ -49,8 +49,7 @@ def _get_color(key: str) -> str:
     return 'black'
 
 
-def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict,
-         row=2, display_last_n_days=None) -> dict:
+def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict, row=2) -> dict:
     for i, (key, dates) in enumerate(context.items()):
         color = _get_color(key)
         fig.add_trace(
@@ -60,13 +59,6 @@ def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict,
                 y=[1 * (i + 1)] * len(dates),
                 mode='markers', marker=dict(size=4, color=color),
             ),
-            row=row, col=1
-        )
-
-    if display_last_n_days is not None:
-        fig.add_vline(
-            x=stock_df['Date'].iloc[-display_last_n_days],
-            line=dict(color='black', width=0.5, dash='dash'),
             row=row, col=1
         )
 

@@ -32,7 +32,6 @@ def _default_args():
         'enable_sr': False,
 
         'enable_ec': False,
-        'enable_transaction': False,
 
         'enable_elliott': False,
         'enable_neck_line': False,
@@ -74,7 +73,6 @@ def _low_args():
     args = {
         'enable_sr': True,
         'enable_ec': True,
-        'enable_transaction': True,
     }
 
     return args
@@ -82,7 +80,7 @@ def _low_args():
 
 def _guru_args():
     args = {
-        'enable_guru': (True, 2, 14),  # (True, 2, None)
+        'enable_guru': (True, 2),
         'enable_volume': (True, 3),
         'rows': 3
     }
