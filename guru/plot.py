@@ -49,8 +49,19 @@ def _get_color(key: str) -> str:
     return 'black'
 
 
+# Sort by color (red -> black -> green), then by factor order within each color.
+def _sorted_keys(context: dict) -> list:
+    from guru import factors
+    order = {f.KEY: idx for idx, f in enumerate(factors)}
+    color_priority = {'red': 0, 'black': 1, 'green': 2}
+    keys = [k for k in context if k in order]
+    keys.sort(key=lambda k: (color_priority.get(_get_color(k), 1), order[k]))
+    return keys
+
+
 def plot(stock_df: pd.DataFrame, fig: go.Figure, context: dict, row=2) -> dict:
-    for i, (key, dates) in enumerate(context.items()):
+    for i, key in enumerate(_sorted_keys(context)):
+        dates = context[key]
         color = _get_color(key)
         fig.add_trace(
             go.Scatter(
