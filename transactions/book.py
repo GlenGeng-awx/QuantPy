@@ -1,8 +1,21 @@
 from conf import *
 from transactions.types import BUY, SELL, CALL, PUT, OPEN, CLOSE, EXPIRED, ASSIGNED, EXERCISED
 
-# (date, side, status, contract, price, num, fee)
-# contract: (stock, CALL/PUT, expire, strike) or (stock,)
+"""
+(date, side, status, contract, price, num, fee)
+
+contract:
+    option — (stock, CALL/PUT, expire, strike)
+    stock  — (stock,)
+
+side:
+    option — BUY or SELL
+    stock  — BUY or SELL
+
+status:
+    option — OPEN / CLOSE / EXPIRED / ASSIGNED / EXERCISED
+    stock  — None
+"""
 BOOK = [
     # 2025-12-29 ~ 2026-01-02
     ('2025-12-30', SELL, OPEN, (QQQ, PUT, '2026-01-30', 600), 5.25, 1, 2.51),
