@@ -2,7 +2,7 @@ from datetime import datetime
 
 from transactions.book import BOOK
 from transactions.position import Position
-from transactions.types import StockContract, OptionContract, strategy_name
+from transactions.types import strategy_name
 from conf import ALL
 
 
@@ -14,8 +14,8 @@ class Portfolio:
             self._positions.setdefault(stock_name, Position(stock_name)).add(entry)
 
     def total_pnl(self):
-        realized = sum(p.realized_pnl for p in self._positions.values())
-        unrealized = sum(p.unrealized_pnl for p in self._positions.values())
+        realized = sum(p.total_realized_pnl for p in self._positions.values())
+        unrealized = sum(p.options.unrealized_pnl for p in self._positions.values())
         fees = sum(p.total_fees for p in self._positions.values())
         print(f"\nTotal: realized={realized:.2f}, unrealized={unrealized:.2f}, fees={fees:.2f}")
 
@@ -23,12 +23,12 @@ class Portfolio:
         print("\n---------------------\nOpen Positions\n---------------------")
         for name in sorted(self._positions):
             p = self._positions[name]
-            if p.num == 0 and not p.unrealized_pnl:
+            if p.stock.num == 0 and not p.options.unrealized_pnl:
                 continue
 
             print(f"\n{name}:")
-            if p.num > 0:
-                print(f"\tStock: {p.num} shares @ {p.avg_price:.2f}")
+            if p.stock.num > 0:
+                print(f"\tStock: {p.stock.num} shares @ {p.stock.avg_price:.2f}")
 
             open_options = sorted(
                 [oc for oc in p.options if oc.pnl[1] != 0],
@@ -70,12 +70,12 @@ class Portfolio:
             if stock_name not in self._positions:
                 continue
             p = self._positions[stock_name]
-            if p.num == 0 and not p.realized_pnl and not p.unrealized_pnl:
+            if p.stock.num == 0 and not p.total_realized_pnl and not p.options.unrealized_pnl:
                 continue
 
             print(f"\n{stock_name}:")
-            print(f"\tNum: {p.num}, Avg Price: {p.avg_price:.2f}, Real Price: {p.real_price:.2f}")
-            print(f"\tRealized: {p.realized_pnl:.2f}, Unrealized: {p.unrealized_pnl:.2f}")
+            print(f"\tNum: {p.stock.num}, Avg Price: {p.stock.avg_price:.2f}, Real Price: {p.stock_real_price:.2f}")
+            print(f"\tRealized: {p.total_realized_pnl:.2f}, Unrealized: {p.options.unrealized_pnl:.2f}")
             print(f"\tFees: {p.total_fees:.2f}")
 
             for d in p.stock.pnl:

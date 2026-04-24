@@ -26,6 +26,7 @@ class StockContract(namedtuple('_StockContract', ['stock_name'])):
 
     @property
     def pnl(self):
+        """realized PnL per sell event for tax reporting: [(date, num, avg_price, sell_price, pnl)]"""
         avg_price = 0.0
         num = 0
         details = []
@@ -70,17 +71,53 @@ class OptionContract(namedtuple('_OptionContract', ['stock_name', 'cp', 'expire'
 
     @property
     def pnl(self):
-        sells = [e.price for e in self.entries if e.side == SELL for _ in range(e.num)]
-        buys = [e.price for e in self.entries if e.side == BUY for _ in range(e.num)]
+        """(realized, unrealized) PnL using moving average cost, for tax reporting"""
+        open_side = self.entries[0].side
+        sign = 1 if open_side == SELL else -1
 
-        realized = sum((s - b) * 100 for s, b in zip(sells, buys))
-        matched = min(len(sells), len(buys))
-        unrealized = sum(p * 100 for p in sells[matched:]) - sum(p * 100 for p in buys[matched:])
+        avg_price = 0.0
+        num = 0
+        realized = 0.0
+
+        for e in self.entries:
+            if e.side == open_side:
+                avg_price = (avg_price * num + e.price * e.num) / (num + e.num)
+                num += e.num
+            else:
+                realized += sign * (avg_price - e.price) * e.num * 100
+                num -= e.num
+
+        unrealized = sign * avg_price * num * 100
         return realized, unrealized
 
     @property
     def total_fees(self):
         return sum(e.fee for e in self.entries)
+
+
+class OptionContracts:
+
+    def __init__(self):
+        self._contracts = {}
+
+    def add(self, contract, date, side, status, price, num, fee):
+        oc = self._contracts.setdefault(contract, OptionContract(*contract))
+        oc.add(date, side, status, price, num, fee)
+
+    @property
+    def realized_pnl(self):
+        return sum(c.pnl[0] for c in self._contracts.values())
+
+    @property
+    def unrealized_pnl(self):
+        return sum(c.pnl[1] for c in self._contracts.values())
+
+    @property
+    def total_fees(self):
+        return sum(c.total_fees for c in self._contracts.values())
+
+    def __iter__(self):
+        return iter(self._contracts.values())
 
 
 def strategy_name(contract, side):
