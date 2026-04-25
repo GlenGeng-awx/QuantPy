@@ -1,10 +1,12 @@
 import pandas as pd
 import plotly.graph_objects as go
 
+SUMMARY_WINDOW = 15
+
 
 def summarize(stock_df: pd.DataFrame) -> str:
     close = stock_df['close']
-    sz = 15
+    sz = SUMMARY_WINDOW
 
     box_psts = []
     incr_psts = []
@@ -49,11 +51,11 @@ def _get_color(key: str) -> str:
     return 'black'
 
 
-# Sort by color (red -> black -> green), then by factor order within each color.
+# Sort by color (green -> black -> red), bottom to top on plot.
 def _sorted_keys(context: dict) -> list:
     from guru import factors
     order = {f.KEY: idx for idx, f in enumerate(factors)}
-    color_priority = {'red': 0, 'black': 1, 'green': 2}
+    color_priority = {'green': 0, 'black': 1, 'red': 2}
     keys = [k for k in context if k in order]
     keys.sort(key=lambda k: (color_priority.get(_get_color(k), 1), order[k]))
     return keys

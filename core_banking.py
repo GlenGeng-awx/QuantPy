@@ -2,23 +2,19 @@ from conf import *
 
 MID_TERM = 'mid_term'
 
-#
-# lines             : date, date1, date2 is in format of '2021-01-01' or ('2021-01-01', 'open')
-# ----------
-#   primary line    : date1, date2, prev_len, post_len
-#                     date1, date2, prev_len, post_len, 'mid_term'
-#   secondary line  : date, prev_len, post_len, date1, date2
-#
-# neck_lines        : date is in format of '2021-01-01' or ('2021-01-01', 'open')
-# ----------
-#   date, prev_len, post_len
-#
-# elliott
-# -------
-#  (1), (2), (3), (4), (5), (A), (B), (C), (W), (X), (Y)
-#   1,   2,   3,   4,   5,   A,   B,   C,   W,   X,   Y
-#   i,   ii,  iii, iv,  v,   a,   b,   c,   w,   x,   y
-#
+"""
+date: '2021-01-01' or ('2021-01-01', 'open')
+
+lines:
+  primary   : date1, date2, prev_len, post_len [, 'mid_term']
+  secondary : date, prev_len, post_len, date1, date2
+
+neck_lines  : date, prev_len, post_len
+
+elliott     : (1) (2) (3) (4) (5) | (A) (B) (C) | (W) (X) (Y)
+               1   2   3   4   5  |  A   B   C  |  W   X   Y
+               i  ii  iii  iv  v  |  a   b   c  |  w   x   y
+"""
 CORE_BANKING = {
     QQQ: {
         'lines': [
@@ -955,12 +951,12 @@ CORE_BANKING = {
         },
     },
     JNJ: {
-        'lines': {
-        },
-        'neck_lines': {
+        'lines': [
+        ],
+        'neck_lines': [
             ('2020-04-23', 50, 1500),
             ('2022-04-25', 50, 1000),
-        },
+        ],
         'elliott': {
             '2025-03-10': ['(1)'],
             '2025-04-10': ['(2)'],

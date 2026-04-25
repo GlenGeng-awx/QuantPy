@@ -1,12 +1,13 @@
 from base_engine import BaseEngine
 from preload_conf import period, FULL, FOUR_YEAR, TWO_YEAR, with_overrides
-from transaction_book import get_current_position
+from transactions.book import get_current_position
+from conf import *
 
 drill_down_full = [
-    (period(7), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=False)),
-    (period(7), with_overrides(FULL, enable_elliott=False, enable_line=False)),
-    (period(7), with_overrides(FULL, enable_elliott=False)),
-    (period(7), FULL),
+    (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=False)),
+    (period(8), with_overrides(FULL, enable_elliott=False, enable_line=False)),
+    (period(8), with_overrides(FULL, enable_elliott=False)),
+    (period(8), FULL),
 ]
 
 drill_down_4y = [
@@ -17,12 +18,12 @@ drill_down_4y = [
 ]
 
 hologram = [
-    (period(7), FULL),
+    (period(8), FULL),
     (period(4), FOUR_YEAR),
     (period(2), TWO_YEAR),
 ]
 
-for stock_name in get_current_position():
+for stock_name in ALL:
     for (from_date, to_date, interval), args in hologram:
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
