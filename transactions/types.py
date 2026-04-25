@@ -141,7 +141,7 @@ class OptionContracts:
 def strategy_name(cp, side):
     return {
         (PUT, SELL): 'CSP',
+        (PUT, BUY): 'Protect Put',
         (CALL, SELL): 'CC',
         (CALL, BUY): 'Long Call',
-        (PUT, BUY): 'Protect Put',
     }[(cp, side)]

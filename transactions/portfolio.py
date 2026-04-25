@@ -58,10 +58,10 @@ class Portfolio:
             for oc in contracts:
                 flag = '*' if oc.pnl[1] != 0 else ' '
                 print(f"\t{flag} {oc.stock_name:<5} {oc}")
-            print(f"\t\tSubtotal: realized={realized:.2f}, unrealized={unrealized:.2f}, fees={fees:.2f}")
+            print(f"\t\tSubtotal: realized= {realized:.2f}, unrealized= {unrealized:.2f}, fees= {fees:.2f}")
 
-    def display_by_stock_name(self):
-        print("\n---------------------\nList by Stock\n---------------------")
+    def display_by_stock(self):
+        print("\n---------------------\nby Stock\n---------------------")
         for stock_name in ALL:
             if stock_name not in self._positions:
                 continue
@@ -86,4 +86,4 @@ if __name__ == '__main__':
     portfolio.display_total_pnl()
     portfolio.display_open()
     portfolio.display_by_expire(full=False)
-    portfolio.display_by_stock_name()
+    portfolio.display_by_stock()
