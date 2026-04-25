@@ -25,6 +25,20 @@ class StockContract(namedtuple('_StockContract', ['stock_name'])):
         self.entries.append(StockEntry(date, side, price, num, fee))
 
     @property
+    def num(self):
+        buy = sum(e.num for e in self.entries if e.side == BUY)
+        sell = sum(e.num for e in self.entries if e.side == SELL)
+        return buy - sell
+
+    @property
+    def avg_price(self):
+        if self.num == 0:
+            return 0.0
+        outflow = sum(e.price * e.num for e in self.entries if e.side == BUY)
+        inflow = sum(e.price * e.num for e in self.entries if e.side == SELL)
+        return (outflow - inflow) / self.num
+
+    @property
     def pnl(self):
         """realized PnL per sell event for tax reporting: [(date, num, avg_price, sell_price, pnl)]"""
         avg_price = 0.0
@@ -43,22 +57,11 @@ class StockContract(namedtuple('_StockContract', ['stock_name'])):
         return details
 
     @property
-    def num(self):
-        buy = sum(e.num for e in self.entries if e.side == BUY)
-        sell = sum(e.num for e in self.entries if e.side == SELL)
-        return buy - sell
-
-    @property
-    def avg_price(self):
-        if self.num == 0:
-            return 0.0
-        outflow = sum(e.price * e.num for e in self.entries if e.side == BUY)
-        inflow = sum(e.price * e.num for e in self.entries if e.side == SELL)
-        return (outflow - inflow) / self.num
-
-    @property
     def total_fees(self):
         return sum(e.fee for e in self.entries)
+
+    def __repr__(self):
+        return f"Stock: {self.num} shares @ {self.avg_price:.2f}"
 
 
 class OptionContract(namedtuple('_OptionContract', ['stock_name', 'cp', 'expire', 'strike'])):
@@ -68,6 +71,17 @@ class OptionContract(namedtuple('_OptionContract', ['stock_name', 'cp', 'expire'
 
     def add(self, date, side, status, price, num, fee):
         self.entries.append(OptionEntry(date, side, status, price, num, fee))
+
+    @property
+    def strategy(self):
+        return strategy_name(self.cp, self.entries[0].side)
+
+    @property
+    def num(self):
+        open_side = self.entries[0].side
+        opened = sum(e.num for e in self.entries if e.side == open_side)
+        closed = sum(e.num for e in self.entries if e.side != open_side)
+        return opened - closed
 
     @property
     def pnl(self):
@@ -93,6 +107,10 @@ class OptionContract(namedtuple('_OptionContract', ['stock_name', 'cp', 'expire'
     @property
     def total_fees(self):
         return sum(e.fee for e in self.entries)
+
+    def __repr__(self):
+        r, u = self.pnl
+        return f"{self.strategy:<12} {self.expire} {self.strike:>7} x{self.num}  realized={r:>8.2f}  unrealized={u:>8.2f}"
 
 
 class OptionContracts:
@@ -120,10 +138,7 @@ class OptionContracts:
         return iter(self._contracts.values())
 
 
-def strategy_name(contract, side):
-    if len(contract) == 1:
-        return 'Buy' if side == BUY else 'Sell'
-    _, cp, _, _ = contract
+def strategy_name(cp, side):
     return {
         (PUT, SELL): 'CSP',
         (CALL, SELL): 'CC',

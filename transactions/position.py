@@ -16,6 +16,10 @@ class Position:
             self.options.add(contract, date, side, status, price, num, fee)
 
     @property
+    def is_open(self):
+        return self.stock.num != 0 or self.options.unrealized_pnl != 0
+
+    @property
     def stock_real_price(self):
         if self.stock.num == 0:
             return 0.0
