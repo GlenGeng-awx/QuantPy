@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -62,9 +64,11 @@ class SecondaryLine:
         )
 
         for i, (dates, prices, k) in enumerate(self.secondary_lines):
+            ratio = f'{math.pow(k, 250) - 1:.1%}'
+
             fig.add_trace(
                 go.Scatter(
-                    name=f's line-{i + 1} {len(dates)}d',
+                    name=f's line-{i + 1} {len(dates)}d {ratio}',
                     x=dates, y=prices,
                     mode='lines', line=dict(width=1, color='green', dash='dash'),
                     visible=None if enable else 'legendonly',

@@ -11,6 +11,9 @@ def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tup
     idx = get_idx_by_date(stock_df, get_date(date))
     price = stock_df.loc[idx][get_price_key(date)]
 
+    if post_len is None:
+        post_len = stock_df.index[-1] - idx + 10
+
     dates, prices = [], []
 
     for delta in range(-prev_len, post_len):
