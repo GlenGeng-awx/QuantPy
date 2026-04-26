@@ -247,4 +247,4 @@ BOOK = [
 
 
 def get_current_position():
-    return [QQQ, PYPL, COIN, ADBE, ORCL, TTD, KWEB, TME]
+    return [QQQ, PYPL, COIN, ADBE, ORCL, TTD, KWEB, TME, NVO]

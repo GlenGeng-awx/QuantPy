@@ -58,6 +58,9 @@ def calculate_primary_line(stock_df: pd.DataFrame,
             dates.append(point[0])
             prices.append(point[1])
 
+    if post_len is None:
+        post_len = stock_df.index[-1] - idx2 + 10
+
     for delta in range(0, post_len):
         point = calculate_point(stock_df, date2, delta, k)
         if point:

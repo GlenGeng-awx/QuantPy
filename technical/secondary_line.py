@@ -15,6 +15,10 @@ def calculate_secondary_line(stock_df: pd.DataFrame,
 
     k = calculate_k(stock_df, date1, date2)
 
+    if post_len is None:
+        idx = get_idx_by_date(stock_df, get_date(date))
+        post_len = stock_df.index[-1] - idx + 10
+
     for delta in range(-prev_len, post_len):
         point = calculate_point(stock_df, date, delta, k)
         if point:

@@ -127,61 +127,58 @@ US_INDEX = [
 
 V_4000B = [
     NVDA,
-    AAPL,
+    GOOG,
 ]
 
 V_3000B = [
-    GOOG,
+    AAPL,
     MSFT,
 ]
 
 V_2000B = [
     AMZN,
+    AVGO,
+    TSM,
 ]
 
 V_1000B = [
     META,
     TSLA,
-    AVGO,
-    TSM,
-    LLY,
+    WMT,
 ]
 
 V_500B = [
-    WMT,
+    LLY,
     JPM,
     VISA,
-    MA,
     TENCENT,
-    ORCL,
     JNJ,
-]
-
-V_300B = [
-    NFLX,
     ASML,
     XOM,
+    AMD,
+]
+
+V_200B = [
+    ORCL,
+    MA,
+    NFLX,
     CVX,
     PG,
     KO,
     BAC,
     PLTR,
-    AMD,
     BABA,
-]
-
-V_200B = [
     GS,
     MS,
     MCD,
-    DIS,
-    NVO,
     MRK,
-    SHOP,
+    INTC,
 ]
 
 V_100B = [
-    ADBE,
+    DIS,
+    NVO,
+    SHOP,
     QCOM,
     PFE,
     GILD,
@@ -189,20 +186,20 @@ V_100B = [
     UBER,
     PDD,
     SPOT,
-    HOOD,
-    INTC,
-]
-
-V_50B = [
-    PYPL,
-    COIN,
-    SNOW,
-    NU,
-    SEA,
     DELL,
 ]
 
-V_30B = [
+V_50B = [
+    ADBE,
+    HOOD,
+    COIN,
+    NU,
+    SEA,
+]
+
+V_20B = [
+    SNOW,
+    PYPL,
     CPNG,
     EBAY,
     XYZ,
@@ -210,29 +207,33 @@ V_30B = [
     JD,
     BIDU,
     ERIC,
+    BNTX,
+    ZM,
+    AFRM,
+    FUTU,
+    RIVN,
 ]
 
 V_10B = [
     TTD,
     TME,
     HPQ,
-    BNTX,
-    ZM,
-    SNAP,
     BEKE,
     OKTA,
     PINS,
-    AFRM,
-    FUTU,
-    RIVN,
     LI,
     XPEV,
     NIO,
+]
+
+V_SMALL = [
+    SNAP,
     BILI,
     KLAR,
 ]
 
 ALL = CN_INDEX + US_INDEX \
       + V_4000B + V_3000B + V_2000B + V_1000B \
-      + V_500B + V_300B + V_200B + V_100B \
-      + V_50B + V_30B + V_10B
+      + V_500B + V_200B + V_100B \
+      + V_50B + V_20B + V_10B \
+      + V_SMALL
