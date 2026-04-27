@@ -36,7 +36,7 @@ def plot_tags(stock_df: pd.DataFrame, stock_name, date: str, tags: list) -> (str
 
 
 # return (x, y, text)
-def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> (list, list, list):
+def calculate_elliott(stock_df: pd.DataFrame, stock_name: str) -> tuple[list, list, list]:
     # date, price, text
     x, y, text = [], [], []
 

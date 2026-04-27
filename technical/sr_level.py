@@ -6,7 +6,7 @@ SR_LEVEL_MAX = 'sr level max'
 SIZE = 10
 
 
-def calculate_sr_level(stock_df: pd.DataFrame) -> (list, list):
+def calculate_sr_level(stock_df: pd.DataFrame) -> tuple[list, list]:
     min_indices, max_indices = [], []
     close = stock_df['close']
 

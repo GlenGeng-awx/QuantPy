@@ -16,9 +16,10 @@ StockEntry = namedtuple('StockEntry', ['date', 'side', 'price', 'num', 'fee'])
 OptionEntry = namedtuple('OptionEntry', ['date', 'side', 'status', 'price', 'num', 'fee'])
 
 
-class StockContract(namedtuple('_StockContract', ['stock_name'])):
+class StockContract:
 
     def __init__(self, stock_name):
+        self.stock_name = stock_name
         self.entries = []
 
     def add(self, date, side, price, num, fee):
@@ -64,9 +65,13 @@ class StockContract(namedtuple('_StockContract', ['stock_name'])):
         return f"Stock: {self.num} shares @ {self.avg_price:.2f}"
 
 
-class OptionContract(namedtuple('_OptionContract', ['stock_name', 'cp', 'expire', 'strike'])):
+class OptionContract:
 
     def __init__(self, stock_name, cp, expire, strike):
+        self.stock_name = stock_name
+        self.cp = cp
+        self.expire = expire
+        self.strike = strike
         self.entries = []
 
     def add(self, date, side, status, price, num, fee):

@@ -1,6 +1,18 @@
 import math
 import pandas as pd
+from typing import NamedTuple
 from util import get_idx_by_date
+
+
+class Anchor(NamedTuple):
+    date: str
+    price_key: str = 'close'
+
+    @classmethod
+    def of(cls, raw):
+        if isinstance(raw, tuple):
+            return cls(*raw)
+        return cls(raw)
 
 
 def get_diff(stock_df: pd.DataFrame, date: str) -> float:
@@ -12,19 +24,3 @@ def get_diff(stock_df: pd.DataFrame, date: str) -> float:
     idx = get_idx_by_date(stock_df, date)
     close = stock_df.loc[idx]['close']
     return close * ratio
-
-
-# date is in format of '20210101' or ('20210101', 'open')
-def get_date(date):
-    if type(date) is tuple:
-        date, _ = date
-    return date
-
-
-# date is in format of '20210101' or ('20210101', 'open')
-def get_price_key(date):
-    if type(date) is tuple:
-        _, price_key = date
-    else:
-        price_key = 'close'
-    return price_key

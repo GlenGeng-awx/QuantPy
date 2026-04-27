@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
+from technical import Anchor
 from technical.neck_line import calculate_neck_line
 from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 
@@ -15,7 +16,7 @@ class ImpliedNeckLine:
             return
 
         for date in dates:
-            self.implied_neck_lines.append(calculate_neck_line(stock_df, date, 5, 250))
+            self.implied_neck_lines.append(calculate_neck_line(stock_df, Anchor(date), 5, 250))
 
         # sort by price
         self.implied_neck_lines.sort(key=lambda x: x[1][0], reverse=True)

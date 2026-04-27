@@ -3,17 +3,16 @@ import plotly.graph_objects as go
 import math
 
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
-from technical import get_date, get_price_key
+from technical import Anchor
 from core_banking import CORE_BANKING, MID_TERM
 
 
-# date1, date2 is in format of '20210101' or ('20210101', 'open')
-def calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
-    x1 = get_idx_by_date(stock_df, get_date(date1))
-    y1 = stock_df.loc[x1][get_price_key(date1)]
+def calculate_k(stock_df: pd.DataFrame, anchor1: Anchor, anchor2: Anchor) -> float:
+    x1 = get_idx_by_date(stock_df, anchor1.date)
+    y1 = stock_df.loc[x1][anchor1.price_key]
 
-    x2 = get_idx_by_date(stock_df, get_date(date2))
-    y2 = stock_df.loc[x2][get_price_key(date2)]
+    x2 = get_idx_by_date(stock_df, anchor2.date)
+    y2 = stock_df.loc[x2][anchor2.price_key]
 
     ratio = y2 / y1
     delta = x2 - x1
@@ -21,10 +20,9 @@ def calculate_k(stock_df: pd.DataFrame, date1, date2) -> float:
     return k
 
 
-# date is in format of '20210101' or ('20210101', 'open')
-def calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
-    x = get_idx_by_date(stock_df, get_date(date))
-    y = stock_df.loc[x][get_price_key(date)]
+def calculate_point(stock_df: pd.DataFrame, anchor: Anchor, delta, k) -> tuple:
+    x = get_idx_by_date(stock_df, anchor.date)
+    y = stock_df.loc[x][anchor.price_key]
 
     target_x = x + delta
     target_y = y * math.pow(k, delta)
@@ -44,16 +42,16 @@ def calculate_point(stock_df: pd.DataFrame, date, delta, k) -> tuple:
 
 
 def calculate_primary_line(stock_df: pd.DataFrame,
-                           date1, date2, prev_len, post_len) -> tuple:
+                           anchor1: Anchor, anchor2: Anchor, prev_len, post_len) -> tuple:
     dates, prices = [], []
 
-    k = calculate_k(stock_df, date1, date2)
+    k = calculate_k(stock_df, anchor1, anchor2)
 
-    idx1 = get_idx_by_date(stock_df, get_date(date1))
-    idx2 = get_idx_by_date(stock_df, get_date(date2))
+    idx1 = get_idx_by_date(stock_df, anchor1.date)
+    idx2 = get_idx_by_date(stock_df, anchor2.date)
 
     for delta in range(-prev_len, idx2 - idx1):
-        point = calculate_point(stock_df, date1, delta, k)
+        point = calculate_point(stock_df, anchor1, delta, k)
         if point:
             dates.append(point[0])
             prices.append(point[1])
@@ -62,7 +60,7 @@ def calculate_primary_line(stock_df: pd.DataFrame,
         post_len = stock_df.index[-1] - idx2 + 10
 
     for delta in range(0, post_len):
-        point = calculate_point(stock_df, date2, delta, k)
+        point = calculate_point(stock_df, anchor2, delta, k)
         if point:
             dates.append(point[0])
             prices.append(point[1])
@@ -82,21 +80,21 @@ class PrimaryLine:
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('lines', []):
             if len(line) == 4 or (len(line) == 5 and line[4] == MID_TERM):
-                date1, date2 = line[0], line[1]
-                if get_date(date1) not in dates or get_date(date2) not in dates:
+                anchor1, anchor2 = Anchor.of(line[0]), Anchor.of(line[1])
+                if anchor1.date not in dates or anchor2.date not in dates:
                     continue
 
-                primary_line = calculate_primary_line(stock_df, *line[0:4])
+                primary_line = calculate_primary_line(stock_df, anchor1, anchor2, line[2], line[3])
                 self.primary_lines.append(primary_line)
-                self.anchor_dates.extend((date1, date2))
+                self.anchor_dates.extend((anchor1, anchor2))
 
     def build_graph(self, fig: go.Figure, enable=False):
         anchor_dates, anchor_prices = [], []
-        for date in self.anchor_dates:
-            anchor_dates.append(get_date(date))
+        for anchor in self.anchor_dates:
+            anchor_dates.append(anchor.date)
 
-            idx = get_idx_by_date(self.stock_df, get_date(date))
-            anchor_prices.append(self.stock_df.loc[idx][get_price_key(date)])
+            idx = get_idx_by_date(self.stock_df, anchor.date)
+            anchor_prices.append(self.stock_df.loc[idx][anchor.price_key])
 
         fig.add_trace(
             go.Scatter(

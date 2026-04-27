@@ -3,13 +3,12 @@ import plotly.graph_objects as go
 
 from core_banking import CORE_BANKING
 from util import get_idx_by_date, shrink_date_str, get_next_n_workday
-from technical import get_date, get_price_key
+from technical import Anchor
 
 
-# date is in format of '2021-01-01' or ('2021-01-01', 'open')
-def calculate_neck_line(stock_df: pd.DataFrame, date, prev_len, post_len) -> tuple:
-    idx = get_idx_by_date(stock_df, get_date(date))
-    price = stock_df.loc[idx][get_price_key(date)]
+def calculate_neck_line(stock_df: pd.DataFrame, anchor: Anchor, prev_len, post_len) -> tuple:
+    idx = get_idx_by_date(stock_df, anchor.date)
+    price = stock_df.loc[idx][anchor.price_key]
 
     if post_len is None:
         post_len = stock_df.index[-1] - idx + 10
@@ -48,20 +47,20 @@ class NeckLine:
 
         dates = stock_df['Date'].apply(shrink_date_str).values
         for line in CORE_BANKING.get(stock_name, {}).get('neck_lines', []):
-            date, _, _ = line
-            if get_date(date) not in dates:
+            anchor = Anchor.of(line[0])
+            if anchor.date not in dates:
                 continue
 
-            self.neck_lines.append(calculate_neck_line(stock_df, *line))
-            self.anchors.append(date)
+            self.neck_lines.append(calculate_neck_line(stock_df, anchor, line[1], line[2]))
+            self.anchors.append(anchor)
 
     def build_graph(self, fig: go.Figure, enable=False):
         anchor_dates, anchor_prices = [], []
-        for date in self.anchors:
-            anchor_dates.append(get_date(date))
+        for anchor in self.anchors:
+            anchor_dates.append(anchor.date)
 
-            idx = get_idx_by_date(self.stock_df, get_date(date))
-            anchor_prices.append(self.stock_df.loc[idx][get_price_key(date)])
+            idx = get_idx_by_date(self.stock_df, anchor.date)
+            anchor_prices.append(self.stock_df.loc[idx][anchor.price_key])
 
         fig.add_trace(
             go.Scatter(

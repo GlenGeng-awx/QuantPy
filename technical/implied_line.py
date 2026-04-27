@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from util import shrink_date_str
-from technical import get_date
+from technical import Anchor
 from technical.min_max import LOCAL_MIN_PRICE_3RD, LOCAL_MAX_PRICE_3RD
 from technical.secondary_line import calculate_secondary_line
 from core_banking import CORE_BANKING, MID_TERM
@@ -16,8 +16,8 @@ class ImpliedLine:
         # list of (dates, prices, k)
         self.implied_lines = []
 
-        date1, date2 = self.get_mid_term_line()
-        if date1 is None or date2 is None:
+        anchor1, anchor2 = self.get_mid_term_line()
+        if anchor1 is None or anchor2 is None:
             return
 
         condition = stock_df[LOCAL_MIN_PRICE_3RD] | stock_df[LOCAL_MAX_PRICE_3RD]
@@ -26,7 +26,7 @@ class ImpliedLine:
             return
 
         for date in dates:
-            implied_line = calculate_secondary_line(stock_df, date, 5, 250, date1, date2)
+            implied_line = calculate_secondary_line(stock_df, Anchor(date), 5, 250, anchor1, anchor2)
             self.implied_lines.append(implied_line)
 
     def get_mid_term_line(self):
@@ -34,9 +34,9 @@ class ImpliedLine:
 
         for line in CORE_BANKING.get(self.stock_name, {}).get('lines', []):
             if len(line) == 5 and line[4] == MID_TERM:
-                date1, date2 = line[0], line[1]
-                if get_date(date1) in dates and get_date(date2) in dates:
-                    return date1, date2
+                anchor1, anchor2 = Anchor.of(line[0]), Anchor.of(line[1])
+                if anchor1.date in dates and anchor2.date in dates:
+                    return anchor1, anchor2
 
         return None, None
 
