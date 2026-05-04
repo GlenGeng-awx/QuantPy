@@ -7,8 +7,11 @@ TEMPLATE = [
     ('Cost Of Revenue', ['CostOfGoodsAndServicesSold', 'CostOfRevenue', 'CostOfGoodsSold']),
     ('Gross Profit', ['GrossProfit']),
     ('Operating Expenses', []),
-    ('  R&D', ['ResearchAndDevelopmentExpense']),
     ('  SG&A', ['SellingGeneralAndAdministrativeExpense']),
+    ('  S&M', ['SellingAndMarketingExpense']),
+    ('  G&A', ['GeneralAndAdministrativeExpense']),
+    ('  R&D', ['ResearchAndDevelopmentExpense',
+               'ResearchAndDevelopmentExpenseSoftwareExcludingAcquiredInProcessCost']),
     ('  Total Operating Expenses', ['OperatingExpenses', 'CostsAndExpenses', 'NoninterestExpense']),
     ('Operating Income', [
         'OperatingIncomeLoss',
@@ -36,10 +39,31 @@ PIT_FIELDS = {
 }
 
 
+def fill_computed_fields(rows, periods):
+    revenue_row = next((r for r in rows if r['label'] == 'Revenue'), None)
+    cost_row = next((r for r in rows if r['label'] == 'Cost Of Revenue'), None)
+    gross_row = next((r for r in rows if r['label'] == 'Gross Profit'), None)
+
+    if not all([revenue_row, cost_row, gross_row]):
+        return
+
+    for period in periods:
+        if gross_row.get(period) is not None:
+            continue
+        revenue = revenue_row.get(period)
+        cost = cost_row.get(period)
+        if revenue is not None and cost is not None:
+            gross_row[period] = revenue - cost
+
+
 def format_income(stock_name):
     us_gaap = load_facts(stock_name)
     annual = extract_annual(us_gaap, TEMPLATE)
     quarterly = extract_quarterly(us_gaap, TEMPLATE, is_period_data=True, pit_fields=PIT_FIELDS)
+
+    fill_computed_fields(annual['rows'], annual['periods'])
+    fill_computed_fields(quarterly['rows'], quarterly['periods'])
+
     return {'annual': annual, 'quarterly': quarterly}
 
 

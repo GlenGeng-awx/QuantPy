@@ -1,4 +1,12 @@
 """
+Usage:
+    python3 -m fundamental.download                  # download raw XBRL data
+    python3 -m fundamental.generate                  # generate statements for all stocks
+    python3 -m fundamental.generate AAPL             # generate statements for one stock
+    python3 -m fundamental.income_statement AAPL     # print income statement
+    python3 -m fundamental.balance_sheet AAPL        # print balance sheet
+    python3 -m fundamental.cash_flow AAPL            # print cash flow statement
+
 SEC EDGAR XBRL data format (companyfacts API):
 
     {

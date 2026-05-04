@@ -2,7 +2,7 @@ import os
 import json
 import time
 import requests
-from conf import ALL
+from conf import ALL, CN_INDEX, US_INDEX
 
 DATA_DIR = 'financial_data'
 SEC_HEADERS = {'User-Agent': 'john@example.com'}
@@ -28,8 +28,10 @@ def download(stock_name, cik):
 
     data = response.json()
     us_gaap = data.get('facts', {}).get('us-gaap', {})
-    if not us_gaap:
-        print('  skip {}: no us-gaap data'.format(stock_name))
+
+    key_fields = {'Revenues', 'NetIncomeLoss', 'Assets', 'ProfitLoss'}
+    if not (key_fields & set(us_gaap.keys())):
+        print('  skip {}: no us-gaap key fields'.format(stock_name))
         return False
 
     path = os.path.join(DATA_DIR, '{}.json'.format(stock_name))
@@ -45,7 +47,10 @@ def main():
     print('loading CIK map...')
     cik_map = load_cik_map()
 
+    skip = set(CN_INDEX + US_INDEX)
     for stock_name in ALL:
+        if stock_name in skip:
+            continue
         ticker = stock_name.split('.')[0]
         cik = cik_map.get(ticker) or cik_map.get(stock_name)
         if not cik:

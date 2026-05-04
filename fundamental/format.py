@@ -1,7 +1,11 @@
 import os
 import json
+from datetime import datetime
 
 DATA_DIR = 'financial_data'
+
+ANNUAL_FORMS = ['10-K', '20-F']
+QUARTERLY_FORMS = ['10-Q', '6-K']
 
 ANCHOR_FIELDS = [
     'NetIncomeLoss',
@@ -31,63 +35,102 @@ def safe_fp(entry):
 
 # --- period discovery ---
 
-def find_periods(us_gaap, forms, count):
+def find_annual_periods(us_gaap, count):
     months = set()
     for field_name in ANCHOR_FIELDS:
         field_data = us_gaap.get(field_name, {})
         for entries in field_data.get('units', {}).values():
             for e in entries:
-                if e.get('form') in forms:
+                if e.get('form') not in ANNUAL_FORMS:
+                    continue
+                start = e.get('start')
+                if not start:
+                    continue
+                # 10-K filings include quarterly breakdowns (< 1 year), skip them
+                days = (datetime.strptime(e['end'], '%Y-%m-%d') - datetime.strptime(start, '%Y-%m-%d')).days
+                if days < 300:
+                    continue
+                months.add(to_month(e['end']))
+    return sorted(months, reverse=True)[:count]
+
+
+def find_quarterly_periods(us_gaap, count):
+    months = set()
+    for field_name in ANCHOR_FIELDS:
+        field_data = us_gaap.get(field_name, {})
+        for entries in field_data.get('units', {}).values():
+            for e in entries:
+                if e.get('form') in QUARTERLY_FORMS:
                     months.add(to_month(e['end']))
     return sorted(months, reverse=True)[:count]
 
 
 def get_annual_periods(us_gaap, count=5):
-    return find_periods(us_gaap, ['10-K', '20-F'], count)
+    return find_annual_periods(us_gaap, count)
 
 
 def get_quarterly_periods(us_gaap):
     # Q4 has no 10-Q filing, so add annual periods to cover Q4
-    q_periods = find_periods(us_gaap, ['10-Q', '6-K'], 20)
+    q_periods = find_quarterly_periods(us_gaap, 20)
     a_periods = get_annual_periods(us_gaap)
     return sorted(set(q_periods + a_periods), reverse=True)
 
 
 # --- single-period value extraction ---
 
-def get_value(us_gaap, field_name, month, forms):
+def get_annual_value(us_gaap, field_name, month):
     field_data = us_gaap.get(field_name, {})
-
     for entries in field_data.get('units', {}).values():
         candidates = []
         for e in entries:
-            if to_month(e['end']) == month and e.get('form') in forms:
+            if to_month(e['end']) == month and e.get('form') in ANNUAL_FORMS:
                 candidates.append(e)
         if candidates:
+            # latest filed = most recent restatement
             candidates.sort(key=lambda e: e.get('filed', ''), reverse=True)
             return candidates[0]['val']
     return None
 
 
-def get_ytd_value(us_gaap, field_name, month):
-    forms = ['10-Q', '6-K']
+def get_quarterly_value(us_gaap, field_name, month):
+    """Get single-quarter value (latest start = shortest period)."""
     field_data = us_gaap.get(field_name, {})
-
     for entries in field_data.get('units', {}).values():
         candidates = []
         for e in entries:
-            if to_month(e['end']) == month and e.get('form') in forms and safe_fp(e).startswith('Q'):
+            if to_month(e['end']) == month and e.get('form') in QUARTERLY_FORMS:
                 candidates.append(e)
         if candidates:
-            # earliest start = longest period = YTD cumulative (not single quarter)
+            candidates.sort(key=lambda e: e.get('start', ''), reverse=True)
+            return candidates[0]['val']
+    return None
+
+
+def get_ytd_value(us_gaap, field_name, month):
+    """Get YTD cumulative value (earliest start = longest period)."""
+    field_data = us_gaap.get(field_name, {})
+    for entries in field_data.get('units', {}).values():
+        candidates = []
+        for e in entries:
+            if to_month(e['end']) == month and e.get('form') in QUARTERLY_FORMS and safe_fp(e).startswith('Q'):
+                candidates.append(e)
+        if candidates:
             candidates.sort(key=lambda e: e.get('start', ''))
             return candidates[0]['val'], safe_fp(candidates[0])
     return None, None
 
 
-def resolve_field(us_gaap, field_names, month, forms):
+def resolve_annual_field(us_gaap, field_names, month):
     for field_name in field_names:
-        val = get_value(us_gaap, field_name, month, forms)
+        val = get_annual_value(us_gaap, field_name, month)
+        if val is not None:
+            return val, field_name
+    return None, None
+
+
+def resolve_quarterly_field(us_gaap, field_names, month):
+    for field_name in field_names:
+        val = get_quarterly_value(us_gaap, field_name, month)
         if val is not None:
             return val, field_name
     return None, None
@@ -107,7 +150,7 @@ def extract_annual_statement(us_gaap, template, month):
     statement = {}
     for label, field_names in template:
         if field_names:
-            val, _ = resolve_field(us_gaap, field_names, month, ['10-K', '20-F'])
+            val, _ = resolve_annual_field(us_gaap, field_names, month)
             statement[label] = val
         else:
             statement[label] = None
@@ -123,7 +166,7 @@ def extract_quarterly_statement(us_gaap, template, month, prev_month, fy_month, 
       - Q4 (fy_month set): FY - Q3 YTD (prev_month is Q3)
 
     For point-in-time data (balance sheet): take value directly
-    pit_fields: fields to treat as point-in-time even in period data (e.g. EPS, shares)
+    pit_fields: fields to take single-quarter value directly (e.g. EPS, shares)
     """
     statement = {}
     for label, field_names in template:
@@ -133,17 +176,19 @@ def extract_quarterly_statement(us_gaap, template, month, prev_month, fy_month, 
 
         is_pit = pit_fields and set(field_names) & pit_fields
 
+        # balance sheet (point-in-time) and PIT fields (EPS, shares): take value directly
         if not is_period_data or is_pit:
             if fy_month:
-                val, _ = resolve_field(us_gaap, field_names, fy_month, ['10-K', '20-F'])
+                val, _ = resolve_annual_field(us_gaap, field_names, fy_month)
             else:
-                val, _ = resolve_field(us_gaap, field_names, month, ['10-Q', '6-K'])
+                val, _ = resolve_quarterly_field(us_gaap, field_names, month)
             statement[label] = val
             continue
 
+        # period data (income/cashflow): derive single-quarter from YTD
         if fy_month:
             # Q4 = FY - Q3 YTD
-            fy_val, matched_field = resolve_field(us_gaap, field_names, fy_month, ['10-K', '20-F'])
+            fy_val, matched_field = resolve_annual_field(us_gaap, field_names, fy_month)
 
             if fy_val is not None and prev_month:
                 q3_ytd, _ = get_ytd_value(us_gaap, matched_field, prev_month)
@@ -203,8 +248,10 @@ def extract_quarterly(us_gaap, template, count=8, is_period_data=True, pit_field
         else:
             _, fp, _ = resolve_ytd_field(us_gaap, ANCHOR_FIELDS, month)
             if fp == 'Q1':
+                # Q1: no prev needed, YTD = single quarter
                 quarters.append((month, None, None))
             else:
+                # Q2 or Q3: need prev for YTD subtraction
                 prev_month = all_q_periods[i + 1] if i + 1 < len(all_q_periods) else None
                 quarters.append((month, prev_month, None))
 
@@ -213,7 +260,8 @@ def extract_quarterly(us_gaap, template, count=8, is_period_data=True, pit_field
 
     period_statements = []
     for month, prev_month, fy_month in quarters:
-        statement = extract_quarterly_statement(us_gaap, template, month, prev_month, fy_month, is_period_data, pit_fields)
+        statement = extract_quarterly_statement(us_gaap, template, month, prev_month, fy_month, is_period_data,
+                                                pit_fields)
         period_statements.append((month, statement))
 
     return {
@@ -264,8 +312,8 @@ def print_statement(title, statement_data):
     label_width = 40
 
     header = '{:<{w}}'.format('', w=label_width)
-    for p in periods:
-        header += '{:>{w}}'.format(p, w=col_width)
+    for period in periods:
+        header += '{:>{w}}'.format(period, w=col_width)
     print(header)
     print('-' * len(header))
 
@@ -275,6 +323,6 @@ def print_statement(title, statement_data):
             print()
             continue
         line = '{:<{w}}'.format(label, w=label_width)
-        for p in periods:
-            line += '{:>{w}}'.format(format_value(row.get(p)), w=col_width)
+        for period in periods:
+            line += '{:>{w}}'.format(format_value(row.get(period)), w=col_width)
         print(line)
