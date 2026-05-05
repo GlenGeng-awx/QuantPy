@@ -4,7 +4,7 @@ import time
 import requests
 from conf import ALL, CN_INDEX, US_INDEX
 
-DATA_DIR = 'financial_data'
+DATA_DIR = 'financial_data/edgar'
 SEC_HEADERS = {'User-Agent': 'john@example.com'}
 
 

@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 
-DATA_DIR = 'financial_data'
+DATA_DIR = 'financial_data/edgar'
 
 ANNUAL_FORMS = ['10-K', '20-F']
 QUARTERLY_FORMS = ['10-Q', '6-K']
