@@ -44,6 +44,7 @@ HPQ = "HPQ"             # HP Inc
 DELL = "DELL"           # Dell Technologies
 ERIC = "ERIC"
 SPOT = "SPOT"           # Spotify
+CRM = "CRM"             # Salesforce
 
 # FINANCIAL
 JPM = "JPM"             # JPMorgan
