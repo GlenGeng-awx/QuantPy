@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import time
 import requests
 from conf import ALL, CN_INDEX, US_INDEX
@@ -47,8 +48,10 @@ def main():
     print('loading CIK map...')
     cik_map = load_cik_map()
 
+    targets = ALL if len(sys.argv) == 1 else [s.upper() for s in sys.argv[1:]]
+
     skip = set(CN_INDEX + US_INDEX)
-    for stock_name in ALL:
+    for stock_name in targets:
         if stock_name in skip:
             continue
         ticker = stock_name.split('.')[0]

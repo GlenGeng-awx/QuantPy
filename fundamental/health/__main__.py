@@ -1,4 +1,5 @@
 import sys
+from conf import ALL, CN_INDEX, US_INDEX
 from fundamental.health.data import load_all_data
 from fundamental.health.income import (
     eval_revenue_growth, eval_op_income_growth, eval_net_income_growth, eval_eps_trend,
@@ -84,16 +85,13 @@ def score_stock(stock_name):
 
 
 def main():
-    if len(sys.argv) > 1:
-        for stock_name in sys.argv[1:]:
-            score_stock(stock_name.upper())
-    else:
-        from conf import ALL, CN_INDEX, US_INDEX
-        skip = set(CN_INDEX + US_INDEX)
-        for stock_name in ALL:
-            if stock_name in skip:
-                continue
-            score_stock(stock_name)
+    targets = sys.argv[1:] if len(sys.argv) > 1 else ALL
+
+    skip = set(CN_INDEX + US_INDEX)
+    for stock_name in targets:
+        if stock_name in skip:
+            continue
+        score_stock(stock_name)
 
 
 if __name__ == '__main__':
