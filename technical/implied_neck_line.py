@@ -10,8 +10,9 @@ class ImpliedNeckLine:
         # list of (dates, prices)
         self.implied_neck_lines = []
 
-        condition = stock_df[LOCAL_MIN_PRICE_3RD] | stock_df[LOCAL_MAX_PRICE_3RD]
-        dates = stock_df.tail(250)[condition]['Date']
+        tail = stock_df.tail(250)
+        condition = tail[LOCAL_MIN_PRICE_3RD] | tail[LOCAL_MAX_PRICE_3RD]
+        dates = tail[condition]['Date']
         if dates.empty:
             return
 
