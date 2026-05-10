@@ -1,11 +1,13 @@
 import sys
 from base_engine import BaseEngine
 from preload_conf import period
+from conf import ALL
 import guru
 
 from fundamental.cheap.price_signal import (
     eval_1y_drawdown, eval_2y_drawdown, eval_near_52w_low,
-    eval_crash_20d, eval_minmax_hit,
+    eval_crash_5d, eval_crash_10d, eval_crash_20d, eval_high_vol,
+    eval_minmax_hit,
 )
 from fundamental.cheap.key_level import (
     eval_elliott_hit, eval_neck_line_hit, eval_trend_line_hit,
@@ -13,7 +15,9 @@ from fundamental.cheap.key_level import (
 
 CATEGORIES = [
     ('PRICE SIGNAL', 0.70, [
-        eval_1y_drawdown, eval_2y_drawdown, eval_near_52w_low, eval_crash_20d, eval_minmax_hit,
+        eval_1y_drawdown, eval_2y_drawdown, eval_near_52w_low,
+        eval_crash_5d, eval_crash_10d, eval_crash_20d, eval_high_vol,
+        eval_minmax_hit,
     ]),
     ('KEY LEVELS', 0.30, [
         eval_elliott_hit, eval_neck_line_hit, eval_trend_line_hit,
@@ -91,16 +95,9 @@ def score_stock(stock_name):
 
 
 def main():
-    if len(sys.argv) > 1:
-        for stock_name in sys.argv[1:]:
-            score_stock(stock_name.upper())
-    else:
-        from conf import ALL, CN_INDEX, US_INDEX
-        skip = set(CN_INDEX + US_INDEX)
-        for stock_name in ALL:
-            if stock_name in skip:
-                continue
-            score_stock(stock_name)
+    targets = ALL if len(sys.argv) == 1 else [s.upper() for s in sys.argv[1:]]
+    for stock_name in targets:
+        score_stock(stock_name)
 
 
 if __name__ == '__main__':

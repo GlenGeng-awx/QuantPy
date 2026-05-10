@@ -7,6 +7,7 @@ ETF_CHI_NEXT = "159915.SZ"
 # US INDEX
 QQQ = "QQQ"
 VOO = "VOO"
+SOX = "SOXX"
 KWEB = "KWEB"
 GOLD = "GLD"
 SLV = "SLV"
@@ -34,10 +35,8 @@ SHOP = "SHOP"           # Shopify
 PINS = "PINS"           # Pinterest
 XYZ = "XYZ"             # Block
 COIN = "COIN"           # Coinbase
-LVMUY = "LVMUY"         # LVMH Moët Hennessy Louis Vuitton
 SEA = "SE"              # Shopee
 CPNG = "CPNG"           # Coupang
-ORCL = "ORCL"           # Oracle
 ADBE = "ADBE"
 BA = "BA"               # Boeing
 HPQ = "HPQ"             # HP Inc
@@ -80,6 +79,8 @@ ASML = "ASML"
 AMD = "AMD"
 QCOM = "QCOM"           # Qualcomm
 INTC = "INTC"
+MU = "MU"               # Micron Technology
+ORCL = "ORCL"           # Oracle
 
 # MEDICAL
 LLY = "LLY"             # Eli Lilly And Co
@@ -120,6 +121,7 @@ CN_INDEX = [
 US_INDEX = [
     QQQ,
     VOO,
+    SOX,
     KWEB,
     GOLD,
     SLV,
@@ -129,10 +131,10 @@ US_INDEX = [
 V_4000B = [
     NVDA,
     GOOG,
+    AAPL,
 ]
 
 V_3000B = [
-    AAPL,
     MSFT,
 ]
 
@@ -157,10 +159,12 @@ V_500B = [
     ASML,
     XOM,
     AMD,
+    ORCL,
+    INTC,
+    MU,
 ]
 
 V_200B = [
-    ORCL,
     MA,
     NFLX,
     CVX,
@@ -171,35 +175,35 @@ V_200B = [
     BABA,
     GS,
     MS,
-    MCD,
     MRK,
-    INTC,
+    NVO,
+    QCOM,
 ]
 
 V_100B = [
+    MCD,
     DIS,
-    NVO,
     SHOP,
-    QCOM,
     PFE,
     GILD,
     BA,
     UBER,
     PDD,
-    SPOT,
     DELL,
+    CRM,
+    ADBE,
 ]
 
 V_50B = [
-    ADBE,
+    SPOT,
     HOOD,
     COIN,
     NU,
     SEA,
+    SNOW,
 ]
 
 V_20B = [
-    SNOW,
     PYPL,
     CPNG,
     EBAY,
@@ -212,14 +216,14 @@ V_20B = [
     ZM,
     AFRM,
     FUTU,
-    RIVN,
+    HPQ,
+    BEKE,
 ]
 
 V_10B = [
+    RIVN,
     TTD,
     TME,
-    HPQ,
-    BEKE,
     OKTA,
     PINS,
     LI,
