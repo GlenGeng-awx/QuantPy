@@ -9,7 +9,7 @@ QQQ = "QQQ"
 VOO = "VOO"
 SOX = "SOXX"
 KWEB = "KWEB"
-GOLD = "GLD"
+GLD = "GLD"
 SLV = "SLV"
 BTC = "BTC-USD"
 
@@ -123,7 +123,7 @@ US_INDEX = [
     VOO,
     SOX,
     KWEB,
-    GOLD,
+    GLD,
     SLV,
     BTC,
 ]
