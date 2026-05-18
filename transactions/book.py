@@ -4,17 +4,16 @@ from transactions.types import BUY, SELL, CALL, PUT, OPEN, CLOSE, EXPIRED, ASSIG
 """
 (date, side, status, contract, price, num, fee)
 
-contract:
-    option — (stock, CALL/PUT, expire, strike)
-    stock  — (stock,)
-
 side:
-    option — BUY or SELL
-    stock  — BUY or SELL
+    BUY or SELL
 
 status:
     option — OPEN / CLOSE / EXPIRED / ASSIGNED / EXERCISED
     stock  — None
+
+contract:
+    option — (stock, CALL/PUT, expire, strike)
+    stock  — (stock,)
 """
 BOOK = [
     # 2025-12-29 ~ 2026-01-02
@@ -280,6 +279,16 @@ BOOK = [
 
     ('2026-05-12', SELL, OPEN, (PDD, PUT, '2026-06-12', 100), 7.24, 1, 2.52),
     ('2026-05-12', BUY, OPEN, (PDD, PUT, '2026-06-12', 90), 2.29, 1, 2.50),
+
+    ('2026-05-13', SELL, OPEN, (TME, PUT, '2026-06-18', 9), 0.50, 10, 11.67),
+
+    ('2026-05-14', SELL, OPEN, (QQQ, CALL, '2026-05-29', 725), 11.37, 1, 2.53),
+    ('2026-05-14', BUY, OPEN, (QQQ, CALL, '2026-05-29', 735), 7.17, 1, 2.50),
+
+    ('2026-05-15', BUY, CLOSE, (COIN, CALL, '2026-05-15', 195), 2.51, 1, 2.50),
+    ('2026-05-15', SELL, OPEN, (COIN, CALL, '2026-06-12', 195), 16.02, 1, 2.54),
+
+    ('2026-05-15', BUY, EXPIRED, (TTD, CALL, '2026-05-15', 30), 0, 9, 0),
 ]
 
 

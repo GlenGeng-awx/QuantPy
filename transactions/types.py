@@ -16,6 +16,7 @@ StockEntry = namedtuple('StockEntry', ['date', 'side', 'price', 'num', 'fee'])
 OptionEntry = namedtuple('OptionEntry', ['date', 'side', 'status', 'price', 'num', 'fee'])
 
 
+# (stock,)
 class StockContract:
 
     def __init__(self, stock_name):
@@ -65,6 +66,7 @@ class StockContract:
         return f"Stock: {self.num} shares @ {self.avg_price:.2f}"
 
 
+# (stock, CALL/PUT, expire, strike)
 class OptionContract:
 
     def __init__(self, stock_name, cp, expire, strike):
@@ -80,6 +82,10 @@ class OptionContract:
     @property
     def strategy(self):
         return strategy_name(self.cp, self.entries[0].side)
+
+    @property
+    def closed(self):
+        return self.entries and self.num == 0
 
     @property
     def num(self):
@@ -121,26 +127,35 @@ class OptionContract:
 class OptionContracts:
 
     def __init__(self):
-        self._contracts = {}
+        self._contracts = {}  # contract_tuple -> [OptionContract, ...]
 
     def add(self, contract, date, side, status, price, num, fee):
-        oc = self._contracts.setdefault(contract, OptionContract(*contract))
-        oc.add(date, side, status, price, num, fee)
+        if contract not in self._contracts:
+            self._contracts[contract] = [OptionContract(*contract)]
+
+        current = self._contracts[contract][-1]
+
+        if current.closed:
+            self._contracts[contract].append(OptionContract(*contract))
+            current = self._contracts[contract][-1]
+
+        current.add(date, side, status, price, num, fee)
 
     @property
     def realized_pnl(self):
-        return sum(c.pnl[0] for c in self._contracts.values())
+        return sum(c.pnl[0] for cs in self._contracts.values() for c in cs)
 
     @property
     def unrealized_pnl(self):
-        return sum(c.pnl[1] for c in self._contracts.values())
+        return sum(c.pnl[1] for cs in self._contracts.values() for c in cs)
 
     @property
     def total_fees(self):
-        return sum(c.total_fees for c in self._contracts.values())
+        return sum(c.total_fees for cs in self._contracts.values() for c in cs)
 
     def __iter__(self):
-        return iter(self._contracts.values())
+        for cs in self._contracts.values():
+            yield from cs
 
 
 def strategy_name(cp, side):
