@@ -1,31 +1,11 @@
 import sys
 from base_engine import BaseEngine
 from preload_conf import period
-from conf import ALL
+from conf import ALL, CN_INDEX, US_INDEX
+from fundamental.health.data import load_info
+from fundamental.cheap.signals import CHECKS as SIG_CHECKS, LABELS as SIG_LABELS, SHORT as SIG_SHORT
+from fundamental.cheap.hints import CHECKS as HINT_CHECKS, LABELS as HINT_LABELS, SHORT as HINT_SHORT
 import guru
-
-from fundamental.cheap.price_signal import (
-    eval_1y_drawdown, eval_2y_drawdown, eval_near_52w_low,
-    eval_crash_5d, eval_crash_10d, eval_crash_20d, eval_high_vol,
-    eval_minmax_hit,
-)
-from fundamental.cheap.key_level import (
-    eval_elliott_hit, eval_neck_line_hit, eval_trend_line_hit,
-)
-
-CATEGORIES = [
-    ('PRICE SIGNAL', 0.70, [
-        eval_1y_drawdown, eval_2y_drawdown, eval_near_52w_low,
-        eval_crash_5d, eval_crash_10d, eval_crash_20d, eval_high_vol,
-        eval_minmax_hit,
-    ]),
-    ('KEY LEVELS', 0.30, [
-        eval_elliott_hit, eval_neck_line_hit, eval_trend_line_hit,
-    ]),
-]
-
-STATUS_ICON = {'pass': '✓', 'fail': '✗', 'warn': '⚠', 'skip': '-'}
-STATUS_SCORE = {'pass': 1.0, 'warn': 0.5, 'fail': 0.0}
 
 
 def load_data(stock_name):
@@ -35,6 +15,7 @@ def load_data(stock_name):
     return {
         'stock_name': stock_name,
         'stock_df': engine.stock_df,
+        'info': load_info(stock_name),
         'primary_lines': engine.primary_line.primary_lines,
         'secondary_lines': engine.secondary_line.secondary_lines,
         'neck_lines': engine.neck_line.neck_lines,
@@ -43,61 +24,69 @@ def load_data(stock_name):
     }
 
 
-def evaluate_category(name, weight, eval_funcs, data):
-    metrics = [f(data) for f in eval_funcs]
+def eval_stock(stock_name):
+    data = load_data(stock_name)
+    signals = [fn(data) for fn in SIG_CHECKS]
+    hints = [fn(data) for fn in HINT_CHECKS]
 
-    scored = [(m['weight'], STATUS_SCORE[m['status']]) for m in metrics if m['status'] != 'skip']
-    if scored:
-        total_weight = sum(w for w, _ in scored)
-        score = sum(w * s for w, s in scored) / total_weight * 100
-    else:
-        score = 0
-
-    return {'name': name, 'weight': weight, 'score': score, 'metrics': metrics}
-
-
-def compute_overall_score(categories):
-    total_weight = sum(c['weight'] for c in categories)
-    return sum(c['weight'] * c['score'] for c in categories) / total_weight
+    return {
+        'stock': stock_name,
+        'signals': signals,
+        'hints': hints,
+        'count': sum(1 for hit, _, _ in signals if hit),
+    }
 
 
-def print_scorecard(stock_name, categories, overall_score):
-    width = 80
+def print_detail(result):
+    width = 60
     print('\n' + '=' * width)
-    print('{:^{}}'.format('CHEAP SCORECARD: {}'.format(stock_name), width))
+    print('{:^{}}'.format('CHEAP: {}'.format(result['stock']), width))
     print('=' * width)
 
-    for cat in categories:
-        print('\n--- {} ({:.0f}/100, Weight: {:.0f}%) ---'.format(
-            cat['name'], cat['score'], cat['weight'] * 100))
-        for m in cat['metrics']:
-            icon = STATUS_ICON[m['status']]
-            detail = '  ' + m['detail'] if m['detail'] else ''
-            print('  {} {:<24}{:<24}{}'.format(icon, m['name'], m['value'], detail))
+    for label, (hit, value, detail) in zip(SIG_LABELS, result['signals']):
+        icon = '✓' if hit else ' '
+        detail_str = '  ' + detail if detail else ''
+        print('  {} {:<16}{:<14}{}'.format(icon, label, value, detail_str))
+    print('  ' + '-' * (width - 4))
+    for label, (hit, value, detail) in zip(HINT_LABELS, result['hints']):
+        icon = '✓' if hit else ' '
+        detail_str = '  ' + detail if detail else ''
+        print('  {} {:<16}{:<14}{}'.format(icon, label, value, detail_str))
+    print('=' * width)
 
+
+def print_ranking(results):
+    results.sort(key=lambda r: r['count'], reverse=True)
+    header = '{:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>5}  | {:>4} {:>4} {:>4} {:>4}'.format(
+        'Stock', *SIG_SHORT, *HINT_SHORT)
+    width = len(header) + 4
     print('\n' + '=' * width)
-    print('  OVERALL SCORE: {:.0f} / 100'.format(overall_score))
+    print('{:^{}}'.format('CHEAP RANKING', width))
+    print('=' * width)
+    print('  ' + header)
+    print('  ' + '-' * len(header))
+    for r in results:
+        signals = [value if hit else '' for hit, value, _ in r['signals']]
+        hints = ['✓' if hit else '' for hit, _, _ in r['hints']]
+        print('  {:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>5}  | {:>4} {:>4} {:>4} {:>4}'.format(
+            r['stock'], *signals, *hints))
     print('=' * width + '\n')
 
 
-def score_stock(stock_name):
-    data = load_data(stock_name)
-
-    categories = []
-    for name, weight, funcs in CATEGORIES:
-        cat = evaluate_category(name, weight, funcs, data)
-        categories.append(cat)
-
-    overall_score = compute_overall_score(categories)
-    print_scorecard(stock_name, categories, overall_score)
-
-    return {'stock_name': stock_name, 'overall_score': overall_score, 'categories': categories}
-
-
 def main():
-    targets = ALL if len(sys.argv) == 1 else [s.upper() for s in sys.argv[1:]]
+    if len(sys.argv) > 1:
+        targets = [s.upper() for s in sys.argv[1:]]
+    else:
+        skip = set(CN_INDEX + US_INDEX)
+        targets = [s for s in ALL if s not in skip]
+
+    results = []
     for stock_name in targets:
-        score_stock(stock_name)
+        result = eval_stock(stock_name)
+        print_detail(result)
+        results.append(result)
+    if len(results) > 1:
+        print_ranking(results)
 
 
 if __name__ == '__main__':
