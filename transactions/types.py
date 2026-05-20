@@ -1,4 +1,5 @@
 from collections import namedtuple
+from fx import to_usd
 
 BUY = 'buy'
 SELL = 'sell'
@@ -96,7 +97,7 @@ class OptionContract:
 
     @property
     def pnl(self):
-        """(realized, unrealized) PnL using moving average cost, for tax reporting"""
+        """(realized, unrealized) PnL in USD, using moving average cost"""
         open_side = self.entries[0].side
         sign = 1 if open_side == SELL else -1
 
@@ -113,11 +114,12 @@ class OptionContract:
                 num -= e.num
 
         unrealized = sign * avg_price * num * 100
-        return realized, unrealized
+        return to_usd(realized, self.stock_name), to_usd(unrealized, self.stock_name)
 
     @property
     def total_fees(self):
-        return sum(e.fee for e in self.entries)
+        total = sum(e.fee for e in self.entries)
+        return to_usd(total, self.stock_name)
 
     def __repr__(self):
         r, u = self.pnl
