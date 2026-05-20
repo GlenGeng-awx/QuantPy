@@ -1,4 +1,4 @@
-from fundamental.health.data import format_value
+from fundamental.data.loader import format_value
 
 
 def _drawdown(stock_df, days):
