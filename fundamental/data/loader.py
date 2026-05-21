@@ -49,11 +49,17 @@ def get_series(df, field, count=None):
     """Returns [(period_str, value), ...] newest first."""
     if df.empty or field not in df.index:
         return []
-    cols = list(df.columns)[:count] if count else list(df.columns)
+    if count:
+        cols = list(df.columns)[:count]
+    else:
+        cols = list(df.columns)
     result = []
     for col in cols:
         val = df.loc[field, col]
-        result.append((col[:7], None if pd.isna(val) else float(val)))
+        if pd.isna(val):
+            result.append((col[:7], None))
+        else:
+            result.append((col[:7], float(val)))
     return result
 
 

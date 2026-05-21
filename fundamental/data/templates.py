@@ -61,7 +61,7 @@ BS_FIELDS = [
 ]
 
 CF_FIELDS = [
-    'Net Income',
+    'Net Income From Continuing Operations',
     'Depreciation And Amortization',
     'Stock Based Compensation',
     'Deferred Tax',

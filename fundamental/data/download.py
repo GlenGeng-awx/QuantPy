@@ -56,16 +56,15 @@ def download_price(stock_name, ticker):
 
 
 def download(stock_name):
-    if stock_name in SKIP:
-        return
-
     print(stock_name)
     ticker = yf.Ticker(stock_name)
 
     try:
+        download_price(stock_name, ticker)
+        if stock_name in SKIP:
+            return
         download_statements(stock_name, ticker)
         download_info(stock_name, ticker)
-        download_price(stock_name, ticker)
     except Exception as e:
         print('  skip {}: {}'.format(stock_name, e))
 

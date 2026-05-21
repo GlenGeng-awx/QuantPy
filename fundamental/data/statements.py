@@ -10,7 +10,7 @@ def print_statement(title, df, fields):
         print('  No data')
         return
 
-    periods = [col[:7] for col in df.columns]
+    periods = [col if col.startswith('TTM') else col[:7] for col in df.columns]
     col_width = 14
     label_width = 52
 
@@ -36,7 +36,8 @@ def merge_ttm(annual, ttm):
         return annual
     if annual.empty:
         return ttm
-    ttm.columns = ['TTM']
+    date = ttm.columns[0][:7] if ttm.columns[0] != 'TTM' else 'TTM'
+    ttm.columns = ['TTM({})'.format(date)]
     return pd.concat([ttm, annual], axis=1)
 
 

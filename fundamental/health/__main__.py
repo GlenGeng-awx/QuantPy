@@ -1,47 +1,51 @@
 import sys
-from conf import ALL, CN_INDEX, US_INDEX
-from fundamental.health.data import load_all_data
+from fundamental.health.helpers import load_all_data
+from fundamental.data.loader import format_value
 from fundamental.health.income import (
-    eval_revenue_growth, eval_op_income_growth, eval_net_income_growth, eval_eps_trend,
+    eval_revenue_growth, eval_op_income_growth, eval_ebitda_growth, eval_eps_trend,
     eval_margins, eval_interest_coverage,
 )
 from fundamental.health.cashflow import (
-    eval_ocf_trend, eval_earnings_quality, eval_fcf, eval_buyback, eval_dividend,
-    eval_net_buyback, eval_sbc_ratio
+    eval_ocf_trend, eval_earnings_quality, eval_fcf,
+    eval_shareholder_return, eval_sbc_ratio,
 )
 from fundamental.health.balance_sheet import (
-    eval_current_ratio, eval_cash_adequacy, eval_debt_over_equity,
-    eval_ar_growth, eval_ap_stability,
+    eval_cash_adequacy, eval_debt_over_equity, eval_current_ratio,
+    eval_ar_growth, eval_ap_stability, eval_risk_flags,
 )
 
 CATEGORIES = [
-    ('INCOME STATEMENT', 0.40, [
-        eval_revenue_growth, eval_op_income_growth, eval_net_income_growth,
+    ('INCOME STATEMENT', 0.25, [
+        eval_revenue_growth, eval_op_income_growth, eval_ebitda_growth,
         eval_eps_trend, eval_margins, eval_interest_coverage,
     ]),
     ('CASH FLOW', 0.35, [
-        eval_ocf_trend, eval_earnings_quality, eval_fcf, eval_buyback, eval_dividend,
-        eval_net_buyback, eval_sbc_ratio
+        eval_ocf_trend, eval_earnings_quality, eval_fcf,
+        eval_shareholder_return, eval_sbc_ratio,
     ]),
-    ('BALANCE SHEET', 0.25, [
-        eval_current_ratio, eval_cash_adequacy, eval_debt_over_equity,
-        eval_ar_growth, eval_ap_stability,
+    ('BALANCE SHEET', 0.40, [
+        eval_cash_adequacy, eval_debt_over_equity, eval_current_ratio,
+        eval_ar_growth, eval_ap_stability, eval_risk_flags,
     ]),
 ]
 
 STATUS_ICON = {'pass': '✓', 'fail': '✗', 'warn': '⚠', 'skip': '-'}
-STATUS_SCORE = {'pass': 1.0, 'warn': 0.5, 'fail': 0.0}
 
 
 def evaluate_category(name, weight, eval_funcs, data):
     metrics = [f(data) for f in eval_funcs]
 
-    scored = [(m['weight'], STATUS_SCORE[m['status']]) for m in metrics if m['status'] != 'skip']
-    if scored:
-        total_weight = sum(w for w, _ in scored)
-        score = sum(w * s for w, s in scored) / total_weight * 100
-    else:
-        score = 0
+    total_pts = sum(m['weight'] for m in metrics if m['status'] != 'skip')
+    earned = 0
+    for m in metrics:
+        if m['status'] == 'skip':
+            continue
+        if m['status'] == 'pass':
+            earned += m['weight']
+        elif m['status'] == 'warn':
+            earned += m['weight'] * 0.5
+
+    score = earned / total_pts * 100 if total_pts > 0 else 0
 
     return {'name': name, 'weight': weight, 'score': score, 'metrics': metrics}
 
@@ -51,11 +55,31 @@ def compute_overall_score(categories):
     return sum(c['weight'] * c['score'] for c in categories) / total_weight
 
 
-def print_scorecard(stock_name, categories, overall_score):
+def print_summary(data):
+    info = data.get('info', {})
+    parts = []
+    price = info.get('currentPrice')
+    if price:
+        parts.append('Price: ${:.2f}'.format(price))
+    mcap = info.get('marketCap')
+    if mcap:
+        parts.append('MCap: {}'.format(format_value(mcap)))
+    for key, label in [('trailingPE', 'P/E'), ('priceToSalesTrailing12Months', 'P/S'),
+                       ('pegRatio', 'PEG'), ('enterpriseToEbitda', 'EV/EBITDA')]:
+        val = info.get(key)
+        if val:
+            parts.append('{}: {:.1f}'.format(label, val))
+    if parts:
+        print('  ' + '  '.join(parts))
+
+
+def print_scorecard(stock_name, categories, overall_score, data):
     width = 80
     print('\n' + '=' * width)
     print('{:^{}}'.format('HEALTH SCORECARD: {}'.format(stock_name), width))
     print('=' * width)
+
+    print_summary(data)
 
     for cat in categories:
         print('\n--- {} ({:.0f}/100, Weight: {:.0f}%) ---'.format(
@@ -79,19 +103,46 @@ def score_stock(stock_name):
         categories.append(cat)
 
     overall_score = compute_overall_score(categories)
-    print_scorecard(stock_name, categories, overall_score)
+    print_scorecard(stock_name, categories, overall_score, data)
 
     return {'stock_name': stock_name, 'overall_score': overall_score, 'categories': categories}
 
 
-def main():
-    targets = sys.argv[1:] if len(sys.argv) > 1 else ALL
+def print_ranking(results):
+    results.sort(key=lambda r: r['overall_score'], reverse=True)
+    header = '{:<10} {:>8} {:>8} {:>8} {:>8}'.format(
+        'Stock', 'Income', 'CF', 'BS', 'Total')
+    width = len(header) + 4
+    print('\n' + '=' * width)
+    print('{:^{}}'.format('HEALTH RANKING', width))
+    print('=' * width)
+    print('  ' + header)
+    print('  ' + '-' * len(header))
+    for r in results:
+        cats = {c['name']: c['score'] for c in r['categories']}
+        print('  {:<10} {:>7.0f} {:>7.0f} {:>7.0f} {:>7.0f}'.format(
+            r['stock_name'],
+            cats.get('INCOME STATEMENT', 0),
+            cats.get('CASH FLOW', 0),
+            cats.get('BALANCE SHEET', 0),
+            r['overall_score']))
+    print('=' * width + '\n')
 
-    skip = set(CN_INDEX + US_INDEX)
-    for stock_name in targets:
-        if stock_name in skip:
-            continue
-        score_stock(stock_name)
+
+def main():
+    results = []
+    if len(sys.argv) > 1:
+        for stock_name in sys.argv[1:]:
+            results.append(score_stock(stock_name.upper()))
+    else:
+        from conf import ALL, CN_INDEX, US_INDEX
+        skip = set(CN_INDEX + US_INDEX)
+        for stock_name in ALL:
+            if stock_name in skip:
+                continue
+            results.append(score_stock(stock_name))
+    if len(results) > 1:
+        print_ranking(results)
 
 
 if __name__ == '__main__':
