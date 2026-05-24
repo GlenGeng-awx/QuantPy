@@ -1,6 +1,4 @@
-from fundamental.data.loader import (
-    load_statement, load_info, load_price,
-)
+from fundamental.data import load_statement, load_info, load_price
 
 
 def ttm_compare_col(ttm_df, annual_df):

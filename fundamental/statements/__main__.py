@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
-from fundamental.data.loader import load_statement, format_value
-from fundamental.data.templates import INCOME_FIELDS, BS_FIELDS, CF_FIELDS
+from fundamental.data import load_statement, format_value
+from fundamental.statements.templates import INCOME_FIELDS, BS_FIELDS, CF_FIELDS
 
 
 def print_statement(title, df, fields):
@@ -24,9 +24,10 @@ def print_statement(title, df, fields):
         if not field:
             print()
             continue
+        key = field.strip()
         line = '{:<{w}}'.format(field, w=label_width)
         for col in df.columns:
-            val = df.loc[field, col] if field in df.index else None
+            val = df.loc[key, col] if key in df.index else None
             line += '{:>{w}}'.format(format_value(val), w=col_width)
         print(line)
 
@@ -51,12 +52,12 @@ def print_stock(stock_name):
                           load_statement(stock_name, 'cf_ttm'))
     cf_quarterly = load_statement(stock_name, 'cf_quarterly')
 
-    print_statement('INCOME STATEMENT (Annual)', income_annual, INCOME_FIELDS)
-    print_statement('INCOME STATEMENT (Quarterly)', income_quarterly, INCOME_FIELDS)
-    print_statement('BALANCE SHEET (Annual)', bs_annual, BS_FIELDS)
-    print_statement('BALANCE SHEET (Quarterly)', bs_quarterly, BS_FIELDS)
-    print_statement('CASHFLOW (Annual)', cf_annual, CF_FIELDS)
-    print_statement('CASHFLOW (Quarterly)', cf_quarterly, CF_FIELDS)
+    print_statement('{} INCOME (Annual)'.format(stock_name), income_annual, INCOME_FIELDS)
+    print_statement('{} INCOME (Quarterly)'.format(stock_name), income_quarterly, INCOME_FIELDS)
+    print_statement('{} BALANCE SHEET (Annual)'.format(stock_name), bs_annual, BS_FIELDS)
+    print_statement('{} BALANCE SHEET (Quarterly)'.format(stock_name), bs_quarterly, BS_FIELDS)
+    print_statement('{} CASHFLOW (Annual)'.format(stock_name), cf_annual, CF_FIELDS)
+    print_statement('{} CASHFLOW (Quarterly)'.format(stock_name), cf_quarterly, CF_FIELDS)
 
 
 def main():
@@ -65,8 +66,10 @@ def main():
             print_stock(stock_name.upper())
     else:
         from conf import ALL
+        from fundamental.data import SKIP
         for stock_name in ALL:
-            print_stock(stock_name)
+            if stock_name not in SKIP:
+                print_stock(stock_name)
 
 
 if __name__ == '__main__':

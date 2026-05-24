@@ -2,7 +2,7 @@ import sys
 from base_engine import BaseEngine
 from preload_conf import period
 from conf import ALL, CN_INDEX, US_INDEX
-from fundamental.data.loader import load_info
+from fundamental.data import load_info
 from fundamental.cheap.signals import CHECKS as SIG_CHECKS, LABELS as SIG_LABELS, SHORT as SIG_SHORT
 from fundamental.cheap.hints import CHECKS as HINT_CHECKS, LABELS as HINT_LABELS, SHORT as HINT_SHORT
 import guru

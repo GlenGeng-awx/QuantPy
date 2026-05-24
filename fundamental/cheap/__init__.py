@@ -1,8 +1,4 @@
 """
-Usage:
-    python3 -m fundamental.cheap            # all stocks + ranking
-    python3 -m fundamental.cheap AAPL       # single stock
-
 寻找格雷厄姆的"被忽视的大公司"，按满足条件数排序。
 
 Signals (排序依据):

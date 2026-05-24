@@ -2,10 +2,8 @@ import os
 import sys
 import json
 import yfinance as yf
-from conf import ALL, CN_INDEX, US_INDEX
-from fundamental.data.loader import STATEMENT_DIR, PRICE_DIR
-
-SKIP = set(CN_INDEX + US_INDEX)
+from conf import ALL
+from fundamental.data import STATEMENT_DIR, PRICE_DIR, SKIP
 
 STATEMENTS = [
     ('income_annual', 'financials'),
@@ -19,6 +17,7 @@ STATEMENTS = [
 ]
 
 INFO_FIELDS = [
+    'currency', 'financialCurrency',
     'currentPrice', 'marketCap',
     'trailingPE', 'trailingEps',
     'priceToSalesTrailing12Months', 'totalRevenue',

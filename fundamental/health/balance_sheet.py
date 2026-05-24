@@ -7,7 +7,7 @@ Balance Sheet (100 pts, weight 40%)
   AP Stability      10    最新季 YoY
   Risk Flags       -15    商誉+经营租赁倒扣（额外扣分）
 """
-from fundamental.data.loader import get_val, get_series, format_value
+from fundamental.data import get_val, get_series, format_value
 from fundamental.health.helpers import growth_rate, make_result
 
 PTS_CASH = 30

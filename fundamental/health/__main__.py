@@ -1,6 +1,6 @@
 import sys
 from fundamental.health.helpers import load_all_data
-from fundamental.data.loader import format_value
+from fundamental.data import format_value
 from fundamental.health.income import (
     eval_revenue_growth, eval_op_income_growth, eval_ebitda_growth, eval_eps_trend,
     eval_margins, eval_interest_coverage,

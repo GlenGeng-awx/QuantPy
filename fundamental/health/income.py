@@ -7,7 +7,7 @@ Income Statement (100 pts, weight 25%)
   Margins            15    TTM only
   Interest Coverage  10    TTM only
 """
-from fundamental.data.loader import get_val, get_series, format_value
+from fundamental.data import get_val, get_series, format_value
 from fundamental.health.helpers import growth_rate, make_result, ttm_compare_col, score_layers, layer_symbols
 
 W_3YR = 0.2

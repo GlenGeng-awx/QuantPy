@@ -6,7 +6,7 @@ Cash Flow (100 pts, weight 35%)
   Shareholder Return  15    3yr + TTM
   SBC Ratio           15    TTM only
 """
-from fundamental.data.loader import get_val, get_series, format_value
+from fundamental.data import get_val, get_series, format_value
 from fundamental.health.helpers import (
     make_result, ttm_compare_col, score_layers, layer_symbols,
 )

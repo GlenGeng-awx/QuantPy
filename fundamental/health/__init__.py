@@ -1,8 +1,4 @@
 """
-Usage:
-    python3 -m fundamental.health | pbcopy   # 全量评分
-    python3 -m fundamental.health ADBE       # 单只评分
-
 评分规则: Q > TTM > 3yr，权重 0.5 / 0.3 / 0.2
     pass=1.0, warn=0.5, fail=0.0, skip=权重分给其余层
     指标得分 = 加权和 × 该指标分值
