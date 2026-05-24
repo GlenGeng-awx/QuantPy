@@ -1,6 +1,7 @@
 import sys
+from conf import ALL
 from fundamental.health.helpers import load_all_data
-from fundamental.data import format_value
+from fundamental.data import format_value, get_info_val, SKIP
 from fundamental.health.income import (
     eval_revenue_growth, eval_op_income_growth, eval_ebitda_growth, eval_eps_trend,
     eval_margins, eval_interest_coverage,
@@ -64,9 +65,9 @@ def print_summary(data):
     mcap = info.get('marketCap')
     if mcap:
         parts.append('MCap: {}'.format(format_value(mcap)))
-    for key, label in [('trailingPE', 'P/E'), ('priceToSalesTrailing12Months', 'P/S'),
+    for key, label in [('trailingPE', 'P/E(TTM)'), ('priceToSalesTrailing12Months', 'P/S(TTM)'),
                        ('pegRatio', 'PEG'), ('enterpriseToEbitda', 'EV/EBITDA')]:
-        val = info.get(key)
+        val = get_info_val(info, key)
         if val:
             parts.append('{}: {:.1f}'.format(label, val))
     if parts:
@@ -131,16 +132,11 @@ def print_ranking(results):
 
 def main():
     results = []
-    if len(sys.argv) > 1:
-        for stock_name in sys.argv[1:]:
-            results.append(score_stock(stock_name.upper()))
-    else:
-        from conf import ALL, CN_INDEX, US_INDEX
-        skip = set(CN_INDEX + US_INDEX)
-        for stock_name in ALL:
-            if stock_name in skip:
-                continue
-            results.append(score_stock(stock_name))
+    targets = sys.argv[1:] if len(sys.argv) > 1 else ALL
+    for stock_name in targets:
+        if stock_name in SKIP:
+            continue
+        results.append(score_stock(stock_name))
     if len(results) > 1:
         print_ranking(results)
 

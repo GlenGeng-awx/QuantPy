@@ -1,4 +1,4 @@
-from fundamental.data import format_value
+from fundamental.data import format_value, get_info_val
 
 
 def _drawdown(stock_df, days):
@@ -38,7 +38,7 @@ def check_near_52w_low(data):
 
 def check_pe(data):
     info = data['info']
-    pe = info.get('trailingPE')
+    pe = get_info_val(info,'trailingPE')
     if pe is None or pe <= 0:
         return False, '-', ''
     price = info.get('currentPrice')
@@ -50,7 +50,7 @@ def check_pe(data):
 
 def check_ev_ebitda(data):
     info = data['info']
-    ev_ratio = info.get('enterpriseToEbitda')
+    ev_ratio = get_info_val(info,'enterpriseToEbitda')
     if ev_ratio is None or ev_ratio <= 0:
         return False, '-', ''
     ev = info.get('enterpriseValue')
@@ -62,7 +62,7 @@ def check_ev_ebitda(data):
 
 def check_ps(data):
     info = data['info']
-    ps = info.get('priceToSalesTrailing12Months')
+    ps = get_info_val(info,'priceToSalesTrailing12Months')
     if ps is None or ps <= 0:
         return False, '-', ''
     mcap = info.get('marketCap')

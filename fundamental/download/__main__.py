@@ -16,16 +16,6 @@ STATEMENTS = [
     ('cf_ttm', 'ttm_cashflow'),
 ]
 
-INFO_FIELDS = [
-    'currency', 'financialCurrency',
-    'currentPrice', 'marketCap',
-    'trailingPE', 'trailingEps',
-    'priceToSalesTrailing12Months', 'totalRevenue',
-    'pegRatio',
-    'enterpriseToEbitda', 'enterpriseValue', 'ebitda',
-]
-
-
 def download_statements(stock_name, ticker):
     stock_dir = os.path.join(STATEMENT_DIR, stock_name)
     os.makedirs(stock_dir, exist_ok=True)
@@ -40,9 +30,8 @@ def download_info(stock_name, ticker):
     os.makedirs(stock_dir, exist_ok=True)
     info = ticker.info
     if info:
-        subset = {k: info.get(k) for k in INFO_FIELDS}
         with open(os.path.join(stock_dir, 'info.json'), 'w') as f:
-            json.dump(subset, f)
+            json.dump(info, f, indent=2)
 
 
 def download_price(stock_name, ticker):

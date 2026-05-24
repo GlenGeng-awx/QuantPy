@@ -66,6 +66,17 @@ def get_series(df, field, count=None):
     return result
 
 
+def get_info_val(info, key):
+    """从 info 取值，对已知有 FX 问题的 key 做修正"""
+    from fx import correct_ratio
+    val = info.get(key)
+    if val is None:
+        return None
+    if key == 'priceToSalesTrailing12Months':
+        return correct_ratio(info, key)
+    return val
+
+
 def format_value(v):
     if v != v or v is None:
         return '-'
