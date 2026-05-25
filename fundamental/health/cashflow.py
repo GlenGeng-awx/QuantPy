@@ -205,9 +205,9 @@ def eval_shareholder_return(data):
     if abs_div > 0:
         parts.append('Div {}'.format(format_value(abs_div)))
     if sbc > 0:
-        parts.append('SBC {}'.format(format_value(sbc)))
+        parts.append('- SBC {}'.format(format_value(sbc)))
     if parts:
-        detail += '  ' + ' - '.join(parts)
+        detail += '  ' + ' + '.join(parts)
 
     return make_result('Shareholder Return', status, value, detail, PTS_RETURN)
 

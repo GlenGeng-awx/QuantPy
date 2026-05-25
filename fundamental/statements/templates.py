@@ -47,6 +47,7 @@ BS_FIELDS = [
     '  Current Deferred Revenue',
     '  Other Current Liabilities',
     'Current Liabilities',
+    '',
     '  Long Term Debt',
     '  Capital Lease Obligations',
     '  Other Non Current Liabilities',
