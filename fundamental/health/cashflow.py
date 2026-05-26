@@ -198,16 +198,9 @@ def eval_shareholder_return(data):
     else:
         value = '-'
 
-    detail = layer_symbols([('3yr', s_3yr), ('TTM', s_ttm)])
-    parts = []
-    if abs_bb > 0:
-        parts.append('BB {}'.format(format_value(abs_bb)))
-    if abs_div > 0:
-        parts.append('Div {}'.format(format_value(abs_div)))
-    if sbc > 0:
-        parts.append('- SBC {}'.format(format_value(sbc)))
-    if parts:
-        detail += '  ' + ' + '.join(parts)
+    detail = '{}  BB {} + Div {} - SBC {}'.format(
+        layer_symbols([('3yr', s_3yr), ('TTM', s_ttm)]),
+        format_value(abs_bb), format_value(abs_div), format_value(sbc))
 
     return make_result('Shareholder Return', status, value, detail, PTS_RETURN)
 

@@ -59,6 +59,7 @@ BS_FIELDS = [
     '  Additional Paid In Capital',
     '  Treasury Stock',
     '  Retained Earnings',
+    '  Ordinary Shares Number',
     'Stockholders Equity',
     '',
     'Total Equity Gross Minority Interest',
