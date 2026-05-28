@@ -1,6 +1,3 @@
-from fundamental.data import load_statement, load_info, load_price
-
-
 def ttm_compare_col(ttm_df, annual_df):
     """TTM 和 annual 同期时，返回 annual 第二列的 index，否则返回 0"""
     if ttm_df.empty or annual_df.empty:
@@ -51,18 +48,3 @@ def layer_symbols(layers):
             icon = '✗'
         symbols.append('{}{}'.format(icon, label))
     return ' '.join(symbols)
-
-
-def load_all_data(stock_name):
-    return {
-        'stock_name': stock_name,
-        'income_annual': load_statement(stock_name, 'income_annual'),
-        'income_quarterly': load_statement(stock_name, 'income_quarterly'),
-        'income_ttm': load_statement(stock_name, 'income_ttm'),
-        'bs_quarterly': load_statement(stock_name, 'bs_quarterly'),
-        'cf_annual': load_statement(stock_name, 'cf_annual'),
-        'cf_quarterly': load_statement(stock_name, 'cf_quarterly'),
-        'cf_ttm': load_statement(stock_name, 'cf_ttm'),
-        'price': load_price(stock_name),
-        'info': load_info(stock_name),
-    }
