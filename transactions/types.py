@@ -1,5 +1,4 @@
 from collections import namedtuple
-from fx import to_usd
 
 BUY = 'buy'
 SELL = 'sell'
@@ -114,12 +113,11 @@ class OptionContract:
                 num -= e.num
 
         unrealized = sign * avg_price * num * 100
-        return to_usd(realized, self.stock_name), to_usd(unrealized, self.stock_name)
+        return realized, unrealized
 
     @property
     def total_fees(self):
-        total = sum(e.fee for e in self.entries)
-        return to_usd(total, self.stock_name)
+        return sum(e.fee for e in self.entries)
 
     def __repr__(self):
         r, u = self.pnl

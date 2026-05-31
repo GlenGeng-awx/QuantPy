@@ -16,6 +16,7 @@ STATEMENTS = [
     ('cf_ttm', 'ttm_cashflow'),
 ]
 
+
 def download_statements(stock_name, ticker):
     stock_dir = os.path.join(STATEMENT_DIR, stock_name)
     os.makedirs(stock_dir, exist_ok=True)
