@@ -147,11 +147,12 @@ V_2000B = [
 V_1000B = [
     META,
     TSLA,
-    WMT,
+    MU,
+    LLY,
 ]
 
 V_500B = [
-    LLY,
+    WMT,
     JPM,
     VISA,
     TENCENT,
@@ -161,7 +162,6 @@ V_500B = [
     AMD,
     ORCL,
     INTC,
-    MU,
 ]
 
 V_200B = [
@@ -178,6 +178,7 @@ V_200B = [
     MRK,
     NVO,
     QCOM,
+    DELL,
 ]
 
 V_100B = [
@@ -189,13 +190,12 @@ V_100B = [
     BA,
     UBER,
     PDD,
-    DELL,
     CRM,
     ADBE,
+    SPOT,
 ]
 
 V_50B = [
-    SPOT,
     HOOD,
     COIN,
     NU,
@@ -215,16 +215,16 @@ V_20B = [
     BNTX,
     ZM,
     AFRM,
-    FUTU,
     HPQ,
-    BEKE,
+    RIVN,
+    OKTA,
 ]
 
 V_10B = [
-    RIVN,
+    BEKE,
+    FUTU,
     TTD,
     TME,
-    OKTA,
     PINS,
     LI,
     XPEV,
