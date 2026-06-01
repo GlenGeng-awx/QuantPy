@@ -46,18 +46,18 @@ def print_stock(stock_name):
     income_annual = merge_ttm(load_statement(stock_name, 'income_annual'),
                               load_statement(stock_name, 'income_ttm'))
     income_quarterly = load_statement(stock_name, 'income_quarterly')
-    bs_annual = load_statement(stock_name, 'bs_annual')
-    bs_quarterly = load_statement(stock_name, 'bs_quarterly')
     cf_annual = merge_ttm(load_statement(stock_name, 'cf_annual'),
                           load_statement(stock_name, 'cf_ttm'))
     cf_quarterly = load_statement(stock_name, 'cf_quarterly')
+    bs_annual = load_statement(stock_name, 'bs_annual')
+    bs_quarterly = load_statement(stock_name, 'bs_quarterly')
 
     print_statement('{} INCOME (Annual)'.format(stock_name), income_annual, INCOME_FIELDS)
     print_statement('{} INCOME (Quarterly)'.format(stock_name), income_quarterly, INCOME_FIELDS)
-    print_statement('{} BALANCE SHEET (Annual)'.format(stock_name), bs_annual, BS_FIELDS)
-    print_statement('{} BALANCE SHEET (Quarterly)'.format(stock_name), bs_quarterly, BS_FIELDS)
     print_statement('{} CASHFLOW (Annual)'.format(stock_name), cf_annual, CF_FIELDS)
     print_statement('{} CASHFLOW (Quarterly)'.format(stock_name), cf_quarterly, CF_FIELDS)
+    print_statement('{} BALANCE SHEET (Annual)'.format(stock_name), bs_annual, BS_FIELDS)
+    print_statement('{} BALANCE SHEET (Quarterly)'.format(stock_name), bs_quarterly, BS_FIELDS)
 
 
 def main():

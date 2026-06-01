@@ -17,34 +17,14 @@ def make_result(name, status, value, detail, weight):
     return {'name': name, 'status': status, 'value': value, 'detail': detail, 'weight': weight}
 
 
-STATUS_SCORE = {'pass': 1.0, 'warn': 0.5, 'fail': 0.0}
-
-
-def score_layers(layers, pts):
-    active = [(w, s) for w, s in layers if s != 'skip']
-    if not active:
-        return 0, 'skip'
-    total_w = sum(w for w, _ in active)
-    score = sum(w * STATUS_SCORE[s] for w, s in active) / total_w
-    if score >= 0.8:
-        status = 'pass'
-    elif score >= 0.4:
-        status = 'warn'
-    else:
-        status = 'fail'
-    return score * pts, status
-
-
-def layer_symbols(layers):
-    symbols = []
-    for label, status in layers:
-        if status == 'skip':
-            continue
-        if status == 'pass':
-            icon = '✓'
-        elif status == 'warn':
-            icon = '⚠'
-        else:
-            icon = '✗'
-        symbols.append('{}{}'.format(icon, label))
-    return ' '.join(symbols)
+def score_dimension(metrics):
+    total = sum(m['weight'] for m in metrics if m['status'] != 'skip')
+    if total == 0:
+        return None
+    earned = 0
+    for m in metrics:
+        if m['status'] == 'pass':
+            earned += m['weight']
+        elif m['status'] == 'warn':
+            earned += m['weight'] * 0.5
+    return earned / total * 100

@@ -4,7 +4,7 @@ from fundamental.data import SKIP
 from fundamental.cheap.scoring import evaluate_stock as eval_cheap, print_detail as print_cheap_detail
 from fundamental.cheap.signals import SHORT as SIG_SHORT
 from fundamental.cheap.hints import SHORT as HINT_SHORT
-from fundamental.health.scoring import evaluate_stock as eval_health, print_detail as print_health_detail
+from fundamental.health.scoring import evaluate_stock as eval_health, print_detail as print_health_detail, PERIODS, fmt_score
 
 
 def print_ranking(results):
@@ -12,12 +12,16 @@ def print_ranking(results):
 
     sig_header = ' '.join('{:>5}'.format(s) for s in SIG_SHORT)
     hint_header = ' '.join('{:>4}'.format(s) for s in HINT_SHORT)
-    header = '{:<10} {}  | {}  |  {:>3} {:>4} {:>4} {:>5}'.format(
-        'Stock', sig_header, hint_header, 'Inc', 'CF', 'BS', 'Total')
+    grid_header = '  '.join('{:>4} {:>4} {:>4}'.format('3yr', 'TTM', '5Q') for _ in range(3))
+    header = '{:<10} {}  | {}  | {}'.format('Stock', sig_header, hint_header, grid_header)
     width = len(header) + 4
     print('\n' + '=' * width)
     print('{:^{}}'.format('COMBINE RANKING', width))
     print('=' * width)
+    cat_label = '{:<10} {:>{sig_w}}  | {:>{hint_w}}  | {:^14}  {:^14}  {:^14}'.format(
+        '', '', '', '--- Inc ---', '---- CF ----', '---- BS ----',
+        sig_w=len(sig_header), hint_w=len(hint_header))
+    print('  ' + cat_label)
     print('  ' + header)
     print('  ' + '-' * len(header))
 
@@ -25,16 +29,19 @@ def print_ranking(results):
         signals = [value if hit else '' for hit, value, _ in r['cheap']['signals']]
         hints = ['✓' if hit else '' for hit, _, _ in r['cheap']['hints']]
 
-        cats = {c['name']: c['score'] for c in r['health']['categories']}
-        inc = cats.get('INCOME STATEMENT', 0)
-        cf = cats.get('CASH FLOW', 0)
-        bs = cats.get('BALANCE SHEET', 0)
-        total = r['health']['overall_score']
+        g = r['health']['grid']
+        grid_scores = []
+        for key in ['income', 'cf', 'bs']:
+            for p in PERIODS:
+                grid_scores.append(g['{}_{}'.format(key, p)]['score'])
 
         sig_cols = ' '.join('{:>5}'.format(s) for s in signals)
         hint_cols = ' '.join('{:>4}'.format(s) for s in hints)
-        print('  {:<10} {}  | {}  |  {:>3.0f} {:>4.0f} {:>4.0f} {:>5.0f}'.format(
-            r['stock'], sig_cols, hint_cols, inc, cf, bs, total))
+        grid_cols = '  '.join('{} {} {}'.format(
+            fmt_score(grid_scores[i]), fmt_score(grid_scores[i + 1]), fmt_score(grid_scores[i + 2]))
+            for i in range(0, 9, 3))
+
+        print('  {:<10} {}  | {}  | {}'.format(r['stock'], sig_cols, hint_cols, grid_cols))
     print('=' * width + '\n')
 
 
