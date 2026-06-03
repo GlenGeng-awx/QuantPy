@@ -82,7 +82,7 @@ def print_summary(data):
     mkt_ccy = info.get('currency', '')
     fin_ccy = info.get('financialCurrency', '')
     if mkt_ccy and fin_ccy and mkt_ccy != fin_ccy:
-        print('  Market: {}  Financials: {}'.format(mkt_ccy, fin_ccy))
+        print('  Stock price in {}; Financial statements in {}'.format(mkt_ccy, fin_ccy))
 
 
 def print_detail(result):

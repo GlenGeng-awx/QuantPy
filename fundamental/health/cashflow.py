@@ -273,7 +273,7 @@ def _check_q_yoy_cf(data, field, label, pts):
 def _eval_4q_buyback(data, pts):
     quarterly = data['cf_quarterly']
     if quarterly.empty or len(quarterly.columns) < 4:
-        return make_result('4Q Buyback', 'skip', '-', 'Insufficient data', pts)
+        return make_result('Buyback 4Q', 'skip', '-', 'Insufficient data', pts)
 
     count = 0
     for i in range(4):
@@ -283,16 +283,16 @@ def _eval_4q_buyback(data, pts):
 
     value = '{}/4 quarters'.format(count)
     status = 'pass' if count > 0 else 'warn'
-    return make_result('4Q Buyback', status, value, '', pts)
+    return make_result('Buyback 4Q', status, value, '', pts)
 
 
 def _eval_q_ocf_ni(data, pts):
     ocf = get_val(data['cf_quarterly'], 'Operating Cash Flow', 0)
     ni = get_val(data['income_quarterly'], 'Net Income', 0)
     if ocf is None or ni is None:
-        return make_result('Q OCF/NI', 'skip', '-', 'No data', pts)
+        return make_result('OCF/NI Q', 'skip', '-', 'No data', pts)
     if ni <= 0:
-        return make_result('Q OCF/NI', 'fail', '-', 'Negative NI', pts)
+        return make_result('OCF/NI Q', 'fail', '-', 'Negative NI', pts)
 
     ratio = ocf / ni
     value = '{:.2f}'.format(ratio)
@@ -303,15 +303,15 @@ def _eval_q_ocf_ni(data, pts):
         status = 'warn'
     else:
         status = 'fail'
-    return make_result('Q OCF/NI', status, value, '', pts)
+    return make_result('OCF/NI Q', status, value, '', pts)
 
 
 def eval_cf_5q(data):
     return [
-        _check_4q_cf_positive(data, 'Operating Cash Flow', '4Q OCF +', 25),
-        _check_q_yoy_cf(data, 'Operating Cash Flow', 'Q YoY OCF', 20),
-        _check_4q_cf_positive(data, 'Free Cash Flow', '4Q FCF +', 25),
-        _check_q_yoy_cf(data, 'Free Cash Flow', 'Q YoY FCF', 15),
+        _check_4q_cf_positive(data, 'Operating Cash Flow', 'OCF 4Q +', 25),
+        _check_q_yoy_cf(data, 'Operating Cash Flow', 'OCF Q YoY', 20),
+        _check_4q_cf_positive(data, 'Free Cash Flow', 'FCF 4Q +', 25),
+        _check_q_yoy_cf(data, 'Free Cash Flow', 'FCF Q YoY', 15),
         _eval_4q_buyback(data, 10),
         _eval_q_ocf_ni(data, 5),
     ]

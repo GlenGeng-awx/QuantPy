@@ -236,12 +236,12 @@ def _check_4q_margin_trend(data, numerator_field, denominator_field, label, pts)
 
 def eval_income_5q(data):
     return [
-        _check_q_yoy(data, 'Total Revenue', 'Q YoY Revenue', 10),
-        _check_q_yoy(data, 'Operating Income', 'Q YoY Op Income', 10),
-        _check_q_yoy(data, 'EBITDA', 'Q YoY EBITDA', 10),
-        _check_q_yoy(data, 'Diluted EPS', 'Q YoY EPS', 15),
-        _check_4q_positive(data, 'Total Revenue', '4Q Revenue +', 10),
-        _check_4q_positive(data, 'Operating Income', '4Q Op Income +', 15),
-        _check_4q_margin_trend(data, 'Gross Profit', 'Total Revenue', '4Q GM Trend', 15),
-        _check_4q_margin_trend(data, 'Net Income', 'Total Revenue', '4Q NM Trend', 15),
+        _check_q_yoy(data, 'Total Revenue', 'Revenue Q YoY', 10),
+        _check_q_yoy(data, 'Operating Income', 'Op Income Q YoY', 10),
+        _check_q_yoy(data, 'EBITDA', 'EBITDA Q YoY', 10),
+        _check_q_yoy(data, 'Diluted EPS', 'EPS Q YoY', 15),
+        _check_4q_positive(data, 'Total Revenue', 'Revenue 4Q +', 10),
+        _check_4q_positive(data, 'Operating Income', 'Op Income 4Q +', 15),
+        _check_4q_margin_trend(data, 'Gross Profit', 'Total Revenue', 'GM Trend 4Q', 15),
+        _check_4q_margin_trend(data, 'Net Income', 'Total Revenue', 'NM Trend 4Q', 15),
     ]

@@ -36,14 +36,14 @@ INCOME STATEMENT
   Interest Coverage      10    >5x=pass; 2-5x=warn; 无债务=pass
 
 --- 5Q (100 pts) ---
-  Q YoY Revenue          10    正增长=pass; 0~-3%=warn; 更差=fail
-  Q YoY Op Income        10    同上
-  Q YoY EBITDA           10    同上
-  Q YoY EPS              15    同上
-  4Q Revenue +           10    全正=pass; 1季负=warn; 多季负=fail
-  4Q Op Income +         15    同上
-  4Q GM Trend            15    环比不下降=pass; 轻微下降=warn; 明显恶化=fail
-  4Q NM Trend            15    同上
+  Revenue Q YoY          10    正增长=pass; 0~-3%=warn; 更差=fail
+  Op Income Q YoY        10    同上
+  EBITDA Q YoY           10    同上
+  EPS Q YoY              15    同上
+  Revenue 4Q +           10    全正=pass; 1季负=warn; 多季负=fail
+  Op Income 4Q +         15    同上
+  GM Trend 4Q            15    环比不下降=pass; 轻微下降=warn; 明显恶化=fail
+  NM Trend 4Q            15    同上
 
 ===================================================================
 CASH FLOW
@@ -64,12 +64,12 @@ CASH FLOW
   SBC/Revenue            15    <10%=pass; 10-15%=warn; >15%=fail
 
 --- 5Q (100 pts) ---
-  4Q OCF +               25    全正=pass; 1季负=warn; 多季负=fail
-  Q YoY OCF              20    正增长=pass; 否则=fail
-  4Q FCF +               25    全正=pass; 1季负=warn; 多季负=fail
-  Q YoY FCF              15    正增长=pass; 否则=fail
-  4Q Buyback             10    有=pass; 无=warn
-  Q OCF/NI                5    >0.8=pass; 0.5-0.8=warn
+  OCF 4Q +               25    全正=pass; 1季负=warn; 多季负=fail
+  OCF Q YoY              20    正增长=pass; 否则=fail
+  FCF 4Q +               25    全正=pass; 1季负=warn; 多季负=fail
+  FCF Q YoY              15    正增长=pass; 否则=fail
+  Buyback 4Q             10    有=pass; 无=warn
+  OCF/NI Q                5    >0.8=pass; 0.5-0.8=warn
 
 ===================================================================
 BALANCE SHEET
