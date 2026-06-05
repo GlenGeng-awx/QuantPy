@@ -28,42 +28,58 @@ class StockContract:
 
     @property
     def num(self):
-        buy = sum(e.num for e in self.entries if e.side == BUY)
-        sell = sum(e.num for e in self.entries if e.side == SELL)
+        buy = sum(entry.num for entry in self.entries if entry.side == BUY)
+        sell = sum(entry.num for entry in self.entries if entry.side == SELL)
         return buy - sell
 
     @property
-    def avg_price(self):
+    def break_even(self):
         if self.num == 0:
             return 0.0
-        outflow = sum(e.price * e.num for e in self.entries if e.side == BUY)
-        inflow = sum(e.price * e.num for e in self.entries if e.side == SELL)
+        outflow = sum(entry.price * entry.num for entry in self.entries if entry.side == BUY)
+        inflow = sum(entry.price * entry.num for entry in self.entries if entry.side == SELL)
         return (outflow - inflow) / self.num
 
     @property
     def pnl(self):
-        """realized PnL per sell event for tax reporting: [(date, num, avg_price, sell_price, pnl)]"""
-        avg_price = 0.0
-        num = 0
+        """FIFO realized PnL: [(sell_date, buy_date, num, cost, sell_price, pnl)]"""
+        lots = []
+        for entry in self.entries:
+            if entry.side == BUY:
+                lots.append({'date': entry.date, 'price': entry.price, 'num': entry.num})
         details = []
-
-        for e in self.entries:
-            if e.side == BUY:
-                avg_price = (avg_price * num + e.price * e.num) / (num + e.num)
-                num += e.num
-            else:
-                pnl = (e.price - avg_price) * e.num
-                details.append((e.date, e.num, avg_price, e.price, pnl))
-                num -= e.num
-
+        for entry in self.entries:
+            if entry.side != SELL:
+                continue
+            to_sell = entry.num
+            while to_sell > 0 and lots:
+                lot = lots[0]
+                matched = min(lot['num'], to_sell)
+                realized = (entry.price - lot['price']) * matched
+                details.append((entry.date, lot['date'], matched, lot['price'], entry.price, realized))
+                lot['num'] -= matched
+                to_sell -= matched
+                if lot['num'] == 0:
+                    lots.pop(0)
         return details
 
     @property
+    def ledger(self):
+        entries = []
+        for entry in self.entries:
+            if entry.side == BUY:
+                entries.append(('BUY', entry.date, entry.num, entry.price))
+        for sell_date, buy_date, num, cost, sell_price, pnl in self.pnl:
+            entries.append(('SELL', sell_date, num, sell_price, cost, pnl))
+        entries.sort(key=lambda entry: entry[1])
+        return entries
+
+    @property
     def total_fees(self):
-        return sum(e.fee for e in self.entries)
+        return sum(entry.fee for entry in self.entries)
 
     def __repr__(self):
-        return f"Stock: {self.num} shares @ {self.avg_price:.2f}"
+        return f"Stock: {self.num} shares  even={self.break_even:.2f}"
 
 
 # (stock, CALL/PUT, expire, strike)
@@ -90,37 +106,47 @@ class OptionContract:
     @property
     def num(self):
         open_side = self.entries[0].side
-        opened = sum(e.num for e in self.entries if e.side == open_side)
-        closed = sum(e.num for e in self.entries if e.side != open_side)
+        opened = sum(entry.num for entry in self.entries if entry.side == open_side)
+        closed = sum(entry.num for entry in self.entries if entry.side != open_side)
         return opened - closed
 
     @property
     def pnl(self):
-        """(realized, unrealized) PnL in USD, using moving average cost"""
+        """(realized, unrealized, details) FIFO"""
         open_side = self.entries[0].side
         sign = 1 if open_side == SELL else -1
 
-        avg_price = 0.0
-        num = 0
+        lots = []
+        for entry in self.entries:
+            if entry.side == open_side:
+                lots.append({'date': entry.date, 'price': entry.price, 'num': entry.num})
+
         realized = 0.0
+        details = []
+        for entry in self.entries:
+            if entry.side == open_side:
+                continue
+            to_close = entry.num
+            while to_close > 0 and lots:
+                lot = lots[0]
+                matched = min(lot['num'], to_close)
+                pnl = sign * (lot['price'] - entry.price) * matched * 100
+                details.append((entry.date, lot['date'], matched, lot['price'], entry.price, pnl))
+                realized += pnl
+                lot['num'] -= matched
+                to_close -= matched
+                if lot['num'] == 0:
+                    lots.pop(0)
 
-        for e in self.entries:
-            if e.side == open_side:
-                avg_price = (avg_price * num + e.price * e.num) / (num + e.num)
-                num += e.num
-            else:
-                realized += sign * (avg_price - e.price) * e.num * 100
-                num -= e.num
-
-        unrealized = sign * avg_price * num * 100
-        return realized, unrealized
+        unrealized = sign * sum(lot['price'] * lot['num'] for lot in lots) * 100
+        return realized, unrealized, details
 
     @property
     def total_fees(self):
-        return sum(e.fee for e in self.entries)
+        return sum(entry.fee for entry in self.entries)
 
     def __repr__(self):
-        r, u = self.pnl
+        r, u, _ = self.pnl
         return f"{self.strategy:<12} {self.expire} {self.strike:>7} x{self.num}  realized={r:>8.2f}  unrealized={u:>8.2f}"
 
 
@@ -134,7 +160,6 @@ class OptionContracts:
             self._contracts[contract] = [OptionContract(*contract)]
 
         current = self._contracts[contract][-1]
-
         if current.closed:
             self._contracts[contract].append(OptionContract(*contract))
             current = self._contracts[contract][-1]
@@ -143,19 +168,28 @@ class OptionContracts:
 
     @property
     def realized_pnl(self):
-        return sum(c.pnl[0] for cs in self._contracts.values() for c in cs)
+        total = 0
+        for option in self:
+            total += option.pnl[0]
+        return total
 
     @property
     def unrealized_pnl(self):
-        return sum(c.pnl[1] for cs in self._contracts.values() for c in cs)
+        total = 0
+        for option in self:
+            total += option.pnl[1]
+        return total
 
     @property
     def total_fees(self):
-        return sum(c.total_fees for cs in self._contracts.values() for c in cs)
+        total = 0
+        for option in self:
+            total += option.total_fees
+        return total
 
     def __iter__(self):
-        for cs in self._contracts.values():
-            yield from cs
+        for contracts in self._contracts.values():
+            yield from contracts
 
 
 def strategy_name(cp, side):
