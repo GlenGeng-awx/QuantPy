@@ -34,16 +34,16 @@ class Portfolio:
         print("\n---------------------\nBy Expire\n---------------------")
         current_date = datetime.now().strftime('%Y-%m-%d')
 
-        expire_map = {}
+        by_expire = {}
         for position in self._positions.values():
             for option in position.options:
-                expire_map.setdefault(option.expire, []).append(option)
+                by_expire.setdefault(option.expire, []).append(option)
 
-        for expire in sorted(expire_map.keys()):
+        for expire in sorted(by_expire.keys()):
             prefix = '-' if expire < current_date else '+'
             if not full and prefix == '-':
                 continue
-            contracts = sorted(expire_map[expire], key=lambda option: option.stock_name)
+            contracts = sorted(by_expire[expire], key=lambda option: option.stock_name)
             realized, unrealized, fees = 0, 0, 0
             for option in contracts:
                 realized += to_usd(option.pnl[0], option.stock_name)

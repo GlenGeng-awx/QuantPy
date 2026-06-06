@@ -117,11 +117,11 @@ class Position:
                     print(f"\t\t  {line}")
                 print(f"\t\t  Realized: {year_realized:.2f}")
 
-        open_opts = [o for o in self.options if not o.closed]
-        open_opts.sort(key=lambda o: o.expire)
-        if open_opts:
+        open_options = [o for o in self.options if not o.closed]
+        open_options.sort(key=lambda o: o.expire)
+        if open_options:
             print(f"\t\t--- Option Open ---")
-            for option in open_opts:
+            for option in open_options:
                 r, u, _ = option.pnl
                 line = f"{option.strategy:<12} {option.expire} {option.strike:>7}  x{option.num}"
                 line += f"  unrealized={u:>8.2f}"
