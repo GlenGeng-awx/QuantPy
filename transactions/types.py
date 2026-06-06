@@ -19,8 +19,9 @@ OptionEntry = namedtuple('OptionEntry', ['date', 'side', 'status', 'price', 'num
 # (stock,)
 class StockContract:
 
-    def __init__(self, stock_name):
+    def __init__(self, stock_name, last_close):
         self.stock_name = stock_name
+        self.last_close = last_close
         self.entries = []
 
     def add(self, date, side, price, num, fee):
@@ -33,7 +34,7 @@ class StockContract:
         return buy - sell
 
     @property
-    def break_even(self):
+    def cost(self):
         if self.num == 0:
             return 0.0
         outflow = sum(entry.price * entry.num for entry in self.entries if entry.side == BUY)
@@ -42,11 +43,13 @@ class StockContract:
 
     @property
     def pnl(self):
-        """FIFO realized PnL: [(sell_date, buy_date, num, cost, sell_price, pnl)]"""
+        """(realized, unrealized, details) FIFO"""
         lots = []
         for entry in self.entries:
             if entry.side == BUY:
                 lots.append({'date': entry.date, 'price': entry.price, 'num': entry.num})
+
+        total_realized = 0
         details = []
         for entry in self.entries:
             if entry.side != SELL:
@@ -56,12 +59,18 @@ class StockContract:
                 lot = lots[0]
                 matched = min(lot['num'], to_sell)
                 realized = (entry.price - lot['price']) * matched
+                total_realized += realized
                 details.append((entry.date, lot['date'], matched, lot['price'], entry.price, realized))
                 lot['num'] -= matched
                 to_sell -= matched
                 if lot['num'] == 0:
                     lots.pop(0)
-        return details
+
+        unrealized = 0
+        for lot in lots:
+            unrealized += (self.last_close - lot['price']) * lot['num']
+
+        return total_realized, unrealized, details
 
     @property
     def ledger(self):
@@ -69,7 +78,7 @@ class StockContract:
         for entry in self.entries:
             if entry.side == BUY:
                 entries.append(('BUY', entry.date, entry.num, entry.price))
-        for sell_date, buy_date, num, cost, sell_price, pnl in self.pnl:
+        for sell_date, buy_date, num, cost, sell_price, pnl in self.pnl[2]:
             entries.append(('SELL', sell_date, num, sell_price, cost, pnl))
         entries.sort(key=lambda entry: entry[1])
         return entries
@@ -79,7 +88,12 @@ class StockContract:
         return sum(entry.fee for entry in self.entries)
 
     def __repr__(self):
-        return f"Stock: {self.num} shares  even={self.break_even:.2f}"
+        r, u, _ = self.pnl
+        lines = [
+            f"{self.num} shares  close={self.last_close:.2f}",
+            f"cost={self.cost:.2f}  realized={r:.2f}  unrealized={u:.2f}",
+        ]
+        return '\n'.join(lines)
 
 
 # (stock, CALL/PUT, expire, strike)

@@ -39,6 +39,13 @@ def load_price(stock_name):
     return pd.read_csv(path)
 
 
+def get_last_close(stock_name):
+    df = load_price(stock_name)
+    if df.empty:
+        raise ValueError(f"No price data for {stock_name}")
+    return df.iloc[-1]['close']
+
+
 def get_val(df, field, col_idx=0):
     if df.empty or field not in df.index or col_idx >= len(df.columns):
         return None

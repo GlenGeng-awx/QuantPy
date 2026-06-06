@@ -14,16 +14,17 @@ class Portfolio:
             self._positions.setdefault(stock_name, Position(stock_name)).add(entry)
 
     def display_total_pnl(self):
-        stock_realized, stock_fees = 0, 0
-        option_realized, option_unrealized, option_fees = 0, 0, 0
+        sr, su, sf = 0, 0, 0
+        or_, ou, of_ = 0, 0, 0
         for stock_name, position in self._positions.items():
-            stock_realized += to_usd(position.stock_realized, stock_name)
-            stock_fees += to_usd(position.stock_fees, stock_name)
-            option_realized += to_usd(position.option_realized, stock_name)
-            option_unrealized += to_usd(position.option_unrealized, stock_name)
-            option_fees += to_usd(position.option_fees, stock_name)
-        print(f"\nStock:  realized={stock_realized:.2f}  fees={stock_fees:.2f}")
-        print(f"Option: realized={option_realized:.2f}  unrealized={option_unrealized:.2f}  fees={option_fees:.2f}")
+            sr += to_usd(position.stock_realized, stock_name)
+            su += to_usd(position.stock_unrealized, stock_name)
+            sf += to_usd(position.stock_fees, stock_name)
+            or_ += to_usd(position.option_realized, stock_name)
+            ou += to_usd(position.option_unrealized, stock_name)
+            of_ += to_usd(position.option_fees, stock_name)
+        print(f"\n{'Stock:':<8} realized={sr:>10.2f}  unrealized={su:>10.2f}  fees={sf:>.2f}")
+        print(f"{'Option:':<8} realized={or_:>10.2f}  unrealized={ou:>10.2f}  fees={of_:>.2f}")
 
     def display_open(self):
         print("\n---------------------\nOpen Positions\n---------------------")
