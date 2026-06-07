@@ -4,9 +4,8 @@ from transactions.book import get_current_position
 from conf import *
 
 drill_down_full = [
-    (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=False)),
-    (period(8), with_overrides(FULL, enable_elliott=False, enable_line=False)),
-    (period(8), with_overrides(FULL, enable_elliott=False)),
+    (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=True)),
+    (period(8), with_overrides(FULL, enable_elliott=True, enable_neck_line=False, enable_line=True)),
     (period(8), FULL),
 ]
 
@@ -23,8 +22,37 @@ hologram = [
     (period(2), TWO_YEAR),
 ]
 
-for stock_name in ALL:
-    for (from_date, to_date, interval), args in hologram:
+Position = [
+    ETF_SSE_DIVIDEND,
+    ETF_CSI_300,
+    ETF_STAR_50,
+    ETF_CHI_NEXT,
+
+    QQQ,
+    SOX,
+    GLD,
+    BTC,
+    COIN,
+
+    KWEB,
+    PDD,
+    TME,
+    TCOM,
+
+    ADBE,
+    TTD,
+    PYPL,
+    CPNG,
+
+    #
+    TENCENT,
+    ORCL,
+    CRM,
+    NVO,
+]
+
+for stock_name in Position:
+    for (from_date, to_date, interval), args in drill_down_full:
         base_engine = BaseEngine(stock_name, from_date, to_date, interval)
         base_engine.build_graph(**args)
         base_engine.fig.show()
