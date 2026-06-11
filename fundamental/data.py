@@ -43,7 +43,10 @@ def get_last_close(stock_name):
     df = load_price(stock_name)
     if df.empty:
         raise ValueError(f"No price data for {stock_name}")
-    return df.iloc[-1]['close']
+    closes = df['close'].dropna()
+    if closes.empty:
+        raise ValueError(f"No close price for {stock_name}")
+    return closes.iloc[-1]
 
 
 def get_val(df, field, col_idx=0):
