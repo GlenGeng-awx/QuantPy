@@ -3,6 +3,7 @@ ETF_CSI_300 = "510300.SS"
 ETF_SSE_DIVIDEND = "510880.SS"
 ETF_STAR_50 = "588000.SS"
 ETF_CHI_NEXT = "159915.SZ"
+ETF_GLD_SH = "518680.SS"
 
 # US INDEX
 QQQ = "QQQ"
@@ -116,16 +117,17 @@ CN_INDEX = [
     ETF_SSE_DIVIDEND,
     ETF_STAR_50,
     ETF_CHI_NEXT,
+    ETF_GLD_SH,
 ]
 
 US_INDEX = [
+    GLD,
+    SLV,
+    BTC,
     QQQ,
     VOO,
     SOX,
     KWEB,
-    GLD,
-    SLV,
-    BTC,
 ]
 
 V_4000B = [

@@ -27,28 +27,26 @@ Position = [
     ETF_CSI_300,
     ETF_STAR_50,
     ETF_CHI_NEXT,
+    ETF_GLD_SH,
+    GLD,
 
     QQQ,
     SOX,
-    GLD,
     BTC,
     COIN,
 
     KWEB,
+    TENCENT,
     PDD,
     TME,
     TCOM,
 
+    ORCL,
+    SEA,
     ADBE,
     TTD,
     PYPL,
     CPNG,
-
-    #
-    TENCENT,
-    ORCL,
-    CRM,
-    NVO,
 ]
 
 for stock_name in Position:
