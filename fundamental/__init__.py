@@ -16,6 +16,6 @@ Health:
     python3 -m fundamental.health AAPL              # 单只评分
 
 Combine:
-    python3 -m fundamental.combine                  # cheap + health 合并排行
-    python3 -m fundamental.combine AAPL             # cheap 明细 + health 明细
+    python3 -m fundamental.combine                  # statements + cheap + health 合并输出
+    python3 -m fundamental.combine AAPL             # 单只：财报 + cheap + health
 """

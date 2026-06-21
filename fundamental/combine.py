@@ -1,6 +1,7 @@
 import sys
 from conf import ALL
 from fundamental.data import SKIP
+from fundamental.statements.__main__ import print_statements
 from fundamental.cheap.scoring import evaluate_stock as eval_cheap, print_detail as print_cheap_detail
 from fundamental.cheap.signals import SHORT as SIG_SHORT
 from fundamental.cheap.hints import SHORT as HINT_SHORT
@@ -55,6 +56,7 @@ def main():
     for stock_name in targets:
         cheap_result = eval_cheap(stock_name)
         health_result = eval_health(stock_name)
+        print_statements(stock_name)
         print_cheap_detail(cheap_result)
         print_health_detail(health_result)
         results.append({

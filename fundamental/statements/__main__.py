@@ -42,7 +42,7 @@ def merge_ttm(annual, ttm):
     return pd.concat([ttm, annual], axis=1)
 
 
-def print_stock(stock_name):
+def print_statements(stock_name):
     income_annual = merge_ttm(load_statement(stock_name, 'income_annual'),
                               load_statement(stock_name, 'income_ttm'))
     income_quarterly = load_statement(stock_name, 'income_quarterly')
@@ -63,13 +63,13 @@ def print_stock(stock_name):
 def main():
     if len(sys.argv) > 1:
         for stock_name in sys.argv[1:]:
-            print_stock(stock_name.upper())
+            print_statements(stock_name.upper())
     else:
         from conf import ALL
         from fundamental.data import SKIP
         for stock_name in ALL:
             if stock_name not in SKIP:
-                print_stock(stock_name)
+                print_statements(stock_name)
 
 
 if __name__ == '__main__':
