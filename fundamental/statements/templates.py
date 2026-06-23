@@ -5,6 +5,9 @@ INCOME_FIELDS = [
     '',
     '  Research And Development',
     '  Selling General And Administration',
+    '    Selling And Marketing Expense',
+    '    General And Administrative Expense',
+    '  Restructuring And Mergern Acquisition',
     '  Operating Expense',
     'Operating Income',
     '',
@@ -13,6 +16,9 @@ INCOME_FIELDS = [
     'Pretax Income',
     '  Tax Provision',
     'Net Income',
+    '',
+    '  Total Unusual Items',
+    'Normalized Income',
     '',
     '  Basic EPS',
     '  Diluted EPS',
@@ -27,6 +33,7 @@ BS_FIELDS = [
     '  Cash And Cash Equivalents',
     '  Other Short Term Investments',
     'Cash Cash Equivalents And Short Term Investments',
+    '  Restricted Cash',
     '  Accounts Receivable',
     '  Inventory',
     '  Other Current Assets',
@@ -54,6 +61,7 @@ BS_FIELDS = [
     'Total Non Current Liabilities Net Minority Interest',
     '',
     'Total Liabilities Net Minority Interest',
+    '  Total Debt',
     '',
     '  Common Stock',
     '  Additional Paid In Capital',
@@ -63,6 +71,8 @@ BS_FIELDS = [
     'Stockholders Equity',
     '',
     'Total Equity Gross Minority Interest',
+    '',
+    'Working Capital',
 ]
 
 CF_FIELDS = [
@@ -90,4 +100,7 @@ CF_FIELDS = [
     '',
     'Changes In Cash',
     'Free Cash Flow',
+    '',
+    '  Interest Paid Supplemental Data',
+    '  Income Tax Paid Supplemental Data',
 ]
