@@ -137,16 +137,16 @@ V_4000B = [
 ]
 
 V_3000B = [
-    MSFT,
 ]
 
 V_2000B = [
+    MSFT,
     AMZN,
-    AVGO,
     TSM,
 ]
 
 V_1000B = [
+    AVGO,
     META,
     TSLA,
     MU,
@@ -157,16 +157,16 @@ V_500B = [
     WMT,
     JPM,
     VISA,
-    TENCENT,
     JNJ,
     ASML,
     XOM,
     AMD,
-    ORCL,
     INTC,
 ]
 
 V_200B = [
+    TENCENT,
+    ORCL,
     MA,
     NFLX,
     CVX,
@@ -193,19 +193,19 @@ V_100B = [
     UBER,
     PDD,
     CRM,
-    ADBE,
     SPOT,
 ]
 
 V_50B = [
+    ADBE,
     HOOD,
-    COIN,
     NU,
     SEA,
     SNOW,
 ]
 
 V_20B = [
+    COIN,
     PYPL,
     CPNG,
     EBAY,
@@ -225,7 +225,6 @@ V_20B = [
 V_10B = [
     BEKE,
     FUTU,
-    TTD,
     TME,
     PINS,
     LI,
@@ -234,6 +233,7 @@ V_10B = [
 ]
 
 V_SMALL = [
+    TTD,
     SNAP,
     BILI,
     KLAR,
