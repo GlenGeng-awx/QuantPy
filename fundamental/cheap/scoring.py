@@ -55,7 +55,7 @@ def print_detail(result):
 
 def print_ranking(results):
     results.sort(key=lambda r: r['count'], reverse=True)
-    header = '{:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>5}  | {:>4} {:>4} {:>4} {:>4}'.format(
+    header = '{:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>6} {:>6}  | {:>4} {:>4} {:>4} {:>4}'.format(
         'Stock', *SIG_SHORT, *HINT_SHORT)
     width = len(header) + 4
     print('\n' + '=' * width)
@@ -66,6 +66,6 @@ def print_ranking(results):
     for r in results:
         signals = [value if hit else '' for hit, value, _ in r['signals']]
         hints = ['✓' if hit else '' for hit, _, _ in r['hints']]
-        print('  {:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>5}  | {:>4} {:>4} {:>4} {:>4}'.format(
+        print('  {:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>6} {:>6}  | {:>4} {:>4} {:>4} {:>4}'.format(
             r['stock'], *signals, *hints))
     print('=' * width + '\n')

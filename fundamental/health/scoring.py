@@ -1,4 +1,4 @@
-from fundamental.data import load_statement, load_info, load_price, format_value, get_info_val
+from fundamental.data import load_statement, load_info, load_price, format_value, get_info_val, get_val
 from fundamental.health.helpers import score_dimension
 from fundamental.health.income import eval_income_3yr, eval_income_ttm, eval_income_5q
 from fundamental.health.cashflow import eval_cf_3yr, eval_cf_ttm, eval_cf_5q
@@ -58,6 +58,38 @@ def fmt_score(score, width=4):
     return '{:>{}.0f}'.format(score, width)
 
 
+def _compute_roic(data):
+    # NOPAT / 投入资本(债+权益−现金及短投,剔闲置流动资产);金融股/负分母/低谷各有护栏
+    info = data.get('info', {})
+    if 'Financial' in (info.get('sector') or ''):
+        return None, 'financial'  # 银行/保险 ROIC 无意义,看 ROA
+
+    income_ttm = data.get('income_ttm')
+    bs_quarterly = data.get('bs_quarterly')
+
+    op_income = get_val(income_ttm, 'Operating Income')
+    debt = get_val(bs_quarterly, 'Total Debt')
+    equity = get_val(bs_quarterly, 'Stockholders Equity')
+    if op_income is None or debt is None or equity is None:
+        return None, 'n/a'
+
+    tax_rate = get_val(income_ttm, 'Tax Rate For Calcs')
+    if tax_rate is None or tax_rate < 0 or tax_rate > 0.5:
+        tax_rate = 0.21
+
+    cash = get_val(bs_quarterly, 'Cash Cash Equivalents And Short Term Investments')
+    if cash is None:
+        cash = get_val(bs_quarterly, 'Cash And Cash Equivalents') or 0
+
+    invested_capital = debt + equity - cash
+    if invested_capital <= 0:
+        return None, 'n/m'  # 净现金>投入资本 或 回购致负权益,分母失效
+
+    nopat = op_income * (1 - tax_rate)
+    roic = nopat / invested_capital
+    return roic, ('trough' if op_income < 0 else '')
+
+
 def print_summary(data):
     info = data.get('info', {})
 
@@ -65,24 +97,45 @@ def print_summary(data):
     mcap = info.get('marketCap')
     pe = get_info_val(info, 'trailingPE')
     ps = get_info_val(info, 'priceToSalesTrailing12Months')
+    pb = get_info_val(info, 'priceToBook')
     peg = get_info_val(info, 'pegRatio')
     ev_ebitda = get_info_val(info, 'enterpriseToEbitda')
 
-    parts = [
+    # 身份/规模
+    ident = [
         'Price: ${:.2f}'.format(price) if price else 'Price: -',
         'MCap: {}'.format(format_value(mcap)) if mcap else 'MCap: -',
+    ]
+    print('  ' + '  '.join(ident))
+
+    # 好价格:估值倍数
+    value = [
         'P/E(TTM): {:.1f}'.format(pe) if pe and pe > 0 else 'P/E(TTM): -',
         'P/S(TTM): {:.1f}'.format(ps) if ps else 'P/S(TTM): -',
-        'PEG: {:.1f}'.format(peg) if peg else 'PEG: -',
+        'P/B: {:.1f}'.format(pb) if pb and pb > 0 else 'P/B: -',
         'EV/EBITDA: {:.1f}'.format(ev_ebitda) if ev_ebitda else 'EV/EBITDA: -',
+        'PEG: {:.1f}'.format(peg) if peg else 'PEG: -',
     ]
+    print('  ' + '  '.join(value))
 
-    print('  ' + '  '.join(parts))
+    # 好公司:资本回报(ROIC 剔杠杆与闲置现金,比 ROE 回购虚高/ROA 商誉虚低干净)
+    roic, note = _compute_roic(data)
+    roe = info.get('returnOnEquity')
+    roa = info.get('returnOnAssets')
+    if roic is None:
+        roic_str = 'ROIC: ' + {'financial': 'n/m(financial)', 'n/m': 'n/m'}.get(note, '-')
+    else:
+        roic_str = 'ROIC: {:.1f}%{}'.format(roic * 100, '(trough)' if note == 'trough' else '')
+    quality = [
+        roic_str,
+        'ROE: {:.1f}%'.format(roe * 100) if roe is not None else 'ROE: -',
+        'ROA: {:.1f}%'.format(roa * 100) if roa is not None else 'ROA: -',
+    ]
+    print('  ' + '  '.join(quality))
 
     mkt_ccy = info.get('currency', '')
     fin_ccy = info.get('financialCurrency', '')
-    if mkt_ccy and fin_ccy and mkt_ccy != fin_ccy:
-        print('  Stock price in {}; Financial statements in {}'.format(mkt_ccy, fin_ccy))
+    print('  Stock price in {}; Financial statements in {}'.format(mkt_ccy, fin_ccy))
 
 
 def print_detail(result):

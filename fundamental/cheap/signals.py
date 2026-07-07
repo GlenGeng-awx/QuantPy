@@ -72,8 +72,19 @@ def check_ps(data):
     return ps < 2.0, '{:.1f}x'.format(ps), 'MCap={}, Rev={}'.format(mcap, rev)
 
 
+def check_pb(data):
+    # 阈值 1.5 = 周期股便宜阈值(金融股 <1.0);轻资产 P/B 天然高,不触发,靠 P/E/回撤入池
+    info = data['info']
+    pb = get_info_val(info,'priceToBook')
+    if pb is None or pb <= 0:
+        return False, '-', ''
+    bv = info.get('bookValue')
+    bv = '{:.1f}'.format(bv) if bv else '-'
+    return pb < 1.5, '{:.1f}x'.format(pb), 'BV={}'.format(bv)
+
+
 CHECKS = [check_1y_drawdown, check_2y_drawdown, check_near_52w_low,
-          check_pe, check_ev_ebitda, check_ps]
+          check_pe, check_ps, check_pb, check_ev_ebitda]
 LABELS = ['1Y Drawdown', '2Y Drawdown', 'Near 52W Low',
-          'P/E TTM', 'EV/EBITDA', 'P/S']
-SHORT = ['1Y', '2Y', '52W', 'P/E', 'EV/E', 'P/S']
+          'P/E TTM', 'P/S TTM', 'P/B', 'EV/EBITDA']
+SHORT = ['1Y', '2Y', '52W', 'P/E', 'P/S', 'P/B', 'EV/E']
