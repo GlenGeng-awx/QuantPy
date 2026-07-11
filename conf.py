@@ -36,6 +36,7 @@ SHOP = "SHOP"           # Shopify
 PINS = "PINS"           # Pinterest
 XYZ = "XYZ"             # Block
 COIN = "COIN"           # Coinbase
+CRCL = "CRCL"           # Circle
 SEA = "SE"              # Shopee
 CPNG = "CPNG"           # Coupang
 ADBE = "ADBE"
@@ -230,6 +231,7 @@ V_10B = [
     LI,
     XPEV,
     NIO,
+    CRCL,
 ]
 
 V_SMALL = [

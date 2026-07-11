@@ -66,7 +66,7 @@ class Position:
         if self.stock.num > 0:
             for line in str(self.stock).split('\n'):
                 print(f"\t{line}")
-            print(f"\tcost(w/ options)={self.cost_with_options:.2f}")
+            print(f"\tcost(w/ options)={self.cost_with_options:.2f}\n")
         open_options = [o for o in self.options if not o.closed]
         open_options.sort(key=lambda o: o.expire)
         for option in open_options:
