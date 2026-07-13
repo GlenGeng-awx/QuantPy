@@ -191,3 +191,7 @@ FCF/股 = 14.66B ÷ 871M            = $16.83
 
 **降级信号（基本面，非价格）**：营收增速跌破 8% / seat 数或净留存率下滑（AI 颠覆坐实）→ 滑向价值陷阱。
 **升级信号**：整体营收重加速回 ≥15%（Agentforce 兑现）+ 去杠杆 → 折扣升至 ×0.67，向"入选/最佳买点"靠。
+
+---
+
+**Delta 2026-07-12 reconfirm**：7/7 发布 Agentic Advisor for RIAs（AI 变现追赶），7/9 IBD 降级称"Agentforce as a product just isn't there"——产品可行性遭质疑，直接关联 base 存疑核心（AI agent 颠覆 seat 模式）。股价 −1.7% 不动（$166→$163），仍在满仓 $120 ~ 合理价 $200 之间。**结论不变**：g=10%、合理价~$200、满仓 $120、好公司×存疑。Agentforce 疑虑确认了 base 已识别的存疑风险，非新 thesis 变化。
