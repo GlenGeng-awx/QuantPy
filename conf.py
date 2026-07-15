@@ -22,6 +22,7 @@ GOOG = "GOOG"
 AMZN = "AMZN"
 TSLA = "TSLA"
 META = "META"
+SPCX = "SPCX"
 
 # TECHNOLOGY
 NFLX = "NFLX"
@@ -150,6 +151,7 @@ V_1000B = [
     AVGO,
     META,
     TSLA,
+    SPCX,
     MU,
     LLY,
 ]
