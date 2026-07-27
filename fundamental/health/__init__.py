@@ -42,8 +42,8 @@ INCOME STATEMENT
   EPS Q YoY              15    同上
   Revenue 4Q +           10    全正=pass; 1季负=warn; 多季负=fail
   Op Income 4Q +         15    同上
-  GM Trend 4Q            15    环比不下降=pass; 轻微下降=warn; 明显恶化=fail
-  NM Trend 4Q            15    同上
+  GM Q YoY               15    同比不下降=pass; 轻微下降=warn; 明显恶化=fail
+  NM Q YoY               15    同上
 
 ===================================================================
 CASH FLOW

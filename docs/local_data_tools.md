@@ -94,7 +94,7 @@ python3 -m fundamental.download STOCK               # 仅下载/更新数据
 | 5Q | Revenue Q YoY | quarterly 最新季 vs 同季去年 | 正增长 = pass |
 | 5Q | EPS Q YoY | quarterly EPS | 正增长 = pass |
 | 5Q | Revenue 4Q+ | 近 4 季全正 | 4/4 正 = pass |
-| 5Q | GM/NM Trend 4Q | 近 4 季 GM/NM 趋势 | 不下滑 = pass |
+| 5Q | GM/NM Q YoY | 同季 GM/NM 同比趋势 | 不下滑 = pass |
 
 ### CF 检查项
 

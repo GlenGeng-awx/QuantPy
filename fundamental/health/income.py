@@ -203,13 +203,13 @@ def _check_4q_positive(data, field, label, pts):
     return make_result(label, status, value, detail, pts)
 
 
-def _check_4q_margin_trend(data, numerator_field, denominator_field, label, pts):
+def _check_margin_yoy(data, numerator_field, denominator_field, label, pts):
     quarterly = data['income_quarterly']
-    if quarterly.empty or len(quarterly.columns) < 4:
+    if quarterly.empty or len(quarterly.columns) < 5:
         return make_result(label, 'skip', '-', 'Insufficient data', pts)
 
     margins = []
-    for i in range(4):
+    for i in range(5):
         num = get_val(quarterly, numerator_field, i)
         den = get_val(quarterly, denominator_field, i)
         if num is None or den is None or den == 0:
@@ -217,15 +217,14 @@ def _check_4q_margin_trend(data, numerator_field, denominator_field, label, pts)
         else:
             margins.append(num / den)
 
-    valid = [m for m in margins if m is not None]
-    if len(valid) < 4:
+    if margins[0] is None or margins[4] is None:
         return make_result(label, 'skip', '-', 'Incomplete data', pts)
 
     value = '{:.1f}%'.format(margins[0] * 100)
-    drop = margins[0] - margins[3]
-    detail = '{:.1f}% -> {:.1f}%'.format(margins[3] * 100, margins[0] * 100)
+    drop = margins[0] - margins[4]
+    detail = '{:.1f}% -> {:.1f}% (YoY)'.format(margins[4] * 100, margins[0] * 100)
 
-    if margins[0] >= margins[3]:
+    if margins[0] >= margins[4]:
         status = 'pass'
     elif drop >= -0.03:
         status = 'warn'
@@ -242,6 +241,6 @@ def eval_income_5q(data):
         _check_q_yoy(data, 'Diluted EPS', 'EPS Q YoY', 15),
         _check_4q_positive(data, 'Total Revenue', 'Revenue 4Q +', 10),
         _check_4q_positive(data, 'Operating Income', 'Op Income 4Q +', 15),
-        _check_4q_margin_trend(data, 'Gross Profit', 'Total Revenue', 'GM Trend 4Q', 15),
-        _check_4q_margin_trend(data, 'Net Income', 'Total Revenue', 'NM Trend 4Q', 15),
+        _check_margin_yoy(data, 'Gross Profit', 'Total Revenue', 'GM Q YoY', 15),
+        _check_margin_yoy(data, 'Net Income', 'Total Revenue', 'NM Q YoY', 15),
     ]
