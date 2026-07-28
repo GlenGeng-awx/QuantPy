@@ -107,7 +107,7 @@ def detect_2a_other_income_mtm(ttm_gv, ttm_has, q_gv, q_has, q_periods, ni):
 
 
 def detect_2b_restructuring(ttm_gv, ttm_has):
-    """2b: Restructuring charges (HIGH confidence)"""
+    """2b: Restructuring charges (FLAG ONLY - expense not gain, per 'don't add back losses')"""
     if not ttm_has('Restructuring And Mergern Acquisition'):
         return None
     r = ttm_gv('Restructuring And Mergern Acquisition')
@@ -115,8 +115,8 @@ def detect_2b_restructuring(ttm_gv, ttm_has):
         return {
             'name': '2b:Restructuring',
             'amount_pretax': r,
-            'confidence': 'high',
-            'detail': '%s' % '{:,.0f}'.format(r),
+            'confidence': 'low',
+            'detail': '%s (expense, flag only)' % '{:,.0f}'.format(r),
         }
     return None
 
@@ -365,7 +365,7 @@ def normalize_eps(stock):
         diff = abs(other_amt - unusual)
         base = max(abs(other_amt), abs(unusual), 1)
         ratio = diff / base
-        if ratio < 0.10:
+        if ratio < 0.20:
             # Overlap — use larger
             if abs(unusual) > abs(other_amt):
                 other_finding['amount_pretax'] = unusual
@@ -397,9 +397,9 @@ def normalize_eps(stock):
         if conf == 'low':
             continue  # flag only, don't auto-strip
         if f.get('amount_pretax') is not None:
-            total_pretax_adj += f['amount_pretax']
+            total_pretax_adj += max(0, f['amount_pretax'])
         elif f.get('amount_after_tax') is not None:
-            total_after_tax_adj += f['amount_after_tax']
+            total_after_tax_adj += max(0, f['amount_after_tax'])
 
     # Tax rate: use historical average if 2c triggered, else TTM
     hist_rates = []

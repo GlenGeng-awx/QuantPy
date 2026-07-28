@@ -102,12 +102,14 @@ key:  Other Income Expense, Net Non Operating Interest Income Expense
 
 > ⚠ **半年报复查**：半年报公司（中概/港股如 0700.HK/BABA/PDD/JD）季度 CSV 多数为零 → vol_ratio 虚高 > 2 → **假阳性**。分析时若季度 CSV {N}/{M} 期为零，标"假阳性"，不计为真波动。详见已知问题 #6。
 
-### 2b: Restructuring → 重组费用（高信心）
+### 2b: Restructuring → 重组费用（只标记不自动剔）
 
 ```
 若 ['Restructuring And Mergern Acquisition'][0] ≠ $0 → 标记
-amount = 该值（pre-tax）
+amount = 该值（pre-tax，仅供分析参考，不进 total_strip）
 ```
+
+> ⚠ 重组是**费用**不是收益。CSV 存正数（=费用金额），旧版误当收益剥离 = `Pretax − 重组` 双重扣减（GAAP 已扣一次）。Per "**只剔收益不加回亏损**"：费用不剥离，留在 GAAP NI。另：重组常连续多年 = 经常性，非一次性。若确认真一次性，Task D 手动加回。
 
 ### 2c: Tax → 税率异常（中信心）
 
@@ -178,7 +180,7 @@ amount = NI_total - NI_continuing（after-tax）
 1. 工具抓了我没抓的？→ 补上
 2. 我抓了工具没抓的？→ 预期行为（工具漏剔非 Unusual MTM）
 3. 两者重叠？
-   若 |某项 - Unusual| / max < 10% → 同一项目，取大值，不重复剔
+   若 |某项 - Unusual| / max < 20% → 同一项目，取大值，不重复剔
    若差异大 → 独立项目，都剔
 ```
 
@@ -221,7 +223,7 @@ v3.1 EPS = v3.1 NI / 稀释股数
 | Detector | 信心 | 自动剔？ | 理由 |
 |----------|------|---------|------|
 | 2a OtherInc (MTM) | 高 | ✅ | 波动 = MTM 几乎确定 |
-| 2b Restructuring | 高 | ✅ | 明确归类 |
+| 2b Restructuring | 中 | ❌ 只标记 | 费用非收益，per"不加回亏损"不剥离；常连续多年=经常性 |
 | 2h Discontinued | 高 | ✅ | 明确归类 |
 | 2c TaxAnomaly | 中 | ✅ | 可能是税率结构变化 |
 | 2e GMDrop | 中 | ✅ | 可能结构性 GM 下滑 |
@@ -257,4 +259,5 @@ python3 -c "import sys; sys.path.insert(0,'docs'); from normalize_eps import nor
 4. **OpIncDrop 无法量化**：需外部 10-K 确认 IPR&D/减值金额
 5. **min() 原则**：正常化 EPS 永远 ≤ GAAP EPS → 只防"买贵"，不追"低估修复"的 alpha
 6. **半年报假阳性**（NEW）：detector 2a 用季度波动率判断 OtherInc 是否波动。半年报公司（0700.HK、BABA、PDD、JD 等中概/港股）季度 CSV 多数为零 → vol_ratio = (max−0)/(avg含零) 虚高 > 2 → **误触发**。实质是"数据缺失被当成高波动"，非投资收益真波动。→ 分析时**必须半年报复查**：若季度 CSV {N}/{M} 期为零，标"假阳性"，v3.1 在此情况下过度保守
-7. **OtherInc 与 Unusual 重叠但判独立**（NEW）：EPS-3 交叉验用 `|OtherInc − Unusual| / max < 10%` 判重叠。但投资控股型公司两者可能含交叉投资收益却差异率 >10% → 判独立 → 双重剥离同一笔收益 → 过度保守。→ 分析时检查 OtherInc 子项与 Unusual 是否有交叉，若有则标注"可能重叠但判独立"
+7. **OtherInc 与 Unusual 重叠但判独立**（NEW）：EPS-3 交叉验用 `|OtherInc − Unusual| / max < 10%` 判重叠。但投资控股型公司两者可能含交叉投资收益却差异率 >10% → 判独立 → 双重剥离同一笔收益 → 过度保守。→ 分析时检查 OtherInc 子项与 Unusual 是否有交叉，若有则标注"可能重叠但判独立"。**v3.1 已修：阈值 10%→20%，当两者均为正（收益）且 diff < 20% → 取 max 不重复剔**
+8. **Restructuring 双重扣减**（NEW，已修）：detector 2b 旧版将重组费用（CSV 正数=费用）当收益剥离 → `Pretax − 重组` = GAAP 已扣一次 + v3.1 再扣一次 = 双重扣减。且重组常连续多年（CRM 5 年、ORCL 等）= 经常性非一次性。**已修：2b 改为只标记不自动剔（confidence=low）**，per"只剔收益不加回亏损"原则，费用留在 GAAP NI
