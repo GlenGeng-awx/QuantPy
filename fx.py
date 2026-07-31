@@ -1,5 +1,3 @@
-from conf import *
-
 FX = {
     'USD': 1.0,
     'HKD': 7.83,
@@ -9,15 +7,6 @@ FX = {
     'EUR': 0.86,
     'SEK': 9.37,
 }
-
-TRADING = {
-    TENCENT: FX['HKD'],
-}
-
-
-def to_usd(amount, stock_name, scenario=TRADING):
-    rate = scenario.get(stock_name, 1.0)
-    return amount / rate
 
 
 def correct_ratio(info, key):

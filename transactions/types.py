@@ -90,8 +90,8 @@ class StockContract:
     def __repr__(self):
         r, u, _ = self.pnl
         lines = [
-            f"{self.num} shares  close={self.last_close:.2f}",
-            f"cost={self.cost:.2f}  realized={r:.2f}  unrealized={u:.2f}",
+            f"{self.num} shares  cost={self.cost:.2f}  close={self.last_close:.2f}",
+            f"realized={r:.2f}  unrealized={u:.2f}",
         ]
         return '\n'.join(lines)
 
