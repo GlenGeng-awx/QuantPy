@@ -1,6 +1,6 @@
 from base_engine import BaseEngine
 from preload_conf import period, FULL, FOUR_YEAR, TWO_YEAR, with_overrides
-from transactions.book import get_current_position
+from transactions.portfolio import get_current_positions
 from conf import *
 
 drill_down_full = [
@@ -21,33 +21,6 @@ hologram = [
     (period(8), FULL),
     (period(4), FOUR_YEAR),
     (period(2), TWO_YEAR),
-]
-
-Position = [
-    ETF_SSE_DIVIDEND,
-    ETF_CSI_300,
-    ETF_STAR_50,
-    ETF_CHI_NEXT,
-    ETF_GLD_SH,
-    GLD,
-
-    QQQ,
-    SOX,
-    BTC,
-    COIN,
-
-    KWEB,
-    TENCENT,
-    PDD,
-    TME,
-    TCOM,
-
-    ORCL,
-    SEA,
-    ADBE,
-    TTD,
-    PYPL,
-    CPNG,
 ]
 
 for stock_name in ALL:

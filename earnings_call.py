@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from conf import *
 from util import sort_stock_names
+from transactions import get_current_positions
 
 #
 # https://www.nasdaq.com/market-activity/stocks/orcl/earnings
@@ -949,6 +950,7 @@ Earnings_Call = {
         '2023-02-02',
     ],
     SEA: [
+        '2026-08-11',
         '2026-05-12',
         '2026-03-03',
 
@@ -1028,6 +1030,7 @@ Earnings_Call = {
         '2023-02-14',
     ],
     JD: [
+        '2026-08-13',
         '2026-05-12',
         '2026-03-05',
 
@@ -1456,15 +1459,39 @@ Earnings_Call = {
         '2026-05-14',
         '2026-02-19',
     ],
+    CRCL: [
+        '2026-08-05',
+        '2026-05-11',
+        '2026-02-25',
+
+        '2025-11-12',
+        '2025-08-12',
+    ],
+    SPCX: [
+        '2025-08-04',
+    ],
+    MU: [
+        '2026-06-24',
+        '2026-03-18',
+
+        '2025-12-17',
+        '2025-09-23',
+        '2025-06-25',
+        '2025-03-20',
+    ],
 }
 
 
-def filter_earnings_call():
+def filter_earnings_call(only_open=False):
+    open_positions = set(get_current_positions()) if only_open else None
+
     past_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m-%d')
     incoming_date = (datetime.now() + relativedelta(months=1)).strftime('%Y-%m-%d')
 
     hits = {}
     for stock_name, dates in Earnings_Call.items():
+        if open_positions is not None and stock_name not in open_positions:
+            continue
         for date in dates:
             if past_date <= date <= incoming_date:
                 hits.setdefault(date, []).append(stock_name)
@@ -1489,4 +1516,4 @@ def filter_earnings_call():
 
 
 if __name__ == '__main__':
-    filter_earnings_call()
+    filter_earnings_call(only_open=True)
