@@ -1,5 +1,5 @@
 # TTD — Task C：增长前瞻 + 护城河 + 管理层 + 消息面
-> 更新: 2026-07-27
+> 更新: 2026-08-04
 
 ## C.1 增长前瞻（产出 g）
 
@@ -11,7 +11,7 @@
 | 2 | OpInc 3yr CAGR | 73% | 低基数扭曲（$113M→$589M），不可用 |
 | 3 | EPS 3yr CAGR | 101% | 极端低基数（$0.11→$0.90），不可用 |
 | 4 | 近期季度 YoY | +11.8% | Q1'26 $688M vs Q1'25 $616M |
-| 5 | PEG 隐含 g | ~24% | PEG 0.8, P/E 19.6 → 市场预期偏高，不可靠 |
+| 5 | PEG 隐含 g | ~26% | PEG 0.8, P/E 20.5 → 市场预期偏高，不可靠 |
 
 ### 外部判断
 
@@ -76,24 +76,29 @@
 | 2026-07-20 | 整个商业团队重建曝光：CCO/CBDO/CMO/board director 全新，8/6 财报前到位 | [TIKR](https://www.tikr.com/blog/the-trade-desk-just-rebuilt-its-entire-commercial-team-before-its-august-earnings) |
 | 2026-07-27 | Argyilan（CCO）+ Lamprecht（CBDO）正式入职 | TIKR |
 | 2026-08-06 | **Q2'26 财报发布（关键催化）** | — |
+| 2026-08-01 | Simply Wall St："TTD 38% 低估，79% 回落后估值合理" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
+| 2026-08-03 | Wedbush："Q2 Likely In-Line Amid Long-Term Structural Headwinds" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
+| 2026-08-03 | Zacks："TTD Set to Report Q2 Earnings: Here's What to Expect" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
+| 2026-08-03 | **Street Q2 共识已降至 $751.6M 营收 + $0.41 EPS**（vs 7/27 指引 ≥$750M → 共识从 $771M 下修至 guidance floor，de-risked） | Yahoo Finance |
 | 2026-03 | Publicis 建议客户停用 TTD 平台（FirmDecisions 第三方审计指控费率不当），TTD 否认，纠纷未解决 | TIKR |
 | 持续 | Amazon DSP 竞争加剧（0-1% vs TTD 20% take rate） | 多源 |
 
-Delta vs 上次分析（7/4）：
-- **新增**：CFO 永久落定 + 整个商业团队重建（CCO/CBDO/CMO/board）+ Publicis 纠纷曝光 + Q2 财报日期确认 8/6
-- **未变**：Amazon 竞争持续、增速降档趋势未逆转
+Delta vs 上次分析（7/27）：
+- **新增**：Street Q2 共识从 $771M 降至 $751.6M（已 de-risk 到 guidance floor）+ Wedbush "in-line" 定调 + Simply Wall St "38% 低估" + Zacks 预览
+- **已变**：Q2 指引 miss 叙事（≥$750M < 共识 $771M → −14% 盘后）已被 "in-line" 替代——共识降至 $751.6M = guidance floor
+- **未变**：Amazon 竞争持续、增速降档趋势未逆转、Publicis 纠纷未解决
 
 ## C.5 熊市逻辑
 
 1. **GM 创 8 季新低 73.6%**，3yr 下滑（81.2%→78.6%→73.6%）——定价权/费率被侵蚀
 2. **Amazon DSP 结构性威胁**（0-1% vs TTD ~20% take rate），已迫使松费率
 3. **增速持续降档**：25% → 18% → 12% → 8% Q2 指引
-4. **Q2 指引 miss**（≥$750M < 共识 $771M → −14% 盘后）
+4. **Q2 指引 miss 已被定价**：共识从 $771M 降至 $751.6M = guidance floor，"miss" 叙事转为 "in-line"（Wedbush）— 但 in-line 意味着无 beat 上行
 5. **一年四换 CFO** + CRO/COO/CTO 离职 = 治理危机（新团队待验证）
 6. **Publicis 纠纷未解决**，代理商客户审计削弱能见度
 7. **SBC 15.9%/Rev**，吃掉 57% FCF
 8. 留存收益 −$724M（回购激进超利润）
-9. 前瞻 P/E ~16x 对 10% 增速属公允，非便宜
+9. 前瞻 P/E 16.3x 对 10% 增速属公允，非便宜
 10. PEG 0.8 → 市场仍 pricing ~24% 增长 → 若增长不及，估值进一步压缩
 
 ## C.6 牛市逻辑
@@ -101,11 +106,11 @@ Delta vs 上次分析（7/4）：
 1. **独立 DSP 龙头**，无利益冲突（vs Google/Amazon 既拥库存又做需求方）
 2. **CTV 长期领导者**（low-50s% 营收），线性 TV 预算持续迁移
 3. **无债 + 净现金 $1.0B**，下行缓冲
-4. **FCF yield 10.2%**，40% EBITDA margin
+4. **FCF yield 9.7%**，40% EBITDA margin
 5. **真缩股 −5.2%/5Q**（Net Return +$686M）
 6. **ROIC 26.7%**
 7. **整个商业团队重建**：ex-Amazon/Uber/Google/LinkedIn 高管入职，直指 retail media 增长
 8. **新产品 Audience Unlimited**（CPM −30%、转化 2.7x 测试数据）
 9. **Retail media 扩张**（Koddi + Dollar General 合作；retailers 覆盖 >80% top US 零售 vs Amazon <15%）
-10. **−81% 自峰值，0-5th 分位** → 预期极低，8/6 财报 = 催化（Q3 guide >8% = 重建有效）
+10. **−81% 自峰值，0.0th 分位** → 预期极低，共识已 de-risk 到 guidance floor，8/6 财报 = 催化（Q3 guide >8% = 重建有效）
 11. GAAP 盈利干净，无正常化需要
