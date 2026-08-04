@@ -34,7 +34,7 @@ EPS = min(GAAP EPS, 工具 EPS, v3.1 EPS)
 ### D.1b 确定前瞻 g（来自 Task C）
 
 ```
-g = 历史与前瞻的保守交集
+g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
 
 详见 forward_g.md
 

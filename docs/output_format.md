@@ -9,8 +9,7 @@ ai_report/{STOCK}/
 ├── output_a.md    价格粗筛 + 估值分位
 ├── output_b.md    财务健康 + 正常化 EPS
 ├── output_c.md    增长前瞻 + 护城河 + 管理层 + 消息面 + 熊牛
-├── output_d.md    估值汇聚 + 安全边际 + 仓位定档
-└── delta.md     变更日志（可选）
+└── output_d.md    估值汇聚 + 安全边际 + 仓位定档
 ```
 
 跨标的对比存 `ai_report/comparison.{YYYY-MM-DD}.md`。
@@ -29,7 +28,7 @@ ai_report/{STOCK}/
 | 价格漂移（trivial） | 全不动 | — |
 | 价格稳稳跨档（>3-5%） | output_a（粗筛）+ output_d（安全边际/定档） | B、C |
 | 财报发布 | output_b + output_c（g）+ output_d（合理价重算）+ output_a（P/E 可能变） | — |
-| 消息面 non-trivial | output_c（delta） | A、B、D |
+| 消息面 non-trivial | output_c | A、B、D |
 | 无变化 | 全不动 | — |
 
 ---
@@ -137,10 +136,10 @@ FCF − SBC = {值} {正/负}
 - adj: {±N}%
 - detectors: {触发的 detector 名称}
 
-### GAAP NI → v3.1 桥接
+### GAAP → v3.1 桥接
 
 ```
-GAAP 净利                    {NI}
+GAAP 税前                    {Pretax}
   − OtherInc 剥离（税前）      {amount}    ← detector 2a
   − Unusual 剥离（税前）       {amount}    ← 工具标记
   = 正常化税前               {norm_pretax}
@@ -382,20 +381,6 @@ FCF−SBC {正/负}、护城河{宽窄}、缩股{趋势}）× 麻烦{档次}
 | 日期 | 现价 | P/E | 安全边际 | 定档 |
 |------|------|-----|---------|------|
 | {日期} | ${值} | {N}x | {N}% | {定档} |
-```
-
----
-
-## delta.md 格式（可选）
-
-```markdown
-# {STOCK} — 变更日志
-
-| 日期 | Task | 改动 | 原因 |
-|------|------|------|------|
-| 2026-07-15 | B | EPS $17.49→$17.39 | v3.1 detector Unusual |
-| 2026-07-15 | D | 合理价 $298→$296 | EPS 变 |
-| 2026-07-14 | C | g 8.5%→9% | 管理层上调 FY 指引 |
 ```
 
 ---

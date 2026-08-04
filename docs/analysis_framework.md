@@ -40,7 +40,7 @@
 | 要素 | 性质 | checklist | 原则 |
 |------|------|-----------|------|
 | **正常化 EPS** | 事实性（财报算） | `normalize_eps.md` | min(GAAP, tool, v3.1) — 三者取最低 |
-| **前瞻 g** | 半预测（历史+共识+指引） | `forward_g.md` | 保守交集，不外推高增长 |
+| **前瞻 g** | 半预测（历史+共识+指引） | `forward_g.md` | 剔高+均值，不外推高增长 |
 | **折扣系数** | 判断性（质量×麻烦） | `discount_coefficient.md` | 7分评分+4档定性→交叉查表 |
 
 三重保守 → 合理价偏低 → 需要更便宜才出手 → **哪怕错过，不要做错**
@@ -83,20 +83,20 @@ B 可给 D 一个**预判**（EPS 已定，折扣地板可估），C 完成后�
 
 > 多币种股（ADR/港股）做 EPS 转换时，用当前汇率，不抄旧报告。
 >
-> **更新日期：2026-07-26** | 每 3-5 天更新一次下表数值。
+> **更新日期：2026-08-02** | 每 3-5 天更新一次下表数值。
 
 | 币种对 | 近似值 | 涉及标的 |
 |--------|--------|---------|
 | CNY/USD | ~6.8 | BABA PDD JD TCOM BIDU BILI FUTU TME BEKE LI XPEV NIO |
 | CNY/HKD | ~1.1 | 0700.HK |
 | TWD/USD | ~32 | TSM |
-| EUR/USD | ~1.08 | ASML NVO BNTX SPOT |
-| DKK/USD | ~6.9 | NVO |
+| EUR/USD | ~1.15 | ASML BNTX SPOT |
+| DKK/USD | ~6.48 | NVO |
 | SEK/USD | ~10.5 | ERIC |
 | KRW/USD | ~1350 | CPNG |
 | SGD/USD | ~1.35 | SE |
 
-> ⚠ 上表为近似值，会变。看更新日期判断是否过期。也可从 info.json 反推：`FX = EPS_财报币种 ÷ trailingEps_USD`。
+> ⚠ 上表为近似值，会变。看更新日期判断是否过期。也可从 info.json 反推：`FX = EPS_财报币种 ÷ trailingEps_USD`（如 NVO：DKK 27.41 ÷ $4.18 = 6.56，与 spot 6.48 差 ~1.2%，EPS 转换用反推值更与 ADR 报告口径一致）。
 
 ---
 

@@ -43,8 +43,11 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 9. `docs/local_data_tools.md` — 工具用法 + 数据格式速查
 10. `docs/output_format.md` — 输出格式 + 存档规则
 11. `docs/batches.md` — 查标的所在批次 + 元标记
+12. `docs/mistakes.md` — 历史复查发现的常见错误 + 提交前自检清单
 
-全部读完后 context 里有完整方法论，再开始 ABCD 分析。
+全部读完后 context 里有完整方法论 + 已知错误，再开始 ABCD 分析。
+
+> ⚠️ 写完 `output_d.md` 后，**必须过一遍 `docs/mistakes.md` 第九节"提交前自检清单"**，逐项打勾再提交。任一项 ✗ = 未完成。
 
 ## 硬规则（不读 doc 也不能违反）
 
@@ -54,6 +57,14 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 - **5 年估值分位须 ≤30%**，查不到则暂停，严禁估算
 - **正常化 EPS = min(GAAP, tool, v3.1)**，只剔收益不加回亏损
 - **回购不进 g**，g 用业务/净利润增长
+
+## web 数据抓取（Task A.2 分位 / Task C 同业·消息面）
+
+- **优先用 playwright 浏览器**（`playwright_browser_navigate` + `playwright_browser_evaluate`）抓 web 数据
+- **`webfetch` 易被反爬**：MacroTrends / GuruFocus / stockanalysis 等常返 Cloudflare 403（"Just a moment..."），webfetch 直拿会失败
+- playwright 首次导航若遇 Cloudflare 挑战页，**等 5 秒**（`playwright_browser_wait_for time=5`）再读，真浏览器能过
+- **拿不到则按硬规则标"暂停"**（"查不到则暂停，严禁估算"），绝不编造、绝不用旧值冒充
+- 5yr 分位常用源：[MacroTrends](https://www.macrotrends.net) P/E (`/pe-ratio`) 或 P/B (`/price-book`) 页，季度历史表用 evaluate 提取，公式 `(current−low)/(high−low)` 算分位
 
 ## 分析报告（迁移期）
 

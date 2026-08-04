@@ -13,7 +13,7 @@
 
 g 的计算（8 源交叉验 + 综合判断 + 护栏）详见 **`forward_g.md`**。
 
-本 stock g = {N}%（{一句话理由：历史 X% 与前瞻 Y% 取保守交集}）
+本 stock g = {N}%（{列出 g 源、剔除项、均值计算}）
 
 ### g 质量护栏（详见 `forward_g.md` G-4）
 
@@ -101,8 +101,8 @@ RSS: Yahoo Finance headline feed（周度扫描）
   ① combine diff: combine 输出 vs output 文件
   ② 消息面 diff: WebSearch 近 3 月 vs output_c 记录的消息面
 
-两路都 trivial → 不落盘
-任一 non-trivial → reconfirm → 结论变才改 base，不变只 delta 标
+两路都 trivial → 不动
+任一 non-trivial → reconfirm → 结论变才改 output，不变则不动
 ```
 
 ---
