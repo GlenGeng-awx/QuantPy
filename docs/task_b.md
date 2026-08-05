@@ -115,10 +115,11 @@ Other Income 大额波动 → 投资损益或 FX
 
 ## B.3 正常化 EPS
 
-详见 **`normalize_eps.md`**（v3.1 checklist，含 8 个 detector + 已知问题）。
+详见 **`normalize_eps.md`**（v3.1 checklist，含 8 个 detector + 已知问题 + 恢复 EPS）。
 
 ```
 正常化 EPS = min(GAAP EPS, 工具 EPS, v3.1 EPS)
+EPS 负值时 → 用恢复 EPS（详见 normalize_eps.md EPS-4b）
 ```
 
 实装：`python3 docs/normalize_eps.py {STOCK}`

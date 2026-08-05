@@ -196,6 +196,26 @@ v3.1 EPS   = (Pretax - sum(max(0, 各 detector 剔除额))) × (1-税率) / 稀�
 
 保证: 正常化 EPS ≤ GAAP EPS（永远不高于 GAAP）
 
+## EPS-4b: 恢复 EPS（EPS 负值时使用）
+
+当 GAAP EPS ≤ 0（亏损）时，min(GAAP, tool, v3.1) 均为负 → PE 公式无意义。
+此时用**恢复 EPS**：假设一次性因素消退后的正常化盈利。
+
+```
+恢复 EPS = (TTM Pretax + 一次性费用加回 − 一次性收益剥离) × (1 − 正常税率) / 稀释股数
+
+步骤:
+  1. 从 TTM GAAP NI 出发
+  2. 加回 detector 标记的一次性费用（重组/罚款/代金券/减值 — 只加回费用，不加回亏损）
+  3. 剥离一次性收益（同 EPS-4 的 max(0, gain) 剥离）
+  4. 用历史正常税率（非当期异常税率）
+  5. ÷ 稀释股数 → 恢复 EPS
+```
+
+> 恢复 EPS 是**判断性估算**（需分析一次性金额），不如 min(GAAP, tool, v3.1) 精确。
+> 在 output 中标注"恢复 EPS"，与正常标的的"正常化 EPS"区分。
+> 合理价仍 = 恢复 EPS × min(8.5+g, 30)；折扣系数视 FCF−SBC 等因素定档。
+
 三个口径的关系:
 - GAAP ≥ 工具（工具只剔 Unusual，可能剔 gain 也可能加回 loss）
 - GAAP ≥ v3.1（v3.1 只剔 gain 不加回 loss，保证 ≤ GAAP）

@@ -28,15 +28,13 @@
 ```
 EPS = min(GAAP EPS, 工具 EPS, v3.1 EPS)
 
-详见 normalize_eps.md
+EPS 负值时 → 用恢复 EPS（详见 normalize_eps.md EPS-4b）
 ```
 
 ### D.1b 确定前瞻 g（来自 Task C）
 
 ```
 g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
-
-详见 forward_g.md
 
 合理 PE = min(8.5 + g, 30)
 ```
@@ -94,11 +92,11 @@ g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
 
 ```
 ✓ 回购不进 g: g 用业务/净利润增长，不含缩股驱动的 EPS 增长          ← forward_g.md
-✓ g 质量: FCF − SBC > 0 且 3 年增长（否则一票否决）                   ← forward_g.md
+✓ g 质量: FCF − SBC < 0 → 重麻烦 ×0.40（不否决，总是估值）           ← discount_coefficient.md
 ✓ 高增长封顶: g ≥ 22% → PE 一律 30x，不追高                          ← forward_g.md
 ✓ 利润被麻烦压低型: 用恢复后正常 margin EPS                            ← 本节
-✓ 亏损/周期股: 公式不适用，用 P/B / 净现金 / 中周期正常化盈利打折      ← 本节
-✓ 三重保守: EPS min + g 保守 + 折扣保守                                ← analysis_framework.md
+✓ 亏损股: EPS 负值时用恢复 EPS（剥一次性后），合理价照算              ← normalize_eps.md EPS-4b
+✓ 三重保守: EPS min/恢复 + g 保守 + 折扣保守                          ← analysis_framework.md
 ```
 
 ---
@@ -128,7 +126,7 @@ FCF−SBC 正负、护城河__、缩股/稀释__）× 麻烦[明确一次性 / �
 | **最佳买点** | 三 ✓ | 满仓建仓 |
 | **价值陷阱** | 仅好价格 | 不出手 |
 | **买贵了** | 缺好价格 | 等 callback |
-| **结构性恶化** | 麻烦非一次性 | 看 asset 托底分两种 |
+| **结构性恶化** | 麻烦非一次性（含 FCF−SBC<0 → ×0.40） | 极低满仓目标，需深跌 |
 
 ---
 
