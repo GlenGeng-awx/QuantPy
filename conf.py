@@ -83,6 +83,7 @@ AMD = "AMD"
 QCOM = "QCOM"           # Qualcomm
 INTC = "INTC"
 MU = "MU"               # Micron Technology
+SKHY = "SKHY"           # SK Hynix Inc
 ORCL = "ORCL"           # Oracle
 
 # MEDICAL
@@ -139,10 +140,10 @@ V_4000B = [
 ]
 
 V_3000B = [
+    MSFT,
 ]
 
 V_2000B = [
-    MSFT,
     AMZN,
     TSM,
 ]
@@ -153,6 +154,7 @@ V_1000B = [
     TSLA,
     SPCX,
     MU,
+    SKHY,
     LLY,
 ]
 
@@ -165,12 +167,12 @@ V_500B = [
     XOM,
     AMD,
     INTC,
+    TENCENT,
+    MA,
 ]
 
 V_200B = [
-    TENCENT,
     ORCL,
-    MA,
     NFLX,
     CVX,
     PG,
@@ -182,11 +184,11 @@ V_200B = [
     MS,
     MRK,
     NVO,
-    QCOM,
     DELL,
 ]
 
 V_100B = [
+    QCOM,
     MCD,
     DIS,
     SHOP,
@@ -196,20 +198,20 @@ V_100B = [
     UBER,
     PDD,
     CRM,
-    SPOT,
+    ADBE,
+    SNOW,
 ]
 
 V_50B = [
-    ADBE,
+    SPOT,
     HOOD,
     NU,
     SEA,
-    SNOW,
+    PYPL,
 ]
 
 V_20B = [
     COIN,
-    PYPL,
     CPNG,
     EBAY,
     XYZ,

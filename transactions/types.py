@@ -90,8 +90,8 @@ class StockContract:
     def __repr__(self):
         r, u, _ = self.pnl
         lines = [
-            f"{self.num} shares  cost={self.cost:.2f}  close={self.last_close:.2f}",
-            f"realized={r:.2f}  unrealized={u:.2f}",
+            f"{self.num} shares  cost={self.cost:.3f}  close={self.last_close:.3f}",
+            f"realized={r:.3f}  unrealized={u:.3f}",
         ]
         return '\n'.join(lines)
 
@@ -161,7 +161,7 @@ class OptionContract:
 
     def __repr__(self):
         r, u, _ = self.pnl
-        return f"{self.strategy:<12} {self.expire} {self.strike:>7} x{self.num}  realized={r:>8.2f}  unrealized={u:>8.2f}"
+        return f"{self.strategy:<12} {self.expire} {self.strike:>7} x{self.num}  realized={r:>8.3f}  unrealized={u:>8.3f}"
 
 
 class OptionContracts:

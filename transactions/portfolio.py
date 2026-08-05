@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from transactions.book import BOOK_HK, BOOK_US
+from transactions.book import BOOK_HK, BOOK_US, BOOK_CN
 from transactions.position import Position
 from conf import ALL, CN_INDEX
 
@@ -28,8 +28,8 @@ class Portfolio:
             or_ += position.option_realized
             ou += position.option_unrealized
             of_ += position.option_fees
-        print(f"\n{'Stock:':<8} realized={sr:>10.2f}  unrealized={su:>10.2f}  fees={sf:>.2f}")
-        print(f"{'Option:':<8} realized={or_:>10.2f}  unrealized={ou:>10.2f}  fees={of_:>.2f}")
+        print(f"\n{'Stock:':<8} realized={sr:>10.3f}  unrealized={su:>10.3f}  fees={sf:>.3f}")
+        print(f"{'Option:':<8} realized={or_:>10.3f}  unrealized={ou:>10.3f}  fees={of_:>.3f}")
 
     def display_open(self):
         print(f"\n---------------------\nOpen Positions ({self._currency})\n---------------------")
@@ -60,7 +60,7 @@ class Portfolio:
             for option in contracts:
                 flag = '*' if not option.closed else ' '
                 print(f"\t{flag} {option.stock_name:<5} {option}")
-            print(f"\t\tSubtotal: realized= {realized:.2f}, unrealized= {unrealized:.2f}, fees= {fees:.2f}")
+            print(f"\t\tSubtotal: realized= {realized:.3f}, unrealized= {unrealized:.3f}, fees= {fees:.3f}")
 
     def display_by_stock(self):
         print(f"\n---------------------\nBy Stock ({self._currency})\n---------------------")
@@ -76,6 +76,7 @@ class PortfolioGroup:
         self._portfolios = [
             Portfolio(BOOK_HK, 'HKD'),
             Portfolio(BOOK_US, 'USD'),
+            Portfolio(BOOK_CN, 'CNY'),
         ]
 
     def open_positions(self):
@@ -103,7 +104,7 @@ class PortfolioGroup:
 
 def get_current_positions():
     pg = PortfolioGroup()
-    return pg.open_positions() + CN_INDEX
+    return pg.open_positions()
 
 
 if __name__ == '__main__':
