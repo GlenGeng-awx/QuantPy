@@ -88,7 +88,7 @@ Other Income 大额波动 → 投资损益或 FX
 | 项目 | key | 看 |
 |------|-----|-----|
 | OCF | `Operating Cash Flow` | OCF/NI >1 = 利润含金量高 |
-| FCF | `Free Cash Flow` | yield = FCF/MCap |
+| FCF | `Free Cash Flow` | yield 见 A（FCF/MCap，随 price 变） |
 | SBC | `Stock Based Compensation` | FCF−SBC 真实现金创造 |
 | 回购 | `Repurchase Of Capital Stock` | 真 缩股 vs 仅对冲 SBC |
 | CapEx | `Capital Expenditure` | 急增可能吞噬 FCF |
@@ -150,7 +150,8 @@ GM 薄 + FCF 弱 → "平庸 ×0.60"
 |------|------|
 | 九宫格分数 + 背离检验 | Task D（好公司判断） |
 | **正常化 EPS** | Task D（合理价 = EPS × PE；满仓目标 = 合理价 × 折扣） |
+| **FCF 金额** | Task A（A 算 FCF yield = FCF/MCap） |
 | 质量地板（GM/FCF/缩股） | Task D（折扣系数预判） |
 | GM/OpInc CAGR | Task C（g 计算的基线） |
 
-B 完全独立（只需本地 CSV），可与 A、C 并行。
+B 完全独立（只需本地 CSV），price 无关，可与 A、C 并行。

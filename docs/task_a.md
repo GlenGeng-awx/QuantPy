@@ -1,7 +1,7 @@
-# Task A：价格粗筛 + 估值分位
+# Task A：价格层（daily）
 
-> 被引用自 `analysis_framework.md`。Task A = 价格（粗筛 + 估值分位）。
-> 数据源：本地 CSV（免费）+ web search（月度）。
+> 所有 price-dependent 指标。日级别更新（读 CSV 刷 price/P/E/FCF yield/安全边际）。
+> B/C/D 不受 price 影响，仅财报/消息面时动。
 
 ## 目标
 
@@ -9,9 +9,9 @@
 
 ---
 
-## A.1 价格粗筛（本地，免费，每次分析跑）
+## A.1 价格粗筛 + price-dependent 指标（daily，本地 CSV + info.json）
 
-### 7 项信号
+### 7 项粗筛信号
 
 满足任意 1 条即入池。门槛宽——漏斗入口，不是最终判断。
 
@@ -24,6 +24,12 @@
 | 5 | EV/EBITDA | <10x | `info.json` | `enterpriseToEbitda` |
 | 6 | P/B | <1.0x（金融股）/ <1.5x（周期股） | `info.json` | `priceToBook` |
 | 7 | P/S | <2.0x | `info.json` | `priceToSalesTrailing12Months` |
+
+### 其他 price-dependent 指标（从 B 吸收）
+
+| 指标 | 计算 | 说明 |
+|------|------|------|
+| FCF yield | FCF(from B) / MCap(from price) | 随 price 变，B 只存 FCF 金额 |
 
 ### 特殊口径
 
@@ -94,17 +100,39 @@ P/E 分位对周期股**反读**：
 
 ---
 
+## A.3 安全边际（daily，join D 的锚）
+
+> 从 output_d D.1 读合理价和满仓（不重算），用 A.1 现价算安全边际。
+
+```
+安全边际 vs 合理价 = 1 − 现价 / D.合理价
+安全边际 vs 满仓目标 = 1 − 现价 / D.满仓目标
+```
+
+操作建议（通用逻辑，汇总时算）：
+
+| 安全边际 vs 满仓 | 操作 |
+|----------------|------|
+| ≥ 0（现价 ≤ 满仓） | 满仓建仓 |
+| < 0 但现价 < 合理价 | 小仓/观察 |
+| 现价 ≥ 合理价 | 不出手，等 callback |
+
+---
+
 ## 与其他 Task 的关系
 
 | 输入 | 来源 |
 |------|------|
 | 正常化 EPS（算正常化 P/E） | Task B |
+| FCF 金额（算 FCF yield） | Task B |
+| 合理价 / 满仓目标（算安全边际） | Task D |
 | 现价 | 本地 CSV |
 
 | 输出 | 去向 |
 |------|------|
-| 6 项粗筛 pass/fail | Task D（好价格判断） |
-| 估值分位 + 同业 + de-rating | Task D + Task C（便宜成因呼应竞争/财报） |
+| 7 项粗筛 pass/fail + FCF yield + 安全边际 | 汇总表（join D → 操作建议） |
+| 估值分位 + 同业 + de-rating | Task C（便宜成因呼应竞争/财报） |
 
 A.1 可独立跑（只需 CSV + info.json）。
-A.2 需 web search（月度），正常化 P/E 需等 Task B 出 EPS。
+A.2 需 web search（月度）。
+A.3 需 D 的合理价/满仓（join）。

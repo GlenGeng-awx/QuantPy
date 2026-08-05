@@ -50,21 +50,24 @@
 ## ABCD 四任务
 
 ```
-Task A: 价格粗筛 + 估值分位        ← 本地CSV(info.json) + web(月度)
-Task B: 财务健康 + 正常化EPS       ← 本地CSV only（免费，财报后更新）
-Task C: 增长前瞻 + 护城河 + 消息面  ← web search（最贵，需 focus）
-Task D: 估值汇聚                  ← 依赖 A(现价) + B(EPS) + C(g+护城河+麻烦)
+Task A: 价格层（daily）            ← price-dependent：P/E, P/B, EV/EBITDA, FCF yield, 安全边际（join D 锚）
+Task B: 财务层（low-freq）         ← 纯财报数据：EPS, SCORECARD, FCF 金额, SBC — price 无关
+Task C: 增长层（low-freq）         ← g, 护城河, 管理层, 消息面 — price 无关
+Task D: 估值锚（low-freq）         ← 合理价, 满仓, 折扣系数 — price 无关
+汇总:   join A(price) + D(锚)      ← 安全边际 + 操作建议（通用逻辑，每次汇总现算）
 ```
 
 ### 依赖关系
 
-A、B、C **完全独立**，可并行。D 是唯一汇聚点，等 A+B+C 完成后算。
+A、B、C **完全独立**，可并行。D 依赖 B(EPS) + C(g+护城河+麻烦)，不含 A(price)。
+汇总时 join A + D → 安全边际 + 操作建议。
 
-| D 的公式 | A 提供 | B 提供 | C 提供 |
-|----------|--------|--------|--------|
-| 合理价 = EPS × PE(g) | — | EPS | g |
-| 满仓目标 = 合理价 × 折扣 | — | 质量 | 麻烦 |
-| 安全边际 = 1 − 现价/合理价 | 现价 | — | — |
+| D 的公式 | B 提供 | C 提供 |
+|----------|--------|--------|
+| 合理价 = EPS × PE(g) | EPS | g |
+| 满仓目标 = 合理价 × 折扣 | 质量 | 麻烦 |
+
+> 安全边际 = 1 − A.现价 / D.合理价 — 汇总时 join A + D 算，不在 D 里。
 
 B 可给 D 一个**预判**（EPS 已定，折扣地板可估），C 完成后更新。
 
@@ -72,10 +75,10 @@ B 可给 D 一个**预判**（EPS 已定，折扣地板可估），C 完成后�
 
 | 任务 | 详细文档 | 内容 |
 |------|---------|------|
-| A | `task_a.md` | 价格粗筛 6 项 + 估值分位（5yr 区间/同业/de-rating） |
+| A | `task_a.md` | 价格层（daily）：粗筛 7 项 + FCF yield + 估值分位 + 安全边际（join D 锚） |
 | B | `task_b.md` | SCORECARD 9 宫格 + 财报 heuristic + 正常化 EPS（引用 `normalize_eps.md`） |
 | C | `task_c.md` | 增长前瞻 g（引用 `forward_g.md`）+ 护城河 + 管理层 + 消息面 + 熊牛逻辑 |
-| D | `task_d.md` | 估值汇聚 + 折扣系数（引用 `discount_coefficient.md`）+ 安全边际 + 仓位定档 |
+| D | `task_d.md` | 估值锚（low-freq）：合理价 + 满仓 + 折扣系数（引用 `discount_coefficient.md`） |
 
 ---
 
