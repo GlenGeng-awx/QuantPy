@@ -1,14 +1,14 @@
-# ADBE — Task C：增长前瞻 + 护城河 + 管理层 + 消息面
-> 更新: 2026-07-28
+# ADBE — Task C：增长层（low-freq）
 
+> 更新: 2026-08-04  price 无关
 ## C.1 增长前瞻（产出 g）
 
 ### 本地基线
 
 | # | 数据 | 值 | 来源 |
 |---|------|-----|------|
-| 1 | 营收 3yr CAGR | 10.5% | income_annual: $23.77B / $17.61B ^ (1/3) - 1 |
-| 2 | OpInc 3yr CAGR | 12.6% | income_annual: $8.71B / $6.10B ^ (1/3) - 1 |
+| 1 | 营收 3yr CAGR | 7.0% | income_annual: $23.769B / $19.409B ^ (1/3) - 1（col0/col2，FY25/FY23） |
+| 2 | OpInc 3yr CAGR | 9.4% | income_annual: $8.706B / $6.650B ^ (1/3) - 1（col0/col2） |
 | 3 | EPS 3yr CAGR | 18.2% | ⚠ 受回购缩股 + Semrush 一次性扭曲，仅参考 |
 | 4 | 近期季度 YoY | +12.7% | income_quarterly: Q2'26 $6.62B vs Q2'25 $5.87B |
 | 5 | PEG 隐含 g | 22.2% | info.json: trailingPE 12.87 / pegRatio 0.58 |
@@ -27,17 +27,36 @@
 
 ### 综合判断
 
-- 近期 vs 3yr: **加速**（Q2'26 +12.7% > 3yr CAGR 10.5%）
-- 管理层 vs 分析师: 管理层 FY26 上调指引 > 分析师 ~8-9% → 用分析师（保守）
-- PEG 隐含 g 22.2% >> 我们的估计 → 市场 pricing 了高增长恢复 → 安全边际更薄
-- **g = 8.5%**（历史 10.5% 与前瞻共识 8-9% 取保守交集；AI 变现 ARR 3x 作上行期权不计入基线）
+```
+g 源:
+  CAGR 7.0%        营收 3yr CAGR
+  OpInc CAGR 9.4%  
+  Q2 YoY 12.7%     近期季度
+  PEG 22.2%        info.json
+  EPS CAGR 18.2%   ⚠ 回购扭曲
+  earningsGrowth 7.9%
+  分析师 ~8.5%
+  管理层 ~10%       FY26 上调
+
+Step 2 剔除:
+  PEG 22.2%        2022 EPS $0.11 近零基数失真
+  EPS CAGR 18.2%   回购扭曲，仅参考
+
+Step 3 剔除:
+  Q2 YoY 12.7%     最高剩余
+
+Step 4:
+  avg(7.0, 9.4, 7.9, 8.5, 10) = 8.6% ≈ 9%
+```
+
+- **g = 9%**（AI 变现 ARR 3x 作上行期权不计入基线）
 
 ### g 质量护栏
 
 - [✓] FCF − SBC = $8.25B > 0
 - [✓] 回购不进 g（g 用营收/业务增长）
 - [✓] 增长持续性（护城河极宽，Firefly AI 加速）
-- [✓] g = 8.5% < 22% → 不封顶
+- [✓] g = 9% < 22% → 不封顶
 
 ## C.2 护城河
 
@@ -75,7 +94,7 @@ Delta vs 上次分析（2026-07-04）: CEO 继任者时间线更新——从"无
 
 ## C.5 熊市逻辑
 
-1. **估值**: P/E 12.9x 虽低但 5yr 中位 ~32-38x 含泡沫期溢价；增速降到 ~8.5% → 一部分 de-rating 合理
+1. **估值**: P/E 14.2x 虽低但 5yr 中位 ~32-38x 含泡沫期溢价；增速降到 ~7% → 一部分 de-rating 合理
 2. **增长**: EPS TTM 增速仅 +4.7%（Semrush 拖累）；AI 可能降低创意软件门槛
 3. **竞争**: Figma（产品设计）+ Canva（prosumer）边缘蚕食；AI 生成工具涌现
 4. **管理层**: CEO + CFO 双过渡，继任者 9/10 前公布 = leadership 不确定 overhang；freemium 模型转型效果未验证
@@ -83,8 +102,8 @@ Delta vs 上次分析（2026-07-04）: CEO 继任者时间线更新——从"无
 
 ## C.6 牛市逻辑
 
-1. **估值**: P/E 12.9x（~2nd 分位）、FCF yield 11.5%、软件里最便宜（vs CRM 18x / MSFT 22x / ORCL 32x）
-2. **增长**: 营收 Q2'26 +12.7% YoY 加速（>3yr CAGR 10.5%）；AI-first ARR 3x 破 $500M + Firefly ~$300M +50% QoQ = AI 变现加速
+1. **估值**: P/E 14.2x（~2nd 分位）、FCF yield 10.3%、软件里最便宜（vs CRM 18x / MSFT 22x / ORCL 32x）
+2. **增长**: 营收 Q2'26 +12.7% YoY 加速（>3yr CAGR 7.0%）；AI-first ARR 3x 破 $500M + Firefly ~$300M +50% QoQ = AI 变现加速
 3. **护城河**: GM 89.4% 5 季纹丝不动；~58% 创意软件份额；PSD/PDF 格式锁定；Firefly 企业合规 AI 唯一选择；MAU 700→850M
 4. **资本**: FCF $10.28B、回购 $9.12B（真缩股 −6.3%/5Q）、FCF−SBC +$8.25B、利息覆盖 34.8x
 5. **催化**: CEO 继任者 9/10 落地 = overhang 解除；AI ARR 续翻倍；Q3 OpM 回升（Semrush 消化）；freemium 扩 TAM

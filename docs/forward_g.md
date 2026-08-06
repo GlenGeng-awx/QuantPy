@@ -113,7 +113,7 @@ Step 2 剔除判据（非穷举，靠分析者判断）:
 4a. FCF − SBC > 0
     文件: income_ttm/cf_ttm.csv
     `Free Cash Flow` − `Stock Based Compensation` > 0
-    ✗ 烧钱式增长（FCF 负）→ 不配用成长估值 → g 降至 0%
+    ✗ < 0 → 重麻烦 → ×0.40（不否决，合理价照算，详见 discount_coefficient.md）
 
 4b. 回购不进 g
     g 用业务/净利润增长，不含缩股驱动的 EPS 增长

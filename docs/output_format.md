@@ -6,7 +6,7 @@
 
 ```
 ai_report/{STOCK}/
-├── output_a.md    价格粗筛 + 估值分位
+├── output_a.md    价格层（daily）— 粗筛 + FCF yield + 分位 + 安全边际
 ├── output_b.md    财务健康 + 正常化 EPS
 ├── output_c.md    增长前瞻 + 护城河 + 管理层 + 消息面 + 熊牛
 └── output_d.md    估值汇聚 + 安全边际 + 仓位定档
@@ -93,8 +93,7 @@ FCF yield = {FCF from B} / {MCap} = {N}%
 | 现价 | ${值} | CSV |
 | 合理价 | ${值} | from D（不重算） |
 | 满仓目标 | ${值} | from D（不重算） |
-| 安全边际 vs 合理价 | {N}% | 1 − 现价/合理价 |
-| 安全边际 vs 满仓 | {N}% | 1 − 现价/满仓 |
+| 安全边际 | {N}% | 1 − 现价/合理价 |
 
 ## 结论
 入池: ✓/✗  ({N}/7 + 分位 {N}th + 安全边际 {N}%)

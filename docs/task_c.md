@@ -17,7 +17,7 @@ g 的计算（8 源交叉验 + 综合判断 + 护栏）详见 **`forward_g.md`**
 
 ### g 质量护栏（详见 `forward_g.md` G-4）
 
-- [✓/✗] FCF − SBC > 0（否则一票否决，不用成长估值）
+- [✓/✗] FCF − SBC > 0（< 0 → 重麻烦 ×0.40，不否决）
 - [✓/✗] 回购不进 g
 - [✓/✗] 增长持续性（护城河支撑？）
 - [✓/✗] g ≥ 22% → 封顶 30x
@@ -135,7 +135,8 @@ RSS: Yahoo Finance headline feed（周度扫描）
 
 | 输入 | 来源 |
 |------|------|
-| GM/OpInc CAGR（g 基线） | Task B |
+| GM/OpInc CAGR（g 基线） | 本地 CSV（与 B 同源，不依赖 B 输出） |
+| 分析师共识 / 管理层指引 | web search |
 | 消息面历史记录 | `ai_report/{STOCK}/analysis.base.md` |
 
 | 输出 | 去向 |
