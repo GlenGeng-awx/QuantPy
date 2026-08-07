@@ -1,116 +1,93 @@
 # TTD — Task C：增长前瞻 + 护城河 + 管理层 + 消息面
-> 更新: 2026-08-04
+> 更新: 2026-08-07（**Q2'26 财报 8/6 报告**：营收 miss、margin 塌陷指引）
 
 ## C.1 增长前瞻（产出 g）
 
-### 本地基线
+### 本地基线（CSV TTM Q1'26 + Q2'26 研究）
 
 | # | 数据 | 值 | 来源 |
 |---|------|-----|------|
-| 1 | 营收 3yr CAGR | 22.4% | income_annual（1.58B→2.90B, 2022→2025） |
-| 2 | OpInc 3yr CAGR | 73% | 低基数扭曲（$113M→$589M），不可用 |
-| 3 | EPS 3yr CAGR | 101% | 极端低基数（$0.11→$0.90），不可用 |
-| 4 | 近期季度 YoY | +11.8% | Q1'26 $688M vs Q1'25 $616M |
-| 5 | PEG 隐含 g | ~26% | PEG 0.8, P/E 20.5 → 市场预期偏高，不可靠 |
+| 1 | 营收 3yr CAGR | 22.4% | $1.58B→$2.90B, 2022→2025（**hypergrowth 不可外推**） |
+| 2 | OpInc 3yr CAGR | 73.0% | $113M→$589M（**hypergrowth**） |
+| 3 | EPS 3yr CAGR | 101% | $0.11→$0.90（**hypergrowth**） |
+| 4 | Q2'26 YoY | **+3%**（$715M vs $694M） | 研究（[BusinessWire](https://www.businesswire.com/news/home/20260806055680/en/The-Trade-Desk-Reports-Second-Quarter-2026-Financial-Results)） |
+| 5 | Q3'26 指引 | Rev ≥$650M（~+3.5% YoY）、EBITDA ~$160M（margin ~25%） | 同上 |
+| 6 | info.json | revenueGrowth 11.8%（Q1'26 YoY，stale）、earningsGrowth −20% | info.json（stale） |
 
 ### 外部判断
 
 | # | 数据 | 值 | 来源 |
 |---|------|-----|------|
-| 6 | 分析师共识 | 8-12% | TIKR（Street modeling 8-12% growth） |
-| 7 | 管理层 Q2 指引 | ≥$750M（~+8% YoY vs $694M） | Q1'26 earnings call（2026-05-07） |
-| 8 | FY26 EBITDA margin 指引 | ≥40% | 管理层（约与 2025 持平） |
+| 7 | 分析师共识（stale pre-Q2） | FY26 +9.8%、FY27 +9.6% | [StockAnalysis.com](https://stockanalysis.com/stocks/ttd/forecast/)（36 分析师, **HOLD**） |
+| 8 | 实际 FY26 轨迹 | ~+3%（H1 $1.40B + Q3 $0.65B + Q4 est ~$0.77B = $2.82B = +3%） | 手算 |
+| 9 | H1'26 | +7%（H1'26 $1.40B vs H1'25 $1.31B） | 研究 |
 
 ### 综合判断
 
-- 近期 YoY 11.8% < 3yr CAGR 22.4% → **放缓 → 用近期**
-- 管理层指引 ~8% < 分析师共识 8-12% → **用管理层（保守）**
-- 增速轨迹：25% → 20% → 18% → 12% → 8% 指引 → 持续降档
-- **g = 10%**（介于 Q1 实际 11.8% 与 Q2 指引 8%，反映持续降档但非最差）
+- **增速断崖**: 22%→12%→8%→**3%** → 从高增长骤降至低个位数
+- 管理层归因: ① macro（CPG+Auto 关税冲击，占 25% 业务）② 执行（Kokai 滚出问题）
+- 但 Meta 同期 +24% → macro 解释力弱 → 有结构性成分（Amazon 竞争 + DSP 分裂）
 
-旧分析 g = 12% → 下调至 10%（Q2 指引暗示 8%，增速持续降档）
+**g = 5%**（G-3: 剔 1a/1b/1c hypergrowth + PEG stale + 分析师 stale → 剩 Q2'26 +3%、Q3 guide +3.5% → 剔最高 +3.5% → avg(+3%) = 3% → Step5 +2%（JBP 6x 增速 + 国际 +30% 抵消 Amazon 压力）→ g = 5%）
+
+> **旧 g=10% → 新 g=5%**（Q2'26 miss + Q3 guide 确认增速降档至 3-5%）
 
 ### g 质量护栏
 
-- [✓] FCF − SBC = $358M > 0（过一票否决线，但 SBC 吃 57% FCF 黄灯）
-- [✓] 回购不进 g（g 用营收增速 10%，非 EPS 增速）
-- [△] 增长持续性存疑（Amazon 压 take rate + 治理动荡；但 CTV 长期顺风 + 新商业团队待验证）
-- [✓] g = 10% < 22% → 合理 PE = 18.5x（不封顶 30x）
+- [✓] FCF − SBC > 0（TTM +$358M、H1'26 +$193M）
+- [✓] 回购不进 g（g 用营收增长，$1.16B 回购是安全边际）
+- [△] 增长持续性（JBP +6x、intl +30% 支撑；但 Amazon + margin 压缩侵蚀）
+- [✓] g < 22% → 无封顶
 
 ## C.2 护城河
 
-- **壁垒类型**：网络效应 + 规模 + 数据
-  - 最大独立 DSP（无利益冲突——不像 Google/Amazon 既拥库存又做需求方）
-  - CTV 领导地位（low-50s% 营收占比，长期顺风）
-  - UID2 身份框架、Kokai AI 平台
-  - 新产品 Audience Unlimited（旅行品牌测试：CPM −30%、数据成本 −38%、转化率 2.7x）
-- **份额趋势**：独立 DSP 中主导，但 **Amazon DSP 正抢份额**
-  - Amazon 对自有媒体程序化收 0%、开放网络收 1%，远低于 TTD ~20% take rate
-  - TTD 已被迫松动费率应对（GM 下滑佐证）
-  - Green 称从 Amazon 赢回一大药企客户，JBP +114% YoY（未独立验证）
-- **威胁**：Amazon DSP（最大）、Google DV360、代理商内部化 + 客户审计（Publicis 纠纷）、隐私/信号丢失
-- **宽度: 中**（moat 存在但 Amazon 正面侵蚀 → 质量评分不加分）
+- 壁垒类型: **独立性（唯一规模化 DSP 无自有库存）+ 规模/数据飞轮 + UID2 身份图**
+  - 独立性 vs Google/Amazon 自有库存偏向 → 客观性优势
+  - 20M ad ops/秒、AI 决策、95%+ 客户留存 10 年+
+- 份额趋势: **收窄**——Amazon DSP 零售媒体抢份额、walled gardens（Meta +24% vs TTD +14% Q4'25）、DSP 市场分裂
+- 威胁: **Amazon DSP**（可补贴定价 across retail/AWS/Prime）、Google DV360、OpenPath 反弹（代理商撤资）、Kokai 执行问题
+- **宽度: 中**（独立性论点成立 + AI/Google 反垄断 tailwind，但定价权受压 + 执行失误） → 不 +1
 
 ## C.3 管理层
 
 | 项目 | 事实 |
 |------|------|
-| CEO | Jeff Green（创始人，双层股权超级投票权控制） |
-| **CFO** | **Nate Olmstead**（2026-07-09 正式入职，第四任 CFO/一年）— 临时 CFO Tahnil Davis 回 CAO |
-| **继任/退休** | CFO 已落定（Olmstead 永久任命，非 interim）✓；**整个商业团队重建**：CCO Kristi Argyilan（ex-Uber/Target）、CBDO Ron Lamprecht（ex-Amazon 7 年）、board director Penry Price（ex-Google DoubleClick/ex-LinkedIn）、新 CMO——7/27 今天正式入职 |
-| 内部人 | 无近期 Form 4 数据 |
-| 资本配置 | 激进回购 $1.16B/年（>FCF），无债；SBC 15.9% 稀释；Net Return +$686M |
-| 指引 vs 实际 | Q1'26 beat 营收共识（$689M vs $679M），但 Q2 指引 ≥$750M < 共识 $771M → miss → −14% 盘后 |
-| 治理风险 | 双层股权（Green 控盘）；一年四换 CFO + CRO/COO/CTO 离职 = 治理危机；**新团队是修复信号，结果待验证** |
-
-管理层更替分档：**频繁换帅（1 年 2+ C-suite）→ 存疑**。但新 CFO 已落定 + 整个商业团队重建 → **趋势向好，但 8/6 财报前无法验证**。
-
-关键人物风险：创始人 Jeff Green 仍在位控盘，非创始人离开场景。C-suite 流失是职业经理人层面。
+| CEO | **Jeff Green**（联合创始人/CEO，still in role） |
+| **继任** | **无公告** |
+| CFO | **Nate Olmstead**（2026-07 新任；前 Penguin Solutions CFO）→ **解决了 interim CFO 问题** |
+| C-suite 重建 | 2026 全新: COO Vivek Kundra、CMO Sarah Gavin、CCO Kristi Argyilan、新董事会成员 → **整个商业团队换血** |
+| 内部人 | 10.77% 持股（创始人 heavy）；无重大减持 flagged |
+| 资本配置 | $1.16B 回购 TTM（aggressive）；无分红；SBC 15.9% 极高 |
+| 指引 vs 实际 | Q2'26 miss（$715M vs 共识 $752M）；Q3 guide 19.2% below consensus |
+| 治理 | Publicis 纠纷（已解决但信任受损）；CFO 一年四换（已落定）；新团队"early in learning process" |
 
 ## C.4 消息面（近 3 月）
 
-| 日期 | 事件 | 来源 |
-|------|------|------|
-| 2026-06-01 | Nate Olmstead 被任命 CFO（第四任/一年），7/9 入职 | [ADWEEK](https://www.adweek.com/media/the-trade-desk-appoints-nate-olmstead-cfo-after-a-year-of-executive-turnover/) |
-| 2026-07-09 | Olmstead 正式入职；临时 CFO Davis 回 CAO | 同上 |
-| 2026-07-20 | 整个商业团队重建曝光：CCO/CBDO/CMO/board director 全新，8/6 财报前到位 | [TIKR](https://www.tikr.com/blog/the-trade-desk-just-rebuilt-its-entire-commercial-team-before-its-august-earnings) |
-| 2026-07-27 | Argyilan（CCO）+ Lamprecht（CBDO）正式入职 | TIKR |
-| 2026-08-06 | **Q2'26 财报发布（关键催化）** | — |
-| 2026-08-01 | Simply Wall St："TTD 38% 低估，79% 回落后估值合理" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
-| 2026-08-03 | Wedbush："Q2 Likely In-Line Amid Long-Term Structural Headwinds" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
-| 2026-08-03 | Zacks："TTD Set to Report Q2 Earnings: Here's What to Expect" | [Yahoo Finance](https://finance.yahoo.com/quote/TTD/) |
-| 2026-08-03 | **Street Q2 共识已降至 $751.6M 营收 + $0.41 EPS**（vs 7/27 指引 ≥$750M → 共识从 $771M 下修至 guidance floor，de-risked） | Yahoo Finance |
-| 2026-03 | Publicis 建议客户停用 TTD 平台（FirmDecisions 第三方审计指控费率不当），TTD 否认，纠纷未解决 | TIKR |
-| 持续 | Amazon DSP 竞争加剧（0-1% vs TTD 20% take rate） | 多源 |
+- **2026-08-06**: **Q2'26 财报**: Rev $715M（+3%，miss −$37M）、EPS $0.14、Adj EBITDA $241M（margin 34% vs 39%）；**Q3 guide Rev ≥$650M（+3.5%）、EBITDA ~$160M（margin ~25%）** → 股价 −27% 盘前至 $12.87（[BusinessWire](https://www.businesswire.com/news/home/20260806055680/en/)）
+- **2026-08-06**: 股价 $17.67 收盘（−6.8% earnings day）→ $12.87 盘前（−27%）
+- **2026-07**: 新 CFO Nate Olmstead 到任 + 新 C-suite 团队
+- **2026-06**: Amazon DSP 竞争加剧（TTD 发文 likening Amazon to Google antitrust）
+- **2026-05**: OpenPath 反弹（代理商撤资）；Kokai 执行问题
+- **2025-04**: Google adtech 反垄断裁决（Judge Brinkema: 非法垄断）→ DOJ 寻求拆分 → TTD 结构性 tailwind（缓慢）
 
-Delta vs 上次分析（7/27）：
-- **新增**：Street Q2 共识从 $771M 降至 $751.6M（已 de-risk 到 guidance floor）+ Wedbush "in-line" 定调 + Simply Wall St "38% 低估" + Zacks 预览
-- **已变**：Q2 指引 miss 叙事（≥$750M < 共识 $771M → −14% 盘后）已被 "in-line" 替代——共识降至 $751.6M = guidance floor
-- **未变**：Amazon 竞争持续、增速降档趋势未逆转、Publicis 纠纷未解决
+Delta: vs 旧 output（8/4 pre-earnings），新增 **Q2'26 miss + Q3 margin 塌陷指引 + 股价 -27% + CFO 落定 + C-suite 重建**
 
 ## C.5 熊市逻辑
 
-1. **GM 创 8 季新低 73.6%**，3yr 下滑（81.2%→78.6%→73.6%）——定价权/费率被侵蚀
-2. **Amazon DSP 结构性威胁**（0-1% vs TTD ~20% take rate），已迫使松费率
-3. **增速持续降档**：25% → 18% → 12% → 8% Q2 指引
-4. **Q2 指引 miss 已被定价**：共识从 $771M 降至 $751.6M = guidance floor，"miss" 叙事转为 "in-line"（Wedbush）— 但 in-line 意味着无 beat 上行
-5. **一年四换 CFO** + CRO/COO/CTO 离职 = 治理危机（新团队待验证）
-6. **Publicis 纠纷未解决**，代理商客户审计削弱能见度
-7. **SBC 15.9%/Rev**，吃掉 57% FCF
-8. 留存收益 −$724M（回购激进超利润）
-9. 前瞻 P/E 16.3x 对 10% 增速属公允，非便宜
-10. PEG 0.8 → 市场仍 pricing ~24% 增长 → 若增长不及，估值进一步压缩
+1. **增速塌陷**: Q2'26 +3%（vs 历史 22%+）、Q3 guide +3.5%——增长引擎熄火
+2. **margin 塌陷**: Q3 guide EBITDA margin ~25% vs 39% LY——opex +6% vs rev +3%
+3. **Amazon 结构性**: Amazon DSP 可补贴定价（retail+AWS+Prime 经济）→ TBD take rate 受永久压力
+4. **执行失误**: Kokai 滚出问题 + OpenPath 代理商反弹 → 自身产品 bet 踉跄
+5. **Meta 对比**: Meta Q4'25 +24% vs TTD +14%（同期 macro）→ macro 解释力弱 → 公司特有/结构性
+6. **SBC 15.9%**: 吃 57% FCF；GAAP EPS 被 SBC 压低
 
 ## C.6 牛市逻辑
 
-1. **独立 DSP 龙头**，无利益冲突（vs Google/Amazon 既拥库存又做需求方）
-2. **CTV 长期领导者**（low-50s% 营收），线性 TV 预算持续迁移
-3. **无债 + 净现金 $1.0B**，下行缓冲
-4. **FCF yield 9.7%**，40% EBITDA margin
-5. **真缩股 −5.2%/5Q**（Net Return +$686M）
-6. **ROIC 26.7%**
-7. **整个商业团队重建**：ex-Amazon/Uber/Google/LinkedIn 高管入职，直指 retail media 增长
-8. **新产品 Audience Unlimited**（CPM −30%、转化 2.7x 测试数据）
-9. **Retail media 扩张**（Koddi + Dollar General 合作；retailers 覆盖 >80% top US 零售 vs Amazon <15%）
-10. **−81% 自峰值，0.0th 分位** → 预期极低，共识已 de-risk 到 guidance floor，8/6 财报 = 催化（Q3 guide >8% = 重建有效）
-11. GAAP 盈利干净，无正常化需要
+1. **估值**: P/E 5yr 0.0th（最低）、EV/FCF ~5.8x（@ pre-market $12.87）、P/FCF ~7x、PEG 0.53
+2. **FCF 强**: TTM $829M、H1'26 $412M（+19%）、无债净现金 $1.5B、OCF/NI 2.53
+3. **JBP**: 217 clients（+38% YoY）、JBP 营收增速 6x overall → 合同性 recurring
+4. **国际**: EMEA+APAC ~+30%、China >+100% YTD
+5. **Top 100 accounts**: 多数 double-digit 增长
+6. **Google 反垄断**: 非法垄断裁决 + DOJ 拆分 → TTD 独立性价值提升（缓慢 tailwind）
+7. **新团队**: CFO 落定 + C-suite 重建 + Zuma（8月 usability 升级）+ Audience Unlimited（open beta）→ 执行修复催化
+8. **$1T TAM ~1%**: 市场仍大，TTD 渗透率低
