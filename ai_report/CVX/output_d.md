@@ -59,6 +59,31 @@ g = 5.5%（业务量增长，Hess/Guyana/Permian；周期股不套 min(8.5+g,30)
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = 10% (好公司)
+g = 0% (from Task C)
+P/FCF0 = min((1+0%)/(10%-0%), 30) = 10.0x
+net_cash/sh = $-20.28
+EPS (FINAL from D.1) = $10.3
+```
+
+EPS 模型合理价 = $10.3 x 8.5 = **$87.55**
+
+| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | $8.14 | 10.0x | $61.2 | -30% |
+| DCF FCF | $8.14 | 10.0x | $61.2 | -30% |
+
+gap 分析:
+- gap 1 (EPS->FCF-SBC): $-26.4 -> PE 公式差异
+- gap 2 (FCF-SBC->FCF): $0.0 -> SBC 差异
+
+**DCF 揭示高估**: EPS $87.6 > DCF FCF-SBC $61.2 > DCF FCF $61.2
 ## D.3 敏感性表（周期股：中周期 EPS × 中周期 PE）
 
 | 口径 | 中周期 EPS | 中周期 PE | 合理价 | 满仓目标（×0.67） |

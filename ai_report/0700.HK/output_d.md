@@ -55,6 +55,31 @@ PE = min(8.5 + 12, 30) = **20.5x**
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+> ⚠ 多币种: CSV CNY -> HKD, FX=0.86 (从 EPS 反推: ¥24.15/HK$28.06)
+
+```
+r = 9% (伟大)
+g = 12% (from Task C)
+P/FCF0 = min((1+12%)/(9%-12%), 30) = 30x (g>r, 封顶)
+net_cash/sh = HK$-4.02 (FX 转换后)
+EPS (FINAL from D.1) = HK$27.44
+```
+
+EPS 模型合理价 = HK$27.44 x 20.5 = **HK$562.52**
+
+| 口径 | base (HK$/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | HK$20.66 | 30x | HK$615.8 | +9% |
+| DCF FCF | HK$23.88 | 30x | HK$712.4 | +27% |
+
+gap 2 (SBC): HK$96.6 (SBC HK$2.78/sh × 30 = HK$83.4, plus FX)
+
+**DCF 与 EPS 基本一致**: EPS HK$562.5 ~ DCF FCF-SBC HK$615.8 (+9%)
+> 0700.HK 是投资控股型, OtherInc 含经常性投资分红, FCF 被低估。详见 normalize_eps.md 已知问题 #2。
 ## D.3 敏感性表（g 驱动，EPS=HK$27.44 固定）
 
 | 前瞻 g | 合理 PE | 合理价 | 满仓目标（×0.75） |

@@ -58,6 +58,29 @@ PE = min(8.5 + 0, 30) = 8.5x（封底）
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+> ⚠ 多币种: CSV -> USD, FX=6.93 (从 EPS 反推)
+
+```
+r = 11% (平庸)
+g = 0% (from Task C)
+P/FCF0 = 9.1x
+net_cash/sh = $9.57 (FX 转换后)
+EPS (FINAL from D.1) = $5.54
+```
+
+EPS 模型合理价 = $5.54 x 8.5 = **$47.09**
+
+| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | $-3.26 | - | N/A (FCF-SBC<0) | - |
+| DCF FCF | $-3.26 | - | N/A (FCF<0) | - |
+
+DCF N/A (FCF<0) -> 仅用 EPS 模型 / P/B
+
 ## D.3 敏感性表
 
 | 口径 | 恢复 EPS (USD) | g | 合理 PE | 合理价 | 满仓目标（×0.40） |

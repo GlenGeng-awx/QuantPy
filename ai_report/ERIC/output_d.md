@@ -58,6 +58,31 @@ mid-cycle PE  = 13x (历史 12-15x, 保守)
 
 > 周期股口径：EPS 用 mid-cycle（非 TTM GAAP 含一次性收益），PE 用 mid-cycle（非 min(8.5+g,30)）
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = 11% (平庸)
+g = 0% (from Task C)
+P/FCF0 = min((1+0%)/(11%-0%), 30) = 9.1x
+net_cash/sh = $4.88
+EPS (FINAL from D.1) = $0.63
+```
+
+EPS 模型合理价 = $0.63 x 8.5 = **$5.32**
+
+| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | $8.93 | 9.1x | $86.0 | 1517% |
+| DCF FCF | $8.93 | 9.1x | $86.0 | 1517% |
+
+gap 分析:
+- gap 1 (EPS->FCF-SBC): $80.7 -> PE 公式差异
+- gap 2 (FCF-SBC->FCF): $0.0 -> SBC 差异
+
+**DCF 揭示低估**: EPS $5.3 < DCF FCF-SBC $86.0 < DCF FCF $86.0
 ## D.3 敏感性表（mid-cycle EPS × mid-cycle PE）
 
 | 情景 | mid-cycle EPS | mid-cycle PE | 合理价 | 满仓（×0.60） |

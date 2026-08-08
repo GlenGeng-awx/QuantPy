@@ -54,6 +54,33 @@ g = 10%（G-3: OpInc CAGR 13.5% + 营收 CAGR 3.5% 均值 8.5%，AI tailwind 调
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = 10% (好公司)
+g = 10% (from Task C)
+P/FCF0 = min((1+10%)/(10%-10%), 30) = 30x
+net_cash/sh = $-29.12
+EPS (FINAL from D.1) = $11.98
+```
+
+EPS 模型合理价 = $11.98 x 18.5 = **$221.63**
+
+| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | $12.97 | 30x | $359.9 | 62% |
+| DCF FCF | $14.04 | 30x | $392.1 | 77% |
+
+回购 $5515M > SBC -> FCF 为主口径
+
+gap 分析:
+- gap 1 (EPS->FCF-SBC): $138.2 -> PE 公式差异
+- gap 2 (FCF-SBC->FCF): $32.2 -> SBC 差异 ($1.07/sh x 30 = $32.2)
+
+**DCF 揭示低估**: EPS $221.6 < DCF FCF-SBC $359.9 < DCF FCF $392.1
 ## D.3 敏感性表（正常化 EPS × g 双维）
 
 | 口径 | 正常化 EPS | g | 合理 PE | 合理价 | 满仓目标（×0.67） |

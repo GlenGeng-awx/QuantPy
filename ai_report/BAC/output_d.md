@@ -59,6 +59,31 @@ NM = 27.8%（NI $33.66B / Rev $121.10B）
 >
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = 10% (好公司)
+g = 0% (from Task C)
+P/FCF0 = min((1+0%)/(10%-0%), 30) = 10.0x
+net_cash/sh = $0
+EPS (FINAL from D.1) = $4.33
+```
+
+EPS 模型合理价 = $4.33 x 8.5 = **$36.8**
+
+| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF-SBC | $-3.52 | - | N/A (FCF-SBC<0) | - |
+| DCF FCF | $-3.02 | - | N/A (FCF<0) | - |
+
+回购 $19224M > SBC -> FCF 为主口径
+
+gap 分析:
+
+DCF N/A (FCF<0) -> 仅用 EPS 模型 / P/B
 ## D.3 敏感性表（银行：合理 P/B × BV/share）
 
 | 口径 | 合理 P/B | 合理价 | 满仓目标（×0.67） |

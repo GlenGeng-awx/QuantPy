@@ -52,6 +52,23 @@ PE = min(8.5 + 11, 30) = 19.5x
 锚定: EPS=$9.08, g=11%, PE=19.5x, 系数=×0.60, 日期: 2026-08-07
 ```
 
+
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+> ⚠ 多币种 + ADR: CSV HKD, 1 ADR=8 股, 无 cf_ttm.csv (用 cf_annual)
+> ⚠ FCF 未经 ADR 比例和 FX 校准 → DCF 待手动验证
+
+```
+r = 10% (好公司)
+g = 11% (from Task C)
+P/FCF0 = 30x (g>r, 封顶)
+EPS (FINAL from D.1) = $9.08
+```
+
+EPS 模型合理价 = $9.08 x 19.5 = **$177.06**
+
+> DCF 待手动计算（需确认 ADR 比例 × FX 后的 FCF/sh）
 ## D.3 敏感性表
 
 | 情景 | EPS | g | 合理 PE | 合理价 | 满仓（×0.60） |

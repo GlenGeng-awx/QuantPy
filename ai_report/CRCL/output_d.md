@@ -58,6 +58,29 @@ g = 8%（G-3: Q YoY 20% → Step 5 定性调至 8%，反映 Fed 降息周期利�
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = 11% (平庸)
+g = 8% (from Task C)
+P/FCF₀ = min((1+8%)/(11%−8%), 30) = 30.0x
+net_cash/sh = $nan
+```
+
+| 口径 | base ($/sh) | P/FCF₀ | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF−SBC | $-0.63 | — | N/A (FCF−SBC < 0) | — |
+| DCF FCF | $1.80 | 30.0x | $nan | N/A |
+
+回购 N/A
+
+gap 分析:
+
+DCF 部分适用（FCF−SBC < 0 或 EPS < 0）
+
+
 ## D.3 敏感性表（恢复 EPS × g 双维）
 
 | 口径 | 恢复 EPS | g | 合理 PE | 合理价 | 满仓目标（×0.40） |
