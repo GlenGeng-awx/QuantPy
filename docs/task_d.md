@@ -12,12 +12,20 @@
 ## 核心公式
 
 ```
+# EPS 模型（保守下限）
 合理价   = 正常化 EPS × min(8.5 + g, 30)
 满仓目标 = 合理价 × 折扣系数
 安全边际 = 1 − 现价 / 合理价
+
+# DCF 交叉验（并列，非替代）
+DCF/sh   = base × (1+g)/(r−g) + net_cash/shares
+  base = FCF/sh 或 (FCF−SBC)/sh
+  r = 质量调整：伟大 9% / 好公司 10% / 平庸 11%
+  P/FCF₀ = min((1+g)/(r−g), 30)
 ```
 
-> 估值三要素关系见 `analysis_framework.md`。各要素的 checklist 详见 `normalize_eps.md` / `forward_g.md` / `discount_coefficient.md`。
+> EPS 模型 = 保守下限（隐含 r≈12-15%）。DCF = 内在价值定义（r=9-11%）。两者并列展示。
+> 估值要素 checklist 详见 `normalize_eps.md` / `forward_g.md` / `discount_coefficient.md` / `dcf.md`。
 
 ---
 
@@ -82,6 +90,46 @@ g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
 | 基准 | XXx | $XX | $XX |
 | 牛口径 | XXx | $XX | $XX |
 ```
+
+### D.2b DCF 交叉验
+
+> 详见 `docs/dcf.md`。与 D.2 EPS 模型并列，非替代。
+
+```
+# 参数（from Task B + C）
+base_fcf    = cf_ttm['Free Cash Flow'] / shares
+base_sbc    = (FCF − cf_ttm['Stock Based Compensation']) / shares
+g           = Task C 前瞻 g
+r           = 质量调整（伟大 9% / 好公司 10% / 平庸 11%）
+net_cash/sh = (bs_quarterly Cash − Total Debt) / shares
+
+# 封顶
+P_FCF = min((1+g)/(r−g), 30)
+
+# 两种口径
+DCF FCF      = base_fcf × P_FCF + net_cash/sh
+DCF FCF−SBC  = base_sbc × P_FCF + net_cash/sh
+```
+
+输出格式：
+
+```
+| 口径 | base | P/FCF₀ | DCF/sh | vs EPS 合理价 |
+|------|------|--------|--------|---------------|
+| DCF FCF−SBC | $XX | XXx | $XX | ±XX% |
+| DCF FCF | $XX | XXx | $XX | ±XX% |
+
+r = X% (伟大/好公司/平庸)
+g = X% (from Task C)
+回购 $XXM {>/≤} SBC $XXM → {FCF/FCF−SBC} 为主口径
+```
+
+gap 分析：
+- gap 1 (EPS→DCF FCF−SBC) = PE 公式差异 (8.5+g vs (1+g)/(r−g))
+- gap 2 (DCF FCF−SBC→DCF FCF) = SBC 差异
+- 判断：{DCF 与 EPS 一致 / DCF 揭示低估 / DCF 揭示高估}
+
+> 满仓目标仍用 EPS 模型（最保守口径 × 折扣系数）。DCF 作为"合理价区间"参考。
 
 ### D.3 护栏检查
 

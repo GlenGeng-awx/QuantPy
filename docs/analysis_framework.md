@@ -26,15 +26,24 @@
 ## 三核心要素（实现公式）
 
 ```
+# EPS 模型（保守下限）
 合理价   = 正常化 EPS × min(8.5 + g, 30)
-              ↑               ↑
-           Task B           Task C
-        normalize_eps.md  forward_g.md
+               ↑               ↑
+            Task B           Task C
+         normalize_eps.md  forward_g.md
 
 满仓目标 = 合理价 × 折扣系数
-                     ↑
-                   Task D
-              discount_coefficient.md
+                      ↑
+                    Task D
+               discount_coefficient.md
+
+# DCF 交叉验（并列，非替代）
+DCF/sh = base × (1+g)/(r−g) + net_cash/shares
+
+  base = FCF/sh 或 (FCF−SBC)/sh              ← dcf.md (from Task B CSV)
+  g = 前瞻增速                                ← forward_g.md (from Task C)
+  r = 质量调整：伟大 9% / 好公司 10% / 平庸 11%  ← dcf.md
+  P/FCF₀ = min((1+g)/(r−g), 30)
 ```
 
 | 要素 | 性质 | checklist | 原则 |
@@ -42,8 +51,14 @@
 | **正常化 EPS** | 事实性（财报算） | `normalize_eps.md` | min(GAAP, tool, v3.1) — 三者取最低 |
 | **前瞻 g** | 半预测（历史+共识+指引） | `forward_g.md` | 剔高+均值，不外推高增长 |
 | **折扣系数** | 判断性（质量×麻烦） | `discount_coefficient.md` | 7分评分+4档定性→交叉查表 |
+| **DCF 交叉验** | 现金流估值（内在价值定义） | `dcf.md` | base × (1+g)/(r−g)，与 EPS 模型并列 |
 
-三重保守 → 合理价偏低 → 需要更便宜才出手 → **哪怕错过，不要做错**
+EPS 模型是保守下限（隐含 r≈12-15%），DCF 是内在价值定义（r=9-11%）。两者并列展示：
+- FCF ≈ NI 时一致
+- 高 SBC（TTD/CRM）→ DCF > EPS 模型，揭示 EPS 低估
+- 高 CapEx（GOOG/NVDA）→ DCF < EPS 模型，揭示 EPS 高估
+
+三重保守（EPS min + g 保守 + 折扣保守）→ 合理价偏低 → 需要更便宜才出手 → **哪怕错过，不要做错**
 
 ---
 

@@ -366,6 +366,28 @@ PE = min(8.5 + {g}, 30) = {N}x
 
 > D 不含现价/安全边际/操作建议——汇总时 join A(price) + D(锚) 算。
 
+## D.2b DCF 交叉验
+
+> 与 D.2 EPS 模型并列。详见 `docs/dcf.md`。
+
+```
+r = {9/10/11}% ({伟大/好公司/平庸})
+g = {N}% (from Task C)
+P/FCF₀ = min((1+g)/(r−g), 30) = {N}x
+```
+
+| 口径 | base ($/sh) | P/FCF₀ | DCF/sh | vs EPS 合理价 |
+|------|-------------|--------|--------|---------------|
+| DCF FCF−SBC | ${值} | {N}x | ${值} | {±N}% |
+| DCF FCF | ${值} | {N}x | ${值} | {±N}% |
+
+回购 ${N}M {>/≤} SBC ${N}M → {FCF/FCF−SBC} 为主口径
+
+gap 分析:
+- gap 1 (EPS→FCF−SBC): ${值} → PE 公式差异 (8.5+g vs (1+g)/(r−g))
+- gap 2 (FCF−SBC→FCF): ${值} → SBC 差异
+- 判断: {DCF 与 EPS 一致 / DCF 揭示低估 / DCF 揭示高估}
+
 ## D.3 敏感性表
 
 | 前瞻 g | 合理 PE | 合理价 | 满仓目标（×{系数}） |

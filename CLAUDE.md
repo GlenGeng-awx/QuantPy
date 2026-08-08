@@ -13,9 +13,18 @@
 ## 三核心公式
 
 ```
+# EPS 模型（保守下限）
 合理价 = 正常化 EPS × min(8.5 + g, 30)
 满仓目标 = 合理价 × 折扣系数
+
+# DCF 交叉验（并列，非替代）
+DCF per share = base × (1+g)/(r−g) + net_cash/shares
+  base = FCF/sh 或 (FCF−SBC)/sh
+  r = 质量调整：伟大 9% / 好公司 10% / 平庸 11%
+  P/FCF₀ = min((1+g)/(r−g), 30)  ← g 接近 r 时封顶 30x
 ```
+
+EPS 模型是保守下限，DCF 是内在价值定义。两者并列展示，当 FCF ≈ NI 时一致，高 SBC / 高 CapEx 时背离。详见 `docs/dcf.md`。
 
 ## ABCD 工作流
 
@@ -40,10 +49,11 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 6. `docs/forward_g.md` — g 检查清单（8 源）
 7. `docs/task_d.md` — 估值汇聚方法
 8. `docs/discount_coefficient.md` — 折扣系数清单（7 分+4 档）
-9. `docs/local_data_tools.md` — 工具用法 + 数据格式速查
-10. `docs/output_format.md` — 输出格式 + 存档规则
-11. `docs/batches.md` — 查标的所在批次 + 元标记
-12. `docs/mistakes.md` — 历史复查发现的常见错误 + 提交前自检清单
+9. `docs/dcf.md` — DCF 交叉验（Gordon 单阶段 + 质量调整 r + 封顶）
+10. `docs/local_data_tools.md` — 工具用法 + 数据格式速查
+11. `docs/output_format.md` — 输出格式 + 存档规则
+12. `docs/batches.md` — 查标的所在批次 + 元标记
+13. `docs/mistakes.md` — 历史复查发现的常见错误 + 提交前自检清单
 
 全部读完后 context 里有完整方法论 + 已知错误，再开始 ABCD 分析。
 
@@ -54,6 +64,7 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 - **FCF − SBC < 0 → 重麻烦 → ×0.40**，不否决、总是估值
 - **g ≥ 22% → 合理 PE 封顶 30x**，不追高增长
 - **合理价 = 正常化 EPS × min(8.5+g, 30)**，折扣只在满仓目标层，不进合理价
+- **DCF 交叉验 = base × (1+g)/(r−g) + net_cash/sh**，与 EPS 模型并列展示，非替代
 - **5 年估值分位须 ≤30%**，查不到则暂停，严禁估算
 - **正常化 EPS = min(GAAP, tool, v3.1)**，只剔收益不加回亏损；EPS 负值时用恢复 EPS（剥一次性后估正常化盈利）
 - **回购不进 g**，g 用业务/净利润增长

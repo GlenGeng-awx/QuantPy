@@ -299,10 +299,11 @@
 - [ ] **正常化 EPS = min(GAAP, tool, v3.1)**，未取上界/加回摊销；EPS 负值时用恢复 EPS
 - [ ] **回购未进 g**
 - [ ] **5 年分位 ≤30%**（查不到已暂停，未自算估算）
+- [ ] **DCF 交叉验 = base × (1+g)/(r−g) + net_cash/sh**，P/FCF₀ = min((1+g)/(r−g), 30)；两种口径（FCF 和 FCF−SBC）并列展示；r 质量调整（伟大 9%/好公司 10%/平庸 11%）
 
 ### 完整性
 
-- [ ] **A/B/C/D 章节按 `output_format.md` 齐备**
+- [ ] **A/B/C/D 章节按 `output_format.md` 齐备**（含 D.2b DCF 交叉验）
 - [ ] **B.5 EPS Chain 四行齐**（GAAP/工具/v3.1/FINAL；亏损股补恢复 EPS 行）
 - [ ] **A.1 粗筛 6 项全列**（N/A 已标原因）
 - [ ] **所有来源带具体 URL**（"web"/"旧分析"不算）
