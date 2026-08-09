@@ -114,11 +114,25 @@ amount = 该值（pre-tax，仅供分析参考，不进 total_strip）
 ### 2c: Tax → 税率异常（中信心）
 
 ```
+# Step 1: 绝对检查（NEW — 防 DTA 释放漏判）
+TTM 有效税率 = TTM Tax / TTM Pretax
+若 Pretax > 0 且 TTM 有效税率 < 0%（税收益，非正常经营）→ 触发
+  normal_rate = 21%（美国法定企业所得税率）
+  one_time_tax = TTM Tax - 21% × TTM Pretax
+  amount = one_time_tax（after-tax，即 tax line 本身的超额收益）
+  → v3.1 用 21% 重算 NI = Pretax × (1 − 21%)
+
+# Step 2: 相对检查（existing）
 TTM 税率 vs income_annual 近 3-4 年均值
 若 |TTM - 均值| > 10pp → 标记一次性税收
   one_time_tax = TTM Tax - 均值税率 × TTM Pretax
   amount = one_time_tax（after-tax）
-若触发 → 正常税率用历史均值，否则用 TTM 税率
+  → v3.1 用历史均值
+
+# 两步关系：Step 1 先判（return early），Step 2 仅当 Step 1 不触发时才判
+# 原因：Step 2 比对历史均值，但若历史本身被 DTA 释放扭曲（如 UBER 2024-2026
+#   均为负税率），则 TTM ≈ 均值 → 不触发 → Q3'25 一次性 DTA 释放漏判。
+#   Step 1 用法定 21% 作绝对锚，不依赖历史，catches 此 case。
 ```
 
 ### 2d: OpInc → 季度趋势（低信心，只标记不自动剔）
@@ -189,12 +203,14 @@ amount = NI_total - NI_continuing（after-tax）
 ```
 GAAP EPS   = ['Diluted EPS'][0]
 工具 EPS   = ['Normalized Income'][0] / ['Diluted Average Shares'][0]
-v3.1 EPS   = (Pretax - sum(max(0, 各 detector 剔除额))) × (1-税率) / 稀释股数
+v3.1 EPS   = (Pretax - sum(max(0, 各 detector 剥离额))) × (1 - use_tax_rate) / 稀释股数
+  use_tax_rate = 2c 的 normal_rate（若触发）：Step1=21% 法定 / Step2=历史均值
+               若 2c 未触发 → 用 TTM 税率
 
 正常化 EPS = min(GAAP EPS, 工具 EPS, v3.1 EPS)
 ```
 
-保证: 正常化 EPS ≤ GAAP EPS（永远不高于 GAAP）
+保证: 正常化 EPS ≤ GAAP EPS（永远不高于 GAAP）。例外：负税率+无剥离时 v3.1 > GAAP（见已知问题 #10），min() 兜底取 GAAP；修 2c Step1 后负税率触发 → 保证恢复
 
 ## EPS-4b: 恢复 EPS（EPS 负值时使用）
 
@@ -245,7 +261,7 @@ v3.1 EPS = v3.1 NI / 稀释股数
 | 2a OtherInc (MTM) | 高 | ✅ | 波动 = MTM 几乎确定 |
 | 2b Restructuring | 中 | ❌ 只标记 | 费用非收益，per"不加回亏损"不剥离；常连续多年=经常性 |
 | 2h Discontinued | 高 | ✅ | 明确归类 |
-| 2c TaxAnomaly | 中 | ✅ | 可能是税率结构变化 |
+| 2c TaxAnomaly | 中 | ✅ | Step1(abs): 负税率=DTA 释放→21% 法定；Step2(rel): vs 历史均值 |
 | 2e GMDrop | 中 | ✅ | 可能结构性 GM 下滑 |
 | 2f RDSpike | 中 | ✅ | 可能结构性研发增加 |
 | 2d OpIncDrop | 低 | ❌ 只标记 | 需外部确认原因和金额 |
@@ -281,3 +297,6 @@ python3 -c "import sys; sys.path.insert(0,'docs'); from normalize_eps import nor
 6. **半年报假阳性**（NEW）：detector 2a 用季度波动率判断 OtherInc 是否波动。半年报公司（0700.HK、BABA、PDD、JD 等中概/港股）季度 CSV 多数为零 → vol_ratio = (max−0)/(avg含零) 虚高 > 2 → **误触发**。实质是"数据缺失被当成高波动"，非投资收益真波动。→ 分析时**必须半年报复查**：若季度 CSV {N}/{M} 期为零，标"假阳性"，v3.1 在此情况下过度保守
 7. **OtherInc 与 Unusual 重叠但判独立**（NEW）：EPS-3 交叉验用 `|OtherInc − Unusual| / max < 10%` 判重叠。但投资控股型公司两者可能含交叉投资收益却差异率 >10% → 判独立 → 双重剥离同一笔收益 → 过度保守。→ 分析时检查 OtherInc 子项与 Unusual 是否有交叉，若有则标注"可能重叠但判独立"。**v3.1 已修：阈值 10%→20%，当两者均为正（收益）且 diff < 20% → 取 max 不重复剔**
 8. **Restructuring 双重扣减**（NEW，已修）：detector 2b 旧版将重组费用（CSV 正数=费用）当收益剥离 → `Pretax − 重组` = GAAP 已扣一次 + v3.1 再扣一次 = 双重扣减。且重组常连续多年（CRM 5 年、ORCL 等）= 经常性非一次性。**已修：2b 改为只标记不自动剔（confidence=low）**，per"只剔收益不加回亏损"原则，费用留在 GAAP NI
+9. **TaxAnomaly 欠触发——DTA 释放盲区**（NEW，已修）：旧版 2c 只比对 TTM vs 3yr 均值。当公司持续 DTA 释放（如 UBER 2024-2026 均为负税率），历史均值本身被扭曲 → TTM ≈ 均值 → 不触发 → Q3'25 一次性 DTA 收益漏判 → EPS 虚高。典型：UBER TTM 税率 −45.7% vs 3yr 均值 −50.9%（diff 5.3pp < 10pp）→ 旧版漏判，GAAP $4.56 含 ~$2.2/sh 递延税水分。**已修：2c 加 Step 1 绝对检查（TTM 税率 < 0% → 用 21% 法定重算）**。UBER 修后 v3.1 = $2.53（min，21% 法定 × TTM Pretax）
+10. **v3.1 > GAAP 保证失效**（NEW）：文档称"v3.1 ≤ GAAP（永远不高于）"，但当 ① 无 detector 剥离 + ② TTM 税率为负（DTA 收益）时，v3.1 = Pretax × (1−负税率) > GAAP NI。UBER 修前 v3.1 = $4.66 > GAAP $4.56。**min() 在最终层兜底（取 GAAP）**，但 v3.1 值本身无意义。**已修：① #9 修 2c 后负税率触发 → v3.1 用 21% → < GAAP（保证恢复）；② 加 guard：`if norm_eps > gaap_eps` 标记"v3.1 失效(负税率)，取 GAAP 兜底"**
+11. **OtherInc 净额陷阱**（NEW，文档化不自动修）：detector 2a 剥 TTM **净** OtherInc。当 gross 季度收益被 gross 季度亏损净额为负时 → 不剥 → gross 一次性收益隐藏。典型：UBER TTM OtherInc = −$294M（净亏），但 gross 含 Q3'25 +$1.43B + Q2'26 +$1.34B = $2.77B 收益被 Q4'25/Q1'26 $3.06B 亏损净额掩盖 → 收益未剥。**不自动改 detector**（gross 剥离过应：剥收益+留亏损 = 双罚，UBER 会跌至 $1.48 vs DCF $113，gap 4x）。**处理：Task D 手动查 gross 季度 OtherInc**，若 material 且性质为 MTM（vol>2x）则在 D.5 软估算标注，不进合理价公式

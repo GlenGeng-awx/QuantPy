@@ -122,10 +122,27 @@ def detect_2b_restructuring(ttm_gv, ttm_has):
 
 
 def detect_2c_tax_anomaly(ttm_gv, a_gv, a_periods, pretax):
-    """2c: Tax rate anomaly (MEDIUM confidence)"""
+    """2c: Tax rate anomaly (MEDIUM confidence)
+    Step 1 (abs): TTM rate < 0% on positive pretax = DTA release -> use 21% statutory
+    Step 2 (rel): |TTM - hist avg| > 10pp -> use historical average
+    Both: abs fires first (returns early); rel only if abs doesn't fire.
+    """
     tax = ttm_gv('Tax Provision')
     ttm_rate = tax / pretax if pretax else 0
 
+    # Step 1: Absolute check (NEW) — negative tax rate on positive pretax = DTA release
+    STATUTORY_RATE = 0.21
+    if pretax > 0 and ttm_rate < 0:
+        one_time_tax = tax - STATUTORY_RATE * pretax
+        return {
+            'name': '2c:TaxAnomaly(abs)',
+            'amount_after_tax': one_time_tax,
+            'confidence': 'medium',
+            'normal_rate': STATUTORY_RATE,
+            'detail': 'TTM %.1f%% < 0%% (DTA release) -> statutory 21%%' % (ttm_rate * 100),
+        }
+
+    # Step 2: Relative check — vs historical average
     hist_rates = []
     for i in range(min(4, len(a_periods))):
         t = a_gv('Tax Provision', i)
@@ -140,12 +157,12 @@ def detect_2c_tax_anomaly(ttm_gv, a_gv, a_periods, pretax):
     diff = abs(ttm_rate - avg_rate)
 
     if diff > 0.10:
-        normal_tax = avg_rate * pretax
-        one_time_tax = tax - normal_tax
+        one_time_tax = tax - avg_rate * pretax
         return {
-            'name': '2c:TaxAnomaly',
+            'name': '2c:TaxAnomaly(rel)',
             'amount_after_tax': one_time_tax,
             'confidence': 'medium',
+            'normal_rate': avg_rate,
             'detail': 'TTM %.1f%% vs hist %.1f%% (diff %.1fpp)' % (ttm_rate * 100, avg_rate * 100, diff * 100),
         }
     return None
@@ -401,22 +418,21 @@ def normalize_eps(stock):
         elif f.get('amount_after_tax') is not None:
             total_after_tax_adj += max(0, f['amount_after_tax'])
 
-    # Tax rate: use historical average if 2c triggered, else TTM
-    hist_rates = []
-    for i in range(min(4, len(a_p))):
-        t = a('Tax Provision', i)
-        p = a('Pretax Income', i)
-        if t and p and p != 0:
-            hist_rates.append(t / p)
-    normal_tax_rate = sum(hist_rates) / len(hist_rates) if hist_rates else tax_rate
-
+    # Tax rate: use 2c's normal_rate if triggered (statutory for abs, historical for rel)
     has_tax_anomaly = any('TaxAnomaly' in f['name'] for f in findings)
-    use_tax_rate = normal_tax_rate if has_tax_anomaly else tax_rate
+    if has_tax_anomaly:
+        tax_finding = next(f for f in findings if 'TaxAnomaly' in f['name'])
+        use_tax_rate = tax_finding.get('normal_rate', tax_rate)
+    else:
+        use_tax_rate = tax_rate
 
     norm_pretax = pretax - total_pretax_adj
     norm_ni = norm_pretax * (1 - use_tax_rate) - total_after_tax_adj
     norm_eps = norm_ni / shares if shares else 0
     tool_eps = norm_tool / shares if shares else 0
+
+    # Guard: v3.1 > GAAP occurs when negative tax + no stripping; min() catches but v3.1 is meaningless
+    v331_gt_gaap = norm_eps > gaap_eps
 
     return {
         'stock': stock,
@@ -429,6 +445,8 @@ def normalize_eps(stock):
         'total_after_tax_adj': total_after_tax_adj,
         'norm_ni': norm_ni,
         'norm_tool': norm_tool,
+        'use_tax_rate': use_tax_rate,
+        'v331_gt_gaap': v331_gt_gaap,
     }
 
 
