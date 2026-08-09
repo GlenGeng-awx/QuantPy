@@ -12,6 +12,8 @@ python3 -m fundamental.cheap STOCK                  # 仅价格粗筛
 python3 -m fundamental.statements STOCK             # 仅三张财报
 python3 -m fundamental.health STOCK                 # 仅 SCORECARD
 python3 -m fundamental.download STOCK               # 仅下载/更新数据
+python3 docs/normalize_eps.py STOCK                 # 正常化 EPS（详见 docs/normalize_eps.md）
+python3 docs/dcf.py STOCK G QUALITY [EPS]            # DCF 交叉验（详见 docs/dcf.md）
 ```
 
 ---
@@ -218,6 +220,22 @@ python3 -m docs.normalize_eps           # 跑全部 72 只
 
 ---
 
+## dcf — DCF 交叉验（Task D 的 D.2b 部分）
+
+**代码**: `docs/dcf.py`
+
+详见 `docs/dcf.md`（Gordon 单阶段 + 质量调整 r + 封顶 30x）。
+
+```bash
+python3 docs/dcf.py WMT 6 好公司 2.609       # STOCK G(%) QUALITY [EPS for gap]
+python3 docs/dcf.py NVDA 15 伟大 10.03        # g≥r 封顶演示
+python3 docs/dcf.py TTD 3 好公司 0.84          # 高 SBC 演示（DCF>EPS）
+```
+
+输入：cf_ttm（FCF/SBC/回购）、income_ttm（shares/EPS）、bs_quarterly（Cash/Total Debt）。g/quality/EPS 来自 Task C/D（非自动）。输出：完整 DCF 表（两口径）+ gap 分析 + 三口径排序。
+
+---
+
 ## 数据更新
 
 ```bash
@@ -237,7 +255,7 @@ python3 -m fundamental.download STOCK   # 下载/更新单只数据
 | B 财务健康 | `health`（9 宫格）+ `statements`（原始数据） | 免费，财报后更新 |
 | B 正常化 EPS | `normalize_eps`（v3.1 checklist） | 免费，财报后更新 |
 | C 增长/消息面 | — | 需 web search（最贵） |
-| D 估值汇聚 | — | 用 A+B+C 输出手工算 |
+| D 估值汇聚 | `dcf`（DCF 交叉验）+ 手工算（合理价/满仓/系数） | DCF 自动，EPS 模型手工 |
 
 **combine = A.1 + B 的合体**——一次跑完价格粗筛 + 财务健康 + 原始报表，是日常分析的主力入口。
 

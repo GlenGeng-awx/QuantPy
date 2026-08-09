@@ -351,25 +351,28 @@ gap 分析:
 ## 实装
 
 ```bash
-# 手算（推荐，逐只精做）
-python3 -c "
-fcf = 848  # cf_ttm FCF ($M)
-sbc = 452  # cf_ttm SBC ($M)
-shares = 480.6  # income_ttm diluted shares (M)
-g = 0.03
-r = 0.10  # 好公司
-nc = 1060  # net cash ($M)
+# 自动（推荐）— docs/dcf.py 从 CSV 读取，输出完整 DCF 表 + gap 分析
+python3 docs/dcf.py WMT 6 好公司 2.609       # STOCK G(%) QUALITY [EPS]
+python3 docs/dcf.py NVDA 15 伟大 10.03      # 高增长封顶 30x 演示
+python3 docs/dcf.py TTD 3 好公司 0.84        # 高 SBC 演示（DCF>EPS）
 
-p_fcf = min((1+g)/(r-g), 30)
-dcf_fcf = (fcf/shares) * p_fcf + nc/shares
-dcf_sbc = ((fcf-sbc)/shares) * p_fcf + nc/shares
-print(f'P/FCF = {p_fcf:.1f}x')
-print(f'DCF FCF = \${dcf_fcf:.1f}')
-print(f'DCF FCF-SBC = \${dcf_sbc:.1f}')
-"
+# g 接受 6 / 6% / 0.06 三种写法；QUALITY ∈ {伟大,好公司,平庸}→r{9%,10%,11%}
+# EPS 可选（给则算 gap vs EPS 模型；不给只输出 DCF）
+
+# 编程接口（返回 dict）
+python3 -c "import sys; sys.path.insert(0,'docs'); from dcf import dcf; print(dcf('WMT',0.06,'好公司',2.609))"
 ```
 
-> 后续可实装为 `docs/dcf.py`，从 CSV 自动计算全部标的的 DCF 交叉验。
+> 已实装 `docs/dcf.py`（与 `normalize_eps.py` 同级）。验证：TTD 输出 DCF FCF $28.17 / FCF−SBC $14.33 / EPS $9.66，与本文档"Gordon 公式推导"前的手算例子一致。
+
+### 边界情况（脚本自动处理）
+
+| 情况 | 脚本行为 |
+|------|---------|
+| FCF < 0 | 输出 "DCF N/A，用 P/B 或恢复 EPS" |
+| FCF−SBC < 0 | 标 "重麻烦 ×0.40"，仅展示 DCF FCF |
+| g ≥ r | P/FCF 封顶 30x，显示 "∞ (g≥r)" |
+| SBC = $0（非科技如 WMT/MCD/KO） | FCF−SBC = FCF，gap 2 = $0，两口径相同 |
 
 ---
 

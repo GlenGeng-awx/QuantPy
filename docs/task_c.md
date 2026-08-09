@@ -72,6 +72,8 @@ CEO 公开市场增持 → 最强看多
 ```
 
 > ⚠ **常见错误**：只写"CEO XXX（N 年）"就完——必须 web search 查是否有退休/继任/过渡公告。Narayen 19 年任期不代表还在位，可能已宣布交接。
+>
+> ⚠ **info.json `companyOfficers` 可能 stale**：字段更新滞后，已交接的 CEO title 可能仍标旧人（或新旧人并列、title 混乱）。**不要直接信 info.json 的 CEO title**——必须 web search 官方 IR（如 `corporate.walmart.com/about/leadership`）确认现任 + 交接生效日。案例：WMT info.json 列 Furner 为 CEO（对），但旧报告 `analysis.base.md`（2026-07）仍写 McMillon（错，Furner 2026-02-01 已接任）——报告历史也会 stale，以官方 IR 为准。
 
 ---
 

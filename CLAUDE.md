@@ -48,7 +48,7 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 5. `docs/task_c.md` — 增长/护城河/管理层/消息面方法
 6. `docs/forward_g.md` — g 检查清单（8 源）
 7. `docs/task_d.md` — 估值汇聚方法
-8. `docs/discount_coefficient.md` — 折扣系数清单（7 分+4 档）
+8. `docs/discount_coefficient.md` — 折扣系数清单（7 分+5 档，含无麻烦列）
 9. `docs/dcf.md` — DCF 交叉验（Gordon 单阶段 + 质量调整 r + 封顶）
 10. `docs/local_data_tools.md` — 工具用法 + 数据格式速查
 11. `docs/output_format.md` — 输出格式 + 存档规则
@@ -72,7 +72,7 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 ## web 数据抓取（Task A.2 分位 / Task C 同业·消息面）
 
 - **优先用 playwright 浏览器**（`playwright_browser_navigate` + `playwright_browser_evaluate`）抓 web 数据
-- **`webfetch` 易被反爬**：MacroTrends / GuruFocus / stockanalysis 等常返 Cloudflare 403（"Just a moment..."），webfetch 直拿会失败
+- **`webfetch` 易被反爬**：MacroTrends / GuruFocus / stockanalysis / Simply Wall St / Yahoo Finance 子页 等常返 Cloudflare 403（"Just a moment..."）或 403 Forbidden，webfetch 直拿会失败
 - playwright 首次导航若遇 Cloudflare 挑战页，**等 5 秒**（`playwright_browser_wait_for time=5`）再读，真浏览器能过
 - **拿不到则按硬规则标"暂停"**（"查不到则暂停，严禁估算"），绝不编造、绝不用旧值冒充
 - 5yr 分位常用源：[MacroTrends](https://www.macrotrends.net) P/E (`/pe-ratio`) 或 P/B (`/price-book`) 页，季度历史表用 evaluate 提取，公式 `(current−low)/(high−low)` 算分位

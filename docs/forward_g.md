@@ -34,11 +34,31 @@ g 越高 → PE 越高 → 合理价越高。因此 **g 偏保守 = 合理价偏
 ### CSV 计算公式
 
 ```
-文件: income_annual.csv  列0=最新年，列2=3年前
+文件: income_annual.csv  列0=最新年（新→旧）
 
-营收 CAGR = (Revenue[0] / Revenue[2]) ^ (1/3) - 1
-OpInc CAGR = (OpInc[0] / OpInc[2]) ^ (1/3) - 1
-EPS CAGR  = (DilutedEPS[0] / DilutedEPS[2]) ^ (1/3) - 1
+⚠ 列号 ≠ 固定年数。col2 常仅 2 年前（非 3 年前）——须 PRINT header 验证 year_gap。
+   旧公式写死 "col2=3年前 + ^1/3"，但 CSV col2 常仅 2 年前 → ^1/3 系统性低估增速。
+   此陷阱已记录 mistakes.md #4/#11，但须在此 inline 修正，否则下次还踩。
+
+Step 1: PRINT income_annual.csv header row → 读各列日期
+Step 2: 找 colN 使 year_gap = col0_year − colN_year = 3（优先）
+        若无 3yr 数据 → 用 year_gap = 2（fallback，注明）
+        ⚠ 选 colN 时注意基数是否异常（如 FY23 低基数会扭曲 3yr CAGR，见下方 WMT 例）
+Step 3: CAGR = (Value[0] / Value[N]) ^ (1 / year_gap) - 1
+
+  营收 CAGR = (Revenue[0] / Revenue[N]) ^ (1/year_gap) - 1
+  OpInc CAGR = (OpInc[0] / OpInc[N]) ^ (1/year_gap) - 1
+  EPS CAGR  = (DilutedEPS[0] / DilutedEPS[N]) ^ (1/year_gap) - 1   ← ⚠ 受回购/一次性扭曲，仅参考
+```
+
+验证示例（WMT FY27 Q1 分析）:
+```
+header: ['', '2026-01-31', '2025-01-31', '2024-01-31', '2023-01-31']
+col0=FY26, col2=FY24 → year_gap=2 → 用 ^1/2
+  营收 2yr CAGR = (713.16/648.12)^(1/2)-1 = 4.90%
+col0=FY26, col3=FY23 → year_gap=3 → 用 ^1/3，但 FY23 OpInc $20.4B 是低基数
+  → OpInc 3yr CAGR = 13.45% 被 FY23 扭曲（虚高），2yr CAGR 5.08% 更代表正常增长
+  → G-3 Step 2 剔除 3yr OpInc CAGR（基数异常）
 ```
 
 ```
@@ -71,6 +91,8 @@ revenueGrowth = info.json 里的 YoY 营收增长率
 1e. PEG 隐含 g          ← 市场预期参照（不是我们的估计）
 1f. info.json 增长率    ← 工具给的 YoY（可能是季度或年度）
 ```
+
+> ⚠ **CAGR 须先 PRINT header 验证 year_gap**（见上方"CSV 计算公式"）。col2 常仅 2 年前，用 ^1/3 会系统性低估增速。选 colN 后还需查基数是否异常（如 FY23 低基数扭曲 3yr OpInc CAGR）→ G-3 Step 2 剔除。
 
 ### G-2: 获取外部 g（web search，Task C）
 

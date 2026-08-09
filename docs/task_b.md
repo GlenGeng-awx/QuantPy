@@ -94,6 +94,8 @@ Other Income 大额波动 → 投资损益或 FX
 | CapEx | `Capital Expenditure` | 急增可能吞噬 FCF |
 ```
 
+> ⚠ **SBC 字段缺失 = 非科技公司**（WMT/MCD/KO/PG 等现金薪酬为主）：cf_ttm 无 `Stock Based Compensation` 行或值为 $0 → SBC=$0 → FCF−SBC = FCF。health scorecard 显示 "SBC/Rev Trend: Insufficient data" 时别卡住，直接标 "SBC=$0（非科技）"，FCF−SBC 检查仍 ✓（= FCF > 0 即可）。
+
 **⚠ FCF 质量必查**：现金充裕时查来源（留存收益 > 发股 > 发债 > 浮存）。
 负营运资本浮存（应付膨胀）随销量反向回流、非永久，作锚要打折。
 
