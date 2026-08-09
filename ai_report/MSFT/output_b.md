@@ -45,8 +45,7 @@ Q4 FY26  90.01B  67.2%  40.60B  45.1%  ~30.2B   ~$4.81  ← 最新（7/29 发）
 |------|-----|------|
 | OCF | $182.94B（+34.3% YoY vs FY25 $136.16B） | 极强 |
 | CapEx | $115.95B（CapEx/OCF 63%） | AI 数据中心 ~$116B/年 run-rate（FY24 $44B→FY26 $116B，2.6x） |
-| FCF | $66.99B（3yr −3.3%） | 被 capex 压制 |
-| FCF yield | ~1.9%（$66.99B / $3451B MCap） | 偏低 |
+| FCF | $66.99B（3yr −3.3%） | 被 capex 压制；yield 见 A（price-dependent） |
 | OCF/NI | 1.37 | 利润含金量高 |
 | SBC | $12.41B（SBC/Rev 3.7%） | 低、节制 |
 | 回购 | $22.27B + 分红 $26.45B | Net Return +$36.31B |
@@ -57,8 +56,8 @@ Q4 FY26  90.01B  67.2%  40.60B  45.1%  ~30.2B   ~$4.81  ← 最新（7/29 发）
 
 | 项目 | 值 | 说明 |
 |------|-----|------|
-| 现金+短投 | $78.23B | — |
-| 总债 | $56.97B | **净现金 ~$21B** |
+| 现金+短投 | $76.65B | — |
+| 总债 | $56.83B | **净现金 ~$20B** |
 | D/E | 0.10（3yr 0.23→0.13→0.10 下降） | 极低杠杆 |
 | Net PPE | $154B→$308B（2 年翻倍） | AI 数据中心 capex 资本化 |
 | Goodwill | $119.66B（含 Activision） | 无减值信号 |
@@ -70,13 +69,14 @@ Q4 FY26  90.01B  67.2%  40.60B  45.1%  ~30.2B   ~$4.81  ← 最新（7/29 发）
 |------|-----|------|
 | GAAP | $17.95 | income_annual Diluted EPS（FY26 = TTM，2026-06-30；income_ttm Diluted EPS=nan 用 annual 兜底） |
 | 工具 | $17.33 | Normalized Income $129.135B / 7.453B shares |
-| v3.1 | $16.20 | v3.1 NI $120.71B / 7.453B shares（剥 OtherInc $10.4B + Unusual $5.7B，detector 实跑） |
-| **FINAL** | **$17.95** | **GAAP（v3.1 过度保守补偿，见下）** |
+| v3.1 | $16.20 | v3.1 NI $120.72B / 7.453B shares（剥 OtherInc $10.447B + Unusual $5.725B，diff 45.2%>20% 判独立） |
+| **FINAL** | **$16.20** | **min(三者) = v3.1** |
 
-> ⚠️ income_ttm.csv Diluted EPS + Diluted Average Shares 均为 nan（数据下载问题）。GAAP EPS 取 income_annual col0（FY26）Diluted EPS $17.95（FY26 = TTM，同截至 2026-06-30）。shares 7.453B 取 income_annual Diluted Average Shares。
+> ⚠️ income_ttm.csv Diluted EPS + Diluted Average Shares 均为 nan（数据下载问题）。GAAP EPS 取 income_annual col0（FY26）Diluted EPS $17.95（FY26 = TTM，同截至 2026-06-30）。shares 7.453B 取 income_annual Diluted Average Shares。v3.1 手工计算（normalize_eps.py 因 TTM 缺 shares 返 $0.00）。
+> ⚠️ v3.1 剥 $16.172B pre-tax 中含 OpenAI $7.6B 一次性（正确）+ Gain On Sale $5.9B + 其他 $2.6B（可能含经常性利息收入 → v3.1 可能过度保守，normalize_eps.md 已知问题 #2）。但 per 框架硬规则 FINAL = min(GAAP, tool, v3.1) = $16.20，**不许取 GAAP 上界**（`mistakes.md` 二）。
 
-- winner: GAAP
-- adj: 0%（v3.1 不取）
+- winner: v3.1
+- adj: −9.7%（$16.172B pre-tax 剥离）
 - detectors: 2a OtherInc(MTM) $10.447B（vol 3.4x，range -3.94B~9.87B）+ 2x Unusual(tool) $5.725B（diff 45.2%，判独立）
 
 ### Detector 2a: OtherInc（OpenAI 投资收益）
@@ -89,7 +89,7 @@ OtherInc $10.447B 含 Q2 FY26 OpenAI 一次性重估 $7.6B + Gain On Sale Of Sec
 
 ### 评估
 
-v3.1 剥 $16.172B pre-tax 中含 OpenAI $7.6B 一次性（正确剥离）+ Gain On Sale $5.9B + 其他投资收益 $2.6B（可能含经常性投资收益 → **过度保守**，normalize_eps.md 已知问题 #2："OtherInc 过度剔——投资控股型公司"）。**补偿路径**：TTM Diluted EPS=nan 且 v3.1 过度保守 → 取 GAAP $17.95（income_annual）作 FINAL，不作 min(GAAP, tool, v3.1) = $16.20。两路殊途：v3.1 $16.20 → 合理价 $349（g=13%）；GAAP $17.95 → 合理价 $386。两者均 < 现价 $465 → 买贵了结论稳健。
+v3.1 剥 $16.172B pre-tax 中含 OpenAI $7.6B 一次性（正确剥离）+ Gain On Sale $5.9B + 其他投资收益 $2.6B（可能含经常性投资收益 → **过度保守**，normalize_eps.md 已知问题 #2）。**补偿路径**：per 框架硬规则仍取 min = $16.20（不许取 GAAP 上界，`mistakes.md` 二/TME 案例）。两路殊途：v3.1 $16.20 → 合理价 $348（g=13%）；GAAP $17.95 → 合理价 $386。两者均 < 现价 $500 → 买贵了结论稳健。
 
 ## B.6 质量地板（给 Task D 预判）
 
@@ -97,11 +97,11 @@ v3.1 剥 $16.172B pre-tax 中含 OpenAI $7.6B 一次性（正确剥离）+ Gain 
 |------|-----|-----|
 | GM >60% 稳 | 67.9%（5 季波动 <1.8pp） | ✓ |
 | NM >20% | 40.3% | ✓ |
-| FCF yield >5% | 1.9% | ✗ |
+| FCF yield >5% | 见 A | ✗ |
 | FCF−SBC >0 | $54.58B | ✓ |
 | 真缩股 | 7.472B→7.453B（3yr，微缩 −0.25%） | ✓* |
 | ROIC >15% | 29.6% | ✓ |
 
 本地评分: 5/6（FCF yield <5% fail）。*缩股幅度极小（微缩，非 AAPL 式大幅缩股）。+ 护城河极宽 → 6/7 = **伟大**（FCF yield 偏低但 capex 是主动投入非恶化）
 
-> 伟大 + 无麻烦 → **无折扣适用**（discount_coefficient.md:178：无困境即无折价理由，满仓=合理价）。FCF yield 1.9% 偏低是 capex 主动投入所致，非基本面恶化。
+> 伟大 + 无麻烦 → **×1.0**（`discount_coefficient.md` 主表无麻烦列；巴菲特"合理价买伟大公司"——合理价三重保守即边际，无需额外折扣）。FCF yield 1.8% 偏低是 capex 主动投入所致，非基本面恶化。
