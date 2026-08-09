@@ -125,7 +125,11 @@ B 可给 D 一个**预判**（EPS 已定，折扣地板可估），C 完成后�
 | KRW/USD | ~1350 | CPNG |
 | SGD/USD | ~1.35 | SE |
 
-> ⚠ 上表为近似值，会变。看更新日期判断是否过期。也可从 info.json 反推：`FX = EPS_财报币种 ÷ trailingEps_USD`（如 NVO：DKK 27.41 ÷ $4.18 = 6.56，与 spot 6.48 差 ~1.2%，EPS 转换用反推值更与 ADR 报告口径一致）。
+> ⚠ 上表为近似值，会变。看更新日期判断是否过期。
+>
+> **FX 来源优先级**：① Google Finance spot（playwright 抓，最准）> ② 上表近似值 > ③ 反推值（CSV EPS_TWD ÷ info.json trailingEps_USD，仅交叉验）。
+>
+> ⚠ **反推值可能 stale**：当 info.json trailingEps 失真时反推值也错（TSM 案例：反推 37.56 vs spot 32.26，差 17%）。**以 spot FX 为准，反推值偏差 >5% 时弃用反推值并标 info.json stale。** 详见 `local_data_tools.md` 多币种 ADR 数据质量节。
 
 ---
 

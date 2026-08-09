@@ -137,6 +137,7 @@ gap 分析：
 ✓ 回购不进 g: g 用业务/净利润增长，不含缩股驱动的 EPS 增长          ← forward_g.md
 ✓ g 质量: FCF − SBC < 0 → 重麻烦 ×0.40（不否决，总是估值）           ← discount_coefficient.md
 ✓ 高增长封顶: g ≥ 22% → PE 一律 30x，不追高                          ← forward_g.md
+✓ 周期股: 默认用 min(8.5+g,30)；仅 EPS 波动大/为负时 fall back 到中周期正常化  ← task_a.md
 ✓ 利润被麻烦压低型: 用恢复后正常 margin EPS                            ← 本节
 ✓ 亏损股: EPS 负值时用恢复 EPS（剥一次性后），合理价照算              ← normalize_eps.md EPS-4b
 ✓ 三重保守: EPS min/恢复 + g 保守 + 折扣保守                          ← analysis_framework.md

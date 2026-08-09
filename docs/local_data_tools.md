@@ -240,3 +240,63 @@ python3 -m fundamental.download STOCK   # 下载/更新单只数据
 | D 估值汇聚 | — | 用 A+B+C 输出手工算 |
 
 **combine = A.1 + B 的合体**——一次跑完价格粗筛 + 财务健康 + 原始报表，是日常分析的主力入口。
+
+---
+
+## 多币种 ADR 数据质量
+
+> 多币种股（`financialCurrency` ≠ USD）的 info.json 多个字段不可信——股价 USD 与财报币种混合导致失真。**combine 工具直接继承这些错误**，须手算修正。
+
+### 不可信字段
+
+| info.json 字段 | 问题 | 正确做法 |
+|---|---|---|
+| `trailingEps` | 用非 spot FX 转换，可能 stale | CSV `Diluted EPS` ÷ spot FX |
+| `trailingPE` | 基于上面 stale EPS | `currentPrice` ÷ CSV EPS（÷ FX） |
+| `priceToBook` | USD price ÷ TWD book value | 手算 price ÷ (Equity ÷ shares ÷ FX) |
+| `enterpriseToEbitda` | EV 字段单位/口径混乱 | 手算 (MCap + Debt÷FX − Cash÷FX) ÷ (EBITDA÷FX) |
+| `priceToSalesTrailing12Months` | USD MCap ÷ TWD revenue | MCap ÷ (Revenue ÷ FX) |
+| `enterpriseValue` | 单位/口径混乱 | MCap + 净债（统一币种） |
+| `bookValue` | 财报币种 book value ÷ shares | BS Equity ÷ shares ÷ FX |
+
+### 可信字段（price 端，不受币种影响）
+
+`currentPrice`, `marketCap`, `sharesOutstanding`, `fiftyTwoWeekHigh`, `fiftyTwoWeekLow`, `dividendYield`, `dividendRate`, `beta`
+
+### FX 验证 decision tree
+
+```
+financialCurrency ≠ USD ?
+├─ 否 → info.json 字段可信，正常用
+└─ 是 → 不信 trailingEps / trailingPE / priceToBook / enterpriseToEbitda / priceToSales / enterpriseValue
+   │
+   ├─ FX 来源优先级：
+   │   ① Google Finance spot（playwright 抓）← 最准
+   │   ② 框架表 ≈ 值（analysis_framework.md，3-5 天更新）
+   │   ③ 反推值 = CSV EPS_TWD ÷ info.json trailingEps_USD ← 仅交叉验，可能 stale
+   │
+   ├─ EPS_USD = CSV Diluted EPS ÷ spot FX
+   ├─ P/E = currentPrice ÷ EPS_USD
+   ├─ P/B = currentPrice ÷ (BS Equity ÷ shares ÷ FX)
+   ├─ EV/EBITDA = (MCap + Debt÷FX − Cash÷FX) ÷ (EBITDA÷FX)
+   ├─ P/S = MCap ÷ (Revenue ÷ FX)
+   │
+   └─ 交叉验：MacroTrends P/E（web），偏差 >5% → 用 CSV + spot，标 info.json stale
+```
+
+> ⚠️ **反推 FX 降级**：`analysis_framework.md` 原写"FX = EPS_财报币种 ÷ trailingEps_USD，反推值更与 ADR 报告口径一致"——当 info.json trailingEps stale 时反推值也错。TSM 案例：反推 37.56 vs spot 32.26，差 17%。**spot FX 为准，反推值仅交叉验。**
+
+### 涉及标的
+
+| 币种 | 标的 |
+|------|------|
+| TWD | TSM |
+| EUR | ASML BNTX SPOT |
+| DKK | NVO |
+| SEK | ERIC |
+| KRW | CPNG |
+| SGD | SE |
+| CNY | BABA PDD JD TCOM BIDU BEKE BILI FUTU TME 0700.HK |
+| HKD | 0700.HK FUTU |
+
+> 详见 `batches.md`"多币种"标记。
