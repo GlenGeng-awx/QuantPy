@@ -37,9 +37,9 @@ EPS 模型是保守下限，DCF 是内在价值定义。两者并列展示，当
 
 A/B/C 独立可并行，D 等三者完成后汇聚。
 
-## 分析预检（每次分析股票前必须完成）
+## 分析预检（每次分析股票 / 汇总 / 校验前必须完成）
 
-⚠️ 收到任何股票分析请求时，先用 read 工具加载以下文档，全部读完才开始 ABCD：
+⚠️ 收到任何股票分析请求、或"汇总/校验"请求时，先用 read 工具加载以下 `docs/*.md`，全部读完才开始（不论分析一只还是汇总所有标的）：
 
 1. `docs/analysis_framework.md` — 框架全景 + 公式 + FX + 数据源
 2. `docs/task_a.md` — 价格粗筛方法
@@ -55,9 +55,11 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
 12. `docs/batches.md` — 查标的所在批次 + 元标记
 13. `docs/mistakes.md` — 历史复查发现的常见错误 + 提交前自检清单
 
-全部读完后 context 里有完整方法论 + 已知错误，再开始 ABCD 分析。
+全部读完后 context 里有完整方法论 + 已知错误，再开始 ABCD 分析或汇总校验。
 
 > ⚠️ 写完 `output_d.md` 后，**必须过一遍 `docs/mistakes.md` 第九节"提交前自检清单"**，逐项打勾再提交。任一项 ✗ = 未完成。
+
+> **`docs/*.md`（框架文本）vs `docs/*.py`（工具）**：框架 .md 必须读（是分析/汇总/校验的 lens，不论一只还是全部）；工具 .py（normalize_eps / dcf / gen_comparison）直接调用，出问题再看源码。
 
 ## 硬规则（不读 doc 也不能违反）
 
@@ -84,6 +86,27 @@ A/B/C 独立可并行，D 等三者完成后汇聚。
   - 未迁移的标的：读旧文件获取历史结论（合理价/满仓/质量判定）
   - 完成 ABCD 后写 `output_*.md`，即完成迁移
 - 迁移完成后旧文件手动删除
+
+## 每日汇总 + 校验（gen_comparison）
+
+> 触发"汇总/校验"同样按"分析预检"先读全部 `docs/*.md`（框架是 lens，汇总也需在 context），再跑下面命令。
+
+刷完 Task A 后跑汇总+校验（一条命令，verify 是汇总前置步骤，自动跑）：
+
+```
+python3 docs/gen_comparison.py --date {YYYY-MM-DD}
+```
+
+产出（`ai_report/` 下并列两文件）：
+- `comparison.{date}.md` — 决策汇总（8 章节：① 决策摘要 ② 买点详情 ③ 三 Top 10（EPS/DCF FCF/回撤信号）④ 隐藏机会 ⑤ 全量主表 ⑥ 特殊档 ⑦ DCF 信号分组 ⑧ 数据质量）
+- `verify.{date}.md` — 数据校验日志（Phase 1：5 项 a+d 检查，自动化 `docs/mistakes.md` §9）
+
+verify 规则（Flag 不阻断）：
+- 违规标的主表标 `⚠` 仍保留，决策不阻断
+- ⚠ 标的需重跑 Task A/D 修复源数据，再重跑 gen_comparison 至 verify 归零
+- 5 检查：① 安全边际符号（1−现价/合理价 符号）② 满仓=合理价×系数 ③ 合理 PE=min(8.5+g,30) ④ g≥22 封顶（折叠进③）⑤ 伟大+无trouble→×1.0
+
+纯 join，不重算 price-derived 量（现价/安全边际/P/E 是 Task A 的活）；唯一派生：DCF 信号标签、DCF FCF 安全边际、隐藏机会筛选。
 
 ## 代码风格
 
