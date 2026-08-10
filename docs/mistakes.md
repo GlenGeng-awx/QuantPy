@@ -1,6 +1,6 @@
 # 分析常见错误清单
 
-> **用途**：每次 ABCD 分析前必读，少犯同类错误
+> **用途**：每次 ABCDE 分析前必读，少犯同类错误
 > **来源**：2026-08-02 复查 19 只股票所发现
 > - 第一轮：12 只持仓股（0700.HK / COIN / ORCL / ADBE / TCOM / PDD / TME / TTD / CRM / CPNG / SPCX / MU）
 > - 第二轮：B1 Mega-cap Tech 7 只（AAPL / MSFT / NVDA / GOOG / AMZN / TSLA / META）
@@ -39,9 +39,9 @@
 
 3. **伟大 + 无麻烦 → ×1.0（主表无麻烦列，不是 ×0.75）** — `discount_coefficient.md` 主表第一列：伟大+无麻烦 = ×1.0 → 满仓目标 = 合理价（巴菲特"合理价买伟大公司"，合理价三重保守即边际，无需额外折扣）。**连框架官方范例 NVDA 都被误套了 ×0.75**，AAPL/MSFT/GOOG/AMZN 全犯。D.1 出现"伟大 × 无麻烦 ×0.75"即报错。（命中 5：AAPL / MSFT / GOOG / NVDA / AMZN）
 
-4. **3yr CAGR 不许用 YoY 或 2yr 顶替** — 必须用 `(Rev[0]/Rev[2])^(1/3)−1`，列号锁 col2。常见错：把当年 YoY 标成"3yr CAGR"，或把 2yr CAGR（^1/2）当 3yr。注意 `forward_g.md` 公式"Rev[2]=3 年前"与 CSV 实际列号（col2 常仅 2 年前）可能偏移，须 print 验证。（命中 6：AAPL / MSFT / GOOG / META / TSLA / NVDA）
+4. **3yr CAGR 不许用 YoY 或 2yr 顶替** — 必须用 `(Value[0]/Value[N])^(1/year_gap)−1`，PRINT header 验证 year_gap（col2 常仅 2 年前非 3 年前，详见 `forward_g.md`）。常见错：把当年 YoY 标成"3yr CAGR"，或把 2yr CAGR（^1/2）当 3yr。（命中 6：AAPL / MSFT / GOOG / META / TSLA / NVDA）
 
-5. **迁移即重做，不许 stub** — 写 `output_*.md` = 实跑 ABCD 流程，不是抄旧 base 结论 + 一句话 stub。章节必须按 `docs/output_format.md` 齐备。典型 stub：A 只有 A.1 无 A.2/A.3；D 缺 D.2/D.3/D.4/D.5 + 写"B/C 详见 base（未迁移）"——但 output_b/c 实际已存在，属假声明。（命中 6+：0700.HK / PDD / CPNG / SPCX / AAPL / MSFT / GOOG / AMZN / TSLA / NVDA）
+5. **迁移即重做，不许 stub** — 写 `output_*.md` = 实跑 ABCDE 流程，不是抄旧 base 结论 + 一句话 stub。章节必须按 `docs/output_format.md` 齐备。典型 stub：A 只有 A.1 无 A.2/A.3；D 缺 D.2/D.3/D.4/D.5 + 写"B/C 详见 base（未迁移）"——但 output_b/c 实际已存在，属假声明。（命中 6+：0700.HK / PDD / CPNG / SPCX / AAPL / MSFT / GOOG / AMZN / TSLA / NVDA）
 
 ---
 
@@ -97,7 +97,7 @@
 
 - **B 的 EPS 必须 = D 的 EPS**、**C 的 g 必须 = D 的 g**、**B 质量评分 = D 质量评分**。
 - **A 的 P/E 用的 EPS 必须 = B 的 GAAP EPS**，差异 >3% 须注明 screen vs CSV 口径。
-- **同文件内部不许矛盾**：D 内 D.1 三要素 = D.2 锚 = D.5 质量判定；A 内 A.3 安全边际 = 1 − A.1 现价 / D.合理价。
+- **同文件内部不许矛盾**：D 内 D.1 三要素 = D.2 锚 = D.5 质量判定；E 内 E.3 安全边际 = 1 − A.1 现价 / D.合理价。
 - **现价只在 A 里**：B/C/D 不含 price，不受现价漂移影响。价格漂移只刷 A。
 - **汇总表排序时旧行系数不回退**：升档后旧日期行应保持旧系数 + 标注。
 
@@ -117,16 +117,16 @@
 
 ### 通用规律
 
-- **迁移即重做，不许 stub**：A/B/C 每个文件按 `output_format.md` 章节齐备（A: A.1 七项表 + A.2 区间表 + 同业表 + de-rating；B: B.1-B.6；C: C.1-C.6）。仅列结论数字 + "详见 analysis.base.md（未迁移）"= 占位，不算迁移完成。**注意：output_b/c 已存在时再写"B/C 详见 base（未迁移）"= 假声明。**
+- **迁移即重做，不许 stub**：A/B/C 每个文件按 `output_format.md` 章节齐备（A: A.1 八项表 + A.2 区间表 + 同业表 + de-rating；B: B.1-B.6；C: C.1-C.6）。仅列结论数字 + "详见 analysis.base.md（未迁移）"= 占位，不算迁移完成。**注意：output_b/c 已存在时再写"B/C 详见 base（未迁移）"= 假声明。**
 - **B.2 与 B.3 必须同一 TTM 戳**：迁移时常只更新 `income_ttm`（利润表）却整段照抄旧 base 的 `cf_ttm`（现金流），导致同文件两表差 $6–22B。income 与 cf 同日戳必须同批重算。
 - **FCF−SBC<0 的标也需完整文件**：CPNG/SPCX/AMZN 因 FCF−SBC<0 后省略 B.2/B.4/A.2，违反模板。不再有"框架外"——总是估值（×0.40），章节必须齐全。
 - **来源必须带具体 URL**："web"/"旧分析"/"估算"不算来源。同业对比不许抄旧快照。
 - **B.5 EPS Chain 四行齐备**：GAAP/工具/v3.1/FINAL，工具行尤其不可省——它与 GAAP 方向相反时正是 min() 要防的信号。
-- **A.1 粗筛表 6 项全列**：N/A 须标原因（"亏损致 P/E N/A" ≠ "EV/EBITDA N/A"）。
+- **A.1 粗筛 8 项全列**：N/A 须标原因（"亏损致 P/E N/A" ≠ "EV/EBITDA N/A"）。
 
 ### 精选案例
 
-**0700.HK / PDD** — A/B/C 均为 4-8 行 stub，无表无推导无 URL，末行"详见 analysis.base.md（未迁移）"。PDD A.1 "2/7（P/E ✓ + P/S ✓）"漏列 EV/EBITDA（旧 price 文件 ~3.3x<10x 应 ✓），实际至少 3/7。`CLAUDE.md` 规定"完成 ABCD 后写 output_*.md 即完成迁移"——这批 stub 名实不副。
+**0700.HK / PDD** — A/B/C 均为 4-8 行 stub，无表无推导无 URL，末行"详见 analysis.base.md（未迁移）"。PDD A.1 "2/8（P/E ✓ + P/S ✓）...至少 3/8。`CLAUDE.md` 规定"完成 ABCDE 后写 output_*.md 即完成迁移"——这批 stub 名实不副。
 
 **COIN `output_b.md:35-39`** — B.5 EPS Chain 缺"工具"行。实算工具 EPS = +$1.88（Normalized Income $526M / 280M 股），与 GAAP −$3.87 方向相反——正是 min() 要防的"加回亏损"信号，被隐藏。
 
@@ -144,7 +144,7 @@
 - **季度 CSV 最新季利润表字段空白（仅 EPS/股数更新）时**：Rev/OpInc/NI/OtherInc 从 TTM 反推（TTM − 前三季），不许抄上一季 + 标 ~ 猜测。CSV 有值则不许标 ~。
 - **快照现价按日期取 price CSV close**：禁用区间内高点（ATH）顶替某日收盘。ATH 属于其真实发生日期，不许张冠李戴到快照行日期。
 - **detector 列表必须 print(norm_eps) 验证**：区分"触发"vs"实际进 total_adj"，不可手抄/猜。low/负值 detector 也列全（不影响 v3.1 但违反完整列表要求）。
-- **CAGR 必须用公式 `(Rev[0]/Rev[2])^(1/3)−1`**：YoY ≠ 3yr CAGR，2yr CAGR（^1/2）≠ 3yr CAGR，标错口径就是编造。注意 `forward_g.md` 公式"列2=3年前"与 CSV 实际列号可能偏移，须 print 验证。
+- **CAGR 必须用公式 `(Value[0]/Value[N])^(1/year_gap)−1`（PRINT header 验证 N）**：YoY ≠ 3yr CAGR，2yr CAGR（^1/2）≠ 3yr CAGR，标错口径就是编造。注意 `forward_g.md` 公式"列2=3年前"与 CSV 实际列号可能偏移，须 print 验证。
 - **NM 用 NI/Revenue**：不可用 OpInc/Revenue（那是 OpM）顶替。
 - **同业 P/E 用当日收盘价 ÷ TTM EPS 实算**：不许抄不明快照。
 - **股数注明口径**：TTM 加权 vs 期末，不许取无来源的中间值。
@@ -196,7 +196,7 @@
 - **分位用框架公式 `(当前−低)/(高−低)`**：不许用自算分布百分位替代；若 COVID 扭曲需换方法，须注明 + 补 web 源 URL。
 - **回撤口径统一**：`(1Y_high − current)/1Y_high`（peak-to-current），全标的一致，不许用 peak-to-trough 抬高。
 - **亏损股 v3.1 ≠ min 展示**：算法在亏损时可能比 GAAP 更负（R&D spike 被当收益剥离 + 负税率放大），应标"v3.1 算法失效，取 GAAP 兜底"或"公式不适用"。
-- **CAGR 列号**：`forward_g.md` 指定 `Rev[0]/Rev[2]`，不许用 col3 代替 col2。注意公式"列2=3年前"与 CSV 实际列号可能偏移（col2 常仅 2 年前），须 print 验证。
+- **CAGR 列号**：`forward_g.md` 指定 PRINT header 验证 year_gap，不许盲目锁 col2 或 col3。注意公式"列2=3年前"与 CSV 实际列号可能偏移（col2 常仅 2 年前），须 print 验证。
 
 ### 精选案例
 
@@ -222,7 +222,7 @@
 
 ### A. 迁移纪律
 
-1. 写 `output_*.md` = 实跑 ABCD，**不许抄旧 base 结论 + stub**。章节按 `output_format.md` 齐备。
+1. 写 `output_*.md` = 实跑 ABCDE，**不许抄旧 base 结论 + stub**。章节按 `output_format.md` 齐备。
 2. 迁移时必须重算而非照抄——废弃公式（8.5+2g）、旧价、旧汇率都在旧文件里，抄进来 = 继承错误。
 3. 修正历史数值错误时，在 output 文件中显式标注"原 X → Y（重算）"，不静默修正。
 
@@ -238,7 +238,7 @@
 
 9. **数字回查 CSV**：GM、SBC、EPS、股数、净现金（Total Debt 含租赁）一律取 CSV 字段实算，不靠记忆。
 10. **detector 实跑 `normalize_eps.py`**：print(norm_eps) 验证触发列表，区分"触发" vs "实际剥离"，low/负值 detector 也列全。
-11. **CAGR 用框架公式 `(Rev[0]/Rev[2])^(1/3)−1`**，列号锁 col2；YoY、2yr CAGR（^1/2）与 3yr CAGR 不可混标。注意公式"列2=3年前"与 CSV 实际列号可能偏移，须 print 验证。
+11. **CAGR 用框架公式 `(Value[0]/Value[N])^(1/year_gap)−1`**（PRINT header 验证 N）；YoY、2yr CAGR（^1/2）与 3yr CAGR 不可混标。注意公式"列2=3年前"与 CSV 实际列号可能偏移，须 print 验证。
 12. **NM = NI/Revenue**，OpM = OpInc/Revenue，不可互替。
 13. **同业 P/E = 当日收盘价 ÷ TTM EPS 实算**，注明来源 URL。
 14. **季度 CSV 最新季利润表字段空白时**：Rev/OpInc/NI/OtherInc 从 TTM 反推（TTM − 前三季），不许抄上一季 + 标 ~ 猜测；CSV 有值则不许标 ~。
@@ -259,38 +259,40 @@
 23. **麻烦定性看结构非事件**：永久约束/监管压 take rate 属"存疑"，"事件落地" ≠ "麻烦降级"。
 24. **归类用框架四档词汇**：最佳买点 / 价值陷阱 / 买贵了 / 结构性恶化。旧 colloquial 词汇不进新文件。
 25. **伟大 + 无麻烦 → ×1.0**（主表无麻烦列，不是 ×0.75）。迁移 megacap 前先查 `discount_coefficient.md` 主表第一列——连官方范例 NVDA 都被误套过。
-26. **price 不漏进 B/C/D**：D 是 price 无关的锚（合理价/满仓/系数/质量判定）; 安全边际 = 1 − A.现价/D.合理价, 只在 A.3。D.2 不含现价/安全边际/操作建议。B/C 不含任何 price 数据。违反 = price 污染锚层, 日频刷新时 D 不该动却动了。
+26. **price 不漏进 B/C/D**：D 是 price 无关的锚（合理价/满仓/系数/质量判定）; 安全边际 = 1 − A.现价/D.合理价, 只在 E.3。D.2 不含现价/安全边际/操作建议。B/C 不含任何 price 数据。违反 = price 污染锚层, 日频刷新时 D 不该动却动了。
 
 ### F. 自检纪律
 
-26. **写完后回头读一遍**：A.3 安全边际 + D 合理价/满仓 + B EPS + C g 必须自洽。现价、EPS、g、系数、合理价、满仓、安全边际七数链式可推。
+26. **写完后回头读一遍**：E.3 安全边际 + D 合理价/满仓 + B EPS + C g 必须自洽。现价、EPS、g、系数、合理价、满仓、安全边际七数链式可推。
 27. **半年报公司（0700.HK/PDD）detector 2a 必须半年报复查**：季度 CSV 多数为零 → vol_ratio 虚高 = 假阳性，需显式说明并改用 tool EPS 或 SOTP 补偿，不可直接取 GAAP 上界。
 
 ---
 
-## 九、提交前自检清单（写完 D 必过）
+## 九、提交前自检清单（写完 D+E 必过）
 
-写完 `output_d.md` 后，逐项打勾再提交。任何一项 ✗ = 未完成。
+写完 `output_d.md` + `output_e.md` 后，逐项打勾再提交。任何一项 ✗ = 未完成。
 
 ### 数学链式自洽（8 数）
 
 - [ ] **合理价 = min_EPS × min(8.5+g, 30)**，复算无误
 - [ ] **满仓目标 = 合理价 × 系数**，复算无误
-- [ ] **安全边际 = 1 − 现价/合理价**，符号对（现价<合理价→正）
+- [ ] **安全边际 = 1 − 现价/合理价**，符号对（现价<合理价→正），写在 **E.3**（不在 A/D）
 - [ ] **P/E = 现价/EPS**，与 info.json screen 口径对齐或注明差异
-- [ ] **A.3 安全边际 vs D.合理价** 一致（现价从 CSV 取，合理价从 D 读不重算）
-- [ ] **TTM 比率**（SBC/Rev、NM、FCF yield）全用 TTM 分子/分母
+- [ ] **E.3 安全边际 vs D.合理价** 一致（现价从 CSV 取，合理价从 D 读不重算）
+- [ ] **TTM 比率**（SBC/Rev、NM）全用 TTM 分子/分母；FCF yield 在 A.1（不在 B/D）
 - [ ] **FX 全文统一**（一个汇率，CNY→USD 一处定义）
 
 ### 跨文件一致
 
 - [ ] **B 的 EPS = D 的 EPS**（FINAL 行逐字相同）
+- [ ] **B 的 v3.1 EPS = A 用的正常化 P/E EPS**（A.2 正常化 P/E 分位用 B v3.1）
 - [ ] **C 的 g = D 的 g**
-- [ ] **B 质量评分 = D 质量评分**（分子分母都对）
+- [ ] **B 质量评分 = D 质量评分**（6/6，分子分母都对；FCF yield 不在评分里）
 - [ ] **A 的 P/E 用的 EPS = B 的 GAAP EPS**（差异 >3% 已注明）
-- [ ] **现价/日期跨 A 统一**（漂移 >3-5% 已刷 A；B/C/D 不受 price 影响）
+- [ ] **现价/日期跨 A+E 统一**（漂移 >3-5% 已刷 A+E；B/C/D 不受 price 影响）
 - [ ] **D 内部一致**（D.1 三要素 = D.2 锚 = D.5 质量判定）
 - [ ] **B.2 利润表与 B.3 现金流同一 TTM 戳**（未只更 income 抄旧 cf）
+- [ ] **E 聚合字段 = A(信号/price) + D(锚/DCF)**（gen_comparison 只读 E）
 
 ### 框架硬规则
 
@@ -299,15 +301,15 @@
 - [ ] **折扣只在满仓目标层**，未进合理价
 - [ ] **正常化 EPS = min(GAAP, tool, v3.1)**，未取上界/加回摊销；EPS 负值时用恢复 EPS
 - [ ] **回购未进 g**
-- [ ] **5 年分位 ≤30%**（查不到已暂停，未自算估算）
+- [ ] **5 年分位 ≤30%**（双分位：GAAP + 正常化 P/E，两个都 ≤30%；查不到已暂停，未自算估算）
 - [ ] **DCF 交叉验 = base × (1+g)/(r−g) + net_cash/sh**，P/FCF₀ = min((1+g)/(r−g), 30)；两种口径（FCF 和 FCF−SBC）并列展示；r 质量调整（伟大 9%/好公司 10%/平庸 11%）
-- [ ] **D 不含现价/安全边际/操作建议**（D 是 price 无关的锚: 合理价/满仓/系数; 安全边际 = 1 − A.现价/D.合理价, 只在 A.3）
+- [ ] **B/C/D 不含 price 数据**（FCF yield 在 A.1；MCap/安全边际在 E；B 只存 FCF 金额）
 
 ### 完整性
 
-- [ ] **A/B/C/D 章节按 `output_format.md` 齐备**（含 D.2b DCF 交叉验）
+- [ ] **A/B/C/D/E 章节按 `output_format.md` 齐备**（含 D.2b DCF + E.1-E.5）
 - [ ] **B.5 EPS Chain 四行齐**（GAAP/工具/v3.1/FINAL；亏损股补恢复 EPS 行）
-- [ ] **A.1 粗筛 6 项全列**（N/A 已标原因）
+- [ ] **A.1 粗筛 8 项全列**（含 FCF yield #5；N/A 已标原因）
 - [ ] **所有来源带具体 URL**（"web"/"旧分析"不算）
 - [ ] **detector 列表实跑 `normalize_eps.py` 验证**（非手抄，low/负值也列全）
 - [ ] **归类用框架四档词汇**（非自创词）
@@ -321,6 +323,7 @@
 - [ ] **周期股**：默认用 `min(8.5+g,30)`；仅 EPS 波动大/为负时 fall back 到中周期正常化 P/E + P/B 分位。EPS 稳定正的周期股（如 TSM/NVDA）用标准公式 + 敏感性表覆盖周期风险。不许贴周期标签又照套公式——要么不标（用标准公式），要么标了且确实 fall back
 - [ ] **麻烦定性**：永久约束未误当"一般"；"事件落地"未误当"麻烦降级"
 - [ ] **伟大+无麻烦** → ×1.0（主表无麻烦列，非 ×0.75；megacap 迁移前先查 `discount_coefficient.md` 主表第一列）
+- [ ] **质量评分 6/6**（FCF yield 不在评分，在 A 粗筛 #5；阈值 5-6/6→伟大）
 
 ---
 

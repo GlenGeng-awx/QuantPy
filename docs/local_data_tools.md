@@ -31,12 +31,12 @@ python3 docs/dcf.py STOCK G QUALITY [EPS]            # DCF 交叉验（详见 do
 
 **输出**（按顺序打印）:
 1. **三张财报**（statements）— annual + quarterly + TTM，按 template 排列
-2. **价格粗筛**（cheap）— 7 项信号 + 4 项技术提示，每项给 pass/fail + 实际值 + 详情
+2. **价格粗筛**（cheap）— 8 项信号 + 4 项技术提示，每项给 pass/fail + 实际值 + 详情
 3. **SCORECARD**（health）— 9 宫格（Income/CF/BS × 3yr/TTM/5Q）+ ROIC/ROE/ROA + Risk Flags
 4. **排名表**（多只时）— 按 cheap count 降序，一览所有标的的粗筛命中 + 九宫格分数
 
 **与四任务框架的映射**:
-- → Task A（价格粗筛）: cheap 的 7 项信号
+- → Task A（价格粗筛）: cheap 的 8 项信号（含 FCF yield #5）
 - → Task B（财务健康）: health 的 9 宫格 + statements 的原始数据
 - → Task B（正常化 EPS）: statements 的 income CSV（`docs/normalize_eps.md` v3.1 checklist）
 - 不覆盖 Task C（增长/消息面，需 web search）
@@ -52,9 +52,9 @@ python3 docs/dcf.py STOCK G QUALITY [EPS]            # DCF 交叉验（详见 do
 
 **输入**: `stock_data/{STOCK}_1d.csv` + `financial_data/{STOCK}/info.json`
 
-### 7 项信号（signals.py）
+### 8 项信号（signals.py）
 
-信号定义和阈值详见 `task_a.md` A.1。工具输出顺序：1Y回撤 → 2Y回撤 → 距52周低 → P/E → P/S → P/B → EV/EBITDA。
+信号定义和阈值详见 `task_a.md` A.1。工具输出顺序：1Y回撤 → 2Y回撤 → 距52周低 → P/E → FCF yield → EV/EBITDA → P/B → P/S。
 
 **返回**: `{'signals': [(pass, value, detail), ...], 'count': N}`
 
@@ -215,7 +215,7 @@ python3 preload.py          # 全部
 详见 `docs/normalize_eps.md`（v3.1 checklist）。
 
 ```bash
-python3 -m docs.normalize_eps           # 跑全部 72 只
+python3 -m docs.normalize_eps           # 跑全部 78 只
 ```
 
 ---
@@ -250,12 +250,13 @@ python3 -m fundamental.download STOCK   # 下载/更新单只数据
 
 | 框架 Task | 本地工具 | 补充 |
 |-----------|---------|------|
-| A.1 价格粗筛 | `cheap`（7 项信号） | 免费，每次分析 |
+| A.1 价格粗筛 | `cheap`（8 项信号，含 FCF yield） | 免费，每次分析 |
 | A.2 估值分位 | — | 需 web search（月度） |
 | B 财务健康 | `health`（9 宫格）+ `statements`（原始数据） | 免费，财报后更新 |
 | B 正常化 EPS | `normalize_eps`（v3.1 checklist） | 免费，财报后更新 |
 | C 增长/消息面 | — | 需 web search（最贵） |
-| D 估值汇聚 | `dcf`（DCF 交叉验）+ 手工算（合理价/满仓/系数） | DCF 自动，EPS 模型手工 |
+| D 估值锚 | `dcf`（DCF 交叉验）+ 手工算（合理价/满仓/系数） | DCF 自动，EPS 模型手工 |
+| E 决策 | — | join A(price) + D(anchor)，daily 刷新 |
 
 **combine = A.1 + B 的合体**——一次跑完价格粗筛 + 财务健康 + 原始报表，是日常分析的主力入口。
 

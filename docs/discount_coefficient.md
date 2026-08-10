@@ -26,11 +26,11 @@
 |------|-----------|------|------|
 | GM 水平 + 稳定性 | income_annual `Gross Profit` / `Total Revenue` | 3yr GM 均值 + 趋势 | >60% 且不下滑 = 高 |
 | NM 水平 | income_ttm `Net Income` / `Total Revenue` | TTM NM% | >20% = 高 |
-| FCF yield | cf_ttm `Free Cash Flow` / info.json `marketCap` | TTM FCF / MCap | >5% = 高 |
 | FCF − SBC | cf_ttm `Free Cash Flow` − `Stock Based Compensation` | TTM 差值 | >0 = 合格 |
 | 真缩股 vs 稀释 | income_annual `Diluted Average Shares` | 3yr 股数趋势 | 下降 = 真缩股 |
-| ROIC | health/scoring.py `_compute_roic` | NOPAT / 投入资本 | >15% = 优秀 |
-| ROE | info.json `returnOnEquity` | 直接 | >15% = 优秀 |
+| ROIC / ROE | health/scoring.py `_compute_roic` / info.json `returnOnEquity` | NOPAT/投入资本 或 直接 | >15% = 优秀 |
+
+> FCF yield 已移出质量评分 → 移到 Task A 粗筛 #5（估值指标，非质量指标）。
 
 ### 质量指标（来自 Task C，web search，贵）
 
@@ -52,18 +52,19 @@
 
 ---
 
-## D-1: 质量评分（0-7 分）
+## D-1: 质量评分（0-6 分）
 
 ### 1a. 本地指标（Task B 可算，免费）
 
 ```
 GM > 60% 且 3yr 不下滑            +1
 NM > 20%                         +1
-FCF yield > 5%                   +1
 FCF − SBC > 0                    +1
 真缩股（Diluted Shares 3yr 下降）  +1
 ROIC > 15% 或 ROE > 15%          +1
 ```
+
+> FCF yield 已移出质量评分 → 移到 Task A 粗筛 #5。FCF yield = FCF/MCap 是估值指标（同 P/E），衡量"便不便宜"非"公司好不好"，随股价变。质量评分只保留 price-independent 指标。
 
 ### 1b. 外部指标（Task C，需 web search）
 
@@ -74,15 +75,15 @@ ROIC > 15% 或 ROE > 15%          +1
 ### 1c. 评级
 
 ```
-6-7 分 → 伟大
-3-5 分 → 好公司
+5-6 分 → 伟大
+3-4 分 → 好公司
 0-2 分 → 平庸
 ```
 
 ### 预判（B 完成后，C 完成前）
 
 ```
-B 指标 6/6（满分不含护城河）→ 至少"好公司 ×0.67"，C 确认护城河后可升"伟大 ×0.75"
+B 指标 5/5（满分不含护城河）→ 至少"好公司 ×0.67"，C 确认护城河后可升"伟大 ×0.75"
 B 指标 ≤2 → "平庸 ×0.60"，C 无法升级
 B 指标 3-5 → 待 C 确认护城河后定档
 ```

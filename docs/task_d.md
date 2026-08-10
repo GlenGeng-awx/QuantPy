@@ -1,11 +1,12 @@
-# Task D：估值汇聚
+# Task D：估值锚（low-freq）
 
-> 被引用自 `analysis_framework.md`。Task D = 估值（汇聚 A+B+C → 合理价 → 安全边际 → 定档）。
-> 依赖：A（现价）+ B（正常化 EPS + 质量地板）+ C（g + 护城河 + 麻烦定性）。
+> 被引用自 `analysis_framework.md`。Task D = 估值锚（汇聚 B+C → 合理价 → 满仓 → 折扣 → DCF）。
+> 依赖：B（正常化 EPS + 质量）+ C（g + 护城河 + 麻烦定性）。**不依赖 A**（price 无关）。
+> 安全边际/操作/归类 → Task E（join A price + D anchor）。
 
 ## 目标
 
-汇聚 B(EPS) + C(g+护城河+麻烦) 的输出，算出合理价、满仓目标、折扣系数。price 无关。
+汇聚 B(EPS) + C(g+护城河+麻烦) 的输出，算出合理价、满仓目标、折扣系数、DCF。price 无关。
 
 ---
 
@@ -15,7 +16,6 @@
 # EPS 模型（保守下限）
 合理价   = 正常化 EPS × min(8.5 + g, 30)
 满仓目标 = 合理价 × 折扣系数
-安全边际 = 1 − 现价 / 合理价
 
 # DCF 交叉验（并列，非替代）
 DCF/sh   = base × (1+g)/(r−g) + net_cash/shares
@@ -24,6 +24,7 @@ DCF/sh   = base × (1+g)/(r−g) + net_cash/shares
   P/FCF₀ = min((1+g)/(r−g), 30)
 ```
 
+> 安全边际 = 1 − A.现价 / D.合理价 — **在 Task E 算**（join A price + D anchor），不在 D 里。
 > EPS 模型 = 保守下限（隐含 r≈12-15%）。DCF = 内在价值定义（r=9-11%）。两者并列展示。
 > 估值要素 checklist 详见 `normalize_eps.md` / `forward_g.md` / `discount_coefficient.md` / `dcf.md`。
 
@@ -56,7 +57,7 @@ g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
 ### D.1d 确定折扣系数（来自 B 质量地板 + C 护城河/麻烦）
 
 ```
-质量评分 = B 的 6 项本地指标 + C 的护城河确认 = 0-7 分
+质量评分 = B 的 5 项本地指标 + C 的护城河确认 = 0-6 分
 麻烦定性 = C 的 6 项检查 = 四档之一
 
 折扣系数 = 查表（质量 × 雇烦 → 系数）
@@ -70,14 +71,14 @@ g = 剔除不可靠源 + 剔最高 + 均值（详见 forward_g.md G-3）
 满仓目标 = 合理价 × 折扣系数
 ```
 
-> 安全边际不在 D 里算——汇总时 join A(现价) + D(合理价) 算：安全边际 = 1 − 现价/合理价。
+> 安全边际不在 D 里算——Task E 算（join A price + D anchor）：安全边际 = 1 − 现价/合理价。
 
 ---
 
-## D.2 ~ D.5 估值锚产出
+## D.2 ~ D.4 估值锚产出
 
-> D 只产出 price-independent 的锚：合理价、满仓、折扣系数。
-> 安全边际、好价格判定、归类、操作建议 = join A(price) + D(锚) → 汇总时算。
+> D 只产出 price-independent 的锚：合理价、满仓、折扣系数、DCF。
+> 安全边际、好价格判定、归类、操作建议 → Task E（join A price + D anchor）。
 
 ### D.2 敏感性表
 
@@ -141,6 +142,7 @@ gap 分析：
 ✓ 利润被麻烦压低型: 用恢复后正常 margin EPS                            ← 本节
 ✓ 亏损股: EPS 负值时用恢复 EPS（剥一次性后），合理价照算              ← normalize_eps.md EPS-4b
 ✓ 三重保守: EPS min/恢复 + g 保守 + 折扣保守                          ← analysis_framework.md
+✓ D 安全边际不在 D 里: join A price + D anchor → Task E                ← task_e.md
 ```
 
 ### D.4 质量判定（决定折扣系数）
@@ -151,7 +153,7 @@ FCF−SBC 正负、护城河__、缩股/稀释__）× 麻烦[明确一次性 / �
 → 折扣系数 ×0.__ → 满仓目标 $__
 ```
 
-> 好价格判定、归类、操作建议不在 D 里——汇总时 join A(price) + D(锚) 算。
+> 好价格判定、归类、操作建议不在 D 里——Task E 算（join A price + D anchor）。
 
 ---
 
@@ -164,4 +166,4 @@ FCF−SBC 正负、护城河__、缩股/稀释__）× 麻烦[明确一次性 / �
 ## 与其他 Task 的关系
 
 D 依赖 B(EPS, 质量) + C(g, 护城河, 麻烦)，**不等 A**（price 无关）。
-A.3 依赖 D（读合理价/满仓算安全边际）。依赖图详见 `analysis_framework.md`。
+E 依赖 A + D（join price + anchor → 安全边际/操作/归类）。依赖图详见 `analysis_framework.md`。

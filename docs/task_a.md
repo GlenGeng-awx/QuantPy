@@ -1,7 +1,7 @@
 # Task A：价格层（daily）
 
-> 所有 price-dependent 指标。日级别更新（读 CSV 刷 price/P/E/FCF yield/安全边际）。
-> B/C/D 不受 price 影响，仅财报/消息面时动。
+> 所有 price-dependent 指标。日级别更新（读 CSV 刷 price/P/E/FCF yield/分位）。
+> A 不依赖 D（安全边际 → Task E）。A 读 B 的 v3.1 EPS 算正常化 P/E 分位。
 
 ## 目标
 
@@ -9,9 +9,9 @@
 
 ---
 
-## A.1 价格粗筛 + price-dependent 指标（daily，本地 CSV + info.json）
+## A.1 价格粗筛 + price-dependent 指标（daily，本地 CSV + info.json + cf_ttm）
 
-### 7 项粗筛信号
+### 8 项粗筛信号
 
 满足任意 1 条即入池。门槛宽——漏斗入口，不是最终判断。
 
@@ -21,15 +21,12 @@
 | 2 | 2Y 回撤 | >60% | 同上，504 日 | |
 | 3 | 距 52 周低点 | ≤15% | CSV | 现价 vs 252 日最低 |
 | 4 | P/E TTM | <15x | `info.json` | `trailingPE` |
-| 5 | EV/EBITDA | <10x | `info.json` | `enterpriseToEbitda` |
-| 6 | P/B | <1.0x（金融股）/ <1.5x（周期股） | `info.json` | `priceToBook` |
-| 7 | P/S | <2.0x | `info.json` | `priceToSalesTrailing12Months` |
+| 5 | FCF yield | >5% | FCF(from `cf_ttm.csv`) / MCap(from `info.json`) | cheap 工具自动算 |
+| 6 | EV/EBITDA | <10x | `info.json` | `enterpriseToEbitda` |
+| 7 | P/B | <1.0x（金融股）/ <1.5x（周期股） | `info.json` | `priceToBook` |
+| 8 | P/S | <2.0x | `info.json` | `priceToSalesTrailing12Months` |
 
-### 其他 price-dependent 指标（从 B 吸收）
-
-| 指标 | 计算 | 说明 |
-|------|------|------|
-| FCF yield | FCF(from B) / MCap(from price) | 随 price 变，B 只存 FCF 金额 |
+> FCF yield 是估值指标（同 P/E），衡量"便不便宜"（P/E 用 NI，FCF yield 用真实现金），不衡量"公司好不好"。已从 `discount_coefficient.md` 质量评分移出（质量评分改 6/6）。
 
 ### 特殊口径
 
@@ -51,26 +48,27 @@ BABA = 股 USD / 财报 CNY，0700.HK = 股 HKD / 财报 CNY。
 ### 工具
 
 ```bash
-python3 -m fundamental.cheap STOCK    # 自动跑 7 项（含 P/B）
+python3 -m fundamental.cheap STOCK    # 自动跑 8 项（含 FCF yield #5）
 ```
 
 详见 `local_data_tools.md` 的 cheap 章节。
 
 ---
 
-## A.2 估值分位（web search，月度）
+## A.2 估值分位（web search + B v3.1，月度）
 
-### 自身 P/E 区间表
+### 双分位
 
-| 口径 | 数值 | 来源 |
-|------|------|------|
-| 正常化 P/E | 现价 ÷ 正常化 EPS（从 Task B 引） | 本地算 |
-| 5 年高 | MacroTrends / GuruFocus | web |
-| 5 年低 | 同上 | web |
-| 5 年中位 | 同上 | web |
-| 当前分位 | (当前 − 低) / (高 − 低) | 算 |
+| 口径 | 当前 | 5yr 高 | 5yr 低 | 5yr 中位 | 分位 | 来源 |
+|------|------|--------|--------|---------|------|------|
+| GAAP P/E TTM | 现价 / GAAP EPS | MacroTrends | MacroTrends | MacroTrends | (当前−低)/(高−低) | web |
+| 正常化 P/E | 现价 / v3.1 EPS（from B） | MacroTrends（共用 GAAP 范围） | 同 | 同 | (正常化P/E−低)/(高−低) | web 范围 + B v3.1 |
 
-**须 ≤30% 分位**才算便宜。查询失败则暂停，严禁估算。
+**两个分位都须 ≤30%**才算便宜。查询失败则暂停，严禁估算。
+
+> **正常化 P/E 分位复用 GAAP P/E 的 5yr 范围当标尺**：MacroTrends 只有 GAAP P/E 历史，没有 v3.1 正常化 P/E 序列。用 GAAP 范围当标尺，插正常化 P/E 当当前值 → 分位。例：TME GAAP P/E <10x（分位极低 → 看着严重低估），正常化 P/E 14-15x（分位正常 → 其实不便宜）。
+
+> GAAP EPS 从 `income_ttm.csv` `Diluted EPS` 字段直接读（原始 CSV，非 B 的 output）。v3.1 EPS 从 B 的 output 读（B 跑 `normalize_eps.py` 算出）。
 
 ### 周期股特殊处理（fallback，非默认）
 
@@ -92,7 +90,7 @@ python3 -m fundamental.cheap STOCK    # 自动跑 7 项（含 P/B）
 
 ### 同业对比表
 
-列可比同业当前或前瞻倍数 + 性质，算 PYPL 折/溢价%。
+列可比同业当前或前瞻倍数 + 性质，算折/溢价%。
 剔除性质不可比者（如卡组织 vs 支付处理商）。
 
 ### de-rating 陷阱
@@ -102,27 +100,9 @@ python3 -m fundamental.cheap STOCK    # 自动跑 7 项（含 P/B）
 ### 展开要求
 
 不许只写"≈Xth 通过"。必须给：
-- **自身区间表**：当前 / 高 / 低 / 中位 / 前瞻 + 分位 + 来源 URL
+- **双分位区间表**：GAAP + 正常化 P/E 的 当前/高/低/中位/分位 + 来源 URL
 - **同业对比表**：可比同业倍数 + 折/溢价%
 - **de-rating 判断**：便宜成因是错杀还是真实恶化
-
----
-
-## A.3 安全边际（daily，join D 的锚）
-
-> 从 output_d D.1 读合理价和满仓（不重算），用 A.1 现价算安全边际。
-
-```
-安全边际 = 1 − 现价 / D.合理价
-```
-
-操作建议（通用逻辑，汇总时算）：
-
-| 现价位置 | 操作 |
-|---------|------|
-| ≤ 满仓 | 满仓建仓 |
-| 满仓 < 现价 < 合理价 | 小仓/观察 |
-| ≥ 合理价 | 不出手，等 callback |
 
 ---
 
@@ -130,16 +110,16 @@ python3 -m fundamental.cheap STOCK    # 自动跑 7 项（含 P/B）
 
 | 输入 | 来源 |
 |------|------|
-| 正常化 EPS（算正常化 P/E） | Task B |
-| FCF 金额（算 FCF yield） | Task B |
-| 合理价 / 满仓目标 | Task D |
+| GAAP EPS（算 GAAP P/E） | `income_ttm.csv` `Diluted EPS`（直接读源 CSV） |
+| v3.1 正常化 EPS（算正常化 P/E 分位） | Task B（`normalize_eps.py` 产出） |
+| FCF（算 FCF yield #5） | `cf_ttm.csv` `Free Cash Flow`（cheap 工具直接读） |
 | 现价 | 本地 CSV |
 
 | 输出 | 去向 |
 |------|------|
-| 7 项粗筛 pass/fail + FCF yield + 安全边际 | 汇总表（join D → 操作建议） |
-| 估值分位 + 同业 + de-rating | Task C（便宜成因呼应竞争/财报） |
+| 8 项粗筛 pass/fail + FCF yield | Task E |
+| 双分位（GAAP + 正常化 P/E）+ 同业 + de-rating | Task E + Task C（便宜成因呼应竞争/财报） |
 
-A.1 可独立跑（只需 CSV + info.json）。
-A.2 需 web search（月度）。
-A.3 需 D 的合理价/满仓（join）。
+A.1 可独立跑（只需 CSV + info.json + cf_ttm.csv）。
+A.2 需 web search（月度）+ B v3.1 EPS（算正常化 P/E 分位）。
+A 不依赖 D（安全边际 → Task E）。

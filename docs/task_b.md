@@ -88,7 +88,7 @@ Other Income 大额波动 → 投资损益或 FX
 | 项目 | key | 看 |
 |------|-----|-----|
 | OCF | `Operating Cash Flow` | OCF/NI >1 = 利润含金量高 |
-| FCF | `Free Cash Flow` | yield 见 A（FCF/MCap，随 price 变） |
+| FCF | `Free Cash Flow` | FCF 金额（yield 在 A 算，price-dependent） |
 | SBC | `Stock Based Compensation` | FCF−SBC 真实现金创造 |
 | 回购 | `Repurchase Of Capital Stock` | 真 缩股 vs 仅对冲 SBC |
 | CapEx | `Capital Expenditure` | 急增可能吞噬 FCF |
@@ -130,13 +130,15 @@ EPS 负值时 → 用恢复 EPS（详见 normalize_eps.md EPS-4b）
 
 ## B.4 质量预判（给 Task D 的地板）
 
-B 完成后可给 D 一个**质量地板**（不含护城河，等 C 确认后可升级）：
+B 完成后可给 D 一个**质量地板**（5 项本地指标，不含护城河，等 C 确认后可升级）：
 
 ```
-GM > 60% 稳 + FCF 强 + 真缩股 → 至少"好公司 ×0.67"
-GM 薄 + FCF 弱 → "平庸 ×0.60"
+GM > 60% 稳 + FCF−SBC > 0 + 真缩股 → 至少"好公司 ×0.67"
+GM 薄 + FCF−SBC 弱 → "平庸 ×0.60"
 中间 → 待 C 确认护城河
 ```
+
+> FCF yield 已移出质量评分 → 移到 Task A 粗筛 #5（FCF yield 是估值指标非质量指标）。质量评分改 6/6，详见 `discount_coefficient.md` D-1。
 
 详见 `discount_coefficient.md` 的质量评分部分。
 
@@ -151,9 +153,9 @@ GM 薄 + FCF 弱 → "平庸 ×0.60"
 | 输出 | 去向 |
 |------|------|
 | 九宫格分数 + 背离检验 | Task D（好公司判断） |
-| **正常化 EPS** | Task D（合理价 = EPS × PE；满仓目标 = 合理价 × 折扣） |
-| **FCF 金额** | Task A（A 算 FCF yield = FCF/MCap） |
-| 质量地板（GM/FCF/缩股） | Task D（折扣系数预判） |
+| **正常化 EPS** | Task D（合理价 = EPS × PE）+ Task A（正常化 P/E 分位） |
+| **FCF 金额** | Task A（A.1 FCF yield #5，cheap 工具直接读 cf_ttm.csv） |
+| 质量地板（GM/FCF−SBC/缩股） | Task D（折扣系数预判） |
 | GM/OpInc CAGR | Task C（g 计算的基线） |
 
 B 完全独立（只需本地 CSV），price 无关，可与 A、C 并行。
