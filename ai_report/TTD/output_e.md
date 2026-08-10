@@ -1,44 +1,69 @@
-# TTD — Task A：价格层（daily）
-> 更新: 2026-08-08  现价 $13.80（CSV 8/7 close）
+# TTD — Task E：决策
+> 更新: 2026-08-08  现价 $13.80
 
-## A.1 价格粗筛 + price-dependent 指标（7 项，满足任意 1 条入池）
+## E.1 粗筛信号（from A）
 
 | # | 条件 | 阈值 | 实际值 | ✓/✗ |
 |---|------|------|--------|-----|
 | 1 | 1Y 回撤 | >40% | 84.4%（$88.33→$13.80） | ✓ |
 | 2 | 2Y 回撤 | >60% | 90.1%（$139.51→$13.80） | ✓ |
 | 3 | 距 52W 低 | ≤15% | 0.0%（$13.80 = 52W low） | ✓ |
-| 4 | P/E TTM | <15x | 16.4x（$13.80/$0.84） | ✗ |
-| 5 | EV/EBITDA | <10x | 7.8x（EV $5.57B / EBITDA $712M） | ✓ |
-| 6 | P/B | <1.5x | —（轻资产 GM 76.9%>60%） | — |
-| 7 | P/S | <2.0x | 2.2x（$6.63B / $2.99B） | ✗ |
+| 4 | P/E TTM | <15x | 16.4x（$13.80/$0.84 CSV） | ✗ |
+| 5 | FCF yield | >5% | 12.8%（$848M/$6.63B） | ✓ |
+| 6 | EV/EBITDA | <10x | 7.8x（EV $5.57B / EBITDA $712M） | ✓ |
+| 7 | P/B | <1.5x | —（轻资产 GM 76.9%>60%） | — |
+| 8 | P/S | <2.0x | 2.2x（$6.63B / $2.99B） | ✗ |
 
-命中: **4/7**（1Y回撤 ✓ + 2Y回撤 ✓ + 距52W低 ✓ + EV/EBITDA ✓）
-
-FCF yield = $848M / $6.63B = **12.8%**
+命中: **5/8**（1Y ✓ + 2Y ✓ + 52W ✓ + FCF yield ✓ + EV/EBITDA ✓）
 
 > MCap = $13.80 × 480.6M diluted shares = $6.63B
 > EV = MCap + Total Debt $434M − Cash $1.49B = $5.57B
-> EBITDA TTM = $712M（from income_ttm CSV）
-> P/E = $13.80 / $0.84 = 16.4x（CSV TTM Diluted EPS $0.84）
-> ⚠ info.json trailingPE 20.9x uses stale trailingEps $0.66（pre-Q2 data, Yahoo 未更新）
+> FCF yield = FCF $848M（from B）/ MCap $6.63B = 12.8% > 5% ✓
+> ⚠ info.json trailingPE 20.9x uses stale trailingEps $0.66（pre-Q2）；CSV EPS $0.84 → P/E 16.4x
 
-技术提示: ✓ Neck Line $17.7 + ✓ Trend Line $17.6 + ✓ MinMax 4th $17.7（CSV 价格 $17.67 8/6 close）；$13.80 已破所有技术位
+## E.2 估值锚（from D）
 
-## A.2 估值分位
+| 口径 | 值 |
+|------|-----|
+| 合理价 | $9.66（$0.84 × 11.5x） |
+| 满仓目标 | $5.80（×0.6） |
+| 系数 | ×0.6（好公司×存疑） |
+| g | 3.0% |
+| 合理 PE | 11.5x |
+| 正常化 EPS | $0.84 |
+| GAAP EPS | $0.84 |
+| FCF/sh | $1.77 |
+| FCF−SBC/sh | $0.82 |
+| r | 10.0% |
+| P/FCF₀ | 14.7x |
+| DCF FCF−SBC | $14.30 |
+| DCF FCF | $28.20 |
+| 质量×麻烦 | 好公司×存疑 |
+
+## E.3 安全边际 + 操作（join A price + D anchor）
+
+| 口径 | 合理价 | 安全边际 | 满仓 | 操作 |
+|------|--------|---------|------|------|
+| EPS 模型 | $9.66 | -42.9% | $5.80 | 买贵了 |
+| DCF FCF | $28.20 | +51.1% | — | — |
+| DCF FCF−SBC | $14.30 | +3.5% | — | — |
+
+## E.4 归类
+买贵了（EPS 口径：现价 $13.80 > 合理价 $9.66 → 安全边际 −42.9%）
+
+**隐藏机会**：DCF FCF $28.20 → 安全边际 +51.1%（便宜）；DCF FCF−SBC $14.30 → +3.5%（接近合理价）。EPS 模型低估（高 SBC 公司，回购 $975M > SBC $452M → 净缩股 → FCF 口径正确）。5/8 粗筛命中 + P/E 0.1th 分位 + FCF yield 12.8% → 便宜信号多，但 Q3 guide −12% + margin 塌陷 → 增速存疑。
+
+## E.5 双分位（from A）
 
 ### 自身 P/E 区间
 
 | 口径 | 当前 | 5yr 高 | 5yr 低 | 5yr 中位 | 分位 | 来源 |
 |------|------|--------|--------|---------|------|------|
 | P/E TTM | 16.4x | 698.17x | 15.68x | 195.34x | **0.1th** | [MacroTrends](https://www.macrotrends.net/stocks/charts/TTD/trade-desk/pe-ratio) |
+| 正常化 P/E (v3.1) | 16.3x（$13.80/$0.847） | 698.17x | 15.68x | 195.34x | **0.1th** | MacroTrends 范围 + B v3.1 |
 
-> MacroTrends P/E = 15.68x（using EPS $0.88, stale pre-Q2）。Our P/E = 16.4x（using CSV EPS $0.84）。
-> 5yr 高 698.17x = 2022-06-30（EPS $0.06, 微利期 P/E 飙至极端）
-> 5yr 低 15.68x = 2026-08-07（current, MacroTrends stale EPS $0.88）
-> Our P/E 16.4x → 分位 = (16.4 − 15.68) / (698.17 − 15.68) = 0.72 / 682.49 = **0.1th**
->
-> **须 ≤30% 分位 → 通过 ✓**（0.1th = 5yr 最低附近）
+> 两个都 ≤30% ✓（0.1th = 5yr 最低附近）。TTD v3.1 ≈ GAAP（Unusual $91K 极小）→ 两口径几乎相同。
+> MacroTrends EPS $0.88 = pre-Q2 TTM（stale）。CSV TTM EPS = $0.84（GAAP）/ $0.847（v3.1）。
 
 ### MacroTrends P/E 季度历史（5yr 范围 2021-09 至 2026-08）
 
