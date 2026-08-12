@@ -28,12 +28,11 @@ PE = min(8.5 + 15, 30) = **23.5x**
 |------|-----|
 | GM >60% 稳 | ✓（60.9% TTM，3yr 上升 55→61） |
 | NM >20% | ✓（27.5% normalized） |
-| FCF yield >5% | ✗（1.2%，AI capex 吞噬） |
 | FCF−SBC >0 | ✓（+$25.1B） |
 | 真缩股 | ✓（−7.0%/3yr） |
 | ROIC >15% | ✓（ROE 48.7%） |
 | 护城河宽 | ✓（Search+YouTube+Cloud+Android） |
-→ 6/7 = **伟大**
+→ 6/6 = **伟大**
 
 麻烦定性: **无麻烦**（营收 +24%、Cloud +82%、$514B backlog、反垄断 NO breakup、非困境）
 
@@ -71,10 +70,13 @@ EPS 模型合理价 = $10.03 x 23.5 = **$235.7**
 回购 $-10744M <= SBC -> FCF-SBC 为主口径
 
 gap 分析:
-- gap 1 (EPS->FCF-SBC): $-163.6 -> PE 公式差异
-- gap 2 (FCF-SBC->FCF): $69.0 -> SBC 差异 ($2.3/sh x 30 = $69.0)
+- gap 1 (EPS→DCF FCF−SBC): $−163.6 → 高 CapEx $132B 压低 FCF（FCF−SBC/sh $2.05 << EPS $10.03）+ PE 公式差异
+- gap 2 (FCF−SBC→FCF): $+69.0 → SBC 差异（$2.30/sh × 30 = $69.0）
+- 判断: DCF FCF−SBC $72.2 < DCF FCF $141.1 < EPS $235.7（**高 CapEx pattern**：FCF << NI，DCF 揭示 EPS 模型高估）
 
-**DCF 揭示高估**: EPS $235.7 > DCF FCF-SBC $72.2 > DCF FCF $141.1
+> ⚠ GOOG 是 dcf.md 中"高 CapEx → DCF << EPS"的经典案例：CapEx $132B 吞噬 FCF（FCF $53B << 正常化 NI $123B）。DCF 更准确反映真实现金创造能力。
+>
+> **前瞻 capex 风险**: FY26 capex $195-205B → FCF 预测 ~$8.7B → FCF−SBC 可能转负 → ×0.40 风险。当前 TTM FCF−SBC = +$25.1B > 0（未触发）。
 ## D.3 敏感性表
 
 | 情景 | EPS | g | 合理 PE | 合理价 |

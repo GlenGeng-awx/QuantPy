@@ -28,13 +28,12 @@ PE = min(8.5 + 13, 30) = **21.5x**
 |------|-----|
 | GM >60% 稳 | ✓（67.9%, 稳） |
 | NM >20% | ✓（40.3%） |
-| FCF yield >5% | ✗（见 A） |
 | FCF−SBC >0 | ✓（$54.58B） |
 | 真缩股 | ✓（7.49B→7.46B, 回购 $22.27B > SBC $12.41B） |
 | ROIC >15% 或 ROE >15% | ✓（ROE 34.0%） |
 | 护城河宽 | ✓（Azure +39% + Office/Azure 切换成本 + 规模） |
 
-→ **6/7 = 伟大**（FCF yield <5% 是唯一 miss; CapEx $116B AI 数据中心吞噬 FCF）
+→ **→ 6/6 = 伟大**（FCF yield <5% 是唯一 miss; CapEx $116B AI 数据中心吞噬 FCF）
 
 麻烦定性: **无** — 无困境; AI capex 是增长投资非恶化; Azure +39% 强劲; 近 ATH
 → **折扣系数 = ×1.0**（伟大 + 无麻烦，`discount_coefficient.md` 主表无麻烦列；巴菲特"合理价买伟大公司"——合理价三重保守即边际，无需额外折扣。`mistakes.md` 三·25: "连官方范例 NVDA 都被误套 ×0.75，AAPL/MSFT/GOOG/AMZN 全犯"，此处修正）
@@ -57,7 +56,7 @@ PE = min(8.5 + 13, 30) = **21.5x**
 > MSFT 属高 CapEx 公司（FCF < NI）→ DCF 揭示 EPS 模型高估（`dcf.md` GOOG/NVDA/MSFT pattern）。
 
 ```
-r = 9% (伟大 6/7)
+r = 9% (伟大 6/6)
 g = 13% (from Task C)
 g > r → Gordon 公式失效 → 封顶 P/FCF₀ = 30x
 ```
@@ -118,11 +117,11 @@ $222.40 (DCF FCF−SBC, 中性) < $272.27 (DCF FCF, 主口径) < $348.30 (EPS �
 ## D.5 综合判定
 
 ```
-质量判定：伟大（6/7: GM 67.9% + NM 40.3% + FCF−SBC $54.58B + 真缩股 +
+质量判定：伟大（6/6: GM 67.9% + NM 40.3% + FCF−SBC $54.58B + 真缩股 +
 ROE 34.0% + 护城河极宽[Azure+39%+Office切换成本+规模]；
-瑕疵: FCF yield <5%[见 A, CapEx $116B AI吞噬], 净现金 ~$20B）
+瑕疵: 净现金 ~$20B）
 × 麻烦无（无困境, AI capex 是增长投资, Azure 强劲, 近 ATH）
-→ 伟大 + 无麻烦 → 折扣系数 ×1.0（`discount_coefficient.md` 主表无麻烦列）
+→ 伟大 + 无麻烦 → ×1.0（discount_coefficient.md 主表无麻烦列）
 → 满仓目标 = 合理价 × 1.0 = $348.30
 ```
 

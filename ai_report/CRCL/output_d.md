@@ -32,13 +32,12 @@ g = 8%（G-3: Q YoY 20% → Step 5 定性调至 8%，反映 Fed 降息周期利�
 |------|-----|-----|
 | GM >60% 稳 | 8.1% TTM / ~21% 正常化 | ✗ |
 | NM >20% | −2.8% TTM / ~8% 正常化 | ✗ |
-| FCF yield >5% | 2.6% | ✗ |
 | FCF−SBC >0 | **−$155M** | ✗（→ 重麻烦） |
 | 真缩股 | 222M→247M（+11% IPO dilution） | ✗ |
 | ROIC >15% 或 ROE >15% | ROE −3.0% / ROIC n/m | ✗ |
 | 护城河宽 | 中（USDC #2 + OCC 牌照 + Coinbase 分销） | +1 |
 
-→ 1/7 = **平庸**
+→ 1/6 = **平庸**
 
 麻烦定性: **重麻烦**（FCF − SBC = −$155M < 0 → 硬规则触发 ×0.40；利率下行结构性 headwind + GM 压缩 + SBC 极高）
 
@@ -65,20 +64,24 @@ g = 8%（G-3: Q YoY 20% → Step 5 定性调至 8%，反映 Fed 降息周期利�
 ```
 r = 11% (平庸)
 g = 8% (from Task C)
-P/FCF₀ = min((1+8%)/(11%−8%), 30) = 30.0x
-net_cash/sh = $nan
+P/FCF₀ = min((1+8%)/(11%−8%), 30) = 30.0x ← 封顶
+net_cash/sh = $6.13
+EPS (FINAL from D.1) = $1.20
 ```
+
+EPS 模型合理价 = $1.20 × 16.5 = **$19.80**
 
 | 口径 | base ($/sh) | P/FCF₀ | DCF/sh | vs EPS 合理价 |
 |------|-------------|--------|--------|---------------|
-| DCF FCF−SBC | $-0.63 | — | N/A (FCF−SBC < 0) | — |
-| DCF FCF | $1.80 | 30.0x | $nan | N/A |
+| DCF FCF−SBC | −$0.63 | — | N/A (FCF−SBC < 0) | — |
+| DCF FCF | $1.80 | 30.0x | $60.22 | +204% |
 
-回购 N/A
+回购 $0 ≤ SBC $602M → 净稀释 → FCF−SBC 为主口径（但 < 0 → N/A）
 
 gap 分析:
-
-DCF 部分适用（FCF−SBC < 0 或 EPS < 0）
+- gap 1 (EPS→DCF FCF−SBC): N/A（FCF−SBC < 0）
+- gap 2 (FCF−SBC→FCF): $+72.92 → SBC 差异（$2.43/sh × 30 = $72.9）
+- 判断: DCF FCF $60.22 >> EPS 模型 $19.80（FCF 正而 EPS 负/IPO 一次性；DCF 用实际 FCF 避开恢复 EPS 判断性）
 
 ## D.3 敏感性表（恢复 EPS × g 双维）
 
@@ -100,8 +103,8 @@ DCF 部分适用（FCF−SBC < 0 或 EPS < 0）
 ## D.5 质量判定（决定折扣系数）
 
 ```
-质量判定：平庸（GM 8.1% ✗、NM −2.8% ✗、FCF yield 2.6% ✗、
-FCF−SBC −$155M ✗、IPO dilution +11% ✗、ROE −3.0% ✗、护城河中 ✓ = 1/7）
+质量判定：平庸（GM 8.1% ✗、NM −2.8% ✗、
+FCF−SBC −$155M ✗、IPO dilution +11% ✗、ROE −3.0% ✗、护城河中 ✓ = 1/6）
 × 麻烦 重麻烦（FCF−SBC < 0 + 利率下行结构性 headwind + GM 压缩 + SBC 极高）
 → 折扣系数 ×0.40 → 满仓目标 $7.92
 ```

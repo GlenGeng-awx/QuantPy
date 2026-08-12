@@ -31,12 +31,11 @@ PE = min(8.5 + 4, 30) = 12.5x
 |------|-----|
 | GM >60% 稳 | ✓（79.6%） |
 | NM >20% | ✗（−10.6% TTM GAAP 亏损；恢复 NM ~31%） |
-| FCF yield >5% | ✓（5.8%） |
 | FCF−SBC >0 | ✓（+$8.57B） |
 | 真缩股 | ✓（−1.6%/3yr，consistent buyback） |
 | ROIC >15% | ✓（18.5%） |
 | 护城河宽 | ✗（中等：HIV 强但 oncology eroding） |
-→ 5/7 = **好公司**
+→ 5/6 = **好公司**
 
 麻烦定性: **明确一次性**
 - $11.2B 收购 IPR&D（deal-close 会计，非现金，一次性）= 主导
@@ -62,23 +61,31 @@ g = 4%
 ```
 r = 10% (好公司)
 g = 4% (from Task C)
-P/FCF0 = min((1+4%)/(10%-4%), 30) = 17.3x
-net_cash/sh = $-11.64
-EPS (FINAL from D.1) = $7.59
+P/FCF₀ = min((1+4%)/(10%-4%), 30) = 17.3x
+
+⚠ 无 cf_ttm.csv，用 FY2025 annual FCF/SBC 手算：
+  FCF/sh = $9.46B / 1.25B = $7.57
+  SBC/sh = $0.894B / 1.25B = $0.72
+  FCF−SBC/sh = $8.57B / 1.25B = $6.85
+  net_cash/sh = $-11.64
 ```
 
-EPS 模型合理价 = $7.59 x 12.5 = **$94.88**
+EPS 模型合理价 = $7.59 × 12.5 = **$94.88**
 
-| 口径 | base ($/sh) | P/FCF0 | DCF/sh | vs EPS 合理价 |
+| 口径 | base ($/sh) | P/FCF₀ | DCF/sh | vs D.2 合理价 |
 |------|-------------|--------|--------|---------------|
-| DCF FCF-SBC | $10.58 | 17.3x | $171.7 | 81% |
-| DCF FCF | $10.58 | 17.3x | $171.7 | 81% |
+| DCF FCF−SBC | $6.85 | 17.3x | $107.1 | +13% |
+| DCF FCF | $7.57 | 17.3x | $119.5 | +26% |
+
+回购 $1.92B > SBC $0.89B → 净缩股 → FCF 为主口径
 
 gap 分析:
-- gap 1 (EPS->FCF-SBC): $76.8 -> PE 公式差异
-- gap 2 (FCF-SBC->FCF): $0.0 -> SBC 差异
+- gap 1 (D.2→DCF FCF−SBC): $+12.2 → PE 公式差异（Gordon 17.3x > framework 12.5x）+ FCF vs 恢复 EPS 差异
+- gap 2 (FCF−SBC→FCF): $+12.4 → SBC 差异（$0.72/sh × 17.3 = $12.5）
+- 判断: DCF > D.2（Gordon 17.3x > framework 12.5x；FCF $9.46B > 恢复 NI $9.49B ≈ 一致）。DCF 揭示 EPS 模型偏保守。
 
-**DCF 揭示低估**: EPS $94.9 < DCF FCF-SBC $171.7 < DCF FCF $171.7
+> ⚠ **DCF base 修正**：旧 D.2b base $10.58 两口径相同（暗示 SBC=0，错误）。修正：FCF/sh $7.57，FCF−SBC/sh $6.85（SBC $0.894B/1.25B = $0.72/sh）。DCF 从 $171.7 降至 $119.5/$107.1。
+
 ## D.3 敏感性表
 
 | 情景 | EPS | g | 合理 PE | 合理价 | 满仓（×0.67） |
