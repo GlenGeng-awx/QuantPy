@@ -313,7 +313,7 @@ financialCurrency ≠ USD ?
 | EUR | ASML BNTX SPOT |
 | DKK | NVO |
 | SEK | ERIC |
-| KRW | CPNG |
+| KRW | — |
 | SGD | SE |
 | CNY | BABA PDD JD TCOM BIDU BEKE BILI FUTU TME 0700.HK |
 | HKD | 0700.HK FUTU |

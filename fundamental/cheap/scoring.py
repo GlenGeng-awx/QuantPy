@@ -1,6 +1,6 @@
 from base_engine import BaseEngine
 from preload_conf import period
-from fundamental.data import load_info
+from fundamental.data import load_info, load_statement, get_val
 from fundamental.cheap.signals import CHECKS as SIG_CHECKS, LABELS as SIG_LABELS, SHORT as SIG_SHORT
 from fundamental.cheap.hints import CHECKS as HINT_CHECKS, LABELS as HINT_LABELS, SHORT as HINT_SHORT
 import guru
@@ -10,6 +10,8 @@ def load_data(stock_name):
     from_date, to_date, interval = period(8)
     engine = BaseEngine(stock_name, from_date, to_date, interval)
     context = guru.calculate(engine.stock_df)
+    cf_df = load_statement(stock_name, 'cf_ttm')
+    fcf = get_val(cf_df, 'Free Cash Flow')
     return {
         'stock_name': stock_name,
         'stock_df': engine.stock_df,
@@ -19,6 +21,7 @@ def load_data(stock_name):
         'neck_lines': engine.neck_line.neck_lines,
         'elliott_dates': engine.elliott.x,
         'guru_context': context,
+        'fcf': fcf,
     }
 
 
@@ -55,8 +58,10 @@ def print_detail(result):
 
 def print_ranking(results):
     results.sort(key=lambda r: r['count'], reverse=True)
-    header = '{:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>6} {:>6}  | {:>4} {:>4} {:>4} {:>4}'.format(
-        'Stock', *SIG_SHORT, *HINT_SHORT)
+    sig_fmt = ' '.join('{:>6}' for _ in SIG_SHORT)
+    hint_fmt = ' '.join('{:>4}' for _ in HINT_SHORT)
+    fmt = '{:<10} ' + sig_fmt + '  | ' + hint_fmt
+    header = fmt.format('Stock', *SIG_SHORT, *HINT_SHORT)
     width = len(header) + 4
     print('\n' + '=' * width)
     print('{:^{}}'.format('CHEAP RANKING', width))
@@ -66,6 +71,5 @@ def print_ranking(results):
     for r in results:
         signals = [value if hit else '' for hit, value, _ in r['signals']]
         hints = ['✓' if hit else '' for hit, _, _ in r['hints']]
-        print('  {:<10} {:>4} {:>4} {:>4} {:>6} {:>6} {:>6} {:>6}  | {:>4} {:>4} {:>4} {:>4}'.format(
-            r['stock'], *signals, *hints))
+        print('  ' + fmt.format(r['stock'], *signals, *hints))
     print('=' * width + '\n')

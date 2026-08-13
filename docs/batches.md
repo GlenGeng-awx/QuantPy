@@ -81,7 +81,7 @@
 | SPOT | Spotify | 多币种(USD/EUR) |
 | COIN | Coinbase | 周期 |
 | CRCL | Circle | |
-| CPNG | Coupang | 多币种(USD/KRW) |
+| CPNG | Coupang | |
 | SE | Sea (Shopee) | 多币种(USD/SGD) |
 
 ## B5 — Fintech & Payments（9）

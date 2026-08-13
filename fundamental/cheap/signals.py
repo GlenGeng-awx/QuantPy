@@ -48,6 +48,18 @@ def check_pe(data):
     return pe < 15, '{:.1f}x'.format(pe), 'P={}, E={}'.format(price, eps)
 
 
+def check_fcf_yield(data):
+    fcf = data.get('fcf')
+    info = data['info']
+    mcap = info.get('marketCap')
+    if fcf is None or mcap is None or mcap <= 0:
+        return False, '-', ''
+    yld = fcf / mcap * 100
+    fcf_str = format_value(fcf)
+    mcap_str = format_value(mcap)
+    return yld > 5, '{:.1f}%'.format(yld), 'FCF={}, MCap={}'.format(fcf_str, mcap_str)
+
+
 def check_ev_ebitda(data):
     info = data['info']
     ev_ratio = get_info_val(info,'enterpriseToEbitda')
@@ -73,7 +85,6 @@ def check_ps(data):
 
 
 def check_pb(data):
-    # 阈值 1.5 = 周期股便宜阈值(金融股 <1.0);轻资产 P/B 天然高,不触发,靠 P/E/回撤入池
     info = data['info']
     pb = get_info_val(info,'priceToBook')
     if pb is None or pb <= 0:
@@ -84,7 +95,7 @@ def check_pb(data):
 
 
 CHECKS = [check_1y_drawdown, check_2y_drawdown, check_near_52w_low,
-          check_pe, check_ps, check_pb, check_ev_ebitda]
+          check_pe, check_fcf_yield, check_ev_ebitda, check_pb, check_ps]
 LABELS = ['1Y Drawdown', '2Y Drawdown', 'Near 52W Low',
-          'P/E TTM', 'P/S TTM', 'P/B', 'EV/EBITDA']
-SHORT = ['1Y', '2Y', '52W', 'P/E', 'P/S', 'P/B', 'EV/E']
+          'P/E TTM', 'FCF Yield', 'EV/EBITDA', 'P/B', 'P/S TTM']
+SHORT = ['1Y', '2Y', '52W', 'P/E', 'FCF', 'EV/E', 'P/B', 'P/S']

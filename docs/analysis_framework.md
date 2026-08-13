@@ -124,7 +124,7 @@ B, C (g + 护城河 + 麻烦)           ──→ D (合理价 + 满仓 + DCF) �
 | EUR/USD | ~1.15 | ASML BNTX SPOT |
 | DKK/USD | ~6.48 | NVO |
 | SEK/USD | ~10.5 | ERIC |
-| KRW/USD | ~1350 | CPNG |
+| KRW/USD | ~1350 | — |
 | SGD/USD | ~1.35 | SE |
 
 > ⚠ 上表为近似值，会变。看更新日期判断是否过期。
