@@ -32,36 +32,39 @@
 | 18 | 分析师 1Y target mean | $137.98（40 分析师，Buy 1.6） | Yahoo Finance |
 | 19 | forwardPE / forward EPS | 38.17x / $3.28（隐含 EPS +15.5% YoY） | info.json |
 
-### 综合判断（G-3）
+### 综合判断（G-3 Step 1234）
 
-**Step 2 剔除不可靠源:**
-- 剔 #3 EPS 3yr CAGR 24.21%（回购 + FY23 双重扭曲，违反"回购不进 g"）
-- 剔 #2 OpInc 3yr CAGR 13.45%（FY23 $20.43B 低基数，3yr 起点失真）
-- 剔 #7 NI 3yr CAGR 23.30%（同 FY23 扭曲）
-- 剔 #10 PEG 隐含 g 9.25%（EPS 基础，含回购；且 PEG 4.27 极高 = 市场乐观预期，非我方估计）
+```
+g 源:
+  营收 3yr CAGR 5.27%      FY23→FY26 ^1/3
+  OpInc 3yr CAGR 13.45%    ⚠ FY23 低基数扭曲
+  EPS 3yr CAGR 24.21%     ⚠ 回购 + FY23 双重扭曲
+  营收 2yr CAGR 4.90%      FY24→FY26 ^1/2
+  OpInc 2yr CAGR 5.08%     恢复后正常增长
+  Q YoY Revenue 7.3%       Q1'27 vs Q1'26
+  NI 3yr CAGR 23.30%      ⚠ FY23 扭曲
+  NI 2yr CAGR 18.80%       含恢复溢价
+  NI YoY 12.64%           FY25→FY26 业务增长
+  PEG 9.25%               含回购，市场乐观
+  earningsGrowth 19.4%     含一次性/回购
 
-**Step 3 剔最高（保守偏置）:**
-- 剔 #6 Q YoY Revenue +7.3%（单季，可能含一次性/季节性，不可外推）
+Step 2 剔除:
+  EPS 3yr CAGR 24.21%     回购 + FY23 双重扭曲
+  OpInc 3yr CAGR 13.45%   FY23 低基数扭曲
+  NI 3yr CAGR 23.30%      FY23 扭曲
+  NI 2yr CAGR 18.80%      含恢复溢价
+  PEG 9.25%               含回购，市场乐观
+  earningsGrowth 19.4%    含一次性/回购
 
-**剩余源:**
-- Revenue 3yr CAGR 5.27%
-- Revenue 2yr CAGR 4.90%
-- OpInc 2yr CAGR 5.08%
-- NI YoY 12.64%（业务 NI 增长，含 margin expansion）
+Step 3 剔除:
+  Q YoY 7.3%              最高剩余，单季含季节性
 
-算术平均 = (5.27 + 4.90 + 5.08 + 12.64) / 4 = 27.89 / 4 = 6.97%
+Step 4:
+  avg(5.27, 4.90, 5.08, 12.64) = 6.97%
+```
 
-**Step 5 定性调整:**
-- 广告（+37-44%）+ 会员（+17.4%）高 margin 引擎驱动 margin mix 上行 → NI 增长 > Revenue 增长
-- 但 CapEx 重投入（自动化/电商）压制 OpInc 增长（Q1 OpInc 仅 +5.0%）
-- 通胀环境 + 低价定位受益消费降级 → Revenue 增速稳健 5-7%
-- 综合判断：业务 g 略高于平均，因 margin expansion 趋势明确，但保守取整
-
-**g = 6%**（业务增长，剔回购；Revenue ~5-6% + margin expansion 1-2pp，保守下限）
-
-- 近期 vs 3yr: Revenue 加速（5.27% → Q1 +7.3%），margin 引擎发力
-- 管理层 vs 分析师: 管理层未给 FY27 明确长期 g 指引（季度口径），分析师隐含 EPS +9-15%（含回购），业务口径 ~6-7%
-- **g = 6%**（剔回购，与 Revenue CAGR + margin expansion 一致，保守偏置）
+- **g = 6%**（Step 5 定性调整：均值 6.97% 被 NI YoY 12.64% 拉高，3yr Revenue CAGR 5.27% 是可持续基线 + margin expansion 1-2pp，保守取下限）
+- g 区间宽（5-13%）反映广告/会员 margin expansion 能否持续的不确定性
 
 ### g 质量护栏（G-4）
 

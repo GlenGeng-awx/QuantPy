@@ -20,10 +20,34 @@
 | 6 | Contact Center ARR | 破 $100M，高双位数增长 | 财报 |
 | 7 | 前瞻共识 | ~4% 营收 | 分析师 |
 
-### 综合判断
+### 综合判断（G-3 Step 1234）
 
-- 核心会议业务饱和（+1-4%），AI Companion + Contact Center 是上行期权但基数小
-- **g = 4%**（FY27 指引 + 历史保守者）
+```
+g 源:
+  营收 3yr CAGR 4.4%       $4.39B→$4.87B
+  Q1'27 YoY 5.5%           $1.24B
+  FY27 指引 4.1%            $5.08-5.09B
+  PEG 3.2%                 P/E 13.6 / PEG 4.2
+  分析师 ~4%               营收共识
+  AI Companion +184%       基数小，期权非主线
+  Contact Center $100M+   ARR 破亿，高双位数
+
+Step 2 剔除:
+  AI Companion +184%      基数小，非可持续主线
+  Contact Center          ARR 基数小
+  PEG 3.2%                GAAP P/E 假便宜（含投资收益），失真
+
+Step 3 剔除:
+  Q1'27 YoY 5.5%          最高剩余，单季含一次性
+
+Step 4:
+  avg(4.4, 4.1, 4) = 4.17%
+```
+
+**Step 5**: 无额外调整。核心会议业务饱和（+1-4%），AI Companion + Contact Center 是上行期权但基数小。
+
+- **g = 4%**（FY27 指引 + 历史保守者，核心会议饱和 + Teams 挤压）
+- g 区间窄（2-6%），增长熄火 + AI 期权未验证
 
 ### g 质量护栏
 

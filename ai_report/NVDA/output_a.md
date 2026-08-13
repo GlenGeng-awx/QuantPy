@@ -9,16 +9,15 @@
 | 2 | 2Y 回撤 | >60% | 4.9% | ✗ |
 | 3 | 距 52W 低 | ≤15% | +35.8%（$223.96 vs 52W low $164.98） | ✗ |
 | 4 | P/E TTM | <15x | 34.3x（$223.96/$6.53 GAAP；info.json 33.58，trailingEps $6.67 vs CSV $6.53 差 2.1%<3%） | ✗ |
-| 5 | EV/EBITDA | <10x | 32.5x（info.json） | ✗ |
-| 6 | P/B | <1.5x | —（轻资产，GM 74.1%>60%，P/B 不适用） | — |
-| 7 | P/S | <2.0x | 21.4x（info.json） | ✗ |
+| 5 | FCF yield | >5% | 2.2%（$119.08B FCF / $5.42T MCap） | ✗ |
+| 6 | EV/EBITDA | <10x | 32.5x（info.json） | ✗ |
+| 7 | P/B | <1.5x | —（轻资产，GM 74.1%>60%，P/B 不适用） | — |
+| 8 | P/S | <2.0x | 21.4x（info.json） | ✗ |
 
-命中: 0/7。距高点仅 4.9%、处 ATH 附近、非困境。
+命中: 0/7（P/B 轻资产不计）。距高点仅 4.9%、处 ATH 附近、非困境。
 
 > 回撤口径统一 peak-to-current（`mistakes.md` 七·197）：52W high $235.47（252 日 close max）、52W low $164.98（252 日 close min），均从 price CSV 实算。
 > P/B 标"—（轻资产）"非 ✗：GM 74.1%>60% → book value 不含 CUDA/IP/网络效应，高 P/B 是资本效率高的体现非贵（`task_a.md` 特殊口径）。P/B 27.75x 绝对水平见 A.2 补充。
-
-FCF yield = $119.08B（from B）/ $5.42T MCap（info.json） = **2.2%**（贵的证据，随 price 变）
 
 ## A.2 估值分位
 
@@ -27,9 +26,9 @@ FCF yield = $119.08B（from B）/ $5.42T MCap（info.json） = **2.2%**（贵的
 | 口径 | 当前 | 5yr 高 | 5yr 低 | 5yr 中位 | 分位 | 来源 |
 |------|------|--------|--------|---------|------|------|
 | GAAP P/E TTM | 34.3x（$223.96/$6.53） | 147.3x | 30.53x | 51.92x | 3.2th ✓ | [MacroTrends](https://www.macrotrends.net/stocks/charts/NVDA/nvidia/pe-ratio) |
-| 正常化 P/E | 39.6x（$223.96/$5.66 v3.1） | — | — | — | — | 无独立 5yr 序列（v3.1 口径） |
+| 正常化 P/E | 39.6x（$223.96/$5.66 v3.1） | 147.3x | 30.53x | 51.92x | 7.8th ✓ | 同 GAAP 5yr 区间（共用范围） |
 
-> 5yr P/E 区间 30.53x–147.3x（中位 51.92x），现 34.3x → 分位 3.2th（公式 (34.3−30.53)/(147.3−30.53)）≤30% → **通过**。来源：[MacroTrends NVDA P/E](https://www.macrotrends.net/stocks/charts/NVDA/nvidia/pe-ratio)（5yr 季度点，playwright 抓取）。
+> 5yr P/E 区间 30.53x–147.3x（中位 51.92x）。GAAP P/E 34.3x → 分位 3.2th ✓；正常化 P/E 39.6x → 分位 7.8th ✓（共用同一 5yr 范围，`analysis_framework.md`）。双分位均 ≤30% → **通过**。来源：[MacroTrends NVDA P/E](https://www.macrotrends.net/stocks/charts/NVDA/nvidia/pe-ratio)（5yr 季度点，playwright 抓取）。
 >
 > **P/E 低分位 vs 安全边际负号并存（非矛盾）**：P/E 处 5yr 低分位（3.2th）系峰值 EPS 驱动（AI capex 超级周期顶 → EPS 爆发 → 分母放大 → P/E 看似低）。框架合理价用 v3.1 EPS（$5.66，剥 $25.1B 一次性投资收益，比 GAAP $6.53 保守 13%）+ g 封顶 30x → $169.80 < 现价 $223.96 → 安全边际 −31.9% → 买贵了。**框架合理价比 5yr P/E 低更保守**（v3.1 剥益 + 封顶），P/E 分位通过不等于便宜。
 
@@ -66,17 +65,3 @@ FCF yield = $119.08B（from B）/ $5.42T MCap（info.json） = **2.2%**（贵的
 ### de-rating 判断
 
 NVDA 距 ATH $235.47 仅 4.9%、52W 低已 +35.8%、P/B 27.75x 极端、净现金仅 1.3% MCap。**非错杀，乃周期顶部被定价至完美**。便宜成因不存在——粗筛 0/7 全灭。
-
-## A.3 安全边际（join D 的锚）
-
-| 口径 | 值 | 来源 |
-|------|-----|------|
-| 现价 | $223.96 | CSV (2026-08-07 close) |
-| 合理价 | $169.80 | from D（$5.66 v3.1 × 30，不重算） |
-| 满仓目标 | $169.80 | from D（$169.80 × 1.0 伟大+无麻烦，不重算） |
-| 安全边际 | **−31.9%** | 1 − 223.96/169.80 |
-
-> GAAP 口径合理价 = $6.53 × 30 = $195.90（上界参照，非框架合理价；框架用 v3.1 min EPS $5.66）。安全边际 (GAAP 上界) = 1 − 223.96/195.90 = −14.3% → 仍为负 → 买贵了。
-
-## 结论
-不入池: ✗（0/7 + P/E 分位 3.2th 虽通过但峰值 EPS 驱动 + 安全边际 −31.9% [现价 > 合理价] + 净现金 1.3% 无缓冲）。距 ATH 仅 4.9%，P/B 27.75x 极端，净现金 1.3% 无缓冲 → 仍非好价格。

@@ -20,11 +20,37 @@
 | 8 | 分析师长期共识 | ~10-12%（营收） | Yahoo Growth Estimates：Current Year EPS +36%（递延税扭曲）、营收 +12%；旧 TIKR 长期 ~10% |
 | 9 | 管理层 Q3'26 指引 | gross bookings +18-22% YoY cc（$58.25-60.25B） | Uber IR 2026-08-05；revenue 增速因 take rate 压缩低于 bookings |
 
-### 综合判断
-- 近期 vs 3yr: 营收减速（Q1 14.5% → Q2 12.2%），但 gross bookings 加速（+22% cc，连续 4 季加速）— take rate 压缩使 bookings 增速 ≠ revenue 增速
-- 管理层 vs 分析师: Q3 指引 bookings +18-22% cc > 分析师长期 ~10-12% 营收（take rate 压缩 + 长期成熟化）
-- **g = 11%**（Step2 剔 PEG 失真 + OpInc/EPS CAGR hyper 低基数 + earningsGrowth 递延税扭曲；Step3 剔最高 12.2%；剩余 avg(11.8, 12.2, 10) ≈ 11.3 → 11%）
-- 与旧值一致（旧 g=14% 已在 v2 降至 11%，本轮 Q2 数据未改结论）
+### 综合判断（G-3 Step 1234）
+
+```
+g 源:
+  营收 3yr CAGR 11.8%      col2=2023 实为 2yr 跨度，forward_g 范例即用此值
+  OpInc 3yr CAGR 71.4%     hypergrowth 低基数 $1.11B→$5.57B
+  EPS 3yr CAGR ~75%        递延税/MTM 严重扭曲
+  Q2'26 Rev YoY 12.2%      减速 Q1 14.5%→Q2 12.2%
+  PEG 2.05%               GAAP P/E 含递延税收益垫高，失真
+  earningsGrowth 85.5%     GAAP EPS YoY，递延税扭曲
+  分析师长期 ~10-12%       Yahoo 长期营收共识
+  mgmt Q3 bookings 18-22%  bookings ≠ revenue（take rate 压缩），口径不对
+
+Step 2 剔除:
+  OpInc CAGR 71.4%         hypergrowth 低基数，不可外推
+  EPS CAGR ~75%            递延税/MTM 扭曲
+  PEG 2.05%               EPS 被递延税垫高 → PEG 失真
+  earningsGrowth 85.5%    递延税扭曲
+  mgmt bookings 18-22%    口径不对（bookings ≠ revenue）
+
+Step 3 剔除:
+  Q2 YoY 12.2%            最高剩余，保守偏置
+
+Step 4:
+  avg(11.8, 11) = 11.4% ≈ 11%
+```
+
+- **g = 11%**（营收 3yr CAGR 11.8% + 分析师长期 11% 均值；旧值 14% 已在 v2 降至 11%）
+- g 区间宽（5-14%）反映 AV 去中介化 + take rate 压缩的不确定性
+- take rate 压缩: bookings +22% vs revenue +12% → revenue g 低于 bookings g
+- AV 威胁（2028-01 Waymo 自有 App）→ 长期 g 有下行风险，11% 未充分反映
 
 ### g 质量护栏
 - [✓] FCF − SBC = +$8.18B > 0

@@ -26,14 +26,35 @@
 | 8 | 2026 EPS 共识 | $9.21（vs FY25 $6.70 = +37% YoY 恢复）| [Simply Wall St](https://simplywall.st/stocks/us/energy/nyse-xom/exxonmobil-holdings)（via Google snippet）|
 | 9 | 2026 分析师目标价 | $165.58 共识 / BofA $158 | [public.com](https://public.com/stocks/xom/forecast-price-target)；[BofA via TheStreet](https://www.thestreet.com/investing/bofa-just-turned-on-exxon-in-favor-of-chevron) |
 
-### 综合判断
+### 综合判断（G-3 Step 1234）
 
-- 本地 g 全剔除（油价周期扭曲，CAGR 跨峰谷不可外推）
-- 剩余源: 分析师 LTG 4.15%、管理层 Permian 9%（**仅上游页岩子业务量增**，非全公司 EPS g）
-- 剔除管理层 Permian 9%（口径过窄，非公司整体；且 Guyana 权益产量占比 + 炼化/化工稳定 → 全公司量增 mid-single digits）
-- 剩余 1 源 → 直接用：**g = 4%**（分析师 LTG 4.15% 取整保守）
+```
+g 源:
+  营收 3yr CAGR -6.4%      油价周期下行，不可靠
+  OpInc 3yr CAGR -18.9%    油价峰回落，不可靠
+  EPS 3yr CAGR -19.7%      油价+回购扭曲，不可靠
+  Q YoY -43%/+112%         周期摆动，不可靠
+  PEG 21.5%               TTM 低谷 EPS 扭曲，不可靠
+  分析师 LTG 4.15%         长期共识
+  mgmt Permian 9%          仅上游子业务量增，非全公司
 
-> g 用业务量增（Guyana/Permian 低成本桶 + 结构性成本节约 $16.3B 累计），不含缩股（缩股价值体现在 EPS 基数 + 安全边际，不抬 PE）。油价是外生周期变量，不进 g。
+Step 2 剔除:
+  营收 CAGR -6.4%          油价周期扭曲（CAGR 跨峰谷）
+  OpInc CAGR -18.9%        油价周期扭曲
+  EPS CAGR -19.7%          油价+回购扭曲
+  Q YoY -43%/+112%         周期摆动
+  PEG 21.5%               低谷 EPS 扭曲
+  mgmt Permian 9%          口径过窄（仅上游子业务量增）
+
+Step 3 剔除:
+  （仅剩 1 源，不需剔最高）
+
+Step 4:
+  仅剩 1 源 → 直接用: 4.15% ≈ 4%
+```
+
+- **g = 4%**（分析师 LTG 4.15% 取整保守；本地 g 全剔除——油价周期扭曲 CAGR 不可外推）
+- g 用业务量增（Guyana/Permian 低成本桶 + 结构性成本节约 $16.3B 累计），不含缩股。油价是外生周期变量，不进 g。
 
 ### g 质量护栏
 - [✓] FCF − SBC > 0（$18.79B - $0 = $18.79B）

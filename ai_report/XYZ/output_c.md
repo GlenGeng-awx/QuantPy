@@ -30,15 +30,37 @@
 | 11 | 分析师 consensus（FY26 adj EPS） | $3.90（Zacks） | [Zacks via Yahoo](https://finance.yahoo.com/markets/stocks/articles/blocks-q2-earnings-revenues-beat-183900653.html) |
 | 12 | Street price target | ~$93 | [TIKR](https://www.tikr.com/blog/block-stock-fell-6-after-its-most-profitable-quarter-ever-heres-where-xyz-could-go-in-2026) |
 
-### 综合判断
+### 综合判断（G-3 Step 1234）
 
-- 近期 vs 3yr：GP 加速（Q2'26 +24.8% > 3yr CAGR 20.0%），但管理层指引 Q3 减速至 +18%、Q4 exit mid-teens → **减速趋势**
-- 管理层 vs 分析师：管理层 FY26 GP +21% > 分析师 EPS $3.90（隐含 ~+62%，从 depressed base）
-- Step 2 剔除：PEG（失真，EPS near-zero）、OpInc/EPS 3yr CAGR（负基数）、earningsGrowth（一次性项扭曲）
-- Step 3 剔最高：Q2'26 GP YoY +24.8%（peak，指引减速）
-- 剩余核心源：GP CAGR 20.0%、FY26 GP 指引 +21%、Q4 exit ~15%、Rev CAGR 11.3%（BTC 失真，不纳入均值）
-- Revenue CAGR/YoY 因 BTC 毛记账失真 → 不纳入主均值
+```
+g 源:
+  营收 3yr CAGR 11.3%      BTC 毛记账失真，低估
+  GP 3yr CAGR 20.0%        $5.99B→$10.36B，最 meaningful
+  OpInc 3yr CAGR N/A        2022 负基数
+  EPS 3yr CAGR N/A          2022 负基数
+  Q2'26 GP YoY 24.8%       peak，指引减速
+  PEG 155%                 EPS near $0.56，失真
+  FY26 GP 指引 21%          管理层上调
+  Q4 exit mid-teens ~15%   管理层 CFO Ahuja
+  Q3'26 GP 指引 18%         减速趋势
+
+Step 2 剔除:
+  PEG 155%                 EPS near-zero 失真
+  OpInc/EPS 3yr CAGR       负基数
+  earningsGrowth -83.3%    一次性项扭曲
+  Rev CAGR 11.3%           BTC 毛记账失真
+
+Step 3 剔除:
+  Q2'26 GP YoY 24.8%       peak，指引减速
+
+Step 4:
+  avg(20.0, 21, 15, 18) = 18.5%
+```
+
+**Step 5 定性调整**: 18.5% → **15%**（管理层 Q4 exit mid-teens 从 20% 历史减速；竞争激烈 + Neighborhoods 新引擎未验证）
+
 - **g = 15%**（管理层 exit mid-teens，从 20% 历史减速的保守前瞻；不含回购）
+- g 用 GP 增长（非 Revenue，因 BTC 毛记账失真）
 
 ### g 质量护栏
 
