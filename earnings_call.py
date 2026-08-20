@@ -1534,5 +1534,24 @@ def filter_earnings_call(only_open=False):
         print(f"{prefix} {date}\t{weekday}\t\t{' '.join(stock_names)}")
 
 
+def filter_missing_earnings_call(after_date):
+    missing = []
+    for stock_name, dates in Earnings_Call.items():
+        has_after = False
+        for date in dates:
+            if date > after_date:
+                has_after = True
+                break
+        if not has_after:
+            latest_date = dates[0] if dates else 'N/A'
+            missing.append((latest_date, stock_name))
+    missing.sort()
+    for latest_date, stock_name in missing:
+        print(f"{stock_name:<10}  latest: {latest_date}")
+
+
 if __name__ == '__main__':
     filter_earnings_call(only_open=True)
+
+    print('\n--- missing after 2026-06-30 ---')
+    filter_missing_earnings_call('2026-06-30')
