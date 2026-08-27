@@ -5,8 +5,8 @@ from conf import *
 
 drill_down_full = [
     (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=False, enable_line=True)),
-    (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=True, enable_line=False)),
-    (period(8), with_overrides(FULL, enable_elliott=True, enable_neck_line=False, enable_line=False)),
+    (period(8), with_overrides(FULL, enable_elliott=False, enable_neck_line=True, enable_line=True)),
+    (period(8), with_overrides(FULL, enable_elliott=True, enable_neck_line=False, enable_line=True)),
     (period(8), FULL),
 ]
 
