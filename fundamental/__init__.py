@@ -8,8 +8,9 @@ Statements:
     python3 -m fundamental.statements AAPL          # 打印单只财报
 
 Cheap:
-    python3 -m fundamental.cheap                    # 全量筛选 + ranking
-    python3 -m fundamental.cheap AAPL               # 单只筛选
+    python3 -m fundamental.cheap                    # 默认 stock: 扫 ALL-INDEX 股票
+    python3 -m fundamental.cheap --mode=index       # 仅指数(ETF/BTC)
+    python3 -m fundamental.cheap AAPL               # 显式 ticker (单组, 忽略 --mode)
 
 Health:
     python3 -m fundamental.health | pbcopy          # 全量评分 + ranking

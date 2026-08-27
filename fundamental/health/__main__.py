@@ -1,6 +1,6 @@
 import sys
 from conf import ALL
-from fundamental.data import SKIP
+from fundamental.data import INDEX
 from fundamental.health.scoring import evaluate_stock, print_detail, print_ranking
 
 
@@ -8,7 +8,7 @@ def main():
     results = []
     targets = sys.argv[1:] if len(sys.argv) > 1 else ALL
     for stock_name in targets:
-        if stock_name in SKIP:
+        if stock_name in INDEX:
             continue
         result = evaluate_stock(stock_name)
         print_detail(result)

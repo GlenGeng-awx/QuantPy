@@ -66,9 +66,9 @@ def main():
             print_statements(stock_name.upper())
     else:
         from conf import ALL
-        from fundamental.data import SKIP
+        from fundamental.data import INDEX
         for stock_name in ALL:
-            if stock_name not in SKIP:
+            if stock_name not in INDEX:
                 print_statements(stock_name)
 
 

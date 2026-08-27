@@ -6,7 +6,7 @@ from conf import CN_INDEX, US_INDEX
 
 STATEMENT_DIR = 'financial_data'
 PRICE_DIR = 'stock_data'
-SKIP = set(CN_INDEX + US_INDEX)
+INDEX = set(CN_INDEX + US_INDEX)
 
 
 def filter_incomplete(df, min_ratio=0.5):

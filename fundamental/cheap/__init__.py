@@ -1,17 +1,26 @@
 """
-寻找格雷厄姆的"被忽视的大公司"，按满足条件数排序。
+每日筛选"价格回撤"标的 (cheap v2)。
 
-Signals (排序依据):
-    1Y Drawdown   > 40%     过去一周低点 vs 一年高点
-    2Y Drawdown   > 60%     过去一周低点 vs 两年高点
-    Near 52W Low  ≤ 15%     当前价距 52 周低点
-    P/E TTM       < 15x
-    EV/EBITDA     < 10x
-    P/S           < 2.0x
+用法:
+    python3 -m fundamental.cheap                   # 默认 stock: 扫 ALL-INDEX 股票
+    python3 -m fundamental.cheap --mode=index      # 仅指数(ETF/BTC): ALL∩INDEX
+    python3 -m fundamental.cheap ADBE NVDA QQQ     # 显式 ticker (单组, 忽略 --mode)
 
-Hints (过去 5 天技术信号):
-    Elliott Hit             触及 Elliott 波浪关键点位
-    Neck Line Hit           触及颈线支撑/阻力
-    Trend Line Hit          触及趋势线
-    MinMax 4th Hit          触及四阶局部极值
+分组 (--mode):
+    stock   ALL-INDEX 股票               (default)
+    index   ALL∩INDEX 指数 (ETF/BTC, 如 QQQ/VOO/SLV/GLD/BTC-USD)
+
+合并表 (每组一张):
+    Stock | 1Y 2Y 52W c5d c10d c20d | cnt | Elli Neck Line 4th | Close P/E P/S P/B FCF EV/E
+    rank(6)+cnt 进排序 (count 降序 + 1Y dd tie-break); TA(4)+估值(6) display。
+
+crash 信号: guru 90pct of rolling 200d, 近 3 交易日命中 → ✓
+ETF/BTC: 无 fundamentals → 估值全 '-', 仅 close + 价格信号
+
+模块:
+    price.py       6 价格信号 (入场/ranking)
+    ta.py          4 TA 命中 (display)
+    valuation.py   6 估值 (close/PE/PS/PB/FCF/EV-E, display)
+    display.py     print_detail + print_ranking (格式化)
+    __main__.py    load_data + evaluate + args/groups + 编排
 """

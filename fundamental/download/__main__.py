@@ -3,7 +3,7 @@ import sys
 import json
 import yfinance as yf
 from conf import ALL
-from fundamental.data import STATEMENT_DIR, PRICE_DIR, SKIP
+from fundamental.data import STATEMENT_DIR, PRICE_DIR, INDEX
 
 STATEMENTS = [
     ('income_annual', 'financials'),
@@ -50,7 +50,7 @@ def download(stock_name):
 
     try:
         download_price(stock_name, ticker)
-        if stock_name in SKIP:
+        if stock_name in INDEX:
             return
         download_statements(stock_name, ticker)
         download_info(stock_name, ticker)
