@@ -166,12 +166,12 @@ V_500B = [
     ASML,
     XOM,
     AMD,
-    INTC,
     TENCENT,
     MA,
 ]
 
 V_200B = [
+    INTC,
     ORCL,
     NFLX,
     CVX,
@@ -225,17 +225,17 @@ V_20B = [
     HPQ,
     RIVN,
     OKTA,
+    BEKE,
+    CRCL,
 ]
 
 V_10B = [
-    BEKE,
     FUTU,
     TME,
     PINS,
     LI,
     XPEV,
     NIO,
-    CRCL,
 ]
 
 V_SMALL = [
