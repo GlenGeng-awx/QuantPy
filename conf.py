@@ -185,6 +185,7 @@ V_200B = [
     MRK,
     NVO,
     DELL,
+    CRM,
 ]
 
 V_100B = [
@@ -197,24 +198,23 @@ V_100B = [
     BA,
     UBER,
     PDD,
-    CRM,
     ADBE,
     SNOW,
+    SPOT,
 ]
 
 V_50B = [
-    SPOT,
     HOOD,
     NU,
     SEA,
-    PYPL,
+    XYZ,
 ]
 
 V_20B = [
+    PYPL,
     COIN,
     CPNG,
     EBAY,
-    XYZ,
     TCOM,
     JD,
     BIDU,
