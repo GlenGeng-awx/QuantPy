@@ -46,3 +46,6 @@ __pycache__/
 stock_data/
 financial_data/
 .playwright-mcp/
+
+### Analysis reports (local, regenerated)
+ai_report/
