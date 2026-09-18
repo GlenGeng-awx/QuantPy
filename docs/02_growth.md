@@ -20,7 +20,7 @@
 | 4 | Revenue Q YoY (latest Q) | income_quarterly CSV | 免费 | `Total Revenue` col0 vs col4 |
 | 5 | PEG 隐含 g | info.json | 免费 | trailingPE / pegRatio |
 | 6 | NI YoY (annual) | income_annual CSV | 免费 | `Normalized Income` col0 / col1 - 1 (剔 unusual items) |
-| 7 | 分析师共识 | web search | 贵 | 分析师 3-5yr 营收 CAGR |
+| 7 | 分析师共识 | web search | 贵 | 分析师 3-5yr 营收 CAGR (**远端, 多年 p.a.**); 只获 FY+1 单年 → 标"近端共识"另列, 不混入 1g |
 | 8 | 管理层指引 | web search | 贵 | FY 指引 / 长期目标 |
 
 ### CSV CAGR 计算公式
@@ -208,4 +208,6 @@ output 格式:
 ✓ CAGR base 为负 → NaN → 用 Revenue CAGR 或 2yr
 ✓ CAGR 峰/谷基数失真 → 用 2yr fallback (注明)
 ✓ g 质量看 Fisher #1-4 (增长可持续性, Task 3)
+✓ 1g 共识口径 = 远端 3-5yr CAGR; FY+1 单年共识只作"近端"参考 (ADBE 教训: 口径混用 → 熊档漂移 2.4pp)
+✓ 近端 vs 远端共识差 > 3pp → 增长衰减结构信号 (熊档取远端)
 ```

@@ -73,6 +73,8 @@ output 格式:
 
 **P/E + P/S 分位都须 ≤30%** 才算便宜 (P/B 仅参考, 轻资产不适用)。查不到则暂停, 严禁估算。
 
+> ⚠ 当前 P/E 跌破 5yr 最低 → 分位 = 0th, 参照系失去下界刻度 → ④ 标 "不可信 (破低)", Task E 用公式价交叉验 (同 derating 处理)。
+
 > **P/S P/B 本地计算**: 用 stock_data CSV (日 close) × annual shares / annual revenue (P/S) 或 annual equity (P/B) → 算每日 P/S P/B → 5yr range = last 1260 交易日 min/max/percentile。不需要 web。
 
 > 正常化 P/E 分位复用 GAAP P/E 的 5yr 范围 (MacroTrends 只有 GAAP)。

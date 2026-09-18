@@ -58,3 +58,5 @@ financialCurrency ≠ USD 时, 以下字段不可信:
 | 6 | P/E 分位短历史 (PLTR 2020 上市) | 5yr 数据点 <15 → 分位不可信 → 用公式+DCF; 或本地算真实低 (price×TTM EPS) | §4.2 / §4.3 |
 | 7 | CapEx 超级周期 (ORCL/MSFT) | CapEx/OCF>30% → DCF 低估; EPS 不受影响 (D&A 分摊) → 合理价用 EPS | §5.2 / §5.4 |
 | 8 | SBC + 回购判断 | 回购>SBC→⑧DCF base+合理价用 EPS; 回购≤SBC→⑦+合理价用⑦ | §5.2 / §5.3 |
+| 9 | P/E 破 5yr 低 (0th 之下) | ④ 标 "不可信 (破低, 无下界刻度)"; Task E 用公式价 | §4.2 |
+| 10 | 季度 CSV 新列未全量 (仅 EPS/股数) | Rev/OpInc 用 TTM 差额反推 + 财报新闻验证, output 标注 * (AVGO/ADBE 两次) | §1.2 |
