@@ -77,6 +77,7 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 - **FCF yield 是估值指标** → 在 Task 4 粗筛 #5（§4.1）
 - **1/2/3/5 严格无 price**（安全边际只在 E；Task 5 只产合理价+范围+置信度，不做决策）
 - **汇总/校验读所有 output_e**
+- **盲评/盲测 {TICKER} → 先读 `prompts/gut_check.md`**（owner，勿自造协议 — NFLX/0700 两轮教训）：新数据（portfolio + CSV + EOD + 近 2 周新闻）+ **不读 docs/ai_report**（防锚定）；gut 先于 docs 预检锁定
 
 ## web 数据抓取（Task 4 分位 / Task 3 消息面）
 
@@ -91,6 +92,9 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 
 - 产出：`ai_report/{STOCK}/output_1.md ~ output_5.md + output_e.md`
 - **output 结构 = 对应 task doc 节序**（§0.5 全局约定），不另设模板
+- 盲评产出：`ai_report/{STOCK}/gut_check.md`（框架分析**前**锁定：头部标协议 + 时间戳 + 字节验证，防 write 静默丢失）
+- 盲评对账：框架全链路完成后，output_e 末尾落**对账附录**——三列表（维度/盲评/框架 v2/对账：结论方向、隐含公允价、触发器、最脆弱假设、gut 抓框架钝感、框架抓 gut 盲区、归类词）+ 对账头条（最有趣的发现一段）
+- 跨案例收敛模式（持续积累）：SE 符号相反 / BILI 时间轴分歧 / NFLX 全收敛（中间带）/ 0700 双误差抵消（知识断层成本）
 - 汇总/校验工具：v1 gen_comparison 已退役；v2 汇总器待建（读全量 output_e）
 
 ## 代码风格
