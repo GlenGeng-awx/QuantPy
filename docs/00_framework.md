@@ -108,6 +108,7 @@ ai_report/{STOCK}/
 ```
 
 > 全局约定: **output_N.md 结构 = 对应 task doc 节序** (如 output_5 = §5.1→§5.5); 各 § 节的表格式即 output 格式, 不另设模板。
+> 例外: **output_3 (Fisher 15) = 认知顺序** (调查→判定→计分→总结), 章节用语义名 (§ 指针标规则归属) — 计算 task 边算边写表格即内容, 调查 task 判定从证据长出来, 先叙事后计分 (规则 owner: 03_fisher15 §3.3 报告结构)。
 > 
 > 文件名与 docs Task 编号一一对应。gen_comparison 只读 output_e。
 
