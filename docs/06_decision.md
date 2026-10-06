@@ -2,7 +2,7 @@
 
 > **产出**: 安全边际 + 入场价/出场价 + 场景叙事 + 入场策略 (A/B/C/D) + 归类 + 总结。
 > 
-> **依赖**: output_1 (BS 生存力/EPS) + output_2 (g 档位 → 场景叙事) + output_3 (折扣/质量档) + output_4 (分位/derating → 交叉验) + output_5 (合理价/全方法/gap) + stock_data CSV (最新 EOD 现价, Task E 独有)。
+> **依赖**: output_1 (BS 生存力/EPS) + output_2 (g 档位 → 场景叙事) + output_3 (折扣/质量档) + output_4 (分位/derating → 交叉验) + output_5 (合理价/全方法/gap) + output_f (若存在: 恐惧分类 → 入场信号强化/削弱, owner 09_fear_test §9.6) + stock_data CSV (最新 EOD 现价, Task E 独有)。
 >
 > 现价职责边界: Task 4 用当日价 (output_4 头部标注); Task E 重取最新 EOD (output_4 之后可能大跌/跳空, 如 ADBE 9/4 -6.7%) → 安全边际/操作按 Task E 现价算, 注明与 output_4 的价差。
 > 

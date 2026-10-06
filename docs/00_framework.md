@@ -40,15 +40,19 @@ EPS vs DCF gap → 哪个更可信 → 看 gap 来源 → 决定合理价口径 
   Task 5 (估值) — 读 output_1 (EPS/per-share) + output_2 (g 多档位) + output_3 (折扣/r) + output_4 (分位 ④⑤⑥)
     ├── 纯估值引擎: 算全部方法 (①②⑦⑧ 公式 + ④⑤⑥ 分位) → 矩阵 → gap → 置信度
     └── output_5 = 合理价 + 全方法值 + 范围 + 置信度 (不做决策, 无 flag)
+  ↓ (触发式: 击球区候选 / 持仓裁决 / 用户指定)
+  Task F (恐惧检验) — 读 output_1 (正常化 EPS + 5 季趋势 + 回购) + output_2 (调整 g) + output_5 (熊/基准 ①) + EOD + web (共识修正 + news)
+    ├── 测量引擎: 恐惧体积 (隐含 g vs 趋势 g) + 足迹 + even-if 赔率 → 恐惧分类 (情绪错杀/基本面事件/刀/M&A 悬置)
+    └── output_f = 恐惧分类 + 体积 + 赔率 + 截止日 (不产操作)
   ↓
-  Task E (决策) — 读 output_1 (BS/EPS) + output_2 (g 档位) + output_3 (折扣/质量) + output_4 (分位/derating) + output_5 (合理价/gap) + stock CSV (最新 EOD)
+  Task E (决策) — 读 output_1 (BS/EPS) + output_2 (g 档位) + output_3 (折扣/质量) + output_4 (分位/derating) + output_5 (合理价/gap) + output_f (若存在) + stock CSV (最新 EOD)
     ├── Step 1: BS 生存力 + 估值能力判断 (能/能力圈外/价值陷阱, 自产 flag — §6.1)
     ├── Step 2-4: 选可信方法 → 入场价/出场价 → 安全边际
     ├── 公式价 vs 分位价 交叉验 (output_5 ①②⑦⑧ vs output_4 ④⑤⑥)
     └── 场景叙事 + 入场策略 + 归类
 ```
 
-> 串行 pipeline: 1→2→3→4→5→E; 每个 task 只读前序 output, 不回指
+> 串行 pipeline: 1→2→3→4→5→(F)→E; F 触发式 (非全量); 每个 task 只读前序 output, 不回指
 > 
 > 估值能力判断 (旧 "估值门口") = Task E Step 1 自产 flag; ×0.40 硬规则 = "不否决, 总是估值"
 > 
@@ -94,6 +98,7 @@ EPS vs DCF gap → 哪个更可信 → 看 gap 来源 → 决定合理价口径 
 | 06_decision | 估值能力 + 入场/出场 + 安全边际 + 场景 + 策略 + 归类 | output_1 + output_2 + output_3 + output_4 + output_5 + stock CSV | Task E |
 | 07_checklist | 提交前自检清单 (指针式) | 全部 | 写报告后提交前 |
 | 08_reference | 固定参数 + FX + edge cases (纯查表, 不含规则) | — | 按需查表 |
+| 09_fear_test | 恐惧体积 + 恐惧分类 (触发式: 击球区候选/持仓裁决) | output_1 + output_2 + output_5 + EOD + web (共识修正 + news) | Task F (5→E 之间, 触发才读) |
 
 ### 目录结构 (产出文件)
 
@@ -104,6 +109,7 @@ ai_report/{STOCK}/
 ├── output_3.md    Task 3: Fisher 15 (15条 + 2D折扣 + r)
 ├── output_4.md    Task 4: 价格层 (粗筛 + 分位门 + derating)
 ├── output_5.md    Task 5: 估值 (多档位×方法矩阵 + gap)
+├── output_f.md    Task F: 恐惧体积检验 (触发式: 拟建仓/持仓裁决; §9.0-9.6)
 └── output_e.md    Task E: 决策 (安全边际 + 入场策略 + 归类)
 ```
 
@@ -140,6 +146,12 @@ ai_report/{STOCK}/
 | **数 PASS** | Fisher 15 计分: 质量/麻烦两维度对称数 PASS; borderline 不计 = 有 cost → 隐性降档 | §3.2 |
 | **borderline** | Fisher 15 第三态 = neutral, 两维度都不计 PASS | §3.1 |
 | **derating** | 5yr P/E 跨增长范式 → 低分位是假便宜, 排除分位法 | §4.3 |
+| **恐惧体积** | 趋势 g ÷ 隐含 g; 市场恐惧的倍数化 (≥1.5× = 错杀候选) | §9.1 |
+| **隐含 g** | 现价 ÷ 正常化 EPS − 8.5 (Graham 反推; 度量衡, 非机制假设) | §9.1 |
+| **修正动量** | FY+1 共识估计方向: 上修 / 企稳 (≥4 周无净下修) / 下修中 | §9.1 |
+| **足迹** | 恐惧叙事应留下的数据证据 (收入/利润/份额/现金, 5 季) | §9.2 |
+| **刀** | 修正动量下修中的下跌 — 缺口收敛, 恐惧无体积可赚, 禁当错杀接 | §9.1/§9.6 |
+| **情绪错杀** | 恐惧分类词: 体积大 + 足迹 0-1 + 修正企稳 + 有截止日 (深/中/浅) | §9.6 |
 | **正常化 EPS** | min(GAAP, 工具, v3.1), 保守下限 | §1.3 |
 | **估值能力判断** | Task E Step 1 自产 flag: 能 / 能力圈外 / 价值陷阱 (旧 "估值门口") | §6.1 |
 | **主口径** | ❌ 已退役 (一词两义致误用)。拆成 DCF base + 合理价口径 | — |

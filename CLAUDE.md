@@ -33,7 +33,7 @@ DCF/sh = 一阶段/两阶段 + net_cash/sh  # g≤3% Gordon; g>3% 两阶段 (N=5
 EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 ```
 
-## 串行工作流（1→2→3→4→5→E，docs/00_framework.md §0.2 依赖图是 owner）
+## 串行工作流（1→2→3→4→5→[F]→E，docs/00_framework.md §0.2 依赖图是 owner）
 
 | Task | 内容 | 产出 |
 |------|------|------|
@@ -42,13 +42,14 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 | 3 | Fisher 15（质量×麻烦 数 PASS → 2D 折扣 + r） | output_3 |
 | 4 | 价格层（粗筛 + 分位门 + derating） | output_4 |
 | 5 | 估值（纯引擎：全方法矩阵 + gap + 置信度，不做决策） | output_5 |
-| E | 决策（估值能力 → 选可信 → 入场/出场 → 安全边际 → 场景 → 策略 → 归类） | output_e |
+| F | 恐惧体积检验（**触发式**：击球区候选/持仓裁决才跑；隐含 g vs 趋势 g + 足迹 + even-if + 修正动量 → 恐惧分类） | output_f |
+| E | 决策（估值能力 → 选可信 → 入场/出场 → 安全边际 → 场景 → 策略 → 归类；读 output_f 若存在） | output_e |
 
 每个 task 只读前序 output，不回指。Task E 独有：重取最新 EOD 现价（Task 4 当日价可能已过时）。
 
 ## 分析预检（每次分析股票 / 汇总 / 校验前必须完成）
 
-⚠️ 收到任何股票分析请求、或"汇总/校验"请求时，先 read 全部 `docs/*.md`（9 文件，不论一只还是全部）：
+⚠️ 收到任何股票分析请求、或"汇总/校验"请求时，先 read 全部 `docs/*.md`（10 文件，不论一只还是全部）：
 
 1. `docs/00_framework.md` — 全景 + 核心公式 + 依赖图 + 目录结构 + 术语表 + 退役清单
 2. `docs/01_financials.md` — 财务健康 + 正常化 EPS（8 检测器）
@@ -59,6 +60,7 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 7. `docs/06_decision.md` — Task E 决策（Step 1-4 + 策略 A/B/C/D + 归类映射）
 8. `docs/07_checklist.md` — 提交前自检清单（指针式）
 9. `docs/08_reference.md` — 固定参数 + FX + edge cases（按需查表）
+10. `docs/09_fear_test.md` — Task F 恐惧体积检验（错杀判别：情绪错杀 / 基本面事件 / 刀 / M&A 悬置；触发式 5→F→E）
 
 > **docs/*.md（框架 lens，必读） vs docs/normalize_eps.py（工具，直接调）**：工具出问题再看源码。
 > 写完 output_5 + output_e 后，**过一遍 `docs/07_checklist.md` 逐项打勾**，任一项 ✗ = 未完成。
@@ -76,6 +78,7 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 - **回购不进 g**，g 用 Revenue/NI 增长；EPS CAGR 只作背离信号（§2.1）
 - **FCF yield 是估值指标** → 在 Task 4 粗筛 #5（§4.1）
 - **1/2/3/5 严格无 price**（安全边际只在 E；Task 5 只产合理价+范围+置信度，不做决策）
+- **错杀判别（Task F §9）**：修正动量下修中 = **刀**，禁止当情绪错杀接（等 ≥4 周企稳）；M&A 悬置/要约在桌 = **全链路暂停**（估值对象变质）；足迹 ≥半数或共识已打印伤害 = **基本面事件**，非错杀（TTD 8/7 教训）
 - **汇总/校验读所有 output_e**
 - **盲评/盲测 {TICKER} → 先读 `prompts/gut_check.md`**（owner，勿自造协议 — NFLX/0700 两轮教训）：新数据（portfolio + CSV + EOD + 近 2 周新闻）+ **不读 docs/ai_report**（防锚定）；gut 先于 docs 预检锁定
 
@@ -90,7 +93,7 @@ EPS vs DCF gap → 看来源 → 决定合理价口径（§5.3 机械规则）
 
 ## 分析报告
 
-- 产出：`ai_report/{STOCK}/output_1.md ~ output_5.md + output_e.md`
+- 产出：`ai_report/{STOCK}/output_1.md ~ output_5.md + output_e.md`（+ 触发式 `output_f.md`，Task F）
 - **output 结构 = 对应 task doc 节序**（§0.5 全局约定），不另设模板
 - 盲评产出：`ai_report/{STOCK}/gut_check.md`（框架分析**前**锁定：头部标协议 + 时间戳 + 字节验证，防 write 静默丢失）
 - 盲评对账：框架全链路完成后，output_e 末尾落**对账附录**——三列表（维度/盲评/框架 v2/对账：结论方向、隐含公允价、触发器、最脆弱假设、gut 抓框架钝感、框架抓 gut 盲区、归类词）+ 对账头条（最有趣的发现一段）
