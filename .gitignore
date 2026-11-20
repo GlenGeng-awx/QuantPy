@@ -50,3 +50,7 @@ financial_data/
 ### Analysis reports (local, regenerated)
 ai_report*/
 docs*/SESSION_LOG.md
+superpowers/
+docs.v2/specs/
+docs.v2/plans/
+tmp/
