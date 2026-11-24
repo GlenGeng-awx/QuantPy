@@ -35,4 +35,3 @@
 - 误提交了 → 用户要求时 reset 干净, 工作区修改保留。
 - **git 分层**: 用户资产 (knowledgeBase/) 入库; LLM 记忆 (SESSION_LOG) 与报告产物 (ai_report*/) 不入库。
 - **transactions/book.py = 用户自维护, LLM 只读** — 持仓真相源的唯一写入权在用户; LLM 不得预填/代改行权、过期、成交记录 (发现缺口 = 报告用户, 等用户自己记)。
-- **看持仓跑 `python3 -m transactions.portfolio`, 禁直接读 book.py 拿数** — book.py 只是原始记录; portfolio.py/position.py/types.py 才是逻辑, 输出才是精髓: 分币种 realized/unrealized/fees 汇总 + 持仓含 **cost(w/ options)** 有效成本 (权利金自动折入, 如 MU 行权 700 − 5 = 695 这类账它原生会算) + 各持仓下挂未平仓期权腿。直接读 book.py = 只见流水不见仓位语义。
