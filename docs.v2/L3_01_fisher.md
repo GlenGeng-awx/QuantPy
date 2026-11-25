@@ -8,8 +8,6 @@
 >
 > **著作锚**: 《怎样挑选成长股》(Common Stocks and Uncommon Profits, 1958) 第一章 15 条 + 闲聊法 (scuttlebutt); 条目原文 = "费雪 15 条" 节的 15 条定义 (与原典同名条目对应, 补充问题为校准增量)。
 >
-> **源声明**: 前三节本体移植自 v2 (15 条预定义搜索全文: `git show HEAD:docs/03_fisher15.md`); 后两节为 v3 增量。
-
 ## 费雪 15 条 (本体定义)
 
 ```
@@ -61,26 +59,6 @@ PK 三态: pass / fail / borderline
 - **判定 = 分析日状态**: 离职旧闻 ≠ 当前 (TTD 判例: 已补位有序过渡 → borderline; 空缺/churn → fail)
 - FAIL 去重: ≥3 条 FAIL 同根因 → 总结合并 1 条 (仅展示; 否决项不参与合并)
 
-## 专属搜索协议 (为什么是 #7/#8/#14/#15 必搜)
-
-**设计哲学 = 费雪闲聊法, web search 就是我们的"闲聊"** — 搜索优先级表:
-
-| 类别 | 条目 | 能否从 data 推断 | 理由 |
-|------|------|-----------------|------|
-| **必搜** | #7 劳工 / #8 高管 / #14 坦白 / #15 诚信 | ❌ 财报无此信息 | 裁员/离职/隐瞒/SEC 案底都不在三表 — **只有 web 能验** (v3: 口碑三层协议见 L1_07) |
-| **建议搜** | #11 护城河 / #2 新品 / #1 市场 | 部分 (GM/g 隐含) | 性质 (在不在变/TAM/侵蚀) 要搜 |
-| **default 可升级** | #3/#4/#5/#6/#9/#10/#12/#13 | ✓ 水平可判 | **升级触发 (任一)**: ① L2_04 损伤表 flag 该维度 ② 判定悬在 borderline 候选 ③ 补充问题问"性质"非"水平" |
-
-**闲聊视角交叉 (scuttlebutt lens — 与搜索层级正交)**: 杠杆是**视角交叉**不是递进深度 — 意外来自"换个人问"。管理层口径 = 单源不算交叉。规则: 必搜/升级条目 ≥2 个闲聊视角 (管理层/员工/客户/竞对/监管); 悬在补充问题的 ≥3 个。
-
-**搜索弹药 (全文见源声明的 git 指针; 常用)**:
-```
-#1  pos "{company} market size TAM growth outlook" / neg "{company} market share loss declining"
-#8  neg "{company} executive departure CFO CTO resign" + follow-up "who replaced, gap, forced?"
-#15 neg "{company} SEC investigation scandal fraud lawsuit accounting"
-#11 补充 "{company} moat type changing technology disruption commoditization"
-```
-
 ## 计分 → 档位 → 折扣 (2D 表本体)
 
 ```
@@ -106,9 +84,9 @@ PK 三态: pass / fail / borderline
 
 **Override 优先级 (高盖低)**:
 ```
-1. 硬规则: FCF-SBC < 0 → ×0.40 (不否决, 总是估值; 不与其他折扣叠加)
+1. 硬规则: FCF−SBC < 0 → 先归因 (00 §0.2 三岔口): 资本周期豪赌型 → ×0.40 (不否决, 总是估值; 不与其他折扣叠加); 投资期型不打折
 2. 价值陷阱过滤器: #1+#6+#14 ≥2 FAIL →
-     档 A: FCF-SBC ≤0 OR Rev YoY <0 → ×0.40 (强制)
+     档 A: Rev YoY <0, 或 FCF−SBC ≤0 且归因豪赌型 → ×0.40 (强制)
      档 B: 均为正 → g=0 估值 + ×0.70 (上限 — 2D 更低时取 2D)
 3. 否决项: #1 或 #15 FAIL → 麻烦档至少存疑 (无论 PASS 数)
 4. 2D 表
@@ -123,10 +101,48 @@ PK 三态: pass / fail / borderline
 | 置信 | 高/中/低 |
 | 质量档 × 麻烦档 | (伟大/好/平庸) × (无/存疑/重) + PASS 计数 |
 | 折扣系数 + r | 2D 表格值 + override 说明 |
-| 一票否决 | #1 或 #15 FAIL? (是 → L4 裁决优先级 2) |
+| 一票否决 | #1 或 #15 FAIL? (是 → 麻烦档至少存疑, override 3) |
 | 定价区间 | [下沿, 上沿] — 下沿 = ①基×折扣; 上沿 = ③ 名义 r(质量档) (锚全引 L2_07 格子); 倒挂时上沿用 ②基 |
 | 翻案条件 | top 2-3 |
 ```
 
-> 区间行下必附**计算 hint 引段** (模板见 L3_00 §2): "上沿 = EPS×(8.5+2g 或 ③DCF) = 算式 = 数字; 下沿 = ①基×折扣系数 = 算式 = 数字。速查: 原料在 L2_05/06, 格子在 L2_07"。
+> 区间行下必附**计算 hint 引段** (四段式模板见 L3_00 §2.1): 上沿段 = EPS×(8.5+2g) 或 ③ DCF 算式; 下沿段 = ①基×折扣系数 算式; 速查段 = 原料在 L2_05/06, 格子在 L2_07。
 > 价值陷阱过滤器输出 (档 A/B) 交 L4 归类; 折扣只乘入场价层 (L4)。
+
+## 专属搜索协议 (mutable — 节序在尾, 弹药沉淀只动此节)
+
+**设计哲学 = 费雪闲聊法, web search 就是我们的"闲聊"** — 搜索优先级表:
+
+| 类别 | 条目 | 能否从 data 推断 | 理由 |
+|------|------|-----------------|------|
+| **必搜** | #7 劳工 / #8 高管 / #14 坦白 / #15 诚信 | ❌ 财报无此信息 | 裁员/离职/隐瞒/SEC 案底都不在三表 — **只有 web 能验** (v3: 口碑三层协议见 L1_07) |
+| **建议搜** | #11 护城河 / #2 新品 / #1 市场 | 部分 (GM/g 隐含) | 性质 (在不在变/TAM/侵蚀) 要搜 |
+| **default 可升级** | #3/#4/#5/#6/#9/#10/#12/#13 | ✓ 水平可判 | **升级触发 (任一)**: ① L2_04 损伤表 flag 该维度 ② 判定悬在 borderline 候选 ③ 补充问题问"性质"非"水平" |
+
+**闲聊视角交叉 (scuttlebutt lens — 与搜索层级正交)**: 杠杆是**视角交叉**不是递进深度 — 意外来自"换个人问"。管理层口径 = 单源不算交叉。规则: 必搜/升级条目 ≥2 个闲聊视角 (管理层/员工/客户/竞对/监管); 悬在补充问题的 ≥3 个。
+
+**搜索弹药 (15 条字典; 与 L1 公共搜索同域不同角 — L1 已铺正面证据, 票的火力集中在 neg 验证与闲聊换角, pos 词仅作冷启动字典; 有效词沉淀回此节)**:
+```
+#1  pos "{company} market size TAM growth outlook" / neg "{company} market share loss competition threat declining"
+    补充 "{company} pricing power erosion technology value redistribution"
+    (⚠ 份额流失不是 #1 FAIL — 归 #4/#11)
+#2  pos "{company} new product launch innovation pipeline" / neg "{company} product failure discontinued delayed"
+#3  pos "{company} R&D investment technology platform" / neg "{company} R&D inefficiency technology lag competitor"
+#4  pos "{company} sales growth customer acquisition" / neg "{company} customer loss revenue miss declining sales"
+#5  pos "{company} gross margin net margin profitability" / neg "{company} margin decline profitability deteriorating"
+    补充 "{company} pricing power commoditization margin structural decline"
+#6  pos "{company} margin improvement operating leverage" / neg "{company} margin pressure cost rising competition pricing"
+    补充 "{company} margin structural decline vs investment phase AI arms race"
+#7  pos "{company} employee satisfaction glassdoor" / neg "{company} employee turnover toxic culture layoffs strike"
+#8  pos "{company} executive team stability retention" / neg "{company} executive departure CFO CTO resign leave turnover"
+    follow-up "{company} new CFO CRO appointed replacement {year}"
+#9  pos "{company} management depth organizational strength" / neg "{company} management depth weakness chaos restructuring"
+#10 pos "{company} cost control operating efficiency" / neg "{company} accounting restatement cost overrun control failure"
+#11 pos "{company} competitive advantage moat market position" / neg "{company} competitive disadvantage losing edge moat eroding"
+    补充 "{company} moat type changing technology disruption business model commoditization"
+#12 pos "{company} long-term strategy vision" / neg "{company} short-term focus quarterly short-sighted"
+    补充 "{company} business model transition freemium subscription pricing power viability"
+#13 pos "{company} buyback low dilution shareholder friendly" / neg "{company} dilution stock offering SBC excessive"
+#14 pos "{company} management transparency honest guidance" / neg "{company} guidance miss blame macro misleading spin"
+#15 pos "{company} CEO integrity reputation ethical" / neg "{company} SEC investigation scandal fraud lawsuit accounting"
+```
