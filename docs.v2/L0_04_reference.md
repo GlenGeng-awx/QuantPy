@@ -14,19 +14,22 @@
 | NVDA 11/20 | 信仰定价型首例; E-peak 三口径证据链; 板块级 sympathy 跌 (MU) | L2_08 §5/§1 |
 | COIN 11/20 | E-trough 首例 (谷底分母使隐含 g 虚高); 复苏定价型; 金融型 NCAV 剔托管镜像 | L2_08 §1/§5, L3_02 |
 | ISRG 11/24 | 信仰定价+负体积; 共识带不存在时四票带与现金地板并排; L3 纵向纠错记档不回改 | L2_08 §5, L3_00 §4, L4_00 |
+| 0700HK 11/25 | "账单拒绝型" (E 平稳×FCF 塌陷×回购停火); 体积第三盲区 | L2_08 §1/§5 |
 
 > 收录判据: 沉淀规则必须跨标的可复用 (换个标的还用得上) — 单链事件叙事归 SESSION_LOG。
 
 ## FX (每 3-5 天更新; er-api spot)
 
-| 币种对 | 近似值 | 备注 |
+口径: 每行 = "1 左币 = X 右币" (如 USD→CNY 6.68 = 1 美元兑 6.68 人民币)。
+
+| 币种对 (左→右) | 近似值 | 备注 |
 |--------|--------|------|
-| CNY/USD | ~6.68 | 2026-11-25 er-api |
-| CNY/HKD | ~0.85 | (同源换算) |
-| TWD/USD | ~32.9 | |
-| EUR/USD | ~1.10 | |
-| DKK/USD | ~6.82 | |
-| SEK/USD | ~10.2 | |
-| SGD/USD | ~1.29 | |
+| USD → CNY | ~6.68 | 2026-11-25 er-api |
+| HKD → CNY | ~0.85 | (同源换算; 0700HK 链用 0.8517) |
+| TWD → USD | ~32.9 | 即 1 USD ≈ 32.9 TWD (er-api 原始方向) |
+| EUR → USD | ~1.10 | |
+| DKK → USD | ~6.82 | 即 1 USD ≈ 6.82 DKK |
+| SEK → USD | ~10.2 | 即 1 USD ≈ 10.2 SEK |
+| SGD → USD | ~1.29 | |
 
 > 不可信 info.json 字段 (多币种): trailingEps/PE/PB/EV-EBITDA/PS/EV/bookValue; 可信: currentPrice/marketCap/shares/52w/dividendYield/beta。
