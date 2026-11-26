@@ -42,7 +42,7 @@
 ## Git 纪律
 
 - **commit 用户自己做, LLM 不 commit 不 push** — 不得污染用户的 git history。
-- LLM 的工作产物 (spec/plan/草稿/临时文件) 放 tmp/ 或 docs.v2/specs|plans/ 并进 .gitignore, git 视野只剩用户文件。
+- LLM 的工作产物 (spec/plan/草稿/临时文件) 放 tmp/ 或 docs.v2/specs|plans/ 并进 .gitignore, git 视野只剩用户文件 (链内中间产物 = ai_report.v2/{STOCK}/tmp/, 随 ai_report* 已 ignore)。
 - 误提交了 → 用户要求时 reset 干净, 工作区修改保留。
 - **git 分层**: 用户资产 (knowledgeBase/) 入库; LLM 记忆 (SESSION_LOG) 与报告产物 (ai_report*/) 不入库。
 - **transactions/book.py = 用户自维护, LLM 只读** — 持仓真相源的唯一写入权在用户; LLM 不得预填/代改行权、过期、成交记录 (发现缺口 = 报告用户, 等用户自己记)。
